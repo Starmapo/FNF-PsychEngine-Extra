@@ -1607,11 +1607,19 @@ class PlayState extends MusicBeatState
 			generateStaticArrows(1);
 			for (i in 0...playerStrums.length) {
 				setOnLuas('defaultPlayerStrumX' + i, playerStrums.members[i].x);
-				setOnLuas('defaultPlayerStrumY' + i, playerStrums.members[i].y);
+				if (!isStoryMode) {
+					setOnLuas('defaultPlayerStrumY' + i, playerStrums.members[i].y + 10);
+				} else {
+					setOnLuas('defaultPlayerStrumY' + i, playerStrums.members[i].y);
+				}
 			}
 			for (i in 0...opponentStrums.length) {
 				setOnLuas('defaultOpponentStrumX' + i, opponentStrums.members[i].x);
-				setOnLuas('defaultOpponentStrumY' + i, opponentStrums.members[i].y);
+				if (!isStoryMode) {
+					setOnLuas('defaultOpponentStrumY' + i, opponentStrums.members[i].y + 10);
+				} else {
+					setOnLuas('defaultOpponentStrumY' + i, opponentStrums.members[i].y);
+				}
 				//if(ClientPrefs.middleScroll) opponentStrums.members[i].visible = false;
 			}
 
