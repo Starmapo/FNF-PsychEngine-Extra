@@ -466,6 +466,7 @@ class FreeplayState extends MusicBeatState
 
 		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 		var diffStr:String = WeekData.getCurrentWeek().difficulties;
+		if(diffStr == null) diffStr = 'Easy,Normal,Hard';
 		if(diffStr != null) diffStr = diffStr.trim(); //Fuck you HTML5
 
 		if(diffStr != null && diffStr.length > 0)
@@ -480,6 +481,22 @@ class FreeplayState extends MusicBeatState
 					if(diffs[i].length < 1) diffs.remove(diffs[i]);
 				}
 				--i;
+			}
+			
+			for (i in 0...diffs.length - 1) {
+				var suffix = '-' + diffs[i];
+				if (suffix == CoolUtil.defaultDifficulty) {
+					suffix = '';
+				}
+				var poop:String = songs[curSelected].songName + suffix;
+				try {
+					var daSong:Song.SwagSong = Song.loadFromJson(poop, songs[curSelected].songName);
+					if (daSong == null) {
+						diffs.remove(diffs[i]);
+					}
+				} catch (e:Any) {
+					diffs.remove(diffs[i]);
+				}
 			}
 
 			if(diffs.length > 0 && diffs[0].length > 0)

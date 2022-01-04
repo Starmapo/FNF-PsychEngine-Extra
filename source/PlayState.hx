@@ -340,6 +340,11 @@ class PlayState extends MusicBeatState
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
 
+		if (PlayState.storyDifficulty > CoolUtil.difficulties.length - 1) {
+			PlayState.storyDifficulty = CoolUtil.difficulties.indexOf('Normal');
+			if (PlayState.storyDifficulty == -1) PlayState.storyDifficulty = 0;
+		}
+
 		#if desktop
 		storyDifficultyText = CoolUtil.difficulties[storyDifficulty];
 

@@ -572,6 +572,7 @@ class ChartingState extends MusicBeatState
 		WeekData.reloadWeekFiles(false);
 		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 		var diffStr:String = WeekData.getCurrentWeek().difficulties;
+		if(diffStr == null) diffStr = 'Easy,Normal,Hard';
 		if(diffStr != null) diffStr = diffStr.trim(); //Fuck you HTML5
 
 		if(diffStr != null && diffStr.length > 0)
@@ -588,12 +589,32 @@ class ChartingState extends MusicBeatState
 				--i;
 			}
 
+			for (i in 0...diffs.length - 1) {
+				var suffix = '-' + diffs[i];
+				if (suffix == CoolUtil.defaultDifficulty) {
+					suffix = '';
+				}
+				var poop:String = _song.song + suffix;
+				try {
+					var daSong:SwagSong = Song.loadFromJson(poop, _song.song);
+					if (daSong == null) {
+						diffs.remove(diffs[i]);
+					}
+				} catch (e:Any) {
+					diffs.remove(diffs[i]);
+				}
+			}
+
 			if(diffs.length > 0 && diffs[0].length > 0)
 			{
 				CoolUtil.difficulties = diffs;
 			}
 		}
-
+		if (PlayState.storyDifficulty > CoolUtil.difficulties.length - 1) {
+			PlayState.storyDifficulty = CoolUtil.difficulties.indexOf('Normal');
+			if (PlayState.storyDifficulty == -1) PlayState.storyDifficulty = 0;
+		}
+		
 		var difficultyDropDown = new FlxUIDropDownMenuCustom(stageDropDown.x, player3DropDown.y, FlxUIDropDownMenuCustom.makeStrIdLabelArray(CoolUtil.difficulties, true), function(difficulty:String)
 		{
 			PlayState.storyDifficulty = Std.parseInt(difficulty);
