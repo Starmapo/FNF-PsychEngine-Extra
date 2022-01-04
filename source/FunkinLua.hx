@@ -1696,6 +1696,62 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
 			PlayState.instance.clearShaderFromCamera(camera);
 		});
+
+		//custom functions
+		Lua_helper.add_callback(lua, "getMidpoint", function(obj:String, ?type:String = 'x') {
+			if(PlayState.instance.modchartSprites.exists(obj)) {
+				var cock:ModchartSprite = PlayState.instance.modchartSprites.get(obj);
+				switch (type) {
+					case 'y':
+						return cock.getMidpoint().y;
+				}
+				return cock.getMidpoint().x;
+			}
+			if(PlayState.instance.modchartTexts.exists(obj)) {
+				var cock:ModchartText = PlayState.instance.modchartTexts.get(obj);
+				switch (type) {
+					case 'y':
+						return cock.getMidpoint().y;
+				}
+				return cock.getMidpoint().x;
+			}
+			
+			var cock:FlxSprite = Reflect.getProperty(getInstance(), obj);
+			switch (type) {
+				case 'y':
+					return cock.getMidpoint().y;
+			}
+			return cock.getMidpoint().x;
+		});
+		Lua_helper.add_callback(lua, "getGraphicMidpoint", function(obj:String, ?type:String = 'x') {
+			if(PlayState.instance.modchartSprites.exists(obj)) {
+				var cock:ModchartSprite = PlayState.instance.modchartSprites.get(obj);
+				switch (type) {
+					case 'y':
+						return cock.getGraphicMidpoint().y;
+				}
+				return cock.getGraphicMidpoint().x;
+			}
+			if(PlayState.instance.modchartTexts.exists(obj)) {
+				var cock:ModchartText = PlayState.instance.modchartTexts.get(obj);
+				switch (type) {
+					case 'y':
+						return cock.getGraphicMidpoint().y;
+				}
+				return cock.getGraphicMidpoint().x;
+			}
+			
+			var cock:FlxSprite = Reflect.getProperty(getInstance(), obj);
+			switch (type) {
+				case 'y':
+					return cock.getGraphicMidpoint().y;
+			}
+			return cock.getGraphicMidpoint().x;
+		});
+		Lua_helper.add_callback(lua, "snapCamFollow", function(?x:Float = 0, ?y:Float = 0) {
+			PlayState.instance.snapCamFollowToPos(x, y);
+		});
+		
 		Discord.DiscordClient.addLuaCallbacks(lua);
 
 		call('onCreate', []);
