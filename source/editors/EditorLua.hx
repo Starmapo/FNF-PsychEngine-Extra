@@ -86,6 +86,9 @@ class EditorLua {
 		set('downscroll', ClientPrefs.downScroll);
 		set('middlescroll', ClientPrefs.middleScroll);
 
+		// Block require, Should probably have a proper function but this should be good enough
+		set('require', false);
+
 		//stuff 4 noobz like you B)
 		Lua_helper.add_callback(lua, "getProperty", function(variable:String) {
 			var killMe:Array<String> = variable.split('.');
