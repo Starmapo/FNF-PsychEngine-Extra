@@ -169,13 +169,15 @@ class CreditsState extends MusicBeatState
 		var upP = controls.UI_UP_P;
 		var downP = controls.UI_DOWN_P;
 
-		if (upP)
-		{
-			changeSelection(-1);
-		}
-		if (downP)
-		{
-			changeSelection(1);
+		if (!warningText.visible) {
+			if (upP)
+			{
+				changeSelection(-1);
+			}
+			if (downP)
+			{
+				changeSelection(1);
+			}
 		}
 
 		if (controls.BACK)
