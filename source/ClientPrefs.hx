@@ -58,6 +58,8 @@ class ClientPrefs {
 	public static var badWindow:Int = 135;
 	public static var safeFrames:Float = 10;
 
+	public static var freeplayAlphabetic:Bool = false;
+
 	//Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx and Controls.hx
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
 		//Key Bind, Name for ControlsSubState
@@ -122,6 +124,8 @@ class ClientPrefs {
 		FlxG.save.data.safeFrames = safeFrames;
 		FlxG.save.data.gameplaySettings = gameplaySettings;
 		FlxG.save.data.controllerMode = controllerMode;
+
+		FlxG.save.data.freeplayAlphabetic = freeplayAlphabetic;
 	
 		FlxG.save.flush();
 
@@ -229,6 +233,10 @@ class ClientPrefs {
 			{
 				gameplaySettings.set(name, value);
 			}
+		}
+
+		if(FlxG.save.data.freeplayAlphabetic != null) {
+			freeplayAlphabetic = FlxG.save.data.freeplayAlphabetic;
 		}
 		
 		// flixel automatically saves your volume!

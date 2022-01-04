@@ -88,6 +88,13 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.changeValue = 0.1;
 		option.decimals = 1;
 		addOption(option);
+
+		var option:Option = new Option('Sort Freeplay Alphabetically',
+			'If checked, songs in the Freeplay menu will be\nsorted alphabetically.',
+			'freeplayAlphabetic',
+			'bool',
+			false);
+		addOption(option);
 		
 		#if !mobile
 		var option:Option = new Option('FPS Counter',

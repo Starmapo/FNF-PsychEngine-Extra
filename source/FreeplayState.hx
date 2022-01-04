@@ -97,6 +97,22 @@ class FreeplayState extends MusicBeatState
 			}
 		}*/
 
+		if (ClientPrefs.freeplayAlphabetic) {
+			songs.sort(function(a:SongMetadata, b:SongMetadata):Int {
+				var val1 = a.songName.toUpperCase();
+				var val2 = b.songName.toUpperCase();
+			  
+				if (val1 < val2) {
+				  return -1;
+				}
+				else if (val1 > val2) {
+				  return 1;
+				} else {
+				  return 0;
+				}
+			});
+		}
+
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
