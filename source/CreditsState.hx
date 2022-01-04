@@ -33,6 +33,8 @@ class CreditsState extends MusicBeatState
 	var intendedColor:Int;
 	var colorTween:FlxTween;
 
+	public var warningText:FlxText;
+
 	override function create()
 	{
 		#if desktop
@@ -144,6 +146,13 @@ class CreditsState extends MusicBeatState
 		descText.borderSize = 2.4;
 		add(descText);
 
+		warningText = new FlxText(0, 0, FlxG.width, "", 48);
+		warningText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		warningText.scrollFactor.set();
+		warningText.borderSize = 2;
+        warningText.visible = false;
+		add(warningText);
+
 		bg.color = getCurrentBGColor();
 		intendedColor = bg.color;
 		changeSelection();
@@ -177,8 +186,19 @@ class CreditsState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			MusicBeatState.switchState(new MainMenuState());
 		}
-		if(controls.ACCEPT) {
-			CoolUtil.browserLoad(creditsStuff[curSelected][3]);
+		if(FlxG.keys.pressed.ENTER && !warningText.visible) {
+			warningText.text = "WARNING!!!\nYOU ARE ABOUT TO GO TO: \n" + creditsStuff[curSelected][3] + "\nARE YOU ABSOLUTELY SURE YOU WANT TO GO TO THIS URL? \n(Y - Yes, N - No)";
+			warningText.screenCenter();
+			warningText.visible = true;
+		}
+		if (warningText.visible) {
+			if(FlxG.keys.pressed.Y) {
+				CoolUtil.browserLoad(creditsStuff[curSelected][3]);
+				warningText.visible = false;
+			}
+			else if(FlxG.keys.pressed.N) {
+				warningText.visible = false;
+			}
 		}
 		super.update(elapsed);
 	}
