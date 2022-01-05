@@ -46,7 +46,7 @@ class NoteSplash extends FlxSprite
 
 		var animNum:Int = FlxG.random.int(1, 2);
 		if (note != null) {
-			animation.play('note' + note.noteData % 4 + '-' + animNum, true);
+			animation.play('note' + note.noteData + '-' + animNum, true);
 		}
 		if (animation.curAnim != null) animation.curAnim.frameRate = 24 + FlxG.random.int(-2, 2);
 	}
