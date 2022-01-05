@@ -9,7 +9,6 @@ import openfl.events.MouseEvent;
 import animateatlas.HelperEnums.LoopMode;
 import openfl.events.Event;
 import openfl.display.Tilemap;
-import openfl.display.Tileset;
 import openfl.Assets;
 import haxe.Json;
 import animateatlas.tilecontainer.TileAnimationLibrary;

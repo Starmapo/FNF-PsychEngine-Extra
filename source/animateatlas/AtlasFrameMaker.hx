@@ -1,5 +1,4 @@
 package animateatlas;
-import flixel.util.FlxDestroyUtil;
 import openfl.geom.Rectangle;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
@@ -15,10 +14,8 @@ import flixel.graphics.frames.FlxFramesCollection;
 import flixel.graphics.frames.FlxFrame;
 #if desktop
 import sys.FileSystem;
-import sys.io.File;
 #else
 import js.html.FileSystem;
-import js.html.File;
 #end
 class AtlasFrameMaker extends FlxFramesCollection{
 
@@ -67,7 +64,7 @@ class AtlasFrameMaker extends FlxFramesCollection{
 				#else
 				
 				//var paf = 'assets/images/$key/spritemap.png' ;
-				bitmapData = Assets.getBitmapData(paf);//new BitmapData(0,1);
+				bitmapData = Assets.getBitmapData(Paths.getPath('images/$key/spritemap.png',IMAGE));//new BitmapData(0,1);
 				#end
 				
 				
