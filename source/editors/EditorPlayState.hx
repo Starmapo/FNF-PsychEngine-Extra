@@ -37,6 +37,9 @@ class EditorPlayState extends MusicBeatState
 	var startOffset:Float = 0;
 	var startPos:Float = 0;
 
+	var bfKeys:Int = 4;
+	var dadKeys:Int = 4;
+
 	public function new(startPos:Float) {
 		this.startPos = startPos;
 		Conductor.songPosition = startPos - startOffset;
@@ -73,6 +76,61 @@ class EditorPlayState extends MusicBeatState
 			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_up')),
 			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_right'))
 		];
+
+		bfKeys = PlayState.SONG.keyAmount;
+		dadKeys = PlayState.SONG.keyAmount;
+		switch (bfKeys) {
+			case 5:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_center')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_up')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_right'))
+				];
+			case 6:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_up')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_down')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right2'))
+				];
+			case 7:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_up')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_center')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_down')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right2'))
+				];
+			case 8:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right2'))
+				];
+			case 9:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_center')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right2'))
+				];
+		}
 		
 		strumLine = new FlxSprite(ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X, 50).makeGraphic(FlxG.width, 10);
 		if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 150;
@@ -210,11 +268,11 @@ class EditorPlayState extends MusicBeatState
 				if(songNotes[1] > -1) { //Real notes
 					var daStrumTime:Float = songNotes[0];
 					if(daStrumTime >= startPos) {
-						var daNoteData:Int = Std.int(songNotes[1] % 4);
+						var daNoteData:Int = Std.int(songNotes[1] % PlayState.SONG.keyAmount);
 
 						var gottaHitNote:Bool = section.mustHitSection;
 
-						if (songNotes[1] > 3)
+						if (songNotes[1] >= PlayState.SONG.keyAmount)
 						{
 							gottaHitNote = !section.mustHitSection;
 						}
@@ -225,7 +283,10 @@ class EditorPlayState extends MusicBeatState
 						else
 							oldNote = null;
 
-						var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
+						var keys:Int = bfKeys;
+						if (!gottaHitNote) keys = dadKeys;
+
+						var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys);
 						swagNote.mustPress = gottaHitNote;
 						swagNote.sustainLength = songNotes[2];
 						swagNote.noteType = songNotes[3];
@@ -243,7 +304,7 @@ class EditorPlayState extends MusicBeatState
 							{
 								oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-								var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + (Conductor.stepCrochet / FlxMath.roundDecimal(PlayState.SONG.speed, 2)), daNoteData, oldNote, true);
+								var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + (Conductor.stepCrochet / FlxMath.roundDecimal(PlayState.SONG.speed, 2)), daNoteData, oldNote, true, false, keys);
 								sustainNote.mustPress = gottaHitNote;
 								sustainNote.noteType = swagNote.noteType;
 								sustainNote.scrollFactor.set();
@@ -256,7 +317,7 @@ class EditorPlayState extends MusicBeatState
 								else if(ClientPrefs.middleScroll)
 								{
 									sustainNote.x += 310;
-									if(daNoteData > 1)
+									if(daNoteData >= Math.floor(dadKeys/2))
 									{ //Up and Right
 										sustainNote.x += FlxG.width / 2 + 25;
 									}
@@ -271,7 +332,7 @@ class EditorPlayState extends MusicBeatState
 						else if(ClientPrefs.middleScroll)
 						{
 							swagNote.x += 310;
-							if(daNoteData > 1) //Up and Right
+							if(daNoteData >= Math.floor(dadKeys/2)) //Up and Right
 							{
 								swagNote.x += FlxG.width / 2 + 25;
 							}
@@ -373,7 +434,7 @@ class EditorPlayState extends MusicBeatState
 
 				strumX += daNote.offsetX;
 				strumY += daNote.offsetY;
-				var center:Float = strumY + Note.swagWidth / 2;
+				var center:Float = strumY + daNote.swagWidth / 2;
 
 				if(daNote.copyX) {
 					daNote.x = strumX;
@@ -392,7 +453,7 @@ class EditorPlayState extends MusicBeatState
 									daNote.y -= 19;
 								}
 							} 
-							daNote.y += (Note.swagWidth / 2) - (60.5 * (roundedSpeed - 1));
+							daNote.y += (daNote.swagWidth / 2) - (60.5 * (roundedSpeed - 1));
 							daNote.y += 27.5 * ((PlayState.SONG.bpm / 100) - 1) * (roundedSpeed - 1);
 
 							if(daNote.mustPress || !daNote.ignoreNote)
@@ -436,7 +497,7 @@ class EditorPlayState extends MusicBeatState
 					if(daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end')) {
 						time += 0.15;
 					}
-					StrumPlayAnim(true, Std.int(Math.abs(daNote.noteData)) % 4, time);
+					StrumPlayAnim(true, Std.int(Math.abs(daNote.noteData)), time);
 					daNote.hitByOpponent = true;
 
 					if (!daNote.isSustainNote)
@@ -643,14 +704,97 @@ class EditorPlayState extends MusicBeatState
 	private function keyShit():Void
 	{
 		// HOLDING
-		var up = controls.NOTE_UP;
-		var right = controls.NOTE_RIGHT;
-		var down = controls.NOTE_DOWN;
-		var left = controls.NOTE_LEFT;
-		var controlHoldArray:Array<Bool> = [left, down, up, right];
+		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left'));
+		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down'));
+		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_center'));
+		var a4 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_up'));
+		var a5 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_right'));
+		var fourHold = [
+			FlxG.keys.anyPressed(a1),
+			FlxG.keys.anyPressed(a2),
+			FlxG.keys.anyPressed(a4),
+			FlxG.keys.anyPressed(a5)
+		];
+		var fiveHold = [
+			FlxG.keys.anyPressed(a1),
+			FlxG.keys.anyPressed(a2),
+			FlxG.keys.anyPressed(a3),
+			FlxG.keys.anyPressed(a4),
+			FlxG.keys.anyPressed(a5)
+		];
+
+		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left'));
+		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_up'));
+		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right'));
+		var a4 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_center'));
+		var a5 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left2'));
+		var a6 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_down'));
+		var a7 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right2'));
+		var sixHold = [
+			FlxG.keys.anyPressed(a1),
+			FlxG.keys.anyPressed(a2),
+			FlxG.keys.anyPressed(a3),
+			FlxG.keys.anyPressed(a5),
+			FlxG.keys.anyPressed(a6),
+			FlxG.keys.anyPressed(a7)
+		];
+		var sevenHold = [
+			FlxG.keys.anyPressed(a1),
+			FlxG.keys.anyPressed(a2),
+			FlxG.keys.anyPressed(a3),
+			FlxG.keys.anyPressed(a4),
+			FlxG.keys.anyPressed(a5),
+			FlxG.keys.anyPressed(a6),
+			FlxG.keys.anyPressed(a7)
+		];
+
+		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left'));
+		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down'));
+		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up'));
+		var a4 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right'));
+		var a5 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_center'));
+		var a6 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left2'));
+		var a7 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down2'));
+		var a8 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up2'));
+		var a9 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right2'));
+		var eightHold = [
+			FlxG.keys.anyPressed(a1),
+			FlxG.keys.anyPressed(a2),
+			FlxG.keys.anyPressed(a3),
+			FlxG.keys.anyPressed(a4),
+			FlxG.keys.anyPressed(a6),
+			FlxG.keys.anyPressed(a7),
+			FlxG.keys.anyPressed(a8),
+			FlxG.keys.anyPressed(a9)
+		];
+		var nineHold = [
+			FlxG.keys.anyPressed(a1),
+			FlxG.keys.anyPressed(a2),
+			FlxG.keys.anyPressed(a3),
+			FlxG.keys.anyPressed(a4),
+			FlxG.keys.anyPressed(a5),
+			FlxG.keys.anyPressed(a6),
+			FlxG.keys.anyPressed(a7),
+			FlxG.keys.anyPressed(a8),
+			FlxG.keys.anyPressed(a9)
+		];
+
+		var controlHoldArray:Array<Bool> = fourHold;
+		switch (bfKeys) {
+			case 5:
+				controlHoldArray = fiveHold;
+			case 6:
+				controlHoldArray = sixHold;
+			case 7:
+				controlHoldArray = sevenHold;
+			case 8:
+				controlHoldArray = eightHold;
+			case 9:
+				controlHoldArray = nineHold;
+		}
 		
 		// TO DO: Find a better way to handle controller inputs, this should work for now
-		if(ClientPrefs.controllerMode)
+		if(ClientPrefs.controllerMode && bfKeys == 4)
 		{
 			var controlArray:Array<Bool> = [controls.NOTE_LEFT_P, controls.NOTE_DOWN_P, controls.NOTE_UP_P, controls.NOTE_RIGHT_P];
 			if(controlArray.contains(true))
@@ -678,7 +822,7 @@ class EditorPlayState extends MusicBeatState
 		}
 
 		// TO DO: Find a better way to handle controller inputs, this should work for now
-		if(ClientPrefs.controllerMode)
+		if(ClientPrefs.controllerMode && bfKeys == 4)
 		{
 			var controlArray:Array<Bool> = [controls.NOTE_LEFT_R, controls.NOTE_DOWN_R, controls.NOTE_UP_R, controls.NOTE_RIGHT_R];
 			if(controlArray.contains(true))
@@ -949,7 +1093,7 @@ class EditorPlayState extends MusicBeatState
 				if(ClientPrefs.middleScroll)
 				{
 					babyArrow.x += 310;
-					if(i > 1) { //Up and Right
+					if(i >= Math.floor(dadKeys/2)) { //Up and Right
 						babyArrow.x += FlxG.width / 2 + 25;
 					}
 				}
@@ -1003,7 +1147,7 @@ class EditorPlayState extends MusicBeatState
 		}
 
 		var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
-		splash.setupNoteSplash(x, y, data, skin, hue, sat, brt);
+		splash.setupNoteSplash(x, y, note, skin, hue, sat, brt, bfKeys);
 		grpNoteSplashes.add(splash);
 	}
 	

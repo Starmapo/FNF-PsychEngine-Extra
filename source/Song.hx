@@ -28,24 +28,15 @@ typedef SwagSong =
 	var arrowSkin:String;
 	var splashSkin:String;
 	var validScore:Bool;
+
+	var keyAmount:Null<Int>;
 }
 
 class Song
 {
 	public var song:String;
 	public var notes:Array<SwagSection>;
-	public var events:Array<Dynamic>;
 	public var bpm:Float;
-	public var needsVoices:Bool = true;
-	public var arrowSkin:String;
-	public var splashSkin:String;
-	public var speed:Float = 1;
-	public var stage:String;
-
-	public var player1:String = 'bf';
-	public var player2:String = 'dad';
-	public var player3:String = 'gf'; //deprecated
-	public var gfVersion:String = 'gf';
 
 	private static function onLoadJson(songJson:SwagSong) // Convert old charts to newest format
 	{
@@ -53,6 +44,11 @@ class Song
 		{
 			songJson.gfVersion = songJson.player3;
 			songJson.player3 = null;
+		}
+		
+		if(songJson.keyAmount == null)
+		{
+			songJson.keyAmount = 4;
 		}
 
 		if(songJson.events == null)
@@ -131,7 +127,7 @@ class Song
 				daBpm = songData.bpm; */
 
 		var songJson:SwagSong = parseJSONshit(rawJson);
-		if(jsonInput != 'events') StageData.loadDirectory(songJson);
+		if(formattedSong != 'events') StageData.loadDirectory(songJson);
 		onLoadJson(songJson);
 		return songJson;
 	}

@@ -69,8 +69,10 @@ class Character extends FlxSprite
 	public var originalFlipX:Bool = false;
 	public var healthColorArray:Array<Int> = [255, 0, 0];
 
+	public var opponentPlay:Bool = false;
+
 	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
-	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false)
+	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false, ?opponentPlay:Bool = false)
 	{
 		super(x, y);
 
@@ -81,6 +83,7 @@ class Character extends FlxSprite
 		#end
 		curCharacter = character;
 		this.isPlayer = isPlayer;
+		this.opponentPlay = opponentPlay;
 		antialiasing = ClientPrefs.globalAntialiasing;
 
 		var library:String = null;
@@ -279,7 +282,7 @@ class Character extends FlxSprite
 				dance();
 			}
 
-			if (!isPlayer)
+			if (!isPlayer && !opponentPlay)
 			{
 				if (animation.curAnim.name.startsWith('sing'))
 				{

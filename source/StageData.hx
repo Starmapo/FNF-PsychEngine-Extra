@@ -28,7 +28,7 @@ class StageData {
 		if(SONG.stage != null) {
 			stage = SONG.stage;
 		} else if(SONG.song != null) {
-			switch (SONG.song.toLowerCase().replace(' ', '-'))
+			switch (Paths.formatToSongPath(SONG.song))
 			{
 				case 'spookeez' | 'south' | 'monster':
 					stage = 'spooky';

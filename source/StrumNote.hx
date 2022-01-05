@@ -14,6 +14,13 @@ class StrumNote extends FlxSprite
 	public var downScroll:Bool = false;//plan on doing scroll directions soon -bb
 
 	private var player:Int;
+
+	var keyAmount:Int = 4;
+	var directions:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+	var colors:Array<String> = ['left', 'down', 'up', 'right'];
+	public var swagWidth:Float = 160 * 0.7;
+	var xOff:Float = 50;
+	public var noteSize:Float = 0.7;
 	
 	public var texture(default, set):String = null;
 	private function set_texture(value:String):String {
@@ -24,13 +31,45 @@ class StrumNote extends FlxSprite
 		return value;
 	}
 
-	public function new(x:Float, y:Float, leData:Int, player:Int) {
+	public function new(x:Float, y:Float, leData:Int, player:Int, ?keyAmount:Int = 4) {
 		colorSwap = new ColorSwap();
 		shader = colorSwap.shader;
 		noteData = leData;
 		this.player = player;
 		this.noteData = leData;
+		this.keyAmount = keyAmount;
 		super(x, y);
+
+		switch (keyAmount) {
+			case 5:
+				directions = ['LEFT', 'DOWN', 'CENTER', 'UP', 'RIGHT'];
+				colors = ['left', 'down', 'center', 'up', 'right'];
+				xOff = 1;
+			case 6:
+				directions = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
+				colors = ['left', 'up', 'right', 'left2', 'down', 'right2'];
+				swagWidth = 160 * 0.6;
+				xOff = -8;
+				noteSize = 0.6;
+			case 7:
+				directions = ['LEFT', 'UP', 'RIGHT', 'CENTER', 'LEFT', 'DOWN', 'RIGHT'];
+				colors = ['left', 'up', 'right', 'center', 'left2', 'down', 'right2'];
+				swagWidth = 160 * 0.55;
+				xOff = -28;
+				noteSize = 0.55;
+			case 8:
+				directions = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+				colors = ['left', 'down', 'up', 'right', 'left2', 'down2', 'up2', 'right2'];
+				swagWidth = 160 * 0.5;
+				xOff = -9;
+				noteSize = 0.5;
+			case 9:
+				directions = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'CENTER', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+				colors = ['left', 'down', 'up', 'right', 'center', 'left2', 'down2', 'up2', 'right2'];
+				swagWidth = 160 * 0.4;
+				xOff = -9;
+				noteSize = 0.4;
+		}
 
 		var skin:String = 'NOTE_assets';
 		if(PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
@@ -54,10 +93,6 @@ class StrumNote extends FlxSprite
 			antialiasing = false;
 			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
 
-			animation.add('green', [6]);
-			animation.add('red', [7]);
-			animation.add('blue', [5]);
-			animation.add('purple', [4]);
 			switch (Math.abs(noteData))
 			{
 				case 0:
@@ -81,33 +116,13 @@ class StrumNote extends FlxSprite
 		else
 		{
 			frames = Paths.getSparrowAtlas(texture);
-			animation.addByPrefix('green', 'arrowUP');
-			animation.addByPrefix('blue', 'arrowDOWN');
-			animation.addByPrefix('purple', 'arrowLEFT');
-			animation.addByPrefix('red', 'arrowRIGHT');
+
+			animation.addByPrefix('static', 'arrow' + directions[noteData]);
+			animation.addByPrefix('pressed', colors[noteData] + ' press', 24, false);
+			animation.addByPrefix('confirm', colors[noteData] + ' confirm', 24, false);
 
 			antialiasing = ClientPrefs.globalAntialiasing;
-			setGraphicSize(Std.int(width * 0.7));
-
-			switch (Math.abs(noteData))
-			{
-				case 0:
-					animation.addByPrefix('static', 'arrowLEFT');
-					animation.addByPrefix('pressed', 'left press', 24, false);
-					animation.addByPrefix('confirm', 'left confirm', 24, false);
-				case 1:
-					animation.addByPrefix('static', 'arrowDOWN');
-					animation.addByPrefix('pressed', 'down press', 24, false);
-					animation.addByPrefix('confirm', 'down confirm', 24, false);
-				case 2:
-					animation.addByPrefix('static', 'arrowUP');
-					animation.addByPrefix('pressed', 'up press', 24, false);
-					animation.addByPrefix('confirm', 'up confirm', 24, false);
-				case 3:
-					animation.addByPrefix('static', 'arrowRIGHT');
-					animation.addByPrefix('pressed', 'right press', 24, false);
-					animation.addByPrefix('confirm', 'right confirm', 24, false);
-			}
+			setGraphicSize(Std.int(width * noteSize));
 		}
 		updateHitbox();
 
@@ -119,8 +134,8 @@ class StrumNote extends FlxSprite
 
 	public function postAddedToGroup() {
 		playAnim('static');
-		x += Note.swagWidth * noteData;
-		x += 50;
+		x += swagWidth * noteData;
+		x += xOff;
 		x += ((FlxG.width / 2) * player);
 		ID = noteData;
 	}
@@ -133,10 +148,10 @@ class StrumNote extends FlxSprite
 				resetAnim = 0;
 			}
 		}
-		//if(animation.curAnim != null){ //my bad i was upset
-		if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
-			centerOrigin();
-		//}
+		if(animation.curAnim != null){ //my bad i was upset
+			if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
+				centerOrigin();
+			}
 		}
 
 		super.update(elapsed);
