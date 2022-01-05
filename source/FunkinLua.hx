@@ -889,13 +889,10 @@ class FunkinLua {
 			var leSprite:ModchartSprite = new ModchartSprite(x, y);
 			
 			switch(spriteType.toLowerCase()){
-				/* saving this until i can test it
-				case "texture":
-					leSprite.frames = AtlasFrameMaker.construct(image);
-					
-				case "packer"
+				case "texture" | "textureatlas" | "tex":
+					leSprite.frames = AtlasFrameMaker.construct(image);	
+				case "packer" | "packeratlas" | "pac":
 					leSprite.frames = Paths.getPackerAtlas(image);
-				*/
 				default:
 					leSprite.frames = Paths.getSparrowAtlas(image);
 			}

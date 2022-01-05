@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.addons.ui.FlxUIState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxState;
+import flixel.system.scaleModes.*;
 
 class MusicBeatState extends FlxUIState
 {
@@ -13,6 +14,11 @@ class MusicBeatState extends FlxUIState
 
 	private var curStep:Int = 0;
 	private var curBeat:Int = 0;
+	public var scaleRatio = ClientPrefs.getResolution()[1] / 720;
+
+	var modeRatio:RatioScaleMode;
+	var modeStage:StageSizeScaleMode;
+
 	private var controls(get, never):Controls;
 
 	inline function get_controls():Controls
@@ -21,6 +27,15 @@ class MusicBeatState extends FlxUIState
 	override function create() {
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
 		super.create();
+
+		modeRatio = new RatioScaleMode();
+		modeStage = new StageSizeScaleMode();
+
+		options.GraphicsSettingsSubState.onChangeRes();
+		//	thx Cary for the res code < 333
+		/*FlxG.scaleMode = modeStage;
+
+		if (FlxG.fullscreen) FlxG.scaleMode = modeRatio;*/
 
 		// Custom made Trans out
 		if(!skip) {

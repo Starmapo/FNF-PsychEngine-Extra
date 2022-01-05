@@ -33,66 +33,57 @@ class AtlasFrameMaker extends FlxFramesCollection{
 	 */
 
         public static function construct(key:String,?_excludeArray:Array<String> = null):FlxFramesCollection{
-
-               // widthoffset = _widthoffset;
-               // heightoffset = _heightoffset;
-               
-               
-
+                // widthoffset = _widthoffset;
+                // heightoffset = _heightoffset;
                 var frameCollection:FlxFramesCollection;
                 var frameArray:Array<Array<FlxFrame>> = [];
-				/*
-				
-				var modTxtToFind:String = Paths.modsTxt(key);
-				var txtToFind:String = Paths.getPath('images/' + key + '/Animation.json', TEXT);
-				var dajson = modTxtToFind;
-					if (FileSystem.exists(modTxtToFind)){
-						dajson = modTxtToFind;
-					}
-					if (FileSystem.exists(txtToFind)){
-						dajson = txtToFind;
-					}
-					if (Assets.exists(txtToFind)){
-						dajson = txtToFind;
-					}*/
+                /*
+                var modTxtToFind:String = Paths.modsTxt(key);
+                var txtToFind:String = Paths.getPath('images/' + key + '/Animation.json', TEXT);
+                var dajson = modTxtToFind;
+                if (FileSystem.exists(modTxtToFind)){
+                        dajson = modTxtToFind;
+                }
+                if (FileSystem.exists(txtToFind)){
+                        dajson = txtToFind;
+                }
+                if (Assets.exists(txtToFind)){
+                        dajson = txtToFind;
+                }*/
+
+                if (Paths.fileExists('images/$key/spritemap1.json',TEXT)) {
+                        PlayState.instance.addTextToDebug("Only Spritemaps made with Adobe Animate 2018 are supported");
+                        trace("Only Spritemaps made with Adobe Animate 2018 are supported");
+                        return null;
+                }
                 var animationData:AnimationData = Json.parse(Paths.getTextFromFile('images/$key/Animation.json'));
                 var atlasData:AtlasData = Json.parse(Paths.getTextFromFile('images/$key/spritemap.json'));
-				var bitmapData:BitmapData;
-				#if MODS_ALLOWED
-				bitmapData = (FileSystem.exists('mods/images/$key/spritemap.png') || FileSystem.exists('mods/' + Paths.currentModDirectory + '/images/$key/spritemap.png') ? BitmapData.fromFile(Paths.modFolders('images/$key/spritemap.png')) : Assets.getBitmapData(Paths.getPath('images/$key/spritemap.png',IMAGE)));
-				
-				#else
-				
-				//var paf = 'assets/images/$key/spritemap.png' ;
-				bitmapData = Assets.getBitmapData(Paths.getPath('images/$key/spritemap.png',IMAGE));//new BitmapData(0,1);
-				#end
-				
-				
-				
-				
-				/*
-				var pieceOfShit = Paths.returnGraphic('$key/spritemap');
-				if (Std.isOfType(pieceOfShit,FlxGraphic)){
-					bitmapData = pieceOfShit.bitmap;
-				}else{
-					bitmapData = Assets.getBitmapData(Paths.getPath('images/$key/spritemap.png',IMAGE));
-				}*/
+                var bitmapData:BitmapData;
+                #if MODS_ALLOWED
+                bitmapData = (FileSystem.exists('mods/images/$key/spritemap.png') || FileSystem.exists('mods/' + Paths.currentModDirectory + '/images/$key/spritemap.png') ? BitmapData.fromFile(Paths.modFolders('images/$key/spritemap.png')) : Assets.getBitmapData(Paths.getPath('images/$key/spritemap.png',IMAGE)));
+                #else
+                //var paf = 'assets/images/$key/spritemap.png' ;
+                bitmapData = Assets.getBitmapData(Paths.getPath('images/$key/spritemap.png',IMAGE));//new BitmapData(0,1);
+                #end
+                /*
+                var pieceOfShit = Paths.returnGraphic('$key/spritemap');
+                if (Std.isOfType(pieceOfShit,FlxGraphic)){
+                        bitmapData = pieceOfShit.bitmap;
+                }else{
+                        bitmapData = Assets.getBitmapData(Paths.getPath('images/$key/spritemap.png',IMAGE));
+                }*/
                 var ss = new SpriteAnimationLibrary(animationData, atlasData, bitmapData);
                 var t = ss.createAnimation();
                 if(_excludeArray == null){
-                _excludeArray = t.getFrameLabels();
-                //trace('creating all anims');
+                        _excludeArray = t.getFrameLabels();
+                        //trace('creating all anims');
                 }
                 else
-                trace('Creating :' + _excludeArray);
+                        trace('Creating :' + _excludeArray);
                 frameCollection = new FlxFramesCollection(FlxGraphic.fromBitmapData(bitmapData),FlxFrameCollectionType.IMAGE);
-
                 
                 for(x in _excludeArray){
-
                         frameArray.push(getFramesArray(t, x));
-
-
                 }
 
                 for(x in frameArray){
