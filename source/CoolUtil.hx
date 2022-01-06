@@ -123,4 +123,49 @@ class CoolUtil
 		FlxG.openURL(site);
 		#end
 	}
+
+	public static function getDifficulties(?song:String = '', ?remove:Bool = false) {
+		difficulties = defaultDifficulties.copy();
+		var diffStr:String = WeekData.getCurrentWeek().difficulties;
+		if(diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
+		diffStr = diffStr.trim(); //Fuck you HTML5
+
+		if(diffStr != null && diffStr.length > 0)
+		{
+			var diffs:Array<String> = diffStr.split(',');
+			var i:Int = diffs.length - 1;
+			while (i > 0)
+			{
+				if(diffs[i] != null)
+				{
+					diffs[i] = diffs[i].trim();
+					if(diffs[i].length < 1) diffs.remove(diffs[i]);
+				}
+				--i;
+			}
+			
+			if (remove) {
+				for (i in 0...diffs.length - 1) {
+					var suffix = '-' + diffs[i];
+					if (diffs[i].toLowerCase() == defaultDifficulty.toLowerCase()) {
+						suffix = '';
+					}
+					var poop:String = song + suffix;
+					try {
+						var daSong:Song.SwagSong = Song.loadFromJson(poop, song);
+						if (daSong == null) {
+							diffs.remove(diffs[i]);
+						}
+					} catch (e:Any) {
+						diffs.remove(diffs[i]);
+					}
+				}
+			}
+
+			if(diffs.length > 0 && diffs[0].length > 0)
+			{
+				difficulties = diffs;
+			}
+		}
+	}
 }

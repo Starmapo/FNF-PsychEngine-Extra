@@ -400,6 +400,7 @@ class ChartingState extends MusicBeatState
 
 		var reloadSongJson:FlxButton = new FlxButton(reloadSong.x, saveButton.y + 30, "Reload JSON", function()
 		{
+			currentSongName = Paths.formatToSongPath(UI_songTitle.text);
 			loadJson(_song.song);
 		});
 
@@ -544,50 +545,9 @@ class ChartingState extends MusicBeatState
 		blockPressWhileScrolling.push(stageDropDown);
 
 		WeekData.reloadWeekFiles(false);
-		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
-		var diffStr:String = WeekData.getCurrentWeek().difficulties;
-		if(diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
-		diffStr = diffStr.trim(); //Fuck you HTML5
-
-		if(diffStr != null && diffStr.length > 0)
-		{
-			var diffs:Array<String> = diffStr.split(',');
-			var i:Int = diffs.length - 1;
-			while (i > 0)
-			{
-				if(diffs[i] != null)
-				{
-					diffs[i] = diffs[i].trim();
-					if(diffs[i].length < 1) diffs.remove(diffs[i]);
-				}
-				--i;
-			}
-
-			for (i in 0...diffs.length - 1) {
-				var suffix = '-' + diffs[i];
-				if (diffs[i].toLowerCase() == CoolUtil.defaultDifficulty.toLowerCase()) {
-					suffix = '';
-				}
-				var poop:String = _song.song + suffix;
-				try {
-					var daSong:SwagSong = Song.loadFromJson(poop, _song.song);
-					if (daSong == null) {
-						diffs.remove(diffs[i]);
-					}
-				} catch (e:Any) {
-					diffs.remove(diffs[i]);
-				}
-			}
-
-			if(diffs.length > 0 && diffs[0].length > 0)
-			{
-				CoolUtil.difficulties = diffs;
-			}
-		}
-		if (PlayState.storyDifficulty > CoolUtil.difficulties.length - 1) {
-			PlayState.storyDifficulty = CoolUtil.difficulties.indexOf('Normal');
-			if (PlayState.storyDifficulty == -1) PlayState.storyDifficulty = 0;
-		}
+		findOutDiffs();
+		PlayState.storyDifficulty = CoolUtil.difficulties.indexOf('Normal');
+		if (PlayState.storyDifficulty == -1) PlayState.storyDifficulty = 0;
 		
 		var difficultyDropDown = new FlxUIDropDownMenuCustom(stageDropDown.x, player3DropDown.y, FlxUIDropDownMenuCustom.makeStrIdLabelArray(CoolUtil.difficulties, true), function(difficulty:String)
 		{
@@ -2700,8 +2660,14 @@ class ChartingState extends MusicBeatState
 
 	function loadJson(song:String):Void
 	{
-		PlayState.SONG = Song.loadFromJson(song + CoolUtil.getDifficultyFilePath(), song);
-		MusicBeatState.resetState();
+		try {
+			findOutDiffs();
+			PlayState.SONG = Song.loadFromJson(song + CoolUtil.getDifficultyFilePath(), song);
+			MusicBeatState.resetState();
+		} catch (e:Any) {
+			trace("File " + Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath() + " is not found.");
+			currentSongName = lastSong;
+		}
 	}
 
 	function autosaveSong():Void
@@ -2808,6 +2774,65 @@ class ChartingState extends MusicBeatState
 		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
 		_file = null;
 		FlxG.log.error("Problem saving Level data");
+	}
+
+	function findOutDiffs():Void {
+		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
+		var diffStr:String = WeekData.getCurrentWeek().difficulties;
+		if(diffStr == null || diffStr.length == 0) {
+			var num:Int = 0;
+			for (i in WeekData.weeksLoaded.keys()) {
+				var songs:Array<Dynamic> = WeekData.weeksLoaded.get(i).songs;
+				for (song in songs) {
+					var daSong:String = song[0].toLowerCase().trim();
+					if (daSong == currentSongName) {
+						PlayState.storyWeek = num;
+						diffStr = WeekData.getCurrentWeek().difficulties;
+						trace('found difficulties');
+						break;
+					}
+				}
+				num++;
+			}
+		}
+		if(diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
+		diffStr.trim(); //Fuck you HTML5
+
+		if(diffStr != null && diffStr.length > 0)
+		{
+			var diffs:Array<String> = diffStr.split(',');
+			var i:Int = diffs.length - 1;
+			while (i > 0)
+			{
+				if(diffs[i] != null)
+				{
+					diffs[i] = diffs[i].trim();
+					if(diffs[i].length < 1) diffs.remove(diffs[i]);
+				}
+				--i;
+			}
+
+			for (i in 0...diffs.length - 1) {
+				var suffix = '-' + diffs[i];
+				if (diffs[i].toLowerCase() == CoolUtil.defaultDifficulty.toLowerCase()) {
+					suffix = '';
+				}
+				var poop:String = _song.song + suffix;
+				try {
+					var daSong:SwagSong = Song.loadFromJson(poop, _song.song);
+					if (daSong == null) {
+						diffs.remove(diffs[i]);
+					}
+				} catch (e:Any) {
+					diffs.remove(diffs[i]);
+				}
+			}
+
+			if(diffs.length > 0 && diffs[0].length > 0)
+			{
+				CoolUtil.difficulties = diffs;
+			}
+		}
 	}
 }
 
