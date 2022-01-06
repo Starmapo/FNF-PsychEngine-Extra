@@ -92,27 +92,31 @@ class Character extends FlxSprite
 			//case 'your character name in case you want to hardcode them instead':
 
 			default:
-				var characterPath:String = 'characters/' + curCharacter + '.json';
+				var characterPath:String = 'characters/' + (isPlayer ? 'player/' : '') + curCharacter + '.json';
+				var characterPath2:String = 'characters/' + curCharacter + '.json'; //incase there is an opponent file but no player file
 				#if MODS_ALLOWED
-				
-				
-				
-				
 				var path:String = Paths.modFolders(characterPath);
+				if (!FileSystem.exists(path)) {
+					path = Paths.modFolders(characterPath2);
+				}
 				if (!FileSystem.exists(path)) {
 					path = Paths.getPreloadPath(characterPath);
 				}
+				if (!FileSystem.exists(path)) {
+					path = Paths.getPreloadPath(characterPath2);
+				}
 
 				if (!FileSystem.exists(path))
-				
-				
-				
 				#else
 				var path:String = Paths.getPreloadPath(characterPath);
+				if (!Assets.exists(path)) {
+					path = characterPath2;
+				}
+
 				if (!Assets.exists(path))
 				#end
 				{
-					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
+					path = Paths.getPreloadPath('characters/' + (isPlayer ? 'player/' : '') + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
 				}
 
 				#if MODS_ALLOWED
@@ -138,14 +142,8 @@ class Character extends FlxSprite
 				if (Assets.exists(Paths.getPath('images/' + json.image + '.txt', TEXT)))
 				#end
 				{
-					
 					spriteType = "packer";
-					
 				}
-				
-				
-				
-				
 				#if MODS_ALLOWED
 				var modAnimToFind:String = Paths.modFolders('images/' + json.image + '/Animation.json');
 				var animToFind:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT);
@@ -158,26 +156,15 @@ class Character extends FlxSprite
 				if (Assets.exists(Paths.getPath('images/' + json.image + '/Animation.json', TEXT)))
 				#end
 				{
-					
 					spriteType = "texture";
-					
 				}
-				
-				
-				
-				
 				switch (spriteType){
-					
 					case "packer":
 						frames = Paths.getPackerAtlas(json.image);
-					
 					case "sparrow":
 						frames = Paths.getSparrowAtlas(json.image);
-					
 					case "texture":
-						frames = AtlasFrameMaker.construct(json.image);
-						
-						
+						frames = AtlasFrameMaker.construct(json.image);	
 				}
 				
 				imageFile = json.image;

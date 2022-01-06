@@ -878,7 +878,7 @@ class PlayState extends MusicBeatState
 		gfGroup.add(gf);
 		startCharacterLua(gf.curCharacter);
 
-		dad = new Character(0, 0, SONG.player2, opponentChart);
+		dad = new Character(0, 0, SONG.player2, false, opponentChart);
 		startCharacterPos(dad, true);
 		dadGroup.add(dad);
 		startCharacterLua(dad.curCharacter);
