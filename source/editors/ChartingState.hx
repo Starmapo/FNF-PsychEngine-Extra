@@ -591,12 +591,14 @@ class ChartingState extends MusicBeatState
 		
 		var difficultyDropDown = new FlxUIDropDownMenuCustom(stageDropDown.x, player3DropDown.y, FlxUIDropDownMenuCustom.makeStrIdLabelArray(CoolUtil.difficulties, true), function(difficulty:String)
 		{
-			PlayState.storyDifficulty = Std.parseInt(difficulty);
-			try {
-				PlayState.SONG = Song.loadFromJson(_song.song + CoolUtil.getDifficultyFilePath(), _song.song);
-				MusicBeatState.resetState();
-			} catch (e:Any) {
-				trace("File " + Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath() + " is not found.");
+			if (PlayState.storyDifficulty != Std.parseInt(difficulty)) {
+				PlayState.storyDifficulty = Std.parseInt(difficulty);
+				try {
+					PlayState.SONG = Song.loadFromJson(_song.song + CoolUtil.getDifficultyFilePath(), _song.song);
+					MusicBeatState.resetState();
+				} catch (e:Any) {
+					trace("File " + Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath() + " is not found.");
+				}
 			}
 		});
 		difficultyDropDown.selectedLabel = CoolUtil.difficulties[PlayState.storyDifficulty];
@@ -1948,8 +1950,8 @@ class ChartingState extends MusicBeatState
 			//trace('Custom vocals found');
 		}
 		else { #end
-			var leVocals:Dynamic = Paths.inst(currentSongName);
-			if (!Std.isOfType(leVocals, Sound) && OpenFlAssets.exists(leVocals)) { //Vanilla inst
+			var leVocals:String = Paths.getPath(currentSongName + '/Inst.' + Paths.SOUND_EXT, SOUND, 'songs');
+			if (OpenFlAssets.exists(leVocals)) { //Vanilla inst
 				audioBuffers[0] = AudioBuffer.fromFile('./' + leVocals.substr(6));
 				//trace('Inst found');
 			}
@@ -1966,8 +1968,8 @@ class ChartingState extends MusicBeatState
 			audioBuffers[1] = AudioBuffer.fromFile(Paths.modFolders('songs/' + currentSongName + '/Voices.ogg'));
 			//trace('Custom vocals found');
 		} else { #end
-			var leVocals:Dynamic = Paths.voices(currentSongName);
-			if (!Std.isOfType(leVocals, Sound) && OpenFlAssets.exists(leVocals)) { //Vanilla voices
+			var leVocals:String = Paths.getPath(currentSongName + '/Voices.' + Paths.SOUND_EXT, SOUND, 'songs');
+			if (OpenFlAssets.exists(leVocals)) { //Vanilla voices
 				audioBuffers[1] = AudioBuffer.fromFile('./' + leVocals.substr(6));
 				//trace('Voices found, LETS FUCKING GOOOO');
 			}
