@@ -355,7 +355,7 @@ class ChartingState extends MusicBeatState
 		}
 		lastSong = currentSongName;
 
-		zoomTxt = new FlxText(10, 10, 0, "Zoom: 1x", 16);
+		zoomTxt = new FlxText(UI_box.x + UI_box.width + 8, 10, 0, "Zoom: 1x", 16);
 		zoomTxt.scrollFactor.set();
 		add(zoomTxt);
 		
@@ -546,8 +546,8 @@ class ChartingState extends MusicBeatState
 		WeekData.reloadWeekFiles(false);
 		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 		var diffStr:String = WeekData.getCurrentWeek().difficulties;
-		if(diffStr == null) diffStr = 'Easy,Normal,Hard';
-		if(diffStr != null) diffStr = diffStr.trim(); //Fuck you HTML5
+		if(diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
+		diffStr = diffStr.trim(); //Fuck you HTML5
 
 		if(diffStr != null && diffStr.length > 0)
 		{
@@ -565,7 +565,7 @@ class ChartingState extends MusicBeatState
 
 			for (i in 0...diffs.length - 1) {
 				var suffix = '-' + diffs[i];
-				if (suffix == CoolUtil.defaultDifficulty) {
+				if (diffs[i].toLowerCase() == CoolUtil.defaultDifficulty.toLowerCase()) {
 					suffix = '';
 				}
 				var poop:String = _song.song + suffix;

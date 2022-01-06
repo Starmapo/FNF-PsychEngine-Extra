@@ -52,7 +52,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 			'1280 x 960',
 			'FULLSCREEN'
 			]);
-		//addOption(option);
+		addOption(option);
 		//option.onChange = onChangeRes;
 		#end
 
