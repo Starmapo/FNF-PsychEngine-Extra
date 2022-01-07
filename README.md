@@ -15,13 +15,13 @@ To install LuaJIT do this: `haxelib install linc_luajit` on a Command prompt/Pow
 * RiverOaken - Arts and Animations
 * bbpanzu - Assistant Coding
 
-* Starmapo - uh he copy and pasted some code????? idk
-* KadeDev - Made Kade Engine (and is smarter than me)
-* Leather128 - Made Leather Engine (and is smarter than me)
+* Starmapo - He copy and pasted some code????? idk
+* KadeDev & GitHub Contributors - Made Kade Engine (and is smarter)
+* Leather128 & GitHub Contributors - Made Leather Engine (and is smarter)
 
 ### Special Thanks
 * shubs - New Input System
-* SqirraRNG - Chart Editor's Sound Waveform base code
+* SqirraRNG - Chart Editor's Sound Waveform base codes
 * iFlicky - Delay/Combo Menu Song Composer + Dialogue Sounds
 * PolybiusProxy - .MP4 Loader Extension
 * Keoiki - Note Splash Animations
