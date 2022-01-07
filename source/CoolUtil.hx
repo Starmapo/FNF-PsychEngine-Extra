@@ -145,7 +145,7 @@ class CoolUtil
 			}
 			
 			if (remove) {
-				for (i in 0...diffs.length - 1) {
+				for (i in 0...diffs.length) {
 					var suffix = '-' + diffs[i];
 					if (diffs[i].toLowerCase() == defaultDifficulty.toLowerCase()) {
 						suffix = '';

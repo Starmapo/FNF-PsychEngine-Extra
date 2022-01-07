@@ -520,7 +520,7 @@ class PlayState extends MusicBeatState
 				add(halloweenBG);
 
 				halloweenWhite = new BGSprite(null, -FlxG.width, -FlxG.height, 0, 0);
-				halloweenWhite.makeGraphic(Std.int(FlxG.width * 3), Std.int(FlxG.height * 3), FlxColor.WHITE);
+				halloweenWhite.makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.WHITE);
 				halloweenWhite.alpha = 0;
 				halloweenWhite.blend = ADD;
 
@@ -844,7 +844,7 @@ class PlayState extends MusicBeatState
 
 		if(!modchartSprites.exists('blammedLightsBlack')) { //Creates blammed light black fade in case you didn't make your own
 			blammedLightsBlack = new ModchartSprite(FlxG.width * -0.5, FlxG.height * -0.5);
-			blammedLightsBlack.makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.BLACK);
+			blammedLightsBlack.makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
 			var position:Int = members.indexOf(gfGroup);
 			if(members.indexOf(boyfriendGroup) < position) {
 				position = members.indexOf(boyfriendGroup);
@@ -1167,7 +1167,7 @@ class PlayState extends MusicBeatState
 			switch (daSong)
 			{
 				case "monster":
-					var whiteScreen:FlxSprite = new FlxSprite(0, 0).makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.WHITE);
+					var whiteScreen:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.WHITE);
 					add(whiteScreen);
 					whiteScreen.scrollFactor.set();
 					whiteScreen.blend = ADD;
@@ -1190,7 +1190,7 @@ class PlayState extends MusicBeatState
 					boyfriend.playAnim('scared', true);
 
 				case "winter-horrorland":
-					var blackScreen:FlxSprite = new FlxSprite().makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.BLACK);
+					var blackScreen:FlxSprite = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
 					add(blackScreen);
 					blackScreen.scrollFactor.set();
 					camHUD.visible = false;
@@ -1984,7 +1984,7 @@ class PlayState extends MusicBeatState
 
 				var oldNote:Note;
 				if (unspawnNotes.length > 0)
-					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
+					oldNote = unspawnNotes[unspawnNotes.length - 1];
 				else
 					oldNote = null;
 
@@ -1996,8 +1996,6 @@ class PlayState extends MusicBeatState
 				swagNote.sustainLength = songNotes[2] / playbackRate;
 				swagNote.gfNote = (section.gfSection && (songNotes[1] < SONG.keyAmount));
 				swagNote.noteType = songNotes[3];
-				if(!Std.isOfType(songNotes[3], String)) swagNote.noteType = editors.ChartingState.noteTypeList[songNotes[3]]; //Backward compatibility + compatibility with Week 7 charts
-				
 				swagNote.scrollFactor.set();
 
 				var susLength:Float = swagNote.sustainLength;
@@ -2009,7 +2007,7 @@ class PlayState extends MusicBeatState
 				if(floorSus > 0) {
 					for (susNote in 0...floorSus+1)
 					{
-						oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
+						oldNote = unspawnNotes[unspawnNotes.length - 1];
 
 						var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + (Conductor.stepCrochet / FlxMath.roundDecimal(songSpeed, 2)), daNoteData, oldNote, true, false, keys);
 						sustainNote.mustPress = gottaHitNote;
@@ -3737,7 +3735,7 @@ class PlayState extends MusicBeatState
 		var daLoop:Int = 0;
 		for (i in seperatedScore)
 		{
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
+			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + i + pixelShitPart2));
 			numScore.cameras = [camHUD];
 			numScore.screenCenter();
 			numScore.x = coolText.x + (43 * daLoop) - 90;
@@ -4108,7 +4106,7 @@ class PlayState extends MusicBeatState
 			var daAlt = '';
 			if(daNote.noteType == 'Alt Animation') daAlt = '-alt';
 
-			var animToPlay:String = singAnimations[Std.int(Math.abs(daNote.noteData))] + 'miss' + daAlt;
+			var animToPlay:String = singAnimations[daNote.noteData] + 'miss' + daAlt;
 			char.playAnim(animToPlay, true);
 		}
 
@@ -4154,7 +4152,7 @@ class PlayState extends MusicBeatState
 			});*/
 
 			if(playerChar.hasMissAnimations) {
-				playerChar.playAnim(singAnimations[Std.int(Math.abs(direction))] + 'miss', true);
+				playerChar.playAnim(singAnimations[direction] + 'miss', true);
 			}
 			vocals.volume = 0;
 		}
@@ -4187,7 +4185,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			var animToPlay:String = dadSingAnimations[Std.int(Math.abs(note.noteData))] + altAnim;
+			var animToPlay:String = dadSingAnimations[note.noteData] + altAnim;
 
 			char.playAnim(animToPlay, true);
 			char.holdTimer = 0;
@@ -4200,10 +4198,10 @@ class PlayState extends MusicBeatState
 		if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
 			time += 0.15;
 		}
-		StrumPlayAnim(true, Std.int(Math.abs(note.noteData)), time);
+		StrumPlayAnim(true, note.noteData, time);
 		note.hitByOpponent = true;
 
-		callOnLuas('opponentNoteHit', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
+		callOnLuas('opponentNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote]);
 
 		if (!note.isSustainNote)
 		{
@@ -4258,7 +4256,7 @@ class PlayState extends MusicBeatState
 				var daAlt = '';
 				if(note.noteType == 'Alt Animation') daAlt = '-alt';
 	
-				var animToPlay:String = singAnimations[Std.int(Math.abs(note.noteData))];
+				var animToPlay:String = singAnimations[note.noteData];
 
 				//if (note.isSustainNote){ wouldn't this be fun : P. i think it would be swell
 					
@@ -4290,7 +4288,7 @@ class PlayState extends MusicBeatState
 				if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
 					time += 0.15;
 				}
-				StrumPlayAnim(false, Std.int(Math.abs(note.noteData)), time);
+				StrumPlayAnim(false, note.noteData, time);
 			} else {
 				var strums = playerStrums;
 				if (opponentChart) strums = opponentStrums;
@@ -4306,7 +4304,7 @@ class PlayState extends MusicBeatState
 			vocals.volume = 1;
 
 			var isSus:Bool = note.isSustainNote; //GET OUT OF MY HEAD, GET OUT OF MY HEAD, GET OUT OF MY HEAD
-			var leData:Int = Math.round(Math.abs(note.noteData));
+			var leData:Int = note.noteData;
 			var leType:String = note.noteType;
 			callOnLuas('goodNoteHit', [notes.members.indexOf(note), leData, leType, isSus]);
 

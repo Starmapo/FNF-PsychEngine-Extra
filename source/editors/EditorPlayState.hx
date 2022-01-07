@@ -302,7 +302,6 @@ class EditorPlayState extends MusicBeatState
 						swagNote.mustPress = gottaHitNote;
 						swagNote.sustainLength = songNotes[2];
 						swagNote.noteType = songNotes[3];
-						if(!Std.isOfType(songNotes[3], String)) swagNote.noteType = editors.ChartingState.noteTypeList[songNotes[3]]; //Backward compatibility + compatibility with Week 7 charts
 						swagNote.scrollFactor.set();
 
 						var susLength:Float = swagNote.sustainLength;
@@ -509,7 +508,7 @@ class EditorPlayState extends MusicBeatState
 					if(daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end')) {
 						time += 0.15;
 					}
-					StrumPlayAnim(true, Std.int(Math.abs(daNote.noteData)), time);
+					StrumPlayAnim(true, daNote.noteData, time);
 					daNote.hitByOpponent = true;
 
 					if (!daNote.isSustainNote)
@@ -890,7 +889,7 @@ class EditorPlayState extends MusicBeatState
 
 			playerStrums.forEach(function(spr:StrumNote)
 			{
-				if (Math.abs(note.noteData) == spr.ID)
+				if (note.noteData == spr.ID)
 				{
 					spr.playAnim('confirm', true);
 				}

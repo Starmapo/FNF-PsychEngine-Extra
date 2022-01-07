@@ -93,7 +93,7 @@ class StrumNote extends FlxSprite
 			antialiasing = false;
 			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
 
-			switch (Math.abs(noteData))
+			switch (noteData)
 			{
 				case 0:
 					animation.add('static', [0]);

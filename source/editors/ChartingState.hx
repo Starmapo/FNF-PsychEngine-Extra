@@ -206,7 +206,7 @@ class ChartingState extends MusicBeatState
 				denominator: 4,
 				validScore: false
 			};
-			addSection(Std.int(_song.numerator * _song.denominator));
+			addSection(_song.numerator * _song.denominator);
 			PlayState.SONG = _song;
 		}
 
@@ -264,7 +264,7 @@ class ChartingState extends MusicBeatState
 		Conductor.numerator = _song.numerator;
 		Conductor.denominator = _song.denominator;
 
-		addSection(Std.int(Conductor.numerator * Conductor.denominator));
+		addSection(Conductor.numerator * Conductor.denominator);
 
 		// sections = _song.notes;
 
@@ -280,7 +280,7 @@ class ChartingState extends MusicBeatState
 		bpmTxt.scrollFactor.set();
 		add(bpmTxt);
 
-		strumLine = new FlxSprite(0, 50).makeGraphic(Std.int(GRID_SIZE * (_song.keyAmount * 2 + 1)), 4);
+		strumLine = new FlxSprite(0, 50).makeGraphic(GRID_SIZE * (_song.keyAmount * 2 + 1), 4);
 		add(strumLine);
 
 		quant = new AttachedSprite('chart_quant','chart_quant');
@@ -577,7 +577,7 @@ class ChartingState extends MusicBeatState
 			_song.numerator = Std.parseInt(numerators[Std.parseInt(numerator)]);
 			Conductor.numerator = _song.numerator;
 			for (i in _song.notes) {
-				i.lengthInSteps = Std.int(_song.numerator * _song.denominator);
+				i.lengthInSteps = _song.numerator * _song.denominator;
 			}
 			reloadGridLayer();
 		});
@@ -590,7 +590,7 @@ class ChartingState extends MusicBeatState
 			_song.denominator = Std.parseInt(denominators[Std.parseInt(denominator)]);
 			Conductor.denominator = _song.denominator;
 			for (i in _song.notes) {
-				i.lengthInSteps = Std.int(_song.numerator * _song.denominator);
+				i.lengthInSteps = _song.numerator * _song.denominator;
 			}
 			reloadGridLayer();
 		});
@@ -1432,7 +1432,7 @@ class ChartingState extends MusicBeatState
 				{
 					daBPM = _song.notes[i].bpm;
 				}
-				daPos += Conductor.numerator * (Math.pow(Conductor.denominator / 4, 2)) * (1000 * 60 / daBPM);
+				daPos += (Conductor.numerator * Math.pow(Conductor.denominator / 4, 2)) * (1000 * 60 / daBPM);
 			}
 		}
 		return daPos;
@@ -1472,7 +1472,7 @@ class ChartingState extends MusicBeatState
 
 				if (_song.notes[curSection + 1] == null)
 				{
-					addSection(Std.int(Conductor.numerator * Conductor.denominator));
+					addSection(Conductor.numerator * Conductor.denominator);
 				}
 
 				changeSection(curSection + 1, false);
@@ -1984,7 +1984,7 @@ class ChartingState extends MusicBeatState
 		}
 		#end
 
-		var gridBlack:FlxSprite = new FlxSprite(0, gridBG.height / 2).makeGraphic(Std.int(GRID_SIZE * (_song.keyAmount * 2 + 1)), Std.int(gridBG.height / 2), FlxColor.BLACK);
+		var gridBlack:FlxSprite = new FlxSprite(0, gridBG.height / 2).makeGraphic(GRID_SIZE * (_song.keyAmount * 2 + 1), Std.int(gridBG.height / 2), FlxColor.BLACK);
 		gridBlack.alpha = 0.4;
 		gridLayer.add(gridBlack);
 
@@ -2010,7 +2010,7 @@ class ChartingState extends MusicBeatState
 	function updateWaveform() {
 		#if desktop
 		if(waveformPrinted) {
-			waveformSprite.makeGraphic(Std.int(GRID_SIZE * _song.keyAmount * 2), Std.int(gridBG.height), 0x00FFFFFF);
+			waveformSprite.makeGraphic(GRID_SIZE * _song.keyAmount * 2, Std.int(gridBG.height), 0x00FFFFFF);
 			waveformSprite.pixels.fillRect(new Rectangle(0, 0, gridBG.width, gridBG.height), 0x00FFFFFF);
 		}
 		waveformPrinted = false;
@@ -2028,7 +2028,7 @@ class ChartingState extends MusicBeatState
 		var drawIndex:Int = 0;
 
 		var steps:Int = Conductor.numerator * Conductor.denominator;
-		if(Math.isNaN(steps) || steps < 1) steps = Std.int(_song.numerator * _song.denominator);
+		if(Math.isNaN(steps) || steps < 1) steps = _song.numerator * _song.denominator;
 		var samplesPerRow:Int = Std.int(((Conductor.stepCrochet * steps * 1.1 * sampleMult) / (Conductor.numerator * Conductor.denominator)) / zoomList[curZoom]);
 		if(samplesPerRow < 1) samplesPerRow = 1;
 		var waveBytes:Bytes = audioBuffers[checkForVoices].data.toBytes();
@@ -2712,7 +2712,7 @@ class ChartingState extends MusicBeatState
 				--i;
 			}
 
-			for (i in 0...diffs.length - 1) {
+			for (i in 0...diffs.length) {
 				var suffix = '-' + diffs[i];
 				if (diffs[i].toLowerCase() == CoolUtil.defaultDifficulty.toLowerCase()) {
 					suffix = '';
