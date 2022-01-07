@@ -276,6 +276,7 @@ class ChartingState extends MusicBeatState
 		Conductor.mapBPMChanges(_song);
 
 		bpmTxt = new FlxText(1000, 50, 0, "", 16);
+		bpmTxt.setBorderStyle(OUTLINE, FlxColor.BLACK);
 		bpmTxt.scrollFactor.set();
 		add(bpmTxt);
 
@@ -361,6 +362,7 @@ class ChartingState extends MusicBeatState
 		lastSong = currentSongName;
 
 		zoomTxt = new FlxText(UI_box.x + UI_box.width + 8, 10, 0, "Zoom: 1x", 16);
+		zoomTxt.setBorderStyle(OUTLINE, FlxColor.BLACK);
 		zoomTxt.scrollFactor.set();
 		add(zoomTxt);
 		
@@ -569,13 +571,21 @@ class ChartingState extends MusicBeatState
 		difficultyDropDown.selectedLabel = CoolUtil.difficulties[PlayState.storyDifficulty];
 		blockPressWhileScrolling.push(difficultyDropDown);
 
-		var stepperNumerator:FlxUINumericStepper = new FlxUINumericStepper(stageDropDown.x + 12, player2DropDown.y, 1, 4, 1, 16);
-		stepperNumerator.value = _song.numerator;
-		stepperNumerator.name = 'song_numerator';
-		blockPressWhileTypingOnStepper.push(stepperNumerator);
+		var numerators:Array<String> = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16'];
+		var numeratorDropDown = new FlxUIDropDownMenuCustom(stageDropDown.x + 12, player2DropDown.y, FlxUIDropDownMenuCustom.makeStrIdLabelArray(numerators, true), function(numerator:String)
+		{
+			_song.numerator = Std.parseInt(numerators[Std.parseInt(numerator)]);
+			Conductor.numerator = _song.numerator;
+			for (i in _song.notes) {
+				i.lengthInSteps = Std.int(_song.numerator * _song.denominator);
+			}
+			reloadGridLayer();
+		});
+		numeratorDropDown.selectedLabel = '' + _song.numerator;
+		blockPressWhileScrolling.push(numeratorDropDown);
 
 		var denominators:Array<String> = ['2', '4', '8', '16'];
-		var denominatorDropDown = new FlxUIDropDownMenuCustom(stepperNumerator.x, stepperNumerator.y + 20, FlxUIDropDownMenuCustom.makeStrIdLabelArray(denominators, true), function(denominator:String)
+		var denominatorDropDown = new FlxUIDropDownMenuCustom(numeratorDropDown.x, numeratorDropDown.y + 20, FlxUIDropDownMenuCustom.makeStrIdLabelArray(denominators, true), function(denominator:String)
 		{
 			_song.denominator = Std.parseInt(denominators[Std.parseInt(denominator)]);
 			Conductor.denominator = _song.denominator;
@@ -600,20 +610,20 @@ class ChartingState extends MusicBeatState
 			updateGrid();
 		});
 
-		var clear_events:FlxButton = new FlxButton(stageDropDown.x + 20, 310, 'Clear events', function()
-			{
-				clearEvents();
-			});
+		var clear_events:FlxButton = new FlxButton(stepperKeys.x, stepperSpeed.y - 15, 'Clear events', function()
+		{
+			clearEvents();
+		});
 		clear_events.color = FlxColor.RED;
 		clear_events.label.color = FlxColor.WHITE;
 
-		var clear_notes:FlxButton = new FlxButton(clear_events.x, clear_events.y + 30, 'Clear notes', function()
-			{
-				for (sec in 0..._song.notes.length) {
-					_song.notes[sec].sectionNotes = [];
-				}
-				updateGrid();
-			});
+		var clear_notes:FlxButton = new FlxButton(clear_events.x, clear_events.y + 22, 'Clear notes', function()
+		{
+			for (sec in 0..._song.notes.length) {
+				_song.notes[sec].sectionNotes = [];
+			}
+			updateGrid();
+		});
 		clear_notes.color = FlxColor.RED;
 		clear_notes.label.color = FlxColor.WHITE;
 
@@ -644,16 +654,16 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(new FlxText(player1DropDown.x, player1DropDown.y - 15, 0, 'Boyfriend:'));
 		tab_group_song.add(new FlxText(stageDropDown.x, stageDropDown.y - 15, 0, 'Stage:'));
 		tab_group_song.add(new FlxText(difficultyDropDown.x, difficultyDropDown.y - 15, 0, 'Difficulty:'));
-		tab_group_song.add(new FlxText(stepperNumerator.x, stepperNumerator.y - 15, 0, 'Time Signature:'));
+		tab_group_song.add(new FlxText(numeratorDropDown.x, numeratorDropDown.y - 15, 0, 'Time Signature:'));
 		tab_group_song.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'Note Texture:'));
 		tab_group_song.add(new FlxText(noteSplashesInputText.x, noteSplashesInputText.y - 15, 0, 'Note Splashes Texture:'));
 		tab_group_song.add(player2DropDown);
 		tab_group_song.add(player3DropDown);
 		tab_group_song.add(player1DropDown);
-		tab_group_song.add(stageDropDown);
-		tab_group_song.add(difficultyDropDown);
-		tab_group_song.add(stepperNumerator);
 		tab_group_song.add(denominatorDropDown);
+		tab_group_song.add(numeratorDropDown);
+		tab_group_song.add(difficultyDropDown);
+		tab_group_song.add(stageDropDown);
 
 		UI_box.addGroup(tab_group_song);
 
@@ -1373,11 +1383,6 @@ class ChartingState extends MusicBeatState
 				_song.keyAmount = Std.int(nums.value);
 				reloadGridLayer();
 			}
-			else if (wname == 'song_numerator'){
-				_song.numerator = Std.int(nums.value);
-				Conductor.numerator = _song.numerator;
-				reloadGridLayer();
-			}
 		}
 		else if(id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
 			if(sender == noteSplashesInputText) {
@@ -1987,7 +1992,7 @@ class ChartingState extends MusicBeatState
 		gridLayer.add(gridBlackLine);
 
 		for (i in 1...Conductor.numerator){
-			var beatsep1:FlxSprite = new FlxSprite(gridBG.x,(GRID_SIZE * (Conductor.numerator * (Conductor.denominator / 4) * curZoom)) * i).makeGraphic(Std.int(gridBG.width), 1, 0x44FF0000);
+			var beatsep1:FlxSprite = new FlxSprite(gridBG.x,(GRID_SIZE * (Conductor.denominator * curZoom)) * i).makeGraphic(Std.int(gridBG.width), 1, 0x44FF0000);
 			if(vortex) gridLayer.add(beatsep1);
 		}
 
