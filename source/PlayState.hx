@@ -263,6 +263,7 @@ class PlayState extends MusicBeatState
 	var bfKeys:Int = 4;
 	var dadKeys:Int = 4;
 	var playerChar:Character;
+	var curSection:Int = 0;
 
 	override public function create()
 	{
@@ -875,18 +876,18 @@ class PlayState extends MusicBeatState
 			SONG.gfVersion = gfVersion; //Fix for the Chart Editor
 		}
 
-		gf = new Character(0, 0, gfVersion);
+		gf = new Character(0, 0, gfVersion, false, false, true);
 		startCharacterPos(gf);
 		gf.scrollFactor.set(0.95, 0.95);
 		gfGroup.add(gf);
 		startCharacterLua(gf.curCharacter);
 
-		dad = new Character(0, 0, SONG.player2, false, opponentChart);
+		dad = new Character(0, 0, SONG.player2, false, opponentChart, true);
 		startCharacterPos(dad, true);
 		dadGroup.add(dad);
 		startCharacterLua(dad.curCharacter);
 		
-		boyfriend = new Boyfriend(0, 0, SONG.player1);
+		boyfriend = new Boyfriend(0, 0, SONG.player1, opponentChart);
 		startCharacterPos(boyfriend);
 		boyfriendGroup.add(boyfriend);
 		startCharacterLua(boyfriend.curCharacter);
@@ -1078,7 +1079,7 @@ class PlayState extends MusicBeatState
 		// healthBar
 		healthBar.visible = !ClientPrefs.hideHud;
 		healthBar.alpha = ClientPrefs.healthBarAlpha;
-		healthBar.numDivisions = 1000;
+		healthBar.numDivisions = 600;
 		add(healthBar);
 		healthBarBG.sprTracker = healthBar;
 
@@ -1915,6 +1916,8 @@ class PlayState extends MusicBeatState
 		
 		var songData = SONG;
 		Conductor.changeBPM(songData.bpm, playbackRate);
+		Conductor.numerator = songData.numerator;
+		Conductor.denominator = songData.denominator;
 		
 		curSong = songData.song;
 
@@ -2555,11 +2558,11 @@ class PlayState extends MusicBeatState
 		var division:Float = 1 / healthBar.numDivisions;
 
 		if (!opponentChart) {
-			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, healthBar.numDivisions, 0) * division)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
+			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, healthBar.numDivisions, 0) * division)) + (150 * iconP1.scale.x - 150) / 2 + iconOffset;
 			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, healthBar.numDivisions, 0) * division)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 		} else {
-			iconP1.x = healthBar.x + (healthBar.width * (healthBar.percent * division)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-			iconP2.x = healthBar.x + (healthBar.width * (healthBar.percent * division)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 0, healthBar.numDivisions) * division)) + (150 * iconP1.scale.x - 150) / 2 + iconOffset;
+			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 0, healthBar.numDivisions) * division)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 		}
 
 		if (health > 2)
@@ -3356,7 +3359,7 @@ class PlayState extends MusicBeatState
 
 			if (Paths.formatToSongPath(SONG.song) == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1)
 			{
-				cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut, onComplete:
+				cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1}, (Conductor.crochet / 1000), {ease: FlxEase.elasticInOut, onComplete:
 					function (twn:FlxTween)
 					{
 						cameraTwn = null;
@@ -3368,7 +3371,7 @@ class PlayState extends MusicBeatState
 
 	function tweenCamIn() {
 		if (Paths.formatToSongPath(SONG.song) == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1.3) {
-			cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1.3}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut, onComplete:
+			cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1.3}, (Conductor.crochet / 1000), {ease: FlxEase.elasticInOut, onComplete:
 				function (twn:FlxTween) {
 					cameraTwn = null;
 				}
@@ -4095,7 +4098,7 @@ class PlayState extends MusicBeatState
 		totalPlayed++;
 		RecalculateRating();
 
-		var char:Character = boyfriend;
+		var char:Character = playerChar;
 		if(daNote.gfNote) {
 			char = gf;
 		}
@@ -4177,7 +4180,6 @@ class PlayState extends MusicBeatState
 		} else if(!note.noAnimation) {
 			var altAnim:String = "";
 
-			var curSection:Int = Math.floor(curStep / 16);
 			if (SONG.notes[curSection] != null)
 			{
 				if (SONG.notes[curSection].altAnim || note.noteType == 'Alt Animation') {
@@ -4545,6 +4547,8 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
+		curSection = Math.floor(curStep / (Conductor.numerator * Conductor.denominator));
+
 		lastStepHit = curStep;
 		setOnLuas('curStep', curStep);
 		callOnLuas('onStepHit', []);
@@ -4555,9 +4559,6 @@ class PlayState extends MusicBeatState
 
 	var lastBeatHit:Int = -1;
 	
-	
-	
-	
 	override function beatHit()
 	{
 		super.beatHit();
@@ -4567,34 +4568,36 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
+		curSection = Math.floor(curStep / (Conductor.numerator * Conductor.denominator));
+
 		if (generatedMusic)
 		{
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
-		if (SONG.notes[Math.floor(curStep / 16)] != null)
+		if (SONG.notes[curSection] != null)
 		{
-			if (SONG.notes[Math.floor(curStep / 16)].changeBPM)
+			if (SONG.notes[curSection].changeBPM)
 			{
-				Conductor.changeBPM(SONG.notes[Math.floor(curStep / 16)].bpm, playbackRate);
+				Conductor.changeBPM(SONG.notes[curSection].bpm, playbackRate);
 				//FlxG.log.add('CHANGED BPM!');
 				setOnLuas('curBpm', Conductor.bpm);
 				setOnLuas('crochet', Conductor.crochet);
 				setOnLuas('stepCrochet', Conductor.stepCrochet);
 			}
-			setOnLuas('mustHitSection', SONG.notes[Math.floor(curStep / 16)].mustHitSection);
-			setOnLuas('altAnim', SONG.notes[Math.floor(curStep / 16)].altAnim);
-			setOnLuas('gfSection', SONG.notes[Math.floor(curStep / 16)].gfSection);
+			setOnLuas('mustHitSection', SONG.notes[curSection].mustHitSection);
+			setOnLuas('altAnim', SONG.notes[curSection].altAnim);
+			setOnLuas('gfSection', SONG.notes[curSection].gfSection);
 			// else
 			// Conductor.changeBPM(SONG.bpm);
 		}
 		// FlxG.log.add('change bpm' + SONG.notes[Std.int(curStep / 16)].changeBPM);
 
-		if (generatedMusic && PlayState.SONG.notes[Std.int(curStep / 16)] != null && !endingSong && !isCameraOnForcedPos)
+		if (generatedMusic && PlayState.SONG.notes[curSection] != null && !endingSong && !isCameraOnForcedPos)
 		{
-			moveCameraSection(Std.int(curStep / 16));
+			moveCameraSection(curSection);
 		}
-		if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curBeat % 4 == 0)
+		if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curBeat % Conductor.numerator == 0)
 		{
 			FlxG.camera.zoom += 0.015;
 			camHUD.zoom += 0.03;
@@ -4653,7 +4656,7 @@ class PlayState extends MusicBeatState
 				if (!trainMoving)
 					trainCooldown += 1;
 
-				if (curBeat % 4 == 0)
+				if (curBeat % Conductor.numerator == 0)
 				{
 					phillyCityLights.forEach(function(light:BGSprite)
 					{
@@ -4666,7 +4669,7 @@ class PlayState extends MusicBeatState
 					phillyCityLights.members[curLight].alpha = 1;
 				}
 
-				if (curBeat % 8 == 4 && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
+				if (curBeat % (Conductor.numerator * 2) == Conductor.numerator && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
 				{
 					trainCooldown = FlxG.random.int(-4, 0);
 					trainStart();
@@ -4679,7 +4682,7 @@ class PlayState extends MusicBeatState
 		}
 		lastBeatHit = curBeat;
 
-				setOnLuas('curBeat', curBeat);//DAWGG?????
+		setOnLuas('curBeat', curBeat);//DAWGG?????
 		callOnLuas('onBeatHit', []);
 	}
 

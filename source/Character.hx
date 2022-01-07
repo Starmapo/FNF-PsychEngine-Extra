@@ -73,7 +73,7 @@ class Character extends FlxSprite
 	public var opponentPlay:Bool = false;
 
 	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
-	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false, ?opponentPlay:Bool = false)
+	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false, ?opponentPlay:Bool = false, ?ignorePlayerCheck:Bool = false)
 	{
 		super(x, y);
 
@@ -93,14 +93,14 @@ class Character extends FlxSprite
 			//case 'your character name in case you want to hardcode them instead':
 
 			default:
-				var characterPath:String = 'characters/' + (isPlayer ? 'player/' : '') + curCharacter + '.json';
+				var characterPath:String = 'characters/player/' + curCharacter + '.json';
 				var characterPath2:String = 'characters/' + curCharacter + '.json'; //incase there is an opponent file but no player file
 				#if MODS_ALLOWED
 				var path:String = Paths.modFolders(characterPath);
-				if (!FileSystem.exists(path)) {
+				if (!FileSystem.exists(path) || ignorePlayerCheck) {
 					path = Paths.modFolders(characterPath2);
 				}
-				if (!FileSystem.exists(path)) {
+				if (!FileSystem.exists(path) && !ignorePlayerCheck) {
 					path = Paths.getPreloadPath(characterPath);
 				}
 				if (!FileSystem.exists(path)) {
@@ -110,7 +110,7 @@ class Character extends FlxSprite
 				if (!FileSystem.exists(path))
 				#else
 				var path:String = Paths.getPreloadPath(characterPath);
-				if (!Assets.exists(path)) {
+				if (!Assets.exists(path) || ignorePlayerCheck) {
 					path = characterPath2;
 				}
 
@@ -119,6 +119,8 @@ class Character extends FlxSprite
 				{
 					path = Paths.getPreloadPath('characters/' + (isPlayer ? 'player/' : '') + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
 				}
+
+				//trace('character path for ' + curCharacter + ': ' + path);
 
 				#if MODS_ALLOWED
 				var rawJson = File.getContent(path);
@@ -270,14 +272,14 @@ class Character extends FlxSprite
 				dance();
 			}
 
-			if (!isPlayer && !opponentPlay)
+			if (!isPlayer)
 			{
 				if (animation.curAnim.name.startsWith('sing'))
 				{
 					holdTimer += elapsed;
 				}
 
-				if (holdTimer >= Conductor.stepCrochet * 0.001 * singDuration)
+				if (!opponentPlay && holdTimer >= Conductor.stepCrochet * 0.001 * singDuration)
 				{
 					dance();
 					holdTimer = 0;

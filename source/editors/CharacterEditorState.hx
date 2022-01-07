@@ -29,6 +29,8 @@ import flixel.animation.FlxAnimation;
 
 #if MODS_ALLOWED
 import sys.FileSystem;
+#else
+import openfl.utils.Assets;
 #end
 
 using StringTools;
@@ -404,6 +406,7 @@ class CharacterEditorState extends MusicBeatState
 		}';
 
 	var charDropDown:FlxUIDropDownMenuCustom;
+	var check_playerFile:FlxUICheckBox;
 	function addSettingsUI() {
 		var tab_group = new FlxUI(null, UI_box);
 		tab_group.name = "Settings";
@@ -422,7 +425,11 @@ class CharacterEditorState extends MusicBeatState
 		charDropDown = new FlxUIDropDownMenuCustom(10, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(character:String)
 		{
 			daAnim = characterList[Std.parseInt(character)];
-			check_player.checked = daAnim.startsWith('bf');
+			#if MODS_ALLOWED
+			check_player.checked = check_playerFile.checked && (FileSystem.exists(Paths.modFolders('characters/player/' + daAnim + '.json')) || FileSystem.exists(Paths.getPreloadPath('characters/player/' + daAnim + '.json')));
+			#else
+			check_player.checked = check_playerFile.checked && Assets.exists(Paths.getPreloadPath('characters/player/' + daAnim + '.json'));
+			#end
 			loadChar(!check_player.checked);
 			updatePresence();
 			reloadCharacterDropDown();
@@ -436,7 +443,20 @@ class CharacterEditorState extends MusicBeatState
 			reloadCharacterDropDown();
 		});
 
-		var templateCharacter:FlxButton = new FlxButton(140, 50, "Load Template", function()
+		check_playerFile = new FlxUICheckBox(140, 50, null, null, "Check for Player File", 100);
+		check_playerFile.checked = false;
+		check_playerFile.callback = function()
+		{
+			#if MODS_ALLOWED
+			check_player.checked = check_playerFile.checked && (FileSystem.exists(Paths.modFolders('characters/player/' + daAnim + '.json')) || FileSystem.exists(Paths.getPreloadPath('characters/player/' + daAnim + '.json')));
+			#else
+			check_player.checked = check_playerFile.checked && Assets.exists(Paths.getPreloadPath('characters/player/' + daAnim + '.json'));
+			#end
+			loadChar(!check_player.checked);
+			reloadCharacterDropDown();
+		};
+
+		var templateCharacter:FlxButton = new FlxButton(140, 80, "Load Template", function()
 		{
 			var parsedJson:CharacterFile = cast Json.parse(TemplateCharacter);
 			var characters:Array<Character> = [char, ghostChar];
@@ -480,6 +500,7 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.add(reloadCharacter);
 		tab_group.add(charDropDown);
 		tab_group.add(reloadCharacter);
+		tab_group.add(check_playerFile);
 		tab_group.add(templateCharacter);
 		UI_box.addGroup(tab_group);
 	}
@@ -902,11 +923,11 @@ class CharacterEditorState extends MusicBeatState
 			--i;
 		}
 		charLayer.clear();
-		ghostChar = new Character(0, 0, daAnim, !isDad);
+		ghostChar = new Character(0, 0, daAnim, !isDad, false, (check_playerFile != null ? !check_playerFile.checked : false));
 		ghostChar.debugMode = true;
 		ghostChar.alpha = 0.6;
 
-		char = new Character(0, 0, daAnim, !isDad);
+		char = new Character(0, 0, daAnim, !isDad, false, (check_playerFile != null ? !check_playerFile.checked : false));
 		if(char.animationsArray[0] != null) {
 			char.playAnim(char.animationsArray[0].anim, true);
 		}

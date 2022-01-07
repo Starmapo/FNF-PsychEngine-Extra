@@ -30,6 +30,15 @@ typedef SwagSong =
 	var validScore:Bool;
 
 	var keyAmount:Null<Int>;
+	var numerator:Null<Int>;
+	var denominator:Null<Int>;
+}
+
+typedef DifferentJSON =
+{
+	var mania:Null<Int>; //Shaggy
+	var keyCount:Null<Int>; //Leather Engine
+	var timescale:Array<Int>; //Leather Engine
 }
 
 class Song
@@ -49,6 +58,14 @@ class Song
 		if(songJson.keyAmount == null)
 		{
 			songJson.keyAmount = 4;
+		}
+		if(songJson.numerator == null)
+		{
+			songJson.numerator = 4;
+		}
+		if(songJson.denominator == null)
+		{
+			songJson.denominator = 4;
 		}
 
 		if(songJson.events == null)
@@ -134,7 +151,28 @@ class Song
 
 	public static function parseJSONshit(rawJson:String):SwagSong
 	{
+		var tempSong:DifferentJSON = cast Json.parse(rawJson).song;
+
 		var swagShit:SwagSong = cast Json.parse(rawJson).song;
+		if (tempSong.mania != null && !Math.isNaN(tempSong.mania)) {
+			switch (tempSong.mania) {
+				case 1:
+					swagShit.keyAmount = 6;
+				case 2:
+					swagShit.keyAmount = 7;
+				case 3:
+					swagShit.keyAmount = 9;
+				default:
+					swagShit.keyAmount = 4;
+			}
+		}
+		if (tempSong.keyCount != null && !Math.isNaN(tempSong.keyCount)) {
+			swagShit.keyAmount = tempSong.keyCount;
+		}
+		if (tempSong.timescale != null && tempSong.timescale.length == 2) {
+			swagShit.numerator = tempSong.timescale[0];
+			swagShit.denominator = tempSong.timescale[1];
+		}
 		swagShit.validScore = true;
 		return swagShit;
 	}

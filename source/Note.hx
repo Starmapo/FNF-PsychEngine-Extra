@@ -100,8 +100,12 @@ class Note extends FlxSprite
 							missHealth = 0.3;
 						}
 						hitCausesMiss = true;
-						hitMult = 0.8;
-						earlyHitMult = 0.4;
+						hitMult = 0.5;
+						if(isSustainNote) {
+							earlyHitMult = 0.3;
+						} else {
+							earlyHitMult = 0.5;
+						}
 					case 'No Animation':
 						noAnimation = true;
 					case 'GF Sing':

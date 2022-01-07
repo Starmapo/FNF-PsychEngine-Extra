@@ -229,6 +229,7 @@ class FreeplayState extends MusicBeatState
 	}*/
 
 	var instPlaying:Int = -1;
+	var speedPlaying:Int = -1;
 	private static var vocals:FlxSound = null;
 	override function update(elapsed:Float)
 	{
@@ -301,7 +302,7 @@ class FreeplayState extends MusicBeatState
 		}
 		else if(space)
 		{
-			if(instPlaying != curSelected)
+			if(instPlaying != curSelected || speedPlaying != ClientPrefs.getGameplaySetting('songspeed', 1))
 			{
 				#if PRELOAD_ALL
 				destroyFreeplayVocals();
@@ -321,7 +322,10 @@ class FreeplayState extends MusicBeatState
 				vocals.looped = true;
 				vocals.volume = 0.7;
 				Conductor.changeBPM(PlayState.SONG.bpm);
+				Conductor.numerator = PlayState.SONG.numerator;
+				Conductor.denominator = PlayState.SONG.denominator;
 				instPlaying = curSelected;
+				speedPlaying = ClientPrefs.getGameplaySetting('songspeed', 1);
 				#end
 			}
 		}
