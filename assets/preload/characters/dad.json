@@ -3,7 +3,7 @@
 		{
 			"loop": false,
 			"offsets": [
-				32,
+				38,
 				7
 			],
 			"fps": 24,
@@ -14,7 +14,7 @@
 		{
 			"loop": false,
 			"offsets": [
-				-3,
+				-1,
 				-7
 			],
 			"fps": 24,
@@ -25,7 +25,7 @@
 		{
 			"loop": false,
 			"offsets": [
-				-3,
+				-1,
 				61
 			],
 			"fps": 24,
@@ -36,7 +36,7 @@
 		{
 			"loop": false,
 			"offsets": [
-				-8,
+				-6,
 				25
 			],
 			"fps": 24,
@@ -74,7 +74,7 @@
 		{
 			"loop": true,
 			"offsets": [
-				32,
+				38,
 				7
 			],
 			"anim": "singLEFT-loop",
@@ -90,7 +90,7 @@
 		{
 			"loop": true,
 			"offsets": [
-				-8,
+				-6,
 				25
 			],
 			"anim": "singRIGHT-loop",
@@ -106,7 +106,7 @@
 		{
 			"loop": true,
 			"offsets": [
-				-3,
+				-1,
 				61
 			],
 			"anim": "singUP-loop",
