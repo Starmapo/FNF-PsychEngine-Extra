@@ -182,7 +182,7 @@ class CreditsState extends MusicBeatState
 			}
 		}
 
-		if (controls.BACK)
+		if (controls.BACK && !warningText.visible)
 		{
 			if(colorTween != null) {
 				colorTween.cancel();

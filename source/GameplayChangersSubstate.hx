@@ -146,7 +146,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	var holdValue:Float = 0;
 	override function update(elapsed:Float)
 	{
-		if (FlxG.mouse.wheel != 0) {
+		if (FlxG.mouse.wheel != 0 && !FlxG.keys.pressed.SHIFT) {
 			changeSelection(FlxG.mouse.wheel * -1);
 		}
 		if (controls.UI_UP_P)
