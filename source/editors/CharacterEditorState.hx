@@ -1121,6 +1121,8 @@ class CharacterEditorState extends MusicBeatState
 		FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 
+		FlxG.mouse.visible = true;//cause reasons. trust me 
+
 		if(!charDropDown.dropPanel.visible) {
 			if (FlxG.keys.justPressed.ESCAPE) {
 				if(goToPlayState) {

@@ -285,6 +285,7 @@ class DialogueEditorState extends MusicBeatState
 			super.update(elapsed);
 			return;
 		}
+		FlxG.mouse.visible = true;//cause reasons. trust me 
 
 		if(character.animation.curAnim != null) {
 			if(daText.finishedText) {

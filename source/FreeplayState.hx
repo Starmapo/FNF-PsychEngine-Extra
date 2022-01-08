@@ -265,9 +265,17 @@ class FreeplayState extends MusicBeatState
 
 		var upP = controls.UI_UP_P;
 		var downP = controls.UI_DOWN_P;
-		var accepted = controls.ACCEPT;
+		var accepted = controls.ACCEPT || FlxG.mouse.justPressed;
 		var space = FlxG.keys.justPressed.SPACE;
 		var ctrl = FlxG.keys.justPressed.CONTROL;
+
+		if (FlxG.mouse.wheel != 0) {
+			if (FlxG.keys.pressed.SHIFT) {
+				changeDiff(FlxG.mouse.wheel);
+			} else {
+				changeSelection(FlxG.mouse.wheel * -1);
+			}
+		}
 
 		var shiftMult:Int = 1;
 		if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
@@ -367,7 +375,7 @@ class FreeplayState extends MusicBeatState
 		else if(controls.RESET)
 		{
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
-			FlxG.sound.play(Paths.sound('scrollMenu'));
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		}
 		super.update(elapsed);
 	}
@@ -375,8 +383,8 @@ class FreeplayState extends MusicBeatState
 	override function beatHit() {
 		super.beatHit();
 
-		if (FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curBeat % 1 == 0 && instPlaying != -1)
-			FlxG.camera.zoom += 0.015;
+		if (FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && instPlaying != -1)
+			FlxG.camera.zoom += 0.005;
 	}
 
 	public static function destroyFreeplayVocals() {

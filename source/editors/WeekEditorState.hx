@@ -403,6 +403,7 @@ class WeekEditorState extends MusicBeatState
 	
 	override function update(elapsed:Float)
 	{
+		FlxG.mouse.visible = true;//cause reasons. trust me 
 		if(loadedWeek != null) {
 			weekFile = loadedWeek;
 			loadedWeek = null;
@@ -769,6 +770,7 @@ class WeekEditorFreeplayState extends MusicBeatState
 	}
 
 	override function update(elapsed:Float) {
+		FlxG.mouse.visible = true;//cause reasons. trust me 
 		if(WeekEditorState.loadedWeek != null) {
 			super.update(elapsed);
 			FlxTransitionableState.skipNextTransIn = true;
@@ -794,6 +796,9 @@ class WeekEditorFreeplayState extends MusicBeatState
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			}
 
+			if (FlxG.mouse.wheel != 0) {
+				changeSelection(FlxG.mouse.wheel * -1);
+			}
 			if(controls.UI_UP_P) changeSelection(-1);
 			if(controls.UI_DOWN_P) changeSelection(1);
 		}

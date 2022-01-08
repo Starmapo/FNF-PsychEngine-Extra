@@ -126,7 +126,7 @@ class ModsMenuState extends MusicBeatState
 		{
 			modsList[curSelected][1] = !modsList[curSelected][1];
 			updateButtonToggle();
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		});
 		buttonToggle.setGraphicSize(50, 50);
 		buttonToggle.updateHitbox();
@@ -141,7 +141,7 @@ class ModsMenuState extends MusicBeatState
 		buttonUp = new FlxButton(startX, 0, "/\\", function()
 		{
 			moveMod(-1);
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		});
 		buttonUp.setGraphicSize(50, 50);
 		buttonUp.updateHitbox();
@@ -154,7 +154,7 @@ class ModsMenuState extends MusicBeatState
 
 		buttonDown = new FlxButton(startX, 0, "\\/", function() {
 			moveMod(1);
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		});
 		buttonDown.setGraphicSize(50, 50);
 		buttonDown.updateHitbox();
@@ -169,7 +169,7 @@ class ModsMenuState extends MusicBeatState
 			for (i in 0...curSelected){//so if shifts to the top instead of replacing the top one
 			moveMod(-1);
 			}
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		});
 		buttonTop.setGraphicSize(80, 50);
 		buttonTop.updateHitbox();
@@ -186,7 +186,7 @@ class ModsMenuState extends MusicBeatState
 				i[1] = false;
 			}
 			updateButtonToggle();
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		});
 		buttonDisableAll.setGraphicSize(170, 50);
 		buttonDisableAll.updateHitbox();
@@ -203,7 +203,7 @@ class ModsMenuState extends MusicBeatState
 				i[1] = true;
 			}
 			updateButtonToggle();
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		});
 		buttonEnableAll.setGraphicSize(170, 50);
 		buttonEnableAll.updateHitbox();
@@ -420,6 +420,7 @@ class ModsMenuState extends MusicBeatState
 	var canExit:Bool = true;
 	override function update(elapsed:Float)
 	{
+		FlxG.mouse.visible = true;//cause reasons. trust me 
 		if(noModsTxt.visible)
 		{
 			noModsSine += 180 * elapsed;
@@ -446,6 +447,9 @@ class ModsMenuState extends MusicBeatState
 			}
 		}
 
+		if (FlxG.mouse.wheel != 0) {
+			changeSelection(FlxG.mouse.wheel * -1);
+		}
 		if(controls.UI_UP_P)
 		{
 			changeSelection(-1);
@@ -508,7 +512,7 @@ class ModsMenuState extends MusicBeatState
 				}
 			});
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		
 		var i:Int = 0;
 		for (mod in mods)

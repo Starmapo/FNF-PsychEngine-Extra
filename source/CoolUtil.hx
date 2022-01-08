@@ -128,7 +128,7 @@ class CoolUtil
 		difficulties = defaultDifficulties.copy();
 		var diffStr:String = WeekData.getCurrentWeek().difficulties;
 		if(diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
-		diffStr = diffStr.trim(); //Fuck you HTML5
+		diffStr.trim(); //Fuck you HTML5
 
 		if(diffStr != null && diffStr.length > 0)
 		{

@@ -146,6 +146,9 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	var holdValue:Float = 0;
 	override function update(elapsed:Float)
 	{
+		if (FlxG.mouse.wheel != 0) {
+			changeSelection(FlxG.mouse.wheel * -1);
+		}
 		if (controls.UI_UP_P)
 		{
 			changeSelection(-1);
@@ -171,21 +174,26 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 			if(usesCheckbox)
 			{
-				if(controls.ACCEPT)
+				if(controls.ACCEPT || FlxG.mouse.justPressed)
 				{
-					FlxG.sound.play(Paths.sound('scrollMenu'));
+					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 					curOption.setValue((curOption.getValue() == true) ? false : true);
 					curOption.change();
 					reloadCheckboxes();
 				}
 			} else {
-				if(controls.UI_LEFT || controls.UI_RIGHT) {
+				if(controls.UI_LEFT || controls.UI_RIGHT || (FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT)) {
 					var pressed = (controls.UI_LEFT_P || controls.UI_RIGHT_P);
-					if(holdTime > 0.5 || pressed) {
-						if(pressed) {
+					var useWheel = FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT;
+					if(holdTime > 0.5 || pressed || useWheel) {
+						if(pressed || useWheel) {
 							var add:Dynamic = null;
 							if(curOption.type != 'string') {
-								add = controls.UI_LEFT ? -curOption.changeValue : curOption.changeValue;
+								if (useWheel) {
+									add = curOption.changeValue * FlxG.mouse.wheel;
+								} else {
+									add = controls.UI_LEFT ? -curOption.changeValue : curOption.changeValue;
+								}
 							}
 
 							switch(curOption.type)
@@ -208,7 +216,8 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 								case 'string':
 									var num:Int = curOption.curOption; //lol
-									if(controls.UI_LEFT_P) --num;
+									if (useWheel) num += FlxG.mouse.wheel;
+									else if(controls.UI_LEFT_P) --num;
 									else num++;
 
 									if(num < 0) {
@@ -243,7 +252,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 							}
 							updateTextFrom(curOption);
 							curOption.change();
-							FlxG.sound.play(Paths.sound('scrollMenu'));
+							FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 						} else if(curOption.type != 'string') {
 							holdValue += curOption.scrollSpeed * elapsed * (controls.UI_LEFT ? -1 : 1);
 							if(holdValue < curOption.minValue) holdValue = curOption.minValue;
@@ -262,7 +271,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 						}
 					}
 
-					if(curOption.type != 'string') {
+					if(curOption.type != 'string' && !useWheel) {
 						holdTime += elapsed;
 					}
 				} else if(controls.UI_LEFT_R || controls.UI_RIGHT_R) {
@@ -319,7 +328,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	function clearHold()
 	{
 		if(holdTime > 0.5) {
-			FlxG.sound.play(Paths.sound('scrollMenu'));
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		}
 		holdTime = 0;
 	}
@@ -350,7 +359,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 			}
 		}
 		curOption = optionsArray[curSelected]; //shorter lol
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 	}
 
 	function reloadCheckboxes() {

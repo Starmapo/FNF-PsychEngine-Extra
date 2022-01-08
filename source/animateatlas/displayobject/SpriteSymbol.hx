@@ -373,6 +373,7 @@ class SpriteSymbol extends Sprite {
 				var frameData:LayerFrameData = frameDates[j];
 				if (frameData.name != null) {
 					labels.push(new FrameLabel(frameData.name, frameData.index));
+					//trace('got frame label ' + frameData.name);
 				}
 			}
 		}

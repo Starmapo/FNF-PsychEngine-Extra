@@ -79,6 +79,18 @@ class MasterEditorMenu extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		FlxG.mouse.visible = true;//cause reasons. trust me 
+		if (FlxG.mouse.wheel != 0) {
+			#if MODS_ALLOWED
+			if (FlxG.keys.pressed.SHIFT) {
+				changeDirectory(FlxG.mouse.wheel);
+			} else {
+			#end
+				changeSelection(FlxG.mouse.wheel * -1);
+			#if MODS_ALLOWED
+			}
+			#end
+		}
 		if (controls.UI_UP_P)
 		{
 			changeSelection(-1);
@@ -103,7 +115,7 @@ class MasterEditorMenu extends MusicBeatState
 			MusicBeatState.switchState(new MainMenuState());
 		}
 
-		if (controls.ACCEPT)
+		if (controls.ACCEPT || FlxG.mouse.justPressed)
 		{
 			switch(options[curSelected]) {
 				case 'Character Editor':

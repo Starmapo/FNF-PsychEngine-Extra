@@ -2556,7 +2556,7 @@ class PlayState extends MusicBeatState
 		var division:Float = 1 / healthBar.numDivisions;
 
 		if (!opponentChart) {
-			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, healthBar.numDivisions, 0) * division)) + (150 * iconP1.scale.x - 150) / 2 + iconOffset;
+			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, healthBar.numDivisions, 0) * division)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, healthBar.numDivisions, 0) * division)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 		} else {
 			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 0, healthBar.numDivisions) * division)) + (150 * iconP1.scale.x - 150) / 2 + iconOffset;
@@ -4187,8 +4187,10 @@ class PlayState extends MusicBeatState
 
 			var animToPlay:String = dadSingAnimations[note.noteData] + altAnim;
 
-			char.playAnim(animToPlay, true);
-			char.holdTimer = 0;
+			if (!char.specialAnim) {
+				char.playAnim(animToPlay, true);
+				char.holdTimer = 0;
+			}
 		}
 
 		if (SONG.needsVoices)
@@ -4265,8 +4267,10 @@ class PlayState extends MusicBeatState
 					//	char.playAnim(anim, true);
 					//	char.holdTimer = 0;
 				//}else{
-					char.playAnim(animToPlay + daAlt, true);
-					char.holdTimer = 0;
+					if (!char.specialAnim) {
+						char.playAnim(animToPlay + daAlt, true);
+						char.holdTimer = 0;
+					}
 				//}
 				if(note.noteType == 'Hey!') {
 					if(char.animOffsets.exists('hey')) {

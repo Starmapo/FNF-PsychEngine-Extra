@@ -255,6 +255,7 @@ class MenuCharacterEditorState extends MusicBeatState
 	}
 
 	override function update(elapsed:Float) {
+		FlxG.mouse.visible = true;//cause reasons. trust me 
 		var blockInput:Bool = false;
 		for (inputText in blockPressWhileTypingOn) {
 			if(inputText.hasFocus) {

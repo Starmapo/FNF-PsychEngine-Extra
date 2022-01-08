@@ -201,16 +201,24 @@ class StoryMenuState extends MusicBeatState
 		{
 			var upP = controls.UI_UP_P;
 			var downP = controls.UI_DOWN_P;
+			if (FlxG.mouse.wheel != 0) {
+				if (FlxG.keys.pressed.SHIFT) {
+					changeDifficulty(FlxG.mouse.wheel);
+				} else {
+					changeWeek(FlxG.mouse.wheel * -1);
+					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				}
+			}
 			if (upP)
 			{
 				changeWeek(-1);
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			}
 
 			if (downP)
 			{
 				changeWeek(1);
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			}
 
 			if (controls.UI_RIGHT)
@@ -239,9 +247,9 @@ class StoryMenuState extends MusicBeatState
 			{
 				persistentUpdate = false;
 				openSubState(new ResetScoreSubState('', curDifficulty, '', curWeek));
-				//FlxG.sound.play(Paths.sound('scrollMenu'));
+				//FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			}
-			else if (controls.ACCEPT)
+			else if (controls.ACCEPT || FlxG.mouse.justPressed)
 			{
 				selectWeek();
 			}

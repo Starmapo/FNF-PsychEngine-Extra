@@ -80,15 +80,15 @@ class ResetScoreSubState extends MusicBeatSubstate
 		}
 		if(week == -1) icon.alpha += elapsed * 2.5;
 
-		if(controls.UI_LEFT_P || controls.UI_RIGHT_P) {
-			FlxG.sound.play(Paths.sound('scrollMenu'), 1);
+		if(controls.UI_LEFT_P || controls.UI_RIGHT_P || FlxG.mouse.wheel != 0) {
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			onYes = !onYes;
 			updateOptions();
 		}
 		if(controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancelMenu'), 1);
 			close();
-		} else if(controls.ACCEPT) {
+		} else if(controls.ACCEPT || FlxG.mouse.justPressed) {
 			if(onYes) {
 				if(week == -1) {
 					Highscore.resetSong(song, difficulty);

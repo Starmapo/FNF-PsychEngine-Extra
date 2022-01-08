@@ -80,6 +80,9 @@ class OptionsState extends MusicBeatState
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
+		if (FlxG.mouse.wheel != 0) {
+			changeSelection(FlxG.mouse.wheel * -1);
+		}
 		if (controls.UI_UP_P) {
 			changeSelection(-1);
 		}
@@ -92,7 +95,7 @@ class OptionsState extends MusicBeatState
 			MusicBeatState.switchState(new MainMenuState());
 		}
 
-		if (controls.ACCEPT) {
+		if (controls.ACCEPT || FlxG.mouse.justPressed) {
 			openSelectedSubstate(options[curSelected]);
 		}
 	}
@@ -119,6 +122,6 @@ class OptionsState extends MusicBeatState
 				selectorRight.y = item.y;
 			}
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 	}
 }

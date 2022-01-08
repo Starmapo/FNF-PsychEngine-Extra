@@ -51,38 +51,6 @@ class Song
 	{
 		var songName:String = Paths.formatToSongPath(songJson.song);
 
-		for (secNum in 0...songJson.notes.length) { //removing int note types
-			var sec:SwagSection = songJson.notes[secNum];
-			for (noteNum in 0...sec.sectionNotes.length) {
-				var note:Array<Dynamic> = sec.sectionNotes[noteNum];
-				var daStrum:Float = note[0];
-				var daData:Int = note[1];
-				var daSusLength:Float = note[2];
-				var daType:String = note[3];
-				if(!Std.isOfType(note[3], String) && note[3] < 6) daType = editors.ChartingState.noteTypeList[note[3]];
-				sec.sectionNotes[noteNum] = [daStrum, daData, daSusLength, daType];
-			}
-		}
-
-		if(songJson.gfVersion == null)
-		{
-			songJson.gfVersion = songJson.player3;
-			songJson.player3 = null;
-		}
-		
-		if(songJson.keyAmount == null)
-		{
-			songJson.keyAmount = 4;
-		}
-		if(songJson.numerator == null)
-		{
-			songJson.numerator = 4;
-		}
-		if(songJson.denominator == null)
-		{
-			songJson.denominator = 4;
-		}
-
 		if(songJson.events == null)
 		{
 			songJson.events = [];
@@ -105,6 +73,45 @@ class Song
 					else i++;
 				}
 			}
+		}
+
+		for (secNum in 0...songJson.notes.length) { //removing int note types
+			var sec:SwagSection = songJson.notes[secNum];
+			var i:Int = 0;
+			var notes:Array<Dynamic> = sec.sectionNotes;
+			var len:Int = notes.length;
+			while(i < len)
+			{
+				var note:Array<Dynamic> = notes[i];
+				if (note[1] > -1) {
+					var daStrum:Float = note[0];
+					var daData:Int = note[1];
+					var daSusLength:Float = note[2];
+					var daType:String = note[3];
+					if(!Std.isOfType(note[3], String) && note[3] < 6) daType = editors.ChartingState.noteTypeList[note[3]];
+					sec.sectionNotes[i] = [daStrum, daData, daSusLength, daType];
+				}
+				i++;
+			}
+		}
+
+		if(songJson.gfVersion == null)
+		{
+			songJson.gfVersion = songJson.player3;
+			songJson.player3 = null;
+		}
+		
+		if(songJson.keyAmount == null)
+		{
+			songJson.keyAmount = 4;
+		}
+		if(songJson.numerator == null)
+		{
+			songJson.numerator = 4;
+		}
+		if(songJson.denominator == null)
+		{
+			songJson.denominator = 4;
 		}
 	}
 

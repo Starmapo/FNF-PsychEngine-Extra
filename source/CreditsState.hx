@@ -169,6 +169,9 @@ class CreditsState extends MusicBeatState
 		var downP = controls.UI_DOWN_P;
 
 		if (!warningText.visible) {
+			if (FlxG.mouse.wheel != 0) {
+				changeSelection(FlxG.mouse.wheel * -1);
+			}
 			if (upP)
 			{
 				changeSelection(-1);
@@ -187,17 +190,17 @@ class CreditsState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			MusicBeatState.switchState(new MainMenuState());
 		}
-		if(FlxG.keys.pressed.ENTER && !warningText.visible) {
+		if((controls.ACCEPT || FlxG.mouse.justPressed) && !warningText.visible) {
 			warningText.text = "WARNING!!!\nYOU ARE ABOUT TO GO TO: \n" + creditsStuff[curSelected][3] + "\nARE YOU ABSOLUTELY SURE YOU WANT TO GO TO THIS URL? \n(Y - Yes, N - No)";
 			warningText.screenCenter();
 			warningText.visible = true;
 		}
 		if (warningText.visible) {
-			if(FlxG.keys.pressed.Y) {
+			if (FlxG.keys.pressed.Y) {
 				CoolUtil.browserLoad(creditsStuff[curSelected][3]);
 				warningText.visible = false;
 			}
-			else if(FlxG.keys.pressed.N) {
+			else if (FlxG.keys.pressed.N || controls.BACK) {
 				warningText.visible = false;
 			}
 		}
