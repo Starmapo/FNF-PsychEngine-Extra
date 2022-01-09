@@ -90,6 +90,8 @@ class FunkinLua {
 		set('beatNumber', Conductor.numerator);
 		set('beatDuration', Conductor.denominator);
 		set('keyAmount', PlayState.SONG.keyAmount);
+		set('playerKeyAmount', PlayState.instance.playerKeys);
+		set('opponentKeyAmount', PlayState.instance.opponentKeys);
 		set('songLength', FlxG.sound.music.length);
 		set('songName', PlayState.SONG.song);
 		set('startedCountdown', false);
@@ -133,9 +135,11 @@ class FunkinLua {
 		set('botPlay', PlayState.instance.cpuControlled);
 		set('practice', PlayState.instance.practiceMode);
 
-		for (i in 0...4) {
+		for (i in 0...PlayState.instance.playerKeys) {
 			set('defaultPlayerStrumX' + i, 0);
 			set('defaultPlayerStrumY' + i, 0);
+		}
+		for (i in 0...PlayState.instance.opponentKeys) {
 			set('defaultOpponentStrumX' + i, 0);
 			set('defaultOpponentStrumY' + i, 0);
 		}

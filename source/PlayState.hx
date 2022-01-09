@@ -262,8 +262,8 @@ class PlayState extends MusicBeatState
 
 	var bfKeys:Int = 4;
 	var dadKeys:Int = 4;
-	var playerKeys:Int = 4;
-	var opponentKeys:Int = 4;
+	public var playerKeys:Int = 4;
+	public var opponentKeys:Int = 4;
 	var playerChar:Character;
 	var opponentChar:Character;
 	var curSection:Int = 0;
