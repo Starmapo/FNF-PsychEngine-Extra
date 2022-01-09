@@ -38,6 +38,7 @@ _____________________________________
 
 # New Options
 * Sort Freeplay songs alphabetically
+* Change instrumentals and voices volume
 
 # Minor Touches
 * Camera bump in Freeplay (@Stilic)
