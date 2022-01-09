@@ -20,6 +20,8 @@ class CoolUtil
 
 	public static var difficulties:Array<String> = [];
 
+	public static var difficultiesMap:Map<String, Array<String>> = new Map<String, Array<String>>();
+
 	public static function getDifficultyFilePath(num:Null<Int> = null)
 	{
 		if(num == null) num = PlayState.storyDifficulty;
@@ -125,6 +127,11 @@ class CoolUtil
 	}
 
 	public static function getDifficulties(?song:String = '', ?remove:Bool = false) {
+		var mapKey:String = WeekData.weeksList[PlayState.storyWeek] + Paths.formatToSongPath(song); //incase there is more than one song with the same name
+		if (difficultiesMap.exists(mapKey)) {
+			difficulties = difficultiesMap.get(mapKey);
+			return;
+		}
 		difficulties = defaultDifficulties.copy();
 		var diffStr:String = WeekData.getCurrentWeek().difficulties;
 		if(diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
@@ -144,7 +151,7 @@ class CoolUtil
 				--i;
 			}
 			
-			if (remove) {
+			if (remove && song.length > 0) {
 				for (i in 0...diffs.length) {
 					var suffix = '-' + diffs[i];
 					if (diffs[i].toLowerCase() == defaultDifficulty.toLowerCase()) {
@@ -166,6 +173,9 @@ class CoolUtil
 			{
 				difficulties = diffs;
 			}
+		}
+		if (!difficultiesMap.exists(mapKey)) {
+			difficultiesMap.set(mapKey, difficulties);
 		}
 	}
 }

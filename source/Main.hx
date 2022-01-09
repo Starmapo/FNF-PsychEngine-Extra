@@ -79,8 +79,8 @@ class Main extends Sprite
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
-		Lib.current.stage.align = "topLeft";
-		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
+		/*Lib.current.stage.align = "topLeft";
+		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;*/
 		if(fpsVar != null) {
 			fpsVar.visible = ClientPrefs.showFPS;
 		}

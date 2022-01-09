@@ -124,10 +124,10 @@ class MusicBeatState extends FlxUIState
 
 	public function onStateSwitch(){
 
-		options.GraphicsSettingsSubState.onChangeRes();
+		/*options.GraphicsSettingsSubState.onChangeRes();
 		FlxG.scaleMode = modeStage;
 
-		if (FlxG.fullscreen)FlxG.scaleMode = modeRatio;
+		if (FlxG.fullscreen)FlxG.scaleMode = modeRatio;*/
 	}
 
 	public static function getState():MusicBeatState {
