@@ -74,7 +74,7 @@ class MusicBeatState extends FlxUIState
 
 	private function updateBeat():Void
 	{
-		curBeat = Math.floor(curStep / Conductor.denominator);
+		curBeat = Math.floor(curStep / 4);
 	}
 
 	private function updateCurStep():Void

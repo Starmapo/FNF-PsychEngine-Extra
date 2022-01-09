@@ -4549,7 +4549,7 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
-		curSection = Math.floor(curStep / (Conductor.numerator * Conductor.denominator));
+		curSection = Math.floor(curStep / (Conductor.numerator * 4));
 
 		lastStepHit = curStep;
 		setOnLuas('curStep', curStep);
@@ -4570,7 +4570,7 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
-		curSection = Math.floor(curStep / (Conductor.numerator * Conductor.denominator));
+		curSection = Math.floor(curStep / (Conductor.numerator * 4));
 
 		if (generatedMusic)
 		{

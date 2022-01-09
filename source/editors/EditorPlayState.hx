@@ -248,14 +248,14 @@ class EditorPlayState extends MusicBeatState
 
 		var songData = PlayState.SONG;
 		Conductor.mapBPMChanges(songData);
-		if (songData.notes[Math.floor(curStep / 16)].changeBPM && songData.notes[Math.floor(curStep / 16)].bpm > 0)
+		if (songData.notes[Math.floor(curStep / (Conductor.numerator * 4))].changeBPM && songData.notes[Math.floor(curStep / (Conductor.numerator * 4))].bpm > 0)
 		{
-			Conductor.changeBPM(songData.notes[Math.floor(curStep / 16)].bpm);
+			Conductor.changeBPM(songData.notes[Math.floor(curStep / (Conductor.numerator * 4))].bpm);
 		}
 		else
 		{
 			var daBPM:Float = songData.bpm;
-			for (i in 0...Math.floor(curStep / 16))
+			for (i in 0...Math.floor(curStep / (Conductor.numerator * 4)))
 				if (songData.notes[i].changeBPM)
 					daBPM = songData.notes[i].bpm;
 			Conductor.changeBPM(daBPM);
@@ -584,9 +584,9 @@ class EditorPlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
-		if (PlayState.SONG.notes[Math.floor(curStep / 16)] != null && PlayState.SONG.notes[Math.floor(curStep / 16)].changeBPM)
+		if (PlayState.SONG.notes[Math.floor(curStep / (Conductor.numerator * 4))] != null && PlayState.SONG.notes[Math.floor(curStep / (Conductor.numerator * 4))].changeBPM)
 		{
-			Conductor.changeBPM(PlayState.SONG.notes[Math.floor(curStep / 16)].bpm);
+			Conductor.changeBPM(PlayState.SONG.notes[Math.floor(curStep / (Conductor.numerator * 4))].bpm);
 		}
 	}
 

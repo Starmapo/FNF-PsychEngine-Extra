@@ -89,6 +89,7 @@ class FunkinLua {
 		set('stepCrochet', Conductor.stepCrochet);
 		set('beatNumber', Conductor.numerator);
 		set('beatDuration', Conductor.denominator);
+		set('keyAmount', PlayState.SONG.keyAmount);
 		set('songLength', FlxG.sound.music.length);
 		set('songName', PlayState.SONG.song);
 		set('startedCountdown', false);
