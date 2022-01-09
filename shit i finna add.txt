@@ -1,6 +1,5 @@
--Key amounts from 1 to 10
+-Key amounts from 1 to 10 (or 18?)
 -Different color picking for every key amount
 -Port most spritesheets to Texture Atlas
--Add player JSONs for all characters
 -Custom default note skin
 -Mid-song time signature changes (hellclown will ruin my life)

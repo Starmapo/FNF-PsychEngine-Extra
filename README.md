@@ -30,7 +30,7 @@ _____________________________________
 
 # New Features
 * Different key amounts (4 - 9)
-* Different time signatures (3/4, 2/2, etc.)
+* Different time signatures (3/4, 4/8, etc.)
 * Play opponent's chart
 * Song playback speed
 * More Lua functions

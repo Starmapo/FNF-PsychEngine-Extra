@@ -128,11 +128,13 @@ class ControlsSubState extends MusicBeatSubstate {
 					changeSelection(FlxG.mouse.wheel * -1);
 				}
 			}
+			var shiftMult:Int = 1;
+			if (FlxG.keys.pressed.SHIFT) shiftMult = 3;
 			if (controls.UI_UP_P) {
-				changeSelection(-1);
+				changeSelection(-shiftMult);
 			}
 			if (controls.UI_DOWN_P) {
-				changeSelection(1);
+				changeSelection(shiftMult);
 			}
 			if (controls.UI_LEFT_P || controls.UI_RIGHT_P) {
 				changeAlt();

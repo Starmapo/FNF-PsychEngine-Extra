@@ -262,7 +262,10 @@ class PlayState extends MusicBeatState
 
 	var bfKeys:Int = 4;
 	var dadKeys:Int = 4;
+	var playerKeys:Int = 4;
+	var opponentKeys:Int = 4;
 	var playerChar:Character;
+	var opponentChar:Character;
 	var curSection:Int = 0;
 
 	override public function create()
@@ -327,11 +330,11 @@ class PlayState extends MusicBeatState
 			SONG = Song.loadFromJson('tutorial');
 
 		bfKeys = dadKeys = SONG.keyAmount;
-		var stupKeys = bfKeys;
+		playerKeys = bfKeys;
 		if (opponentChart) {
-			stupKeys = dadKeys;
+			playerKeys = dadKeys;
 		}
-		switch (stupKeys) {
+		switch (playerKeys) {
 			case 5:
 				singAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singUP', 'singRIGHT'];
 				keysArray = [
@@ -388,11 +391,11 @@ class PlayState extends MusicBeatState
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right2'))
 				];
 		}
-		var stupKeys = dadKeys;
+		opponentKeys = dadKeys;
 		if (opponentChart) {
-			stupKeys = bfKeys;
+			opponentKeys = bfKeys;
 		}
-		switch (stupKeys) {
+		switch (opponentKeys) {
 			case 5:
 				dadSingAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singUP', 'singRIGHT'];
 			case 6:
@@ -893,7 +896,11 @@ class PlayState extends MusicBeatState
 		startCharacterLua(boyfriend.curCharacter);
 
 		playerChar = boyfriend;
-		if (opponentChart) playerChar = dad;
+		opponentChar = dad;
+		if (opponentChart) {
+			playerChar = dad;
+			opponentChar = boyfriend;
+		}
 		
 		var camPos:FlxPoint = new FlxPoint(gf.getGraphicMidpoint().x, gf.getGraphicMidpoint().y);
 		camPos.x += gf.cameraPosition[0];
@@ -1662,6 +1669,7 @@ class PlayState extends MusicBeatState
 	}
 
 	var startTimer:FlxTimer;
+	var endingTimer:FlxTimer = null;
 	var finishTimer:FlxTimer = null;
 
 	// For being able to mess with the sprites on Lua
@@ -1988,8 +1996,8 @@ class PlayState extends MusicBeatState
 				else
 					oldNote = null;
 
-				var keys = bfKeys;
-				if (gottaHitNote == opponentChart) keys = dadKeys;
+				var keys = playerKeys;
+				if (!gottaHitNote) keys = opponentKeys;
 
 				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys);
 				swagNote.mustPress = gottaHitNote;
@@ -2023,9 +2031,7 @@ class PlayState extends MusicBeatState
 						else if(ClientPrefs.middleScroll)
 						{
 							sustainNote.x += 310;
-							var keys = dadKeys;
-							if (opponentChart) keys = bfKeys;
-							if(daNoteData >= Math.floor(keys / 2))
+							if(daNoteData >= Math.floor(opponentKeys / 2))
 							{ //Up and Right
 								sustainNote.x += FlxG.width / 2 + 25;
 							}
@@ -2040,9 +2046,7 @@ class PlayState extends MusicBeatState
 				else if(ClientPrefs.middleScroll)
 				{
 					swagNote.x += 310;
-					var keys = dadKeys;
-					if (opponentChart) keys = bfKeys;
-					if(daNoteData >= Math.floor(keys / 2)) //Up and Right
+					if(daNoteData >= Math.floor(opponentKeys / 2)) //Up and Right
 					{
 						swagNote.x += FlxG.width / 2 + 25;
 					}
@@ -2199,6 +2203,8 @@ class PlayState extends MusicBeatState
 
 			if (!startTimer.finished)
 				startTimer.active = false;
+			if (endingTimer != null && !endingTimer.finished)
+				endingTimer.active = false;
 			if (finishTimer != null && !finishTimer.finished)
 				finishTimer.active = false;
 			if (songSpeedTween != null)
@@ -2240,6 +2246,8 @@ class PlayState extends MusicBeatState
 
 			if (!startTimer.finished)
 				startTimer.active = true;
+			if (endingTimer != null && !endingTimer.finished)
+				endingTimer.active = true;
 			if (finishTimer != null && !finishTimer.finished)
 				finishTimer.active = true;
 			if (songSpeedTween != null)
@@ -2357,12 +2365,13 @@ class PlayState extends MusicBeatState
 		{
 			if (!startingSong && !endingSong)
 			{
-				if (FlxG.sound.music != null && FlxG.sound.music.time / playbackRate > (songLength - 100))
+				if (FlxG.sound.music != null && FlxG.sound.music.time / playbackRate >= (songLength - 100))
 				{
 					shouldEndSong = true;
-					new FlxTimer().start(0.1 / playbackRate, function(timer)
+					endingTimer = new FlxTimer().start(0.1 / playbackRate, function(timer)
 					{
 						finishSong();
+						endingTimer = null;
 					});
 				}
 			}
@@ -2806,7 +2815,7 @@ class PlayState extends MusicBeatState
 
 				if (doKill)
 				{
-					if (daNote.mustPress && !cpuControlled &&!daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit)) {
+					if (daNote.mustPress && !cpuControlled && !daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit)) {
 						noteMiss(daNote);
 					}
 
@@ -3232,6 +3241,7 @@ class PlayState extends MusicBeatState
 							boyfriend.alpha = lastAlpha;
 							iconP1.changeIcon(boyfriend.healthIcon);
 							if (!opponentChart) playerChar = boyfriend;
+							else opponentChar = boyfriend;
 						}
 						setOnLuas('boyfriendName', boyfriend.curCharacter);
 
@@ -3255,6 +3265,7 @@ class PlayState extends MusicBeatState
 							dad.alpha = lastAlpha;
 							iconP2.changeIcon(dad.healthIcon);
 							if (opponentChart) playerChar = dad;
+							else opponentChar = dad;
 						}
 						setOnLuas('dadName', dad.curCharacter);
 
@@ -3920,11 +3931,6 @@ class PlayState extends MusicBeatState
 	// Hold notes
 	private function keyShit():Void
 	{
-		var keys = bfKeys;
-		if (opponentChart) {
-			keys = dadKeys;
-		}
-
 		// HOLDING
 		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left'));
 		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down'));
@@ -4002,7 +4008,7 @@ class PlayState extends MusicBeatState
 		];
 
 		var controlHoldArray:Array<Bool> = fourHold;
-		switch (keys) {
+		switch (playerKeys) {
 			case 5:
 				controlHoldArray = fiveHold;
 			case 6:
@@ -4016,7 +4022,7 @@ class PlayState extends MusicBeatState
 		}
 		
 		// TO DO: Find a better way to handle controller inputs, this should work for now
-		if(ClientPrefs.controllerMode && keys == 4)
+		if(ClientPrefs.controllerMode && playerKeys == 4)
 		{
 			var controlArray:Array<Bool> = [controls.NOTE_LEFT_P, controls.NOTE_DOWN_P, controls.NOTE_UP_P, controls.NOTE_RIGHT_P];
 			if(controlArray.contains(true))
@@ -4055,7 +4061,7 @@ class PlayState extends MusicBeatState
 		}
 
 		// TO DO: Find a better way to handle controller inputs, this should work for now
-		if(ClientPrefs.controllerMode && keys == 4)
+		if(ClientPrefs.controllerMode && playerKeys == 4)
 		{
 			var controlArray:Array<Bool> = [controls.NOTE_LEFT_R, controls.NOTE_DOWN_R, controls.NOTE_UP_R, controls.NOTE_RIGHT_R];
 			if(controlArray.contains(true))
@@ -4163,10 +4169,7 @@ class PlayState extends MusicBeatState
 		if (Paths.formatToSongPath(SONG.song) != 'tutorial')
 			camZooming = true;
 
-		var char:Character = dad;
-		if (opponentChart) {
-			char = boyfriend;
-		}
+		var char:Character = opponentChar;
 		if (note.gfNote) {
 			char = gf;
 		}
@@ -4332,8 +4335,6 @@ class PlayState extends MusicBeatState
 	}
 
 	public function spawnNoteSplash(x:Float, y:Float, data:Int, ?note:Note = null) {
-		var keys:Int = bfKeys;
-		if (opponentChart) keys = dadKeys;
 		var skin:String = 'noteSplashes';
 		if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) skin = PlayState.SONG.splashSkin;
 		
@@ -4348,7 +4349,7 @@ class PlayState extends MusicBeatState
 		}
 
 		var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
-		splash.setupNoteSplash(x, y, note, skin, hue, sat, brt, keys);
+		splash.setupNoteSplash(x, y, note, skin, hue, sat, brt, playerKeys);
 		grpNoteSplashes.add(splash);
 	}
 

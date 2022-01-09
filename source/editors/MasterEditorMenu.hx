@@ -79,7 +79,6 @@ class MasterEditorMenu extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		FlxG.mouse.visible = true;//cause reasons. trust me 
 		if (FlxG.mouse.wheel != 0) {
 			#if MODS_ALLOWED
 			if (FlxG.keys.pressed.SHIFT) {

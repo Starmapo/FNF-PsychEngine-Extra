@@ -1,7 +1,10 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxState;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import openfl.utils.Assets;
+import Type.ValueType;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -84,7 +87,7 @@ class CoolUtil
 				  if(countByColor.exists(colorOfThisPixel)){
 				    countByColor[colorOfThisPixel] =  countByColor[colorOfThisPixel] + 1;
 				  }else if(countByColor[colorOfThisPixel] != 13520687 - (2*13520687)){
-					 countByColor[colorOfThisPixel] = 1;
+					countByColor[colorOfThisPixel] = 1;
 				  }
 			  }
 			}
@@ -92,7 +95,7 @@ class CoolUtil
 		var maxCount = 0;
 		var maxKey:Int = 0;//after the loop this will store the max color
 		countByColor[flixel.util.FlxColor.BLACK] = 0;
-			for(key in countByColor.keys()){
+		for(key in countByColor.keys()){
 			if(countByColor[key] >= maxCount){
 				maxCount = countByColor[key];
 				maxKey = key;
@@ -177,5 +180,131 @@ class CoolUtil
 		if (!difficultiesMap.exists(mapKey)) {
 			difficultiesMap.set(mapKey, difficulties);
 		}
+	}
+
+	public static function getProperty(variable:String):Dynamic {
+		var killMe:Array<String> = variable.split('.');
+		if(killMe.length > 1) {
+			var coverMeInPiss:Dynamic = null;
+			if(PlayState.instance.modchartSprites.exists(killMe[0])) {
+				coverMeInPiss = PlayState.instance.modchartSprites.get(killMe[0]);
+			} else if(PlayState.instance.modchartTexts.exists(killMe[0])) {
+				coverMeInPiss = PlayState.instance.modchartTexts.get(killMe[0]);
+			} else {
+				coverMeInPiss = Reflect.getProperty(getInstance(), killMe[0]);
+			}
+
+			for (i in 1...killMe.length-1) {
+				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
+			}
+			return Reflect.getProperty(coverMeInPiss, killMe[killMe.length-1]);
+		}
+		return Reflect.getProperty(getInstance(), variable);
+	}
+
+	public static function setProperty(variable:String, value:Dynamic) {
+		var killMe:Array<String> = variable.split('.');
+		if(killMe.length > 1) {
+			var coverMeInPiss:Dynamic = null;
+			if(PlayState.instance.modchartSprites.exists(killMe[0])) {
+				coverMeInPiss = PlayState.instance.modchartSprites.get(killMe[0]);
+			} else if(PlayState.instance.modchartTexts.exists(killMe[0])) {
+				coverMeInPiss = PlayState.instance.modchartTexts.get(killMe[0]);
+			} else {
+				coverMeInPiss = Reflect.getProperty(getInstance(), killMe[0]);
+			}
+
+			for (i in 1...killMe.length-1) {
+				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
+			}
+			return Reflect.setProperty(coverMeInPiss, killMe[killMe.length-1], value);
+		}
+		return Reflect.setProperty(getInstance(), variable, value);
+	}
+
+	public static function getPropertyFromGroup(obj:String, index:Int, variable:Dynamic):Dynamic {
+		if(Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedGroup)) {
+			return getGroupStuff(Reflect.getProperty(getInstance(), obj).members[index], variable);
+		}
+
+		var leArray:Dynamic = Reflect.getProperty(getInstance(), obj)[index];
+		if(leArray != null) {
+			if(Type.typeof(variable) == ValueType.TInt) {
+				return leArray[variable];
+			}
+			return getGroupStuff(leArray, variable);
+		}
+		trace("Object #" + index + " from group: " + obj + " doesn't exist!");
+		return null;
+	}
+
+	public static function setPropertyFromGroup(obj:String, index:Int, variable:Dynamic, value:Dynamic) {
+		if(Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedGroup)) {
+			setGroupStuff(Reflect.getProperty(getInstance(), obj).members[index], variable, value);
+			return;
+		}
+
+		var leArray:Dynamic = Reflect.getProperty(getInstance(), obj)[index];
+		if(leArray != null) {
+			if(Type.typeof(variable) == ValueType.TInt) {
+				leArray[variable] = value;
+				return;
+			}
+			setGroupStuff(leArray, variable, value);
+		}
+	}
+
+	public static function getPropertyFromClass(classVar:String, variable:String):Dynamic {
+		var killMe:Array<String> = variable.split('.');
+		if(killMe.length > 1) {
+			var coverMeInPiss:Dynamic = Reflect.getProperty(Type.resolveClass(classVar), killMe[0]);
+			for (i in 1...killMe.length-1) {
+				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
+			}
+			return Reflect.getProperty(coverMeInPiss, killMe[killMe.length-1]);
+		}
+		return Reflect.getProperty(Type.resolveClass(classVar), variable);
+	}
+
+	public static function setPropertyFromClass(classVar:String, variable:String, value:Dynamic) {
+		var killMe:Array<String> = variable.split('.');
+		if(killMe.length > 1) {
+			var coverMeInPiss:Dynamic = Reflect.getProperty(Type.resolveClass(classVar), killMe[0]);
+			for (i in 1...killMe.length-1) {
+				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
+			}
+			return Reflect.setProperty(coverMeInPiss, killMe[killMe.length-1], value);
+		}
+		return Reflect.setProperty(Type.resolveClass(classVar), variable, value);
+	}
+
+	public static inline function getInstance():FlxState
+	{
+		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
+	}
+
+	public static function getGroupStuff(leArray:Dynamic, variable:String):Dynamic {
+		var killMe:Array<String> = variable.split('.');
+		if(killMe.length > 1) {
+			var coverMeInPiss:Dynamic = Reflect.getProperty(leArray, killMe[0]);
+			for (i in 1...killMe.length-1) {
+				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
+			}
+			return Reflect.getProperty(coverMeInPiss, killMe[killMe.length-1]);
+		}
+		return Reflect.getProperty(leArray, variable);
+	}
+
+	public static function setGroupStuff(leArray:Dynamic, variable:String, value:Dynamic) {
+		var killMe:Array<String> = variable.split('.');
+		if(killMe.length > 1) {
+			var coverMeInPiss:Dynamic = Reflect.getProperty(leArray, killMe[0]);
+			for (i in 1...killMe.length-1) {
+				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
+			}
+			Reflect.setProperty(coverMeInPiss, killMe[killMe.length-1], value);
+			return;
+		}
+		Reflect.setProperty(leArray, variable, value);
 	}
 }
