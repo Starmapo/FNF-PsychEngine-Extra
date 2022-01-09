@@ -1875,6 +1875,7 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.play();
 		//FlxG.sound.music.onComplete = finishSong;
 		vocals.play();
+		vocals.volume = ClientPrefs.voicesVolume;
 
 		#if cpp
 		@:privateAccess
@@ -1936,7 +1937,7 @@ class PlayState extends MusicBeatState
 
 		FlxG.sound.list.add(vocals);
 
-		FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+		FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), ClientPrefs.instVolume, false);
 		FlxG.sound.music.pause();
 		FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song)));
 
@@ -3616,7 +3617,7 @@ class PlayState extends MusicBeatState
 		//trace(noteDiff, ' ' + Math.abs(note.strumTime - Conductor.songPosition));
 
 		// playerChar.playAnim('hey');
-		vocals.volume = 1;
+		vocals.volume = ClientPrefs.voicesVolume;
 
 		var placement:String = Std.string(combo);
 
@@ -4197,7 +4198,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if (SONG.needsVoices)
-			vocals.volume = 1;
+			vocals.volume = ClientPrefs.voicesVolume;
 
 		var time:Float = 0.15;
 		if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
@@ -4308,7 +4309,7 @@ class PlayState extends MusicBeatState
 				});
 			}
 			note.wasGoodHit = true;
-			vocals.volume = 1;
+			vocals.volume = ClientPrefs.voicesVolume;
 
 			var isSus:Bool = note.isSustainNote; //GET OUT OF MY HEAD, GET OUT OF MY HEAD, GET OUT OF MY HEAD
 			var leData:Int = note.noteData;

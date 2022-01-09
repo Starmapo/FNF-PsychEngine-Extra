@@ -59,6 +59,8 @@ class ClientPrefs {
 	public static var safeFrames:Float = 10;
 
 	public static var freeplayAlphabetic:Bool = false;
+	public static var instVolume:Float = 1;
+	public static var voicesVolume:Float = 1;
 
 	//Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx and Controls.hx
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
@@ -151,6 +153,8 @@ class ClientPrefs {
 		FlxG.save.data.screenRes = screenRes;
 
 		FlxG.save.data.freeplayAlphabetic = freeplayAlphabetic;
+		FlxG.save.data.instVolume = instVolume;
+		FlxG.save.data.voicesVolume = voicesVolume;
 	
 		FlxG.save.flush();
 
@@ -265,6 +269,12 @@ class ClientPrefs {
 
 		if(FlxG.save.data.freeplayAlphabetic != null) {
 			freeplayAlphabetic = FlxG.save.data.freeplayAlphabetic;
+		}
+		if(FlxG.save.data.instVolume != null) {
+			instVolume = FlxG.save.data.instVolume;
+		}
+		if(FlxG.save.data.voicesVolume != null) {
+			voicesVolume = FlxG.save.data.voicesVolume;
 		}
 		
 		// flixel automatically saves your volume!

@@ -367,8 +367,8 @@ class EditorPlayState extends MusicBeatState
 		startingSong = false;
 		FlxG.sound.music.time = startPos;
 		FlxG.sound.music.play();
-		FlxG.sound.music.volume = 1;
-		vocals.volume = 1;
+		FlxG.sound.music.volume = ClientPrefs.instVolume;
+		vocals.volume = ClientPrefs.voicesVolume;
 		vocals.time = startPos;
 		vocals.play();
 	}
@@ -502,7 +502,7 @@ class EditorPlayState extends MusicBeatState
 				if (!daNote.mustPress && daNote.wasGoodHit && !daNote.hitByOpponent && !daNote.ignoreNote)
 				{
 					if (PlayState.SONG.needsVoices)
-						vocals.volume = 1;
+						vocals.volume = ClientPrefs.voicesVolume;
 
 					var time:Float = 0.15;
 					if(daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end')) {
@@ -896,7 +896,7 @@ class EditorPlayState extends MusicBeatState
 			});
 
 			note.wasGoodHit = true;
-			vocals.volume = 1;
+			vocals.volume = ClientPrefs.voicesVolume;
 
 			if (!note.isSustainNote)
 			{
@@ -924,7 +924,7 @@ class EditorPlayState extends MusicBeatState
 	{
 		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 
-		vocals.volume = 1;
+		vocals.volume = ClientPrefs.voicesVolume;
 
 		var placement:String = Std.string(combo);
 
