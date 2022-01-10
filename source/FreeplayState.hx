@@ -333,6 +333,16 @@ class FreeplayState extends MusicBeatState
 				Conductor.changeBPM(PlayState.SONG.bpm, ClientPrefs.getGameplaySetting('songspeed', 1));
 				instPlaying = curSelected;
 				speedPlaying = ClientPrefs.getGameplaySetting('songspeed', 1);
+				#if cpp
+				@:privateAccess
+				{
+					if (ClientPrefs.getGameplaySetting('songspeed', 1) != 1) {
+						lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+						if (vocals.playing)
+							lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+					}
+				}
+				#end
 				#end
 			}
 		}

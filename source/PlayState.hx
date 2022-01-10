@@ -408,6 +408,8 @@ class PlayState extends MusicBeatState
 				dadSingAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT', 'singUP', 'singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
 		}
 
+		Conductor.numerator = SONG.numerator;
+		Conductor.denominator = SONG.denominator;
 		Conductor.mapBPMChanges(SONG, playbackRate);
 		Conductor.changeBPM(SONG.bpm, playbackRate);
 
@@ -1925,8 +1927,6 @@ class PlayState extends MusicBeatState
 		
 		var songData = SONG;
 		Conductor.changeBPM(songData.bpm, playbackRate);
-		Conductor.numerator = songData.numerator;
-		Conductor.denominator = songData.denominator;
 		
 		curSong = songData.song;
 

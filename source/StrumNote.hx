@@ -19,7 +19,7 @@ class StrumNote extends FlxSprite
 	var directions:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
 	var colors:Array<String> = ['left', 'down', 'up', 'right'];
 	public var swagWidth:Float = 160 * 0.7;
-	var xOff:Float = 50;
+	var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
 	
 	public var texture(default, set):String = null;
@@ -44,30 +44,30 @@ class StrumNote extends FlxSprite
 			case 5:
 				directions = ['LEFT', 'DOWN', 'CENTER', 'UP', 'RIGHT'];
 				colors = ['left', 'down', 'center', 'up', 'right'];
-				xOff = 1;
+				xOff = -2;
 			case 6:
 				directions = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
 				colors = ['left', 'up', 'right', 'left2', 'down', 'right2'];
 				swagWidth = 160 * 0.6;
-				xOff = -8;
+				xOff = -10;
 				noteSize = 0.6;
 			case 7:
 				directions = ['LEFT', 'UP', 'RIGHT', 'CENTER', 'LEFT', 'DOWN', 'RIGHT'];
 				colors = ['left', 'up', 'right', 'center', 'left2', 'down', 'right2'];
-				swagWidth = 160 * 0.55;
-				xOff = -28;
-				noteSize = 0.55;
+				swagWidth = 160 * 0.5;
+				xOff = -2;
+				noteSize = 0.5;
 			case 8:
 				directions = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
 				colors = ['left', 'down', 'up', 'right', 'left2', 'down2', 'up2', 'right2'];
-				swagWidth = 160 * 0.5;
-				xOff = -9;
-				noteSize = 0.5;
+				swagWidth = 160 * 0.45;
+				xOff = -10;
+				noteSize = 0.45;
 			case 9:
 				directions = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'CENTER', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
 				colors = ['left', 'down', 'up', 'right', 'center', 'left2', 'down2', 'up2', 'right2'];
 				swagWidth = 160 * 0.4;
-				xOff = -9;
+				xOff = -10;
 				noteSize = 0.4;
 		}
 
