@@ -10,7 +10,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		rpcTitle = 'Gameplay Settings Menu'; //for Discord Rich Presence
 		
 		var option:Option = new Option('Controller Mode',
-			'Check this if you want to play with\na controller instead of using your Keyboard.',
+			'Check this if you want to play with\na controller instead of using your Keyboard.\n(DOES NOT WORK WITH HIGHER THAN 4 KEYS)',
 			'controllerMode',
 			'bool',
 			false);

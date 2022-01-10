@@ -80,6 +80,21 @@ class EditorPlayState extends MusicBeatState
 		bfKeys = PlayState.SONG.keyAmount;
 		dadKeys = PlayState.SONG.keyAmount;
 		switch (bfKeys) {
+			case 1:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note1'))
+				];
+			case 2:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'))
+				];
+			case 3:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_center')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'))
+				];
 			case 5:
 				keysArray = [
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left')),
@@ -420,7 +435,7 @@ class EditorPlayState extends MusicBeatState
 		
 		if (generatedMusic)
 		{
-			var fakeCrochet:Float = (60 / PlayState.SONG.bpm) * 1000;
+			var fakeCrochet:Float = (60 / Conductor.bpm) * 1000;
 			notes.forEachAlive(function(daNote:Note)
 			{
 				/*if (daNote.y > FlxG.height)
@@ -467,7 +482,7 @@ class EditorPlayState extends MusicBeatState
 								}
 							} 
 							daNote.y += (daNote.swagWidth / 2) - (60.5 * (roundedSpeed - 1));
-							daNote.y += 27.5 * ((PlayState.SONG.bpm / 100) - 1) * (roundedSpeed - 1);
+							daNote.y += 27.5 * ((Conductor.bpm / 100) - 1) * (roundedSpeed - 1);
 
 							if(daNote.mustPress || !daNote.ignoreNote)
 							{
@@ -722,6 +737,24 @@ class EditorPlayState extends MusicBeatState
 	private function keyShit():Void
 	{
 		// HOLDING
+		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note1'));
+		var oneHold = [
+			FlxG.keys.anyPressed(a1)
+		];
+
+		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left'));
+		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_center'));
+		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'));
+		var twoHold = [
+			FlxG.keys.anyPressed(a1),
+			FlxG.keys.anyPressed(a3)
+		];
+		var threeHold = [
+			FlxG.keys.anyPressed(a1),
+			FlxG.keys.anyPressed(a2),
+			FlxG.keys.anyPressed(a3)
+		];
+
 		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left'));
 		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down'));
 		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_center'));
@@ -799,6 +832,12 @@ class EditorPlayState extends MusicBeatState
 
 		var controlHoldArray:Array<Bool> = fourHold;
 		switch (bfKeys) {
+			case 1:
+				controlHoldArray = oneHold;
+			case 2:
+				controlHoldArray = twoHold;
+			case 3:
+				controlHoldArray = threeHold;
 			case 5:
 				controlHoldArray = fiveHold;
 			case 6:

@@ -10,13 +10,21 @@ import Controls;
 using StringTools;
 
 class ControlsSubState extends MusicBeatSubstate {
-	private static var curSelected:Int = -1;
+	private static var curSelected:Int = 9;
 	private static var curAlt:Bool = false;
 
 	private static var defaultKey:String = 'Reset to Default Keys';
 	private var bindLength:Int = 0;
 
 	var optionShit:Array<Dynamic> = [
+		['NOTES (1K)'],
+		['Center', 'note1'],
+		[''],
+		['NOTES (2K-3K)'],
+		['Left', 'note3_left'],
+		['Center', 'note3_center'],
+		['Right', 'note3_right'],
+		[''],
 		['NOTES (4K-5K)'],
 		['Left', 'note_left'],
 		['Down', 'note_down'],

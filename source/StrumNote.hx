@@ -41,6 +41,18 @@ class StrumNote extends FlxSprite
 		super(x, y);
 
 		switch (keyAmount) {
+			case 1:
+				directions = ['CENTER'];
+				colors = ['center'];
+				xOff = 222;
+			case 2:
+				directions = ['LEFT', 'RIGHT'];
+				colors = ['left', 'right'];
+				xOff = 166;
+			case 3:
+				directions = ['LEFT', 'CENTER', 'RIGHT'];
+				colors = ['left', 'center', 'right'];
+				xOff = 110;
 			case 5:
 				directions = ['LEFT', 'DOWN', 'CENTER', 'UP', 'RIGHT'];
 				colors = ['left', 'down', 'center', 'up', 'right'];

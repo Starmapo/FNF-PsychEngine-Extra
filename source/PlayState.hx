@@ -336,6 +336,24 @@ class PlayState extends MusicBeatState
 			playerKeys = dadKeys;
 		}
 		switch (playerKeys) {
+			case 1:
+				singAnimations = ['singUP'];
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note1'))
+				];
+			case 2:
+				singAnimations = ['singLEFT', 'singRIGHT'];
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'))
+				];
+			case 3:
+				singAnimations = ['singLEFT', 'singUP', 'singRIGHT'];
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_center')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'))
+				];
 			case 5:
 				singAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singUP', 'singRIGHT'];
 				keysArray = [
@@ -397,6 +415,12 @@ class PlayState extends MusicBeatState
 			opponentKeys = bfKeys;
 		}
 		switch (opponentKeys) {
+			case 1:
+				dadSingAnimations = ['singUP'];
+			case 2:
+				dadSingAnimations = ['singLEFT', 'singRIGHT'];
+			case 3:
+				dadSingAnimations = ['singLEFT', 'singUP', 'singRIGHT'];
 			case 5:
 				dadSingAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singUP', 'singRIGHT'];
 			case 6:
@@ -3936,6 +3960,24 @@ class PlayState extends MusicBeatState
 	private function keyShit():Void
 	{
 		// HOLDING
+		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note1'));
+		var oneHold = [
+			FlxG.keys.anyPressed(a1)
+		];
+
+		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left'));
+		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_center'));
+		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'));
+		var twoHold = [
+			FlxG.keys.anyPressed(a1),
+			FlxG.keys.anyPressed(a3)
+		];
+		var threeHold = [
+			FlxG.keys.anyPressed(a1),
+			FlxG.keys.anyPressed(a2),
+			FlxG.keys.anyPressed(a3)
+		];
+
 		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left'));
 		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down'));
 		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_center'));
@@ -4013,6 +4055,12 @@ class PlayState extends MusicBeatState
 
 		var controlHoldArray:Array<Bool> = fourHold;
 		switch (playerKeys) {
+			case 1:
+				controlHoldArray = oneHold;
+			case 2:
+				controlHoldArray = twoHold;
+			case 3:
+				controlHoldArray = threeHold;
 			case 5:
 				controlHoldArray = fiveHold;
 			case 6:

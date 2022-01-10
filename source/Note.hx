@@ -133,6 +133,15 @@ class Note extends FlxSprite
 		this.keyAmount = keyAmount;
 
 		switch (keyAmount) {
+			case 1:
+				colors = ['center'];
+				xOff = 222;
+			case 2:
+				colors = ['left', 'right'];
+				xOff = 166;
+			case 3:
+				colors = ['left', 'center', 'right'];
+				xOff = 110;
 			case 5:
 				colors = ['left', 'down', 'center', 'up', 'right'];
 				xOff = -2;

@@ -273,7 +273,7 @@ class ChartingState extends MusicBeatState
 		loadAudioBuffer();
 		reloadGridLayer();
 		loadSong();
-		Conductor.changeBPM(_song.bpm);
+		getLastBPM();
 		Conductor.mapBPMChanges(_song);
 
 		bpmTxt = new FlxText(1000, 50, 0, "", 16);
@@ -450,7 +450,7 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.name = 'song_speed';
 		blockPressWhileTypingOnStepper.push(stepperSpeed);
 
-		var stepperKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBPM.x + 80, stepperBPM.y, 1, 4, 4, 9);
+		var stepperKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBPM.x + 80, stepperBPM.y, 1, 4, 1, 9);
 		stepperKeys.value = _song.keyAmount;
 		stepperKeys.name = 'song_keys';
 		blockPressWhileTypingOnStepper.push(stepperKeys);
@@ -590,6 +590,7 @@ class ChartingState extends MusicBeatState
 		{
 			_song.denominator = Std.parseInt(denominators[Std.parseInt(denominator)]);
 			Conductor.denominator = _song.denominator;
+			getLastBPM();
 			reloadGridLayer();
 		});
 		denominatorDropDown.selectedLabel = '' + _song.denominator;
@@ -1352,7 +1353,7 @@ class ChartingState extends MusicBeatState
 			{
 				tempBpm = nums.value;
 				Conductor.mapBPMChanges(_song);
-				Conductor.changeBPM(nums.value);
+				getLastBPM();
 				stepperSusLength.max = Conductor.stepCrochet * (Conductor.numerator * 8);
 			}
 			else if (wname == 'note_susLength')
@@ -1430,7 +1431,7 @@ class ChartingState extends MusicBeatState
 				{
 					daBPM = _song.notes[i].bpm;
 				}
-				daPos += (((60 / daBPM) * 1000) / (16 / _song.denominator)) * _song.notes[i].lengthInSteps;
+				daPos += ((((60 / daBPM) * 1000) / (_song.denominator / 4)) / 4) * _song.notes[i].lengthInSteps;
 			}
 		}
 		return daPos;
@@ -2283,20 +2284,7 @@ class ChartingState extends MusicBeatState
 		nextRenderedNotes.clear();
 		nextRenderedSustains.clear();
 
-		if (_song.notes[curSection].changeBPM && _song.notes[curSection].bpm > 0)
-		{
-			Conductor.changeBPM(_song.notes[curSection].bpm);
-			//trace('BPM of this section:');
-		}
-		else
-		{
-			// get last bpm
-			var daBPM:Float = _song.bpm;
-			for (i in 0...curSection)
-				if (_song.notes[i].changeBPM)
-					daBPM = _song.notes[i].bpm;
-			Conductor.changeBPM(daBPM);
-		}
+		getLastBPM();
 
 		/* // PORT BULLSHIT, INCASE THERE'S NO SUSTAIN DATA FOR A NOTE
 			for (sec in 0..._song.notes.length)
@@ -2685,6 +2673,23 @@ class ChartingState extends MusicBeatState
 			note.playAnim('static', true);
 			strumLineNotes.add(note);
 			note.scrollFactor.set(1, 1);
+		}
+	}
+
+	function getLastBPM():Void {
+		if (_song.notes[curSection].changeBPM && _song.notes[curSection].bpm > 0)
+		{
+			Conductor.changeBPM(_song.notes[curSection].bpm);
+			//trace('BPM of this section:');
+		}
+		else
+		{
+			// get last bpm
+			var daBPM:Float = tempBpm;
+			for (i in 0...curSection)
+				if (_song.notes[i].changeBPM)
+					daBPM = _song.notes[i].bpm;
+			Conductor.changeBPM(daBPM);
 		}
 	}
 
