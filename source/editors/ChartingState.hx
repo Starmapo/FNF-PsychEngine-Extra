@@ -1481,8 +1481,7 @@ class ChartingState extends MusicBeatState
 		FlxG.watch.addQuick('daBeat', curBeat);
 		FlxG.watch.addQuick('daStep', curStep);
 
-		
-		if (FlxG.mouse.justPressed)
+		if (!FlxG.mouse.overlaps(UI_box) && FlxG.mouse.justPressed)
 		{
 			if (FlxG.mouse.overlaps(curRenderedNotes))
 			{
@@ -2007,7 +2006,9 @@ class ChartingState extends MusicBeatState
 		}
 
 		rightIcon.setPosition(GRID_SIZE * _song.keyAmount, -100);
-		if (strumLine != null) strumLine.setGraphicSize(GRID_SIZE * (_song.keyAmount * 2 + 1), 4);
+		if (strumLine != null) {
+			strumLine = new FlxSprite(0, 50).makeGraphic(GRID_SIZE * (_song.keyAmount * 2 + 1), 4);
+		}
 	}
 
 	var waveformPrinted:Bool = true;
