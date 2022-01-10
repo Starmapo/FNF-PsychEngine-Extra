@@ -8,8 +8,9 @@ class NoteSplash extends FlxSprite
 	public var colorSwap:ColorSwap = null;
 	private var idleAnim:String;
 	private var textureLoaded:String = null;
+	var daNote:Note = null;
 
-	public function new(x:Float = 0, y:Float = 0, ?note:Int = 0) {
+	public function new(x:Float = 0, y:Float = 0, ?note:Note = null) {
 		super(x, y);
 
 		var skin:String = 'noteSplashes';
@@ -25,10 +26,11 @@ class NoteSplash extends FlxSprite
 	}
 
 	public function setupNoteSplash(x:Float, y:Float, note:Note = null, texture:String = null, hueColor:Float = 0, satColor:Float = 0, brtColor:Float = 0, keyAmount:Int = 4) {
+		daNote = note;
 		if (note != null) {
-			scale.set(1 / (0.7 / note.noteSize), 1 / (0.7 / note.noteSize));
-			setPosition(x - note.swagWidth * 0.95, y - note.swagWidth);
+			setGraphicSize(Std.int(note.width * 2.68), Std.int(note.height * 2.77));
 		}
+		updateHitbox();
 		alpha = 0.6;
 
 		if(texture == null) {
@@ -42,13 +44,21 @@ class NoteSplash extends FlxSprite
 		colorSwap.hue = hueColor;
 		colorSwap.saturation = satColor;
 		colorSwap.brightness = brtColor;
-		offset.set(10, 10);
 
 		var animNum:Int = FlxG.random.int(1, 2);
 		if (note != null) {
 			animation.play('note' + note.noteData + '-' + animNum, true);
+		} else {
+			animation.play('note1' + '-' + animNum, true);
 		}
 		if (animation.curAnim != null) animation.curAnim.frameRate = 24 + FlxG.random.int(-2, 2);
+		updateHitbox();
+        centerOrigin();
+		if (note != null) {
+			setPosition(note.x - (note.width), note.y - (note.height));
+			alpha = note.alpha;
+			angle = note.angle;
+		}
 	}
 
 	function loadAnims(skin:String) {
@@ -63,6 +73,12 @@ class NoteSplash extends FlxSprite
 
 	override function update(elapsed:Float) {
 		if(animation.curAnim != null)if(animation.curAnim.finished) kill();
+
+		if (daNote != null) {
+			setPosition(daNote.x - (daNote.width), daNote.y - (daNote.height));
+			alpha = daNote.alpha;
+			angle = daNote.angle;
+		}
 
 		super.update(elapsed);
 	}

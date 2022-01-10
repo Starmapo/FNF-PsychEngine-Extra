@@ -2007,7 +2007,9 @@ class ChartingState extends MusicBeatState
 
 		rightIcon.setPosition(GRID_SIZE * _song.keyAmount, -100);
 		if (strumLine != null) {
+			remove(strumLine);
 			strumLine = new FlxSprite(0, 50).makeGraphic(GRID_SIZE * (_song.keyAmount * 2 + 1), 4);
+			insert(members.indexOf(quant) - 1, strumLine);
 		}
 	}
 
