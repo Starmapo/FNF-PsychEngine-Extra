@@ -31,7 +31,7 @@ To install LuaJIT do this: `haxelib install linc_luajit` on a Command prompt/Pow
 _____________________________________
 
 # New Features
-* Different key amounts (4 - 9)
+* Different key amounts (1 - 9)
 * Different time signatures (3/4, 4/8, etc.)
 * Play opponent's chart
 * Song playback speed
