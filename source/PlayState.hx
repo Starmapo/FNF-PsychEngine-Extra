@@ -1734,9 +1734,11 @@ class PlayState extends MusicBeatState
 				//if(ClientPrefs.middleScroll) opponentStrums.members[i].visible = false;
 			}
 
+			var modifiedCrochet:Float = (Conductor.crochet * (Conductor.denominator / 4)); //slows or speeds up to mimic normal quarter notes
+
 			startedCountdown = true;
 			Conductor.songPosition = 0;
-			Conductor.songPosition -= Conductor.crochet * 5;
+			Conductor.songPosition -= modifiedCrochet * 5;
 			setOnLuas('startedCountdown', true);
 			callOnLuas('onCountdownStarted', []);
 
@@ -1744,10 +1746,10 @@ class PlayState extends MusicBeatState
 
 			if (skipCountdown){
 				Conductor.songPosition = 0;
-				Conductor.songPosition -= Conductor.crochet;
+				Conductor.songPosition -= modifiedCrochet;
 				swagCounter = 3;
 			}
-			startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
+			startTimer = new FlxTimer().start(modifiedCrochet / 1000, function(tmr:FlxTimer)
 			{
 				for (gf in gfGroup) {
 					if (tmr.loopsLeft % gfSpeed == 0 && !gf.stunned && gf.animation.curAnim.name != null && !gf.animation.curAnim.name.startsWith("sing")) {
@@ -1810,7 +1812,7 @@ class PlayState extends MusicBeatState
 						countdownReady.screenCenter();
 						countdownReady.antialiasing = antialias;
 						add(countdownReady);
-						FlxTween.tween(countdownReady, {/*y: countdownReady.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
+						FlxTween.tween(countdownReady, {/*y: countdownReady.y + 100,*/ alpha: 0}, modifiedCrochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
 							{
@@ -1829,7 +1831,7 @@ class PlayState extends MusicBeatState
 						countdownSet.screenCenter();
 						countdownSet.antialiasing = antialias;
 						add(countdownSet);
-						FlxTween.tween(countdownSet, {/*y: countdownSet.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
+						FlxTween.tween(countdownSet, {/*y: countdownSet.y + 100,*/ alpha: 0}, modifiedCrochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
 							{
@@ -1851,7 +1853,7 @@ class PlayState extends MusicBeatState
 							countdownGo.screenCenter();
 							countdownGo.antialiasing = antialias;
 							add(countdownGo);
-							FlxTween.tween(countdownGo, {/*y: countdownGo.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
+							FlxTween.tween(countdownGo, {/*y: countdownGo.y + 100,*/ alpha: 0}, modifiedCrochet / 1000, {
 								ease: FlxEase.cubeInOut,
 								onComplete: function(twn:FlxTween)
 								{

@@ -87,8 +87,8 @@ class FunkinLua {
 		set('scrollSpeed', PlayState.SONG.speed);
 		set('crochet', Conductor.crochet);
 		set('stepCrochet', Conductor.stepCrochet);
-		set('beatNumber', Conductor.numerator);
-		set('beatDuration', Conductor.denominator);
+		set('barLength', Conductor.numerator);
+		set('noteValue', Conductor.denominator);
 		set('keyAmount', PlayState.SONG.keyAmount);
 		set('playerKeyAmount', PlayState.instance.playerKeys);
 		set('opponentKeyAmount', PlayState.instance.opponentKeys);

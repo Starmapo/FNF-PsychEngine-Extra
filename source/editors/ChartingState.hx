@@ -577,6 +577,8 @@ class ChartingState extends MusicBeatState
 		{
 			_song.numerator = Std.parseInt(numerators[Std.parseInt(numerator)]);
 			Conductor.numerator = _song.numerator;
+			getLastBPM();
+			stepperSusLength.max = Conductor.stepCrochet * (Conductor.numerator * 8);
 			for (i in _song.notes) {
 				i.lengthInSteps = _song.numerator * 4;
 			}
@@ -591,6 +593,7 @@ class ChartingState extends MusicBeatState
 			_song.denominator = Std.parseInt(denominators[Std.parseInt(denominator)]);
 			Conductor.denominator = _song.denominator;
 			getLastBPM();
+			stepperSusLength.max = Conductor.stepCrochet * (Conductor.numerator * 8);
 			reloadGridLayer();
 		});
 		denominatorDropDown.selectedLabel = '' + _song.denominator;
