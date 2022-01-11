@@ -4235,6 +4235,7 @@ class PlayState extends MusicBeatState
 		} else if(!note.noAnimation) {
 			var altAnim:String = "";
 
+			var curSection:Int = getCurSection();
 			if (SONG.notes[curSection] != null)
 			{
 				if (SONG.notes[curSection].altAnim || note.noteType == 'Alt Animation') {
@@ -4613,8 +4614,6 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
-		curSection = Math.floor(curStep / (Conductor.numerator * 4));
-
 		lastStepHit = curStep;
 		setOnLuas('curStep', curStep);
 		callOnLuas('onStepHit', []);
@@ -4641,6 +4640,7 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
+		var curSection:Int = getCurSection();
 		if (SONG.notes[curSection] != null)
 		{
 			if (SONG.notes[curSection].changeBPM)
@@ -4648,6 +4648,15 @@ class PlayState extends MusicBeatState
 				Conductor.changeBPM(SONG.notes[curSection].bpm, playbackRate);
 				//FlxG.log.add('CHANGED BPM!');
 				setOnLuas('curBpm', Conductor.bpm);
+				setOnLuas('crochet', Conductor.crochet);
+				setOnLuas('stepCrochet', Conductor.stepCrochet);
+			}
+			if (SONG.notes[curSection].changeSignature)
+			{
+				Conductor.changeSignature(SONG.notes[Math.floor(curSection)].numerator, SONG.notes[Math.floor(curSection)].denominator);
+				//FlxG.log.add('CHANGED BPM!');
+				setOnLuas('barLength', Conductor.numerator);
+				setOnLuas('noteValue', Conductor.denominator);
 				setOnLuas('crochet', Conductor.crochet);
 				setOnLuas('stepCrochet', Conductor.stepCrochet);
 			}
@@ -4750,6 +4759,25 @@ class PlayState extends MusicBeatState
 
 		setOnLuas('curBeat', curBeat);//DAWGG?????
 		callOnLuas('onBeatHit', []);
+	}
+
+	function getCurSection():Int {
+		var daNumerator:Int = SONG.numerator;
+		var daPos:Int = 0;
+		var daStep:Int = 0;
+		for (i in 0...SONG.notes.length) {
+			if (SONG.notes[i] != null) {
+				if (SONG.notes[i].changeSignature) {
+					daNumerator = SONG.notes[i].numerator;
+				}
+			}
+			if (daStep + (daNumerator * 4) >= curStep) {
+				return daPos + Math.floor((curStep - daStep) / (daNumerator * 4));
+			}
+			daStep += daNumerator * 4;
+			daPos++;
+		}
+		return daPos;
 	}
 
 	public var closeLuas:Array<FunkinLua> = [];
