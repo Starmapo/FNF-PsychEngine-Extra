@@ -30,8 +30,10 @@ class MusicBeatState extends FlxUIState
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
 		super.create();
 		musInstance = this;
+		#if desktop
 		modeRatio = new RatioScaleMode();
 		modeStage = new StageSizeScaleMode();
+		#end
 
 		//	thx Cary for the res code < 333
 		// fixAspectRatio();
@@ -80,7 +82,7 @@ class MusicBeatState extends FlxUIState
 		   // regardless this is a janky and bad way to do this, like, please don't ever do this
 		   // the visual effect this causes is going to make every person ever think this is a glitch
 
-		   if (FlxG.keys.pressed.ALT && FlxG.keys.justPressed.ENTER && FlxG.fullscreen && ClientPrefs.screenScaleMode == "ADAPTIVE") {
+		if (FlxG.keys.pressed.ALT && FlxG.keys.justPressed.ENTER && FlxG.fullscreen && ClientPrefs.screenScaleMode == "ADAPTIVE") {
 			FlxG.fullscreen = false;
 		} // only disabling this when adaptive is enabled is better as a warning about jankiness is given for adaptive anyways
 
@@ -140,6 +142,7 @@ class MusicBeatState extends FlxUIState
 	public function fixAspectRatio() {
 		// options.GraphicsSettingsSubState.onChangeRes();
 
+		#if desktop
 		if (ClientPrefs.screenScaleMode == "LETTERBOX") {
 			FlxG.scaleMode = new RatioScaleMode (false);
 		} else if (ClientPrefs.screenScaleMode == "PAN") {
@@ -149,6 +152,7 @@ class MusicBeatState extends FlxUIState
 		} else if (ClientPrefs.screenScaleMode == "ADAPTIVE") {
 			FlxG.scaleMode = modeStage;
 		}
+		#end
 
 		//FlxG.scaleMode = modeStage; // https://coinflipstudios.com/devblog/?p=418#:~:text=StageSizeScaleMode%C2%A0%C2%A0
 		//if (FlxG.fullscreen) FlxG.scaleMode = modeRatio;

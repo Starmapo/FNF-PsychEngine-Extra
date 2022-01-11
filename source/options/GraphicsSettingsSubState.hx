@@ -146,6 +146,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 	}
 	public static function onChangeRes()
 	{
+		#if desktop
 		FlxG.fullscreen = ClientPrefs.screenRes == "FULLSCREEN";
 		if (!FlxG.fullscreen) {
 			var res = ClientPrefs.screenRes.split(" x ");
@@ -159,6 +160,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 		}
 
 		MusicBeatState.musInstance.fixAspectRatio();
+		#end
 		// FlxG.resetState();
 	}
 

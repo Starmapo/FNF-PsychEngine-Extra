@@ -263,7 +263,7 @@ class ClientPrefs {
 			safeFrames = FlxG.save.data.safeFrames;
 		}
 		if(FlxG.save.data.controllerMode != null) {
-			controllerMode = FlxG.save.data.controllerMode;
+			//controllerMode = FlxG.save.data.controllerMode;
 		}
 		if(FlxG.save.data.screenRes != null) {
 			screenRes = FlxG.save.data.screenRes;
