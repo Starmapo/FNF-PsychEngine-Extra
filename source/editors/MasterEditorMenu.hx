@@ -18,6 +18,7 @@ class MasterEditorMenu extends MusicBeatState
 		'Menu Character Editor',
 		'Dialogue Editor',
 		'Dialogue Portrait Editor',
+		'UI Skin Editor',
 		'Character Editor',
 		'Chart Editor'
 	];
@@ -123,6 +124,8 @@ class MasterEditorMenu extends MusicBeatState
 					MusicBeatState.switchState(new WeekEditorState());
 				case 'Menu Character Editor':
 					MusicBeatState.switchState(new MenuCharacterEditorState());
+				case 'UI Skin Editor':
+					LoadingState.loadAndSwitchState(new SkinEditorState(PlayState.SONG.arrowSkin));
 				case 'Dialogue Portrait Editor':
 					LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
 				case 'Dialogue Editor':

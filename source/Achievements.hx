@@ -19,11 +19,28 @@ using StringTools;
 typedef AchievementFile =
 {
 	var unlocksAfter:String;
-	var icon:String;
 	var name:String;
 	var description:String;
 	var hidden:Bool;
 	var customGoal:Bool;
+}
+
+class Achievement
+{
+	public var description:String = '';
+	public var name:String = '';
+	public var hidden:Bool = false;
+	public var customGoal:Bool = false;
+	public var unlocksAfter:String = '';
+	public var tag:String = ''; 
+
+	public function new(data:AchievementFile) {
+		this.description = data.description;
+		this.name = data.name;
+		this.hidden = data.hidden;
+		this.customGoal = data.customGoal;
+		this.unlocksAfter = data.unlocksAfter;
+	}
 }
 
 class Achievements {
@@ -52,7 +69,7 @@ class Achievements {
 	];
 
 	public static var achievementsMap:Map<String, Bool> = new Map<String, Bool>();
-	public static var loadedAchievements:Map<String, AchievementFile> = new Map<String, AchievementFile>();
+	public static var loadedAchievements:Map<String, Achievement> = new Map<String, Achievement>();
 
 	public static var henchmenDeath:Int = 0;
 	public static function unlockAchievement(name:String):Void {
@@ -117,6 +134,9 @@ class Achievements {
 		// EDIT 2: Uhh this is weird, this message was written for MInd Games, so it doesn't apply logically for Psych Engine LOL
 
 	public static function reloadAchievements() {	//Achievements in game are hardcoded, no need to make a folder for them
+		achievementsStuff = [];
+		achievementsStuff = achievementShits;
+
 		loadedAchievements.clear();
 
 		#if MODS_ALLOWED //Based on WeekData.hx
@@ -169,7 +189,11 @@ class Achievements {
 					var path:String = directory + achievement + '.json';
 
 					if (FileSystem.exists(path) && !loadedAchievements.exists(achievement) && achievement != PlayState.othersCodeName) {
-						loadedAchievements.set(achievement, getAchievementInfo(path));
+						var achievementInfo:AchievementFile = getAchievementInfo(path);
+						var achievementData:Achievement = new Achievement(achievementInfo);
+						achievementData.tag = achievement;
+
+						loadedAchievements.set(achievement, achievementData);
 					}
 
 					//trace(path);
@@ -180,7 +204,11 @@ class Achievements {
 
 					var cutName:String = file.substr(0, file.length - 5);
 					if (!FileSystem.isDirectory(path) && file.endsWith('.json') && !loadedAchievements.exists(cutName) && cutName != PlayState.othersCodeName) {
-						loadedAchievements.set(cutName, getAchievementInfo(path));
+						var achievementInfo:AchievementFile = getAchievementInfo(path);
+						var achievementData:Achievement = new Achievement(achievementInfo);
+						achievementData.tag = cutName;
+
+						loadedAchievements.set(cutName, achievementData);
 					}
 
 					//trace(file);
@@ -190,7 +218,9 @@ class Achievements {
 
 		for (json in loadedAchievements) {
 			//trace(json);
-			achievementsStuff.push([json.name, json.description, json.icon, json.unlocksAfter, json.hidden]);
+			if (!achievementsStuff.contains([json.name, json.description, json.tag, json.unlocksAfter, json.hidden])) {	// fixed ()plication bug
+				achievementsStuff.push([json.name, json.description, json.tag, json.unlocksAfter, json.hidden]);
+			}
 		}
 		#end
 	}
@@ -236,13 +266,11 @@ class AttachedAchievement extends FlxSprite {
 
 			if (Achievements.loadedAchievements.exists(tag)) {
 				isModIcon = true;
-				imagePath = Paths.image(Achievements.loadedAchievements.get(tag).icon);
+				imagePath = Paths.image(tag);
 			}
 
 			var index:Int = Achievements.getAchievementIndex(tag);
 			if (isModIcon) index = 0;
-
-			trace(imagePath);
 
 			loadGraphic(imagePath, true, 150, 150);
 			animation.add('icon', [index], 0, false, false);
@@ -288,14 +316,11 @@ class AchievementObject extends FlxSpriteGroup {
 
 		if (Achievements.loadedAchievements.exists(name)) {
 			isModIcon = true;
-			modsImage = Paths.image(Achievements.loadedAchievements.get(name).icon);
+			modsImage = Paths.image(name);
 		}
 
 		var index:Int = Achievements.getAchievementIndex(name);
 		if (isModIcon) index = 0;
-
-		trace(imagePath);
-		trace(modsImage);
 
 		var achievementIcon:FlxSprite = new FlxSprite(achievementBG.x + 10, achievementBG.y + 10).loadGraphic((isModIcon ? modsImage : imagePath), true, 150, 150);
 		achievementIcon.animation.add('icon', [index], 0, false, false);
