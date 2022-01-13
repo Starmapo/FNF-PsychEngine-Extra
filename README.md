@@ -33,6 +33,7 @@ _____________________________________
 # New Features
 * Different key amounts (1 - 9)
 * Different time signatures (3/4, 4/8, etc.)
+* Custom note skins
 * Play opponent's chart
 * Song playback speed
 * More Lua functions
