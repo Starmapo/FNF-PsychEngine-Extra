@@ -2,6 +2,11 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import UIData;
+#if MODS_ALLOWED
+import sys.FileSystem;
+#end
+import openfl.utils.Assets;
 
 using StringTools;
 
@@ -21,6 +26,7 @@ class StrumNote extends FlxSprite
 	public var swagWidth:Float = 160 * 0.7;
 	var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
+	public var uiSkin:SkinFile;
 	
 	public var texture(default, set):String = null;
 	private function set_texture(value:String):String {
@@ -31,60 +37,42 @@ class StrumNote extends FlxSprite
 		return value;
 	}
 
-	public function new(x:Float, y:Float, leData:Int, player:Int, ?keyAmount:Int = 4) {
+	public function new(x:Float, y:Float, leData:Int, player:Int, ?keyAmount:Int = 4, ?uiSkin:SkinFile = null) {
 		colorSwap = new ColorSwap();
 		shader = colorSwap.shader;
 		noteData = leData;
+		if (uiSkin == null) {
+			uiSkin = UIData.getUIFile('');
+		}
 		this.player = player;
 		this.noteData = leData;
 		this.keyAmount = keyAmount;
+		this.uiSkin = uiSkin;
 		super(x, y);
 
-		switch (keyAmount) {
-			case 1:
-				directions = ['CENTER'];
-				colors = ['center'];
-				xOff = 222;
-			case 2:
-				directions = ['LEFT', 'RIGHT'];
-				colors = ['left', 'right'];
-				xOff = 166;
-			case 3:
-				directions = ['LEFT', 'CENTER', 'RIGHT'];
-				colors = ['left', 'center', 'right'];
-				xOff = 110;
-			case 5:
-				directions = ['LEFT', 'DOWN', 'CENTER', 'UP', 'RIGHT'];
-				colors = ['left', 'down', 'center', 'up', 'right'];
-				xOff = -2;
-			case 6:
-				directions = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
-				colors = ['left', 'up', 'right', 'left2', 'down', 'right2'];
-				swagWidth = 160 * 0.6;
-				xOff = -10;
-				noteSize = 0.6;
-			case 7:
-				directions = ['LEFT', 'UP', 'RIGHT', 'CENTER', 'LEFT', 'DOWN', 'RIGHT'];
-				colors = ['left', 'up', 'right', 'center', 'left2', 'down', 'right2'];
-				swagWidth = 160 * 0.5;
-				xOff = -2;
-				noteSize = 0.5;
-			case 8:
-				directions = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
-				colors = ['left', 'down', 'up', 'right', 'left2', 'down2', 'up2', 'right2'];
-				swagWidth = 160 * 0.45;
-				xOff = -10;
-				noteSize = 0.45;
-			case 9:
-				directions = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'CENTER', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
-				colors = ['left', 'down', 'up', 'right', 'center', 'left2', 'down2', 'up2', 'right2'];
-				swagWidth = 160 * 0.4;
-				xOff = -10;
-				noteSize = 0.4;
+		var maniaData:ManiaArray = null;
+		for (i in uiSkin.mania) {
+			if (i.keys == keyAmount) {
+				maniaData = i;
+				break;
+			}
+		}
+		if (maniaData == null) {
+			var bad:SkinFile = UIData.getUIFile('default');
+			for (i in bad.mania) {
+				if (i.keys == keyAmount) {
+					maniaData = i;
+					break;
+				}
+			}
 		}
 
+		colors = maniaData.colors;
+		swagWidth = maniaData.noteSpacing;
+		xOff = maniaData.xOffset;
+		noteSize = maniaData.noteSize;
+
 		var skin:String = 'NOTE_assets';
-		if(PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
 		texture = skin; //Load texture and anims
 
 		scrollFactor.set();
@@ -94,48 +82,31 @@ class StrumNote extends FlxSprite
 	{
 		var lastAnim:String = null;
 		if(animation.curAnim != null) lastAnim = animation.curAnim.name;
+		var uiFile:String = PlayState.SONG.arrowSkin;
+		if (uiFile == null || uiFile.length < 1) {
+			uiFile = 'default';
+		}
 
-		if(PlayState.isPixelStage)
-		{
-			loadGraphic(Paths.image('pixelUI/' + texture));
-			width = width / 4;
-			height = height / 5;
-			loadGraphic(Paths.image('pixelUI/' + texture), true, Math.floor(width), Math.floor(height));
+		var path:String = 'uiskins/$uiFile/notes/$texture';
+		#if MODS_ALLOWED
+		if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
+		#else
+		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
+		#end
+			path = 'uiskins/default/notes/$texture';
+		}
 
+		frames = Paths.getSparrowAtlas(path);
+
+		animation.addByPrefix('static', 'arrow' + directions[noteData] + '0');
+		animation.addByPrefix('pressed', colors[noteData] + ' press', 24, false);
+		animation.addByPrefix('confirm', colors[noteData] + ' confirm', 24, false);
+
+		antialiasing = ClientPrefs.globalAntialiasing;
+		if (!uiSkin.antialiasing) {
 			antialiasing = false;
-			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
-
-			switch (noteData)
-			{
-				case 0:
-					animation.add('static', [0]);
-					animation.add('pressed', [4, 8], 12, false);
-					animation.add('confirm', [12, 16], 24, false);
-				case 1:
-					animation.add('static', [1]);
-					animation.add('pressed', [5, 9], 12, false);
-					animation.add('confirm', [13, 17], 24, false);
-				case 2:
-					animation.add('static', [2]);
-					animation.add('pressed', [6, 10], 12, false);
-					animation.add('confirm', [14, 18], 12, false);
-				case 3:
-					animation.add('static', [3]);
-					animation.add('pressed', [7, 11], 12, false);
-					animation.add('confirm', [15, 19], 24, false);
-			}
 		}
-		else
-		{
-			frames = Paths.getSparrowAtlas(texture);
-
-			animation.addByPrefix('static', 'arrow' + directions[noteData]);
-			animation.addByPrefix('pressed', colors[noteData] + ' press', 24, false);
-			animation.addByPrefix('confirm', colors[noteData] + ' confirm', 24, false);
-
-			antialiasing = ClientPrefs.globalAntialiasing;
-			setGraphicSize(Std.int(width * noteSize));
-		}
+		setGraphicSize(Std.int((width * noteSize) * uiSkin.scale * uiSkin.noteScale));
 		updateHitbox();
 
 		if(lastAnim != null)
@@ -161,7 +132,7 @@ class StrumNote extends FlxSprite
 			}
 		}
 		if(animation.curAnim != null){ //my bad i was upset
-			if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
+			if(animation.curAnim.name == 'confirm' && uiSkin.centerOrigin) {
 				centerOrigin();
 			}
 		}
@@ -182,7 +153,7 @@ class StrumNote extends FlxSprite
 			colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
 			colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
 
-			if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
+			if(animation.curAnim.name == 'confirm' && uiSkin.centerOrigin) {
 				centerOrigin();
 			}
 		}

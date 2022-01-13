@@ -1,0 +1,92 @@
+{
+	"mania": [
+		{
+			"keys": 1,
+			"noteSize": 0.7,
+			"noteSpacing": 112,
+			"xOffset": 222,
+			"colors": [
+				"up"
+			],
+			"directions": [
+				"UP"
+			],
+			"singAnimations": [
+				"singUP"
+			]
+		},
+		{
+			"keys": 2,
+			"noteSize": 0.7,
+			"noteSpacing": 112,
+			"xOffset": 166,
+			"colors": [
+				"left",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singRIGHT"
+			]
+		},
+		{
+			"keys": 3,
+			"noteSize": 0.7,
+			"noteSpacing": 112,
+			"xOffset": 110,
+			"colors": [
+				"left",
+				"up",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"UP",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singUP",
+				"singRIGHT"
+			]
+		},
+		{
+			"keys": 4,
+			"noteSize": 0.7,
+			"noteSpacing": 112,
+			"xOffset": 54,
+			"colors": [
+				"left",
+				"down",
+				"up",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT"
+			]
+		}
+	],
+	"scale": 6,
+	"noteScale": 1.3,
+	"sustainYScale": 1.19,
+	"countdownScale": 1,
+	"ratingScale": 0.85,
+	"comboNumScale": 1,
+	"sustainXOffset": 30,
+	"tailYOffset": 8,
+	"centerOrigin": false,
+	"antialiasing": false
+}

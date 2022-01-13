@@ -2,6 +2,11 @@ package;
 
 import flixel.FlxSprite;
 import editors.ChartingState;
+import UIData;
+#if MODS_ALLOWED
+import sys.FileSystem;
+#end
+import openfl.utils.Assets;
 
 using StringTools;
 
@@ -70,6 +75,7 @@ class Note extends FlxSprite
 	var colors:Array<String> = ['left', 'down', 'up', 'right'];
 	var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
+	public var uiSkin:SkinFile;
 
 	private function set_texture(value:String):String {
 		if(texture != value) {
@@ -81,7 +87,7 @@ class Note extends FlxSprite
 
 	private function set_noteType(value:String):String {
 		if(noteData > -1) {
-			noteSplashTexture = PlayState.SONG.splashSkin;
+			noteSplashTexture = 'noteSplashes';
 			colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
 			colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
 			colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
@@ -120,52 +126,44 @@ class Note extends FlxSprite
 		return value;
 	}
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?keyAmount:Int = 4)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?keyAmount:Int = 4, ?uiSkin:SkinFile = null)
 	{
 		super();
 
 		if (prevNote == null)
 			prevNote = this;
 
+		if (uiSkin == null) {
+			uiSkin = UIData.getUIFile('');
+		}
+
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
 		this.inEditor = inEditor;
 		this.keyAmount = keyAmount;
+		this.uiSkin = uiSkin;
 
-		switch (keyAmount) {
-			case 1:
-				colors = ['center'];
-				xOff = 222;
-			case 2:
-				colors = ['left', 'right'];
-				xOff = 166;
-			case 3:
-				colors = ['left', 'center', 'right'];
-				xOff = 110;
-			case 5:
-				colors = ['left', 'down', 'center', 'up', 'right'];
-				xOff = -2;
-			case 6:
-				colors = ['left', 'up', 'right', 'left2', 'down', 'right2'];
-				swagWidth = 160 * 0.6;
-				xOff = -10;
-				noteSize = 0.6;
-			case 7:
-				colors = ['left', 'up', 'right', 'center', 'left2', 'down', 'right2'];
-				swagWidth = 160 * 0.5;
-				xOff = -2;
-				noteSize = 0.5;
-			case 8:
-				colors = ['left', 'down', 'up', 'right', 'left2', 'down2', 'up2', 'right2'];
-				swagWidth = 160 * 0.45;
-				xOff = -10;
-				noteSize = 0.45;
-			case 9:
-				colors = ['left', 'down', 'up', 'right', 'center', 'left2', 'down2', 'up2', 'right2'];
-				swagWidth = 160 * 0.4;
-				xOff = -10;
-				noteSize = 0.4;
+		var maniaData:ManiaArray = null;
+		for (i in uiSkin.mania) {
+			if (i.keys == keyAmount) {
+				maniaData = i;
+				break;
+			}
 		}
+		if (maniaData == null) {
+			var bad:SkinFile = UIData.getUIFile('default');
+			for (i in bad.mania) {
+				if (i.keys == keyAmount) {
+					maniaData = i;
+					break;
+				}
+			}
+		}
+
+		colors = maniaData.colors;
+		swagWidth = maniaData.noteSpacing;
+		xOff = maniaData.xOffset;
+		noteSize = maniaData.noteSize;
 
 		x += (ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + xOff;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
@@ -204,8 +202,7 @@ class Note extends FlxSprite
 
 			offsetX -= width / 2;
 
-			if (PlayState.isPixelStage)
-				offsetX += 30;
+			offsetX += uiSkin.sustainXOffset;
 
 			if (prevNote.isSustainNote)
 			{
@@ -217,17 +214,13 @@ class Note extends FlxSprite
 					prevNote.scale.y *= PlayState.instance.songSpeed;
 				}
 
-				if(PlayState.isPixelStage) {
-					prevNote.scale.y *= 1.19;
-				}
+				prevNote.scale.y *= uiSkin.sustainYScale;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}
 
-			if(PlayState.isPixelStage) {
-				scale.y *= PlayState.daPixelZoom;
-				updateHitbox();
-			}
+			scale.y *= uiSkin.scale;
+			updateHitbox();
 		} else if(!isSustainNote) {
 			earlyHitMult = 1;
 		}
@@ -240,11 +233,8 @@ class Note extends FlxSprite
 		if(suffix == null) suffix = '';
 		
 		var skin:String = texture;
-		if(texture.length < 1) {
-			skin = PlayState.SONG.arrowSkin;
-			if(skin == null || skin.length < 1) {
-				skin = 'NOTE_assets';
-			}
+		if(skin == null || skin.length < 1) {
+			skin = 'NOTE_assets';
 		}
 
 		var animName:String = null;
@@ -256,26 +246,23 @@ class Note extends FlxSprite
 		arraySkin[arraySkin.length-1] = prefix + arraySkin[arraySkin.length-1] + suffix;
 
 		var lastScaleY:Float = scale.y;
-		var blahblah:String = arraySkin.join('/');
-		if(PlayState.isPixelStage) {
-			if(isSustainNote) {
-				loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'));
-				width = width / 4;
-				height = height / 2;
-				loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'), true, Math.floor(width), Math.floor(height));
-			} else {
-				loadGraphic(Paths.image('pixelUI/' + blahblah));
-				width = width / 4;
-				height = height / 5;
-				loadGraphic(Paths.image('pixelUI/' + blahblah), true, Math.floor(width), Math.floor(height));
-			}
-			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
-			loadPixelNoteAnims();
+		var uiFile:String = PlayState.SONG.arrowSkin;
+		if (uiFile == null || uiFile.length < 1) {
+			uiFile = 'default';
+		}
+		var path:String = 'uiskins/$uiFile/notes/' + arraySkin.join('/');
+		#if MODS_ALLOWED
+		if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
+		#else
+		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
+		#end
+			path = 'uiskins/default/notes/' + arraySkin.join('/');
+		}
+		frames = Paths.getSparrowAtlas(path);
+		loadNoteAnims();
+		antialiasing = ClientPrefs.globalAntialiasing;
+		if (!uiSkin.antialiasing) {
 			antialiasing = false;
-		} else {
-			frames = Paths.getSparrowAtlas(blahblah);
-			loadNoteAnims();
-			antialiasing = ClientPrefs.globalAntialiasing;
 		}
 		if(isSustainNote) {
 			scale.y = lastScaleY;
@@ -295,8 +282,7 @@ class Note extends FlxSprite
 	}
 
 	function loadNoteAnims() {
-		var anims = ['left', 'down', 'up', 'right', 'center', 'left2', 'down2', 'up2', 'right2'];
-		for (i in anims) {
+		for (i in colors) {
 			animation.addByPrefix(i, i + '0');
 			if (isSustainNote) {
 				animation.addByPrefix(i + 'hold', i + ' hold0');
@@ -304,27 +290,8 @@ class Note extends FlxSprite
 			}
 		}
 
-		setGraphicSize(Std.int(width * noteSize));
+		setGraphicSize(Std.int((width * noteSize) * uiSkin.scale * uiSkin.noteScale));
 		updateHitbox();
-	}
-
-	function loadPixelNoteAnims() {
-		if(isSustainNote) {
-			animation.add('leftholdend', [PURP_NOTE + 4]);
-			animation.add('upholdend', [GREEN_NOTE + 4]);
-			animation.add('rightholdend', [RED_NOTE + 4]);
-			animation.add('downholdend', [BLUE_NOTE + 4]);
-
-			animation.add('lefthold', [PURP_NOTE]);
-			animation.add('uphold', [GREEN_NOTE]);
-			animation.add('righthold', [RED_NOTE]);
-			animation.add('downhold', [BLUE_NOTE]);
-		} else {
-			animation.add('up', [GREEN_NOTE + 4]);
-			animation.add('right', [RED_NOTE + 4]);
-			animation.add('down', [BLUE_NOTE + 4]);
-			animation.add('left', [PURP_NOTE + 4]);
-		}
 	}
 
 	override function update(elapsed:Float)

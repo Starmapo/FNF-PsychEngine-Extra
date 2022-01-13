@@ -3,6 +3,7 @@ package editors;
 #if desktop
 import Discord.DiscordClient;
 #end
+import UIData;
 import Conductor.BPMChangeEvent;
 import Section.SwagSection;
 import Song.SwagSong;
@@ -184,6 +185,10 @@ class ChartingState extends MusicBeatState
 	public static var curQuant = 0;
 	var text:String = "";
 	public static var vortex:Bool = false;
+
+	public var uiSkin:SkinFile = null;
+	var tempKeys:Int = 4;
+
 	override function create()
 	{
 		if (PlayState.SONG != null)
@@ -197,7 +202,6 @@ class ChartingState extends MusicBeatState
 				bpm: 150.0,
 				needsVoices: true,
 				arrowSkin: '',
-				splashSkin: 'noteSplashes',//idk it would crash if i didn't
 				player1: 'bf',
 				player2: 'dad',
 				player3: null,
@@ -214,6 +218,12 @@ class ChartingState extends MusicBeatState
 		}
 
 		// Paths.clearMemory();
+		uiSkin = UIData.getUIFile(_song.arrowSkin);
+		if (uiSkin == null) {
+			uiSkin = UIData.getUIFile('');
+		}
+
+		tempKeys = _song.keyAmount;
 
 		#if desktop
 		// Updating Discord Rich Presence
@@ -556,8 +566,10 @@ class ChartingState extends MusicBeatState
 
 		WeekData.reloadWeekFiles(false);
 		findOutDiffs();
-		PlayState.storyDifficulty = CoolUtil.difficulties.indexOf('Normal');
-		if (PlayState.storyDifficulty == -1) PlayState.storyDifficulty = 0;
+		if (PlayState.storyDifficulty > CoolUtil.difficulties.length - 1) {
+			PlayState.storyDifficulty = CoolUtil.difficulties.indexOf('Normal');
+			if (PlayState.storyDifficulty == -1) PlayState.storyDifficulty = 0;
+		}
 		
 		var difficultyDropDown = new FlxUIDropDownMenuCustom(stageDropDown.x, player3DropDown.y, FlxUIDropDownMenuCustom.makeStrIdLabelArray(CoolUtil.difficulties, true), function(difficulty:String)
 		{
@@ -600,13 +612,16 @@ class ChartingState extends MusicBeatState
 		if(skin == null) skin = '';
 		noteSkinInputText = new FlxUIInputText(player2DropDown.x, player2DropDown.y + 50, 150, skin, 8);
 		blockPressWhileTypingOn.push(noteSkinInputText);
-	
-		noteSplashesInputText = new FlxUIInputText(noteSkinInputText.x, noteSkinInputText.y + 35, 150, _song.splashSkin, 8);
-		blockPressWhileTypingOn.push(noteSplashesInputText);
 
-		var reloadNotesButton:FlxButton = new FlxButton(noteSplashesInputText.x + 5, noteSplashesInputText.y + 20, 'Change Notes', function() {
+		var reloadNotesButton:FlxButton = new FlxButton(noteSkinInputText.x + 5, noteSkinInputText.y + 55, 'Change Notes', function() {
 			_song.arrowSkin = noteSkinInputText.text;
+			PlayState.SONG = _song;
+			uiSkin = UIData.getUIFile(PlayState.SONG.arrowSkin);
+			if (uiSkin == null) {
+				uiSkin = UIData.getUIFile('');
+			}
 			updateGrid();
+			makeStrumNotes();
 		});
 
 		var clear_events:FlxButton = new FlxButton(stepperKeys.x, stepperSpeed.y - 15, 'Clear events', function()
@@ -644,7 +659,6 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(stepperKeys);
 		tab_group_song.add(reloadNotesButton);
 		tab_group_song.add(noteSkinInputText);
-		tab_group_song.add(noteSplashesInputText);
 		tab_group_song.add(new FlxText(stepperBPM.x, stepperBPM.y - 15, 0, 'Song BPM:'));
 		tab_group_song.add(new FlxText(stepperSpeed.x, stepperSpeed.y - 15, 0, 'Song Speed:'));
 		tab_group_song.add(new FlxText(stepperKeys.x, stepperKeys.y - 15, 0, 'Key Amount:'));
@@ -654,8 +668,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(new FlxText(stageDropDown.x, stageDropDown.y - 15, 0, 'Stage:'));
 		tab_group_song.add(new FlxText(difficultyDropDown.x, difficultyDropDown.y - 15, 0, 'Difficulty:'));
 		tab_group_song.add(new FlxText(numeratorDropDown.x, numeratorDropDown.y - 15, 0, 'Time Signature:'));
-		tab_group_song.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'Note Texture:'));
-		tab_group_song.add(new FlxText(noteSplashesInputText.x, noteSplashesInputText.y - 15, 0, 'Note Splashes Texture:'));
+		tab_group_song.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'UI Skin:'));
 		tab_group_song.add(player2DropDown);
 		tab_group_song.add(player3DropDown);
 		tab_group_song.add(player1DropDown);
@@ -1431,10 +1444,7 @@ class ChartingState extends MusicBeatState
 			}
 		}
 		else if(id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
-			if(sender == noteSplashesInputText) {
-				_song.splashSkin = noteSplashesInputText.text;
-			}
-			else if(curSelectedNote != null)
+			if(curSelectedNote != null)
 			{
 				if(sender == value1InputText) {
 					curSelectedNote[1][curEventSelected][1] = value1InputText.text;
@@ -2059,10 +2069,14 @@ class ChartingState extends MusicBeatState
 		}
 
 		rightIcon.setPosition(GRID_SIZE * _song.keyAmount, -100);
-		if (strumLine != null) {
+		if (tempKeys != _song.keyAmount && strumLine != null) {
 			remove(strumLine);
 			strumLine = new FlxSprite(0, 50).makeGraphic(GRID_SIZE * (_song.keyAmount * 2 + 1), 4);
 			insert(members.indexOf(quant) - 1, strumLine);
+
+			quant.sprTracker = strumLine;
+
+			tempKeys = _song.keyAmount;
 		}
 	}
 
@@ -2448,7 +2462,7 @@ class ChartingState extends MusicBeatState
 		var daStrumTime = i[0];
 		var daSus:Dynamic = i[2];
 
-		var note:Note = new Note(daStrumTime, daNoteInfo % _song.keyAmount, null, null, true, _song.keyAmount);
+		var note:Note = new Note(daStrumTime, daNoteInfo % _song.keyAmount, null, null, true, _song.keyAmount, uiSkin);
 		if(daSus != null) { //Common note
 			if(!Std.isOfType(i[3], String)) //Convert old note type to new note type format
 			{
@@ -2736,7 +2750,7 @@ class ChartingState extends MusicBeatState
 		}
 		strumLineNotes.clear();
 		for (i in 0..._song.keyAmount * 2){
-			var note:StrumNote = new StrumNote(GRID_SIZE * (i+1), strumLine.y, i % _song.keyAmount, 0, _song.keyAmount);
+			var note:StrumNote = new StrumNote(GRID_SIZE * (i+1), strumLine.y, i % _song.keyAmount, 0, _song.keyAmount, uiSkin);
 			note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 			note.updateHitbox();
 			note.playAnim('static', true);
@@ -2808,7 +2822,7 @@ class ChartingState extends MusicBeatState
 					if (daSong == currentSongName) {
 						PlayState.storyWeek = num;
 						diffStr = WeekData.getCurrentWeek().difficulties;
-						trace('found difficulties');
+						//trace('found difficulties');
 						break;
 					}
 				}
@@ -2934,7 +2948,6 @@ class ChartingState extends MusicBeatState
 			needsVoices: _song.needsVoices,
 			speed: _song.speed,
 			arrowSkin: _song.arrowSkin,
-			splashSkin: _song.splashSkin,
 
 			player1: _song.player1,
 			player2: _song.player2,
