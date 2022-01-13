@@ -261,7 +261,7 @@ class Note extends FlxSprite
 		frames = Paths.getSparrowAtlas(path);
 		loadNoteAnims();
 		antialiasing = ClientPrefs.globalAntialiasing;
-		if (!uiSkin.antialiasing) {
+		if (uiSkin.noAntialiasing) {
 			antialiasing = false;
 		}
 		if(isSustainNote) {

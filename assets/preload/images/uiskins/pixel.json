@@ -85,8 +85,8 @@
 	"countdownScale": 1,
 	"ratingScale": 0.85,
 	"comboNumScale": 1,
-	"sustainXOffset": 30,
+	"sustainXOffset": 0,
 	"tailYOffset": 8,
 	"centerOrigin": false,
-	"antialiasing": false
+	"noAntialiasing": true
 }

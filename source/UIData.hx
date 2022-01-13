@@ -20,7 +20,7 @@ typedef SkinFile = {
     var sustainXOffset:Float; //sustain note x offset (happens before note is scaled)
     var tailYOffset:Float; //sustain tail note y offset for downscroll
     var centerOrigin:Bool; //whether to center the strums in the confirm animation
-    var antialiasing:Bool; //whether to have antialiasing enabled
+    var noAntialiasing:Bool; //whether to always have antialiasing disabled
 }
 
 typedef ManiaArray = {

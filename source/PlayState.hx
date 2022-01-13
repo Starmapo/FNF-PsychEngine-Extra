@@ -1822,7 +1822,7 @@ class PlayState extends MusicBeatState
 
 				var introAlts:Array<String> = introAssets.get('default');
 				var antialias:Bool = ClientPrefs.globalAntialiasing;
-				if (!uiSkin.antialiasing) {
+				if (uiSkin.noAntialiasing) {
 					antialias = false;
 				}
 
@@ -3823,7 +3823,7 @@ class PlayState extends MusicBeatState
 		comboSpr.setGraphicSize(Std.int(comboSpr.width * uiSkin.scale * uiSkin.ratingScale));
 		rating.antialiasing = ClientPrefs.globalAntialiasing;
 		comboSpr.antialiasing = ClientPrefs.globalAntialiasing;
-		if (!uiSkin.antialiasing) {
+		if (uiSkin.noAntialiasing) {
 			rating.antialiasing = false;
 			comboSpr.antialiasing = false;
 		}
@@ -3867,7 +3867,7 @@ class PlayState extends MusicBeatState
 			numScore.setGraphicSize(Std.int(numScore.width * uiSkin.scale * uiSkin.comboNumScale));
 			numScore.updateHitbox();
 			numScore.antialiasing = ClientPrefs.globalAntialiasing;
-			if (!uiSkin.antialiasing) {
+			if (uiSkin.noAntialiasing) {
 				numScore.antialiasing = false;
 			}
 

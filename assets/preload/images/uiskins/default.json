@@ -253,5 +253,5 @@
 	"sustainXOffset": 0,
 	"tailYOffset": -19,
 	"centerOrigin": true,
-	"antialiasing": true
+	"noAntialiasing": false
 }

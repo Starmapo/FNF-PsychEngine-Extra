@@ -70,6 +70,14 @@ class NoteSplash extends FlxSprite
 			if (uiFile == null || uiFile.length < 1) {
 				uiFile == 'default';
 			}
+			var uiSkin = UIData.getUIFile(uiFile);
+			if (uiSkin == null) {
+				uiSkin == UIData.getUIFile('default');
+			}
+			antialiasing = ClientPrefs.globalAntialiasing;
+			if (uiSkin.noAntialiasing) {
+				antialiasing = false;
+			}
 			var path:String = 'uiskins/$uiFile/splashes/$skin';
 			#if MODS_ALLOWED
 			if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {

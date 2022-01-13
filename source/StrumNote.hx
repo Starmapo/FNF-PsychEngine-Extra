@@ -103,7 +103,7 @@ class StrumNote extends FlxSprite
 		animation.addByPrefix('confirm', colors[noteData] + ' confirm', 24, false);
 
 		antialiasing = ClientPrefs.globalAntialiasing;
-		if (!uiSkin.antialiasing) {
+		if (uiSkin.noAntialiasing) {
 			antialiasing = false;
 		}
 		setGraphicSize(Std.int((width * noteSize) * uiSkin.scale * uiSkin.noteScale));
