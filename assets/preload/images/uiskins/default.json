@@ -377,6 +377,57 @@
 				"singUP",
 				"singRIGHT"
 			]
+		},
+		{
+			"keys": 13,
+			"noteSize": 0.2,
+			"noteSpacing": 32,
+			"xOffset": 70,
+			"colors": [
+				"left",
+				"down",
+				"up",
+				"right",
+				"left3",
+				"down3",
+				"center",
+				"up3",
+				"right3",
+				"left2",
+				"down2",
+				"up2",
+				"right2"
+			],
+			"directions": [
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT",
+				"LEFT2",
+				"DOWN2",
+				"CENTER",
+				"UP2",
+				"RIGHT2",
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT"
+			]
 		}
 	],
 	"scale": 1,

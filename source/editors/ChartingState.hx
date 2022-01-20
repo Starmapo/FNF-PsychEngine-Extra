@@ -187,7 +187,6 @@ class ChartingState extends MusicBeatState
 	public static var vortex:Bool = false;
 
 	public var uiSkin:SkinFile = null;
-	var tempKeys:Int = 4;
 
 	override function create()
 	{
@@ -222,8 +221,6 @@ class ChartingState extends MusicBeatState
 		if (uiSkin == null) {
 			uiSkin = UIData.getUIFile('');
 		}
-
-		tempKeys = _song.keyAmount;
 
 		#if desktop
 		// Updating Discord Rich Presence
@@ -288,11 +285,6 @@ class ChartingState extends MusicBeatState
 		getLastBPM();
 		Conductor.mapBPMChanges(_song);
 
-		bpmTxt = new FlxText(1000, 50, 0, "", 16);
-		bpmTxt.setBorderStyle(OUTLINE, FlxColor.BLACK);
-		bpmTxt.scrollFactor.set();
-		add(bpmTxt);
-
 		strumLine = new FlxSprite(0, 50).makeGraphic(GRID_SIZE * (_song.keyAmount * 2 + 1), 4);
 		add(strumLine);
 
@@ -313,6 +305,12 @@ class ChartingState extends MusicBeatState
 
 		dummyArrow = new FlxSprite().makeGraphic(GRID_SIZE, GRID_SIZE);
 		add(dummyArrow);
+
+		add(curRenderedSustains);
+		add(curRenderedNotes);
+		add(curRenderedNoteType);
+		add(nextRenderedSustains);
+		add(nextRenderedNotes);
 
 		var tabs = [
 			{name: "Song", label: 'Song'},
@@ -352,7 +350,10 @@ class ChartingState extends MusicBeatState
 		}
 		add(UI_box);
 
-		bpmTxt.x = UI_box.x + UI_box.width + 8;
+		bpmTxt = new FlxText(UI_box.x + UI_box.width + 8, 50, 0, "", 16);
+		bpmTxt.setBorderStyle(OUTLINE, FlxColor.BLACK);
+		bpmTxt.scrollFactor.set();
+		add(bpmTxt);
 
 		addSongUI();
 		addSectionUI();
@@ -362,12 +363,6 @@ class ChartingState extends MusicBeatState
 		updateHeads();
 		updateWaveform();
 		//UI_box.selected_tab = 4;
-
-		add(curRenderedSustains);
-		add(curRenderedNotes);
-		add(curRenderedNoteType);
-		add(nextRenderedSustains);
-		add(nextRenderedNotes);
 
 		if(lastSong != currentSongName) {
 			changeSection();
@@ -462,7 +457,7 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.name = 'song_speed';
 		blockPressWhileTypingOnStepper.push(stepperSpeed);
 
-		var stepperKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBPM.x + 80, stepperBPM.y, 1, 4, 1, 12);
+		var stepperKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBPM.x + 80, stepperBPM.y, 1, 4, 1, 13);
 		stepperKeys.value = _song.keyAmount;
 		stepperKeys.name = 'song_keys';
 		blockPressWhileTypingOnStepper.push(stepperKeys);
@@ -2070,14 +2065,8 @@ class ChartingState extends MusicBeatState
 		}
 
 		rightIcon.setPosition(GRID_SIZE * _song.keyAmount, -100);
-		if (tempKeys != _song.keyAmount && strumLine != null) {
-			remove(strumLine);
-			strumLine = new FlxSprite(0, 50).makeGraphic(GRID_SIZE * (_song.keyAmount * 2 + 1), 4);
-			insert(members.indexOf(quant) - 1, strumLine);
-
-			quant.sprTracker = strumLine;
-
-			tempKeys = _song.keyAmount;
+		if (strumLine != null) {
+			strumLine.makeGraphic(GRID_SIZE * (_song.keyAmount * 2 + 1), 4);
 		}
 	}
 
