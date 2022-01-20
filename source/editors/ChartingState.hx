@@ -462,7 +462,7 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.name = 'song_speed';
 		blockPressWhileTypingOnStepper.push(stepperSpeed);
 
-		var stepperKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBPM.x + 80, stepperBPM.y, 1, 4, 1, 9);
+		var stepperKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBPM.x + 80, stepperBPM.y, 1, 4, 1, 12);
 		stepperKeys.value = _song.keyAmount;
 		stepperKeys.name = 'song_keys';
 		blockPressWhileTypingOnStepper.push(stepperKeys);

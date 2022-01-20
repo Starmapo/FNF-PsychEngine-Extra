@@ -52,7 +52,7 @@ class NotesSubState extends MusicBeatSubstate
 			}
 
 			var note:FlxSprite = new FlxSprite(posX, yPos);
-			note.frames = Paths.getSparrowAtlas('NOTE_assets');
+			note.frames = Paths.getSparrowAtlas('uiskins/default/notes/NOTE_assets');
 			var animations:Array<String> = ['left0', 'down0', 'up0', 'right0'];
 			note.animation.addByPrefix('idle', animations[i]);
 			note.animation.play('idle');

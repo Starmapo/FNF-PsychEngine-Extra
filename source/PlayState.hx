@@ -340,25 +340,21 @@ class PlayState extends MusicBeatState
 		}
 		switch (playerKeys) {
 			case 1:
-				singAnimations = ['singUP'];
 				keysArray = [
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note1'))
 				];
 			case 2:
-				singAnimations = ['singLEFT', 'singRIGHT'];
 				keysArray = [
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left')),
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'))
 				];
 			case 3:
-				singAnimations = ['singLEFT', 'singUP', 'singRIGHT'];
 				keysArray = [
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left')),
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_center')),
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'))
 				];
 			case 5:
-				singAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singUP', 'singRIGHT'];
 				keysArray = [
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left')),
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down')),
@@ -367,7 +363,6 @@ class PlayState extends MusicBeatState
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_right'))
 				];
 			case 6:
-				singAnimations = ['singLEFT', 'singUP', 'singRIGHT', 'singLEFT', 'singDOWN', 'singRIGHT'];
 				keysArray = [
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left')),
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_up')),
@@ -377,7 +372,6 @@ class PlayState extends MusicBeatState
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right2'))
 				];
 			case 7:
-				singAnimations = ['singLEFT', 'singUP', 'singRIGHT', 'singUP', 'singLEFT', 'singDOWN', 'singRIGHT'];
 				keysArray = [
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left')),
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_up')),
@@ -388,7 +382,6 @@ class PlayState extends MusicBeatState
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right2'))
 				];
 			case 8:
-				singAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT', 'singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
 				keysArray = [
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left')),
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down')),
@@ -400,7 +393,6 @@ class PlayState extends MusicBeatState
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right2'))
 				];
 			case 9:
-				singAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT', 'singUP', 'singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
 				keysArray = [
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left')),
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down')),
@@ -412,33 +404,74 @@ class PlayState extends MusicBeatState
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up2')),
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right2'))
 				];
+			case 10:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_down')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_up')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_down3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_up3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right3'))
+				];
+			case 11:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_down')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_up')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_center')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_down3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_up3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right3'))
+				];
+			case 12:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right3'))
+				];
+			case 13:
+				keysArray = [
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_center')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right2')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up3')),
+					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right3'))
+				];
 		}
 		opponentKeys = dadKeys;
 		if (opponentChart) {
 			opponentKeys = bfKeys;
 		}
-		switch (opponentKeys) {
-			case 1:
-				dadSingAnimations = ['singUP'];
-			case 2:
-				dadSingAnimations = ['singLEFT', 'singRIGHT'];
-			case 3:
-				dadSingAnimations = ['singLEFT', 'singUP', 'singRIGHT'];
-			case 5:
-				dadSingAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singUP', 'singRIGHT'];
-			case 6:
-				dadSingAnimations = ['singLEFT', 'singUP', 'singRIGHT', 'singLEFT', 'singDOWN', 'singRIGHT'];
-			case 7:
-				dadSingAnimations = ['singLEFT', 'singUP', 'singRIGHT', 'singUP', 'singLEFT', 'singDOWN', 'singRIGHT'];
-			case 8:
-				dadSingAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT', 'singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
-			case 9:
-				dadSingAnimations = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT', 'singUP', 'singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
-		}
 
 		if (SONG.arrowSkin == null || SONG.arrowSkin.length < 1) {
 			SONG.arrowSkin = 'default';
 		}
+		//PLAYER
 		uiSkin = UIData.getUIFile(SONG.arrowSkin);
 		if (uiSkin == null) {
 			uiSkin = UIData.getUIFile('');
@@ -455,7 +488,22 @@ class PlayState extends MusicBeatState
 			var bad:SkinFile = UIData.getUIFile('default');
 			maniaData = bad.mania[playerKeys - 1];
 		}
+		singAnimations = maniaData.singAnimations;
 		maniaArrangement = maniaData.colors;
+		//OPPONENT
+		var maniaData:ManiaArray = null;
+		for (i in uiSkin.mania) {
+			if (i.keys == opponentKeys) {
+				maniaData = i;
+				break;
+			}
+		}
+		if (maniaData == null) {
+			FlxG.log.add('Couldn\'t get ' + opponentKeys + 'K data for ' + uiSkin.name + '!');
+			var bad:SkinFile = UIData.getUIFile('default');
+			maniaData = bad.mania[opponentKeys - 1];
+		}
+		dadSingAnimations = maniaData.singAnimations;
 
 		Conductor.mapBPMChanges(SONG, playbackRate);
 		Conductor.changeBPM(SONG.bpm, playbackRate);
@@ -4051,121 +4099,13 @@ class PlayState extends MusicBeatState
 	private function keyShit():Void
 	{
 		// HOLDING
-		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note1'));
-		var oneHold = [
-			FlxG.keys.anyPressed(a1)
-		];
-
-		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left'));
-		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_center'));
-		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'));
-		var twoHold = [
-			FlxG.keys.anyPressed(a1),
-			FlxG.keys.anyPressed(a3)
-		];
-		var threeHold = [
-			FlxG.keys.anyPressed(a1),
-			FlxG.keys.anyPressed(a2),
-			FlxG.keys.anyPressed(a3)
-		];
-
-		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left'));
-		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down'));
-		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_center'));
-		var a4 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_up'));
-		var a5 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_right'));
-		var fourHold = [
-			FlxG.keys.anyPressed(a1),
-			FlxG.keys.anyPressed(a2),
-			FlxG.keys.anyPressed(a4),
-			FlxG.keys.anyPressed(a5)
-		];
-		var fiveHold = [
-			FlxG.keys.anyPressed(a1),
-			FlxG.keys.anyPressed(a2),
-			FlxG.keys.anyPressed(a3),
-			FlxG.keys.anyPressed(a4),
-			FlxG.keys.anyPressed(a5)
-		];
-
-		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left'));
-		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_up'));
-		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right'));
-		var a4 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_center'));
-		var a5 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left2'));
-		var a6 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_down'));
-		var a7 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right2'));
-		var sixHold = [
-			FlxG.keys.anyPressed(a1),
-			FlxG.keys.anyPressed(a2),
-			FlxG.keys.anyPressed(a3),
-			FlxG.keys.anyPressed(a5),
-			FlxG.keys.anyPressed(a6),
-			FlxG.keys.anyPressed(a7)
-		];
-		var sevenHold = [
-			FlxG.keys.anyPressed(a1),
-			FlxG.keys.anyPressed(a2),
-			FlxG.keys.anyPressed(a3),
-			FlxG.keys.anyPressed(a4),
-			FlxG.keys.anyPressed(a5),
-			FlxG.keys.anyPressed(a6),
-			FlxG.keys.anyPressed(a7)
-		];
-
-		var a1 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left'));
-		var a2 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down'));
-		var a3 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up'));
-		var a4 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right'));
-		var a5 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_center'));
-		var a6 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left2'));
-		var a7 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down2'));
-		var a8 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up2'));
-		var a9 = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right2'));
-		var eightHold = [
-			FlxG.keys.anyPressed(a1),
-			FlxG.keys.anyPressed(a2),
-			FlxG.keys.anyPressed(a3),
-			FlxG.keys.anyPressed(a4),
-			FlxG.keys.anyPressed(a6),
-			FlxG.keys.anyPressed(a7),
-			FlxG.keys.anyPressed(a8),
-			FlxG.keys.anyPressed(a9)
-		];
-		var nineHold = [
-			FlxG.keys.anyPressed(a1),
-			FlxG.keys.anyPressed(a2),
-			FlxG.keys.anyPressed(a3),
-			FlxG.keys.anyPressed(a4),
-			FlxG.keys.anyPressed(a5),
-			FlxG.keys.anyPressed(a6),
-			FlxG.keys.anyPressed(a7),
-			FlxG.keys.anyPressed(a8),
-			FlxG.keys.anyPressed(a9)
-		];
-
-		var controlHoldArray:Array<Bool> = fourHold;
-		switch (playerKeys) {
-			case 1:
-				controlHoldArray = oneHold;
-			case 2:
-				controlHoldArray = twoHold;
-			case 3:
-				controlHoldArray = threeHold;
-			case 5:
-				controlHoldArray = fiveHold;
-			case 6:
-				controlHoldArray = sixHold;
-			case 7:
-				controlHoldArray = sevenHold;
-			case 8:
-				controlHoldArray = eightHold;
-			case 9:
-				controlHoldArray = nineHold;
+		var controlHoldArray:Array<Bool> = [];
+		for (i in keysArray) {
+			controlHoldArray.push(FlxG.keys.anyPressed(i));
 		}
 		
 		// TO DO: Find a better way to handle controller inputs, this should work for now
-		if(ClientPrefs.controllerMode && playerKeys == 4)
+		if(ClientPrefs.controllerMode)
 		{
 			var controlArray:Array<Bool> = [controls.NOTE_LEFT_P, controls.NOTE_DOWN_P, controls.NOTE_UP_P, controls.NOTE_RIGHT_P];
 			if(controlArray.contains(true))
@@ -4204,7 +4144,7 @@ class PlayState extends MusicBeatState
 		}
 
 		// TO DO: Find a better way to handle controller inputs, this should work for now
-		if(ClientPrefs.controllerMode && playerKeys == 4)
+		if(ClientPrefs.controllerMode)
 		{
 			var controlArray:Array<Bool> = [controls.NOTE_LEFT_R, controls.NOTE_DOWN_R, controls.NOTE_UP_R, controls.NOTE_RIGHT_R];
 			if(controlArray.contains(true))

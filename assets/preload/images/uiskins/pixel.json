@@ -77,6 +77,279 @@
 				"singUP",
 				"singRIGHT"
 			]
+		},
+		{
+			"keys": 6,
+			"noteSize": 0.6,
+			"noteSpacing": 96,
+			"xOffset": -10,
+			"colors": [
+				"left",
+				"up",
+				"right",
+				"left",
+				"down",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"UP",
+				"RIGHT",
+				"LEFT",
+				"DOWN",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singDOWN",
+				"singRIGHT"
+			]
+		},
+		{
+			"keys": 7,
+			"noteSize": 0.5,
+			"noteSpacing": 80,
+			"xOffset": -2,
+			"colors": [
+				"left",
+				"up",
+				"right",
+				"up",
+				"left2",
+				"down",
+				"right2"
+			],
+			"directions": [
+				"LEFT",
+				"UP",
+				"RIGHT",
+				"UP",
+				"LEFT",
+				"DOWN",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singUP",
+				"singRIGHT",
+				"singUP",
+				"singLEFT",
+				"singDOWN",
+				"singRIGHT"
+			]
+		},
+		{
+			"keys": 8,
+			"noteSize": 0.45,
+			"noteSpacing": 72,
+			"xOffset": -10,
+			"colors": [
+				"left",
+				"down",
+				"up",
+				"right",
+				"left",
+				"down",
+				"up",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT",
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT"
+			]
+		},
+		{
+			"keys": 9,
+			"noteSize": 0.4,
+			"noteSpacing": 64,
+			"xOffset": -10,
+			"colors": [
+				"left",
+				"down",
+				"up",
+				"right",
+				"up",
+				"left",
+				"down",
+				"up",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT",
+				"UP",
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT",
+				"singUP",
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT"
+			]
+		},
+		{
+			"keys": 10,
+			"noteSize": 0.35,
+			"noteSpacing": 56,
+			"xOffset": -2,
+			"colors": [
+				"left",
+				"down",
+				"up",
+				"right",
+				"left",
+				"right",
+				"left",
+				"down",
+				"up",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT",
+				"LEFT",
+				"RIGHT",
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singRIGHT",
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT"
+			]
+		},
+		{
+			"keys": 11,
+			"noteSize": 0.3,
+			"noteSpacing": 48,
+			"xOffset": 14,
+			"colors": [
+				"left",
+				"down",
+				"up",
+				"right",
+				"left",
+				"up",
+				"right",
+				"left",
+				"down",
+				"up",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT",
+				"LEFT",
+				"UP",
+				"RIGHT",
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT"
+			]
+		},
+		{
+			"keys": 12,
+			"noteSize": 0.25,
+			"noteSpacing": 40,
+			"xOffset": 38,
+			"colors": [
+				"left",
+				"down",
+				"up",
+				"right",
+				"left",
+				"down",
+				"up",
+				"right",
+				"left",
+				"down",
+				"up",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT",
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT",
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT"
+			]
 		}
 	],
 	"scale": 6,

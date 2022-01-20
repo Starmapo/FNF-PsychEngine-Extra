@@ -67,6 +67,7 @@ class StrumNote extends FlxSprite
 			}
 		}
 
+		directions = maniaData.directions;
 		colors = maniaData.colors;
 		swagWidth = maniaData.noteSpacing;
 		xOff = maniaData.xOffset;
