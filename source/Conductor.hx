@@ -27,7 +27,7 @@ class Conductor
 	public static var bpm:Float = 100;
 	public static var crochet:Float = ((60 / bpm) * 1000); // beats in milliseconds
 	public static var stepCrochet:Float = crochet / 4; // steps in milliseconds
-	public static var songPosition:Float;
+	public static var songPosition:Float = 0;
 	public static var lastSongPos:Float;
 	public static var offset:Float = 0;
 	public static var numerator:Int = 4;
@@ -96,7 +96,7 @@ class Conductor
 
 			var deltaSteps:Int = song.notes[i].lengthInSteps;
 			totalSteps += deltaSteps;
-			totalPos += ((((60 /  curBPM) * 1000) / (curDenominator / 4)) / 4) * deltaSteps;
+			totalPos += ((((60 /  curBPM) * 4000) / curDenominator) / 4) * deltaSteps;
 		}
 		//trace("new BPM map BUDDY " + bpmChangeMap);
 		//trace("new signature map BUDDY " + signatureChangeMap);
@@ -107,7 +107,7 @@ class Conductor
 		if (newBpm > 0) {
 			bpm = newBpm * mult;
 
-			crochet = ((60 / bpm) * 1000) / (denominator / 4);
+			crochet = ((60 / bpm) * 4000) / denominator;
 			stepCrochet = crochet / 4;
 		}
 	}
@@ -117,7 +117,7 @@ class Conductor
 		numerator = newNumerator;
 		denominator = newDenominator;
 
-		crochet = ((60 / bpm) * 1000) / (denominator / 4);
+		crochet = ((60 / bpm) * 4000) / denominator;
 		stepCrochet = crochet / 4;
 	}
 }

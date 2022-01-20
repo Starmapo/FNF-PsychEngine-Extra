@@ -452,7 +452,7 @@ class ChartingState extends MusicBeatState
 			saveEvents();
 		});
 
-		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 339, 1);
+		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 1500, 1);
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
 		blockPressWhileTypingOnStepper.push(stepperBPM);
@@ -608,7 +608,7 @@ class ChartingState extends MusicBeatState
 		denominatorDropDown.selectedLabel = '' + _song.denominator;
 		blockPressWhileScrolling.push(denominatorDropDown);
 
-		var skin = PlayState.SONG.arrowSkin;
+		var skin = _song.arrowSkin;
 		if(skin == null) skin = '';
 		noteSkinInputText = new FlxUIInputText(player2DropDown.x, player2DropDown.y + 50, 150, skin, 8);
 		blockPressWhileTypingOn.push(noteSkinInputText);
@@ -1493,7 +1493,7 @@ class ChartingState extends MusicBeatState
 				{
 					daDenominator = _song.notes[i].denominator;
 				}
-				daPos += ((((60 / daBPM) * 1000) / (daDenominator / 4)) / 4) * _song.notes[i].lengthInSteps;
+				daPos += ((((60 / daBPM) * 4000) / daDenominator) / 4) * _song.notes[i].lengthInSteps;
 			}
 		}
 		return daPos;
@@ -1579,6 +1579,7 @@ class ChartingState extends MusicBeatState
 				{
 					FlxG.log.add('added note');
 					addNote();
+					stepperSusLength.max = Conductor.stepCrochet * (Conductor.numerator * 8);
 				}
 			}
 		}
@@ -2503,7 +2504,7 @@ class ChartingState extends MusicBeatState
 		var daStepCrochet = Conductor.stepCrochet;
 		if (isNextSection) {
 			if (_song.notes[curSection + 1].changeSignature) {
-				daStepCrochet = ((60 / Conductor.bpm) * 1000) / (_song.notes[curSection + 1].denominator / 4);
+				daStepCrochet = ((60 / Conductor.bpm) * 4000) / _song.notes[curSection + 1].denominator;
 			}
 		}
 		note.y = (GRID_SIZE * (isNextSection ? _song.notes[curSection].lengthInSteps : 0)) * zoomList[curZoom] + Math.floor(getYfromStrum((daStrumTime - sectionStartTime(isNextSection ? 1 : 0)) % (daStepCrochet * _song.notes[curSection + (isNextSection ? 1 : 0)].lengthInSteps), false));
@@ -2643,6 +2644,7 @@ class ChartingState extends MusicBeatState
 		
 		if (!delnote){
 			addNote(cs, d, style);
+			stepperSusLength.max = Conductor.stepCrochet * (Conductor.numerator * 8);
 		}
 	}
 	function clearSong():Void
@@ -2791,7 +2793,6 @@ class ChartingState extends MusicBeatState
 			}
 			Conductor.changeSignature(daNumerator, daDenominator);
 		}
-		if (stepperSusLength != null) stepperSusLength.max = Conductor.stepCrochet * (Conductor.numerator * 8);
 	}
 
 	function updateSectionLengths():Void {

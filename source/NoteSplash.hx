@@ -66,7 +66,7 @@ class NoteSplash extends FlxSprite
 			frames = Paths.getSparrowAtlas('uiskins/default/splashes/noteSplashes');
 			animation.addByPrefix("note0-1", "note splash left 1", 24, false);
 		} else {
-			var uiFile:String = PlayState.SONG.arrowSkin;
+			var uiFile:String = daNote.uiSkin.name;
 			if (uiFile == null || uiFile.length < 1) {
 				uiFile == 'default';
 			}

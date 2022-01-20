@@ -252,6 +252,5 @@
 	"comboNumScale": 0.5,
 	"sustainXOffset": 0,
 	"tailYOffset": -19,
-	"centerOrigin": true,
 	"noAntialiasing": false
 }

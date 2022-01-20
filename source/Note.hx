@@ -246,7 +246,7 @@ class Note extends FlxSprite
 		arraySkin[arraySkin.length-1] = prefix + arraySkin[arraySkin.length-1] + suffix;
 
 		var lastScaleY:Float = scale.y;
-		var uiFile:String = PlayState.SONG.arrowSkin;
+		var uiFile:String = uiSkin.name;
 		if (uiFile == null || uiFile.length < 1) {
 			uiFile = 'default';
 		}

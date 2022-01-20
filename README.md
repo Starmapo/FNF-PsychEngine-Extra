@@ -28,6 +28,8 @@ To install LuaJIT do this: `haxelib git linc_luajit https://github.com/AndreiRud
 * PolybiusProxy - .MP4 Loader Extension
 * Keoiki - Note Splash Animations
 * Smokey - Spritemap Texture Atlas support
+* Cary - OG Resolution code
+* Nebula_Zorua - VCR Shader code
 _____________________________________
 
 # New Features

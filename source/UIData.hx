@@ -10,6 +10,7 @@ import sys.FileSystem;
 using StringTools;
 
 typedef SkinFile = {
+    var name:String; //just internal name to make it easier
 	var mania:Array<ManiaArray>; //data for key amounts
     var scale:Float; //overall scale (all other scales are added ontop of this one)
     var noteScale:Float; //note scale (added ontop the mania one)
@@ -17,9 +18,8 @@ typedef SkinFile = {
     var countdownScale:Float; //countdown sprites scale
     var ratingScale:Float; //rating and 'combo' sprites scale
     var comboNumScale:Float; //combo numbers scale
-    var sustainXOffset:Float; //sustain note x offset (happens before note is scaled)
+    var sustainXOffset:Float; //sustain note x offset
     var tailYOffset:Float; //sustain tail note y offset for downscroll
-    var centerOrigin:Bool; //whether to center the strums in the confirm animation
     var noAntialiasing:Bool; //whether to always have antialiasing disabled
 }
 
@@ -35,6 +35,7 @@ typedef ManiaArray = {
 
 class UIData {
     public static function getUIFile(skin:String):SkinFile {
+        var daFile:SkinFile = null;
         if (skin == null || skin.length < 1) skin = 'default';
         var rawJson:String = null;
         var path:String = Paths.getPath('images/uiskins/' + skin + '.json', TEXT);
@@ -55,6 +56,8 @@ class UIData {
         {
             return null;
         }
-        return cast Json.parse(rawJson);
+        daFile = cast Json.parse(rawJson);
+        daFile.name = skin;
+        return daFile;
     }
 }

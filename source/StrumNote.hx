@@ -82,7 +82,7 @@ class StrumNote extends FlxSprite
 	{
 		var lastAnim:String = null;
 		if(animation.curAnim != null) lastAnim = animation.curAnim.name;
-		var uiFile:String = PlayState.SONG.arrowSkin;
+		var uiFile:String = uiSkin.name;
 		if (uiFile == null || uiFile.length < 1) {
 			uiFile = 'default';
 		}
@@ -132,7 +132,7 @@ class StrumNote extends FlxSprite
 			}
 		}
 		if(animation.curAnim != null){ //my bad i was upset
-			if(animation.curAnim.name == 'confirm' && uiSkin.centerOrigin) {
+			if(animation.curAnim.name == 'confirm') {
 				centerOrigin();
 			}
 		}
@@ -153,7 +153,7 @@ class StrumNote extends FlxSprite
 			colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
 			colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
 
-			if(animation.curAnim.name == 'confirm' && uiSkin.centerOrigin) {
+			if(animation.curAnim.name == 'confirm') {
 				centerOrigin();
 			}
 		}

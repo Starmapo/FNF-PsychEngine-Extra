@@ -87,11 +87,12 @@ class FunkinLua {
 		set('scrollSpeed', PlayState.SONG.speed);
 		set('crochet', Conductor.crochet);
 		set('stepCrochet', Conductor.stepCrochet);
-		set('barLength', Conductor.numerator);
-		set('noteValue', Conductor.denominator);
-		set('keyAmount', PlayState.SONG.keyAmount);
+		set('numerator', Conductor.numerator);
+		set('denominator', Conductor.denominator);
+		set('songKeyAmount', PlayState.SONG.keyAmount);
 		set('playerKeyAmount', PlayState.instance.playerKeys);
 		set('opponentKeyAmount', PlayState.instance.opponentKeys);
+		set('uiSkin', PlayState.instance.uiSkin.name);
 		set('songLength', FlxG.sound.music.length);
 		set('songName', PlayState.SONG.song);
 		set('startedCountdown', false);

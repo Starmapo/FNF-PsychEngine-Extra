@@ -262,8 +262,6 @@ class EditorPlayState extends MusicBeatState
 		vocals.volume = 0;
 
 		var songData = PlayState.SONG;
-		Conductor.numerator = songData.numerator;
-		Conductor.denominator = songData.denominator;
 		Conductor.mapBPMChanges(songData);
 		if (songData.notes[Math.floor(curStep / (Conductor.numerator * 4))].changeBPM && songData.notes[Math.floor(curStep / (Conductor.numerator * 4))].bpm > 0)
 		{
@@ -277,6 +275,7 @@ class EditorPlayState extends MusicBeatState
 					daBPM = songData.notes[i].bpm;
 			Conductor.changeBPM(daBPM);
 		}
+		Conductor.changeSignature(PlayState.SONG.numerator, PlayState.SONG.denominator);
 		
 		notes = new FlxTypedGroup<Note>();
 		add(notes);
@@ -290,8 +289,19 @@ class EditorPlayState extends MusicBeatState
 
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 
+		var curStepCrochet = Conductor.stepCrochet;
+		var curBPM = Conductor.bpm;
+		var curDenominator = Conductor.denominator;
 		for (section in noteData)
 		{
+			if (section.changeBPM) {
+				curBPM = section.bpm;
+				curStepCrochet = (((60 / curBPM) * 4000) / curDenominator) / 4;
+			}
+			if (section.changeSignature) {
+				curDenominator = section.denominator;
+				curStepCrochet = (((60 / curBPM) * 4000) / curDenominator) / 4;
+			}
 			for (songNotes in section.sectionNotes)
 			{
 				if(songNotes[1] > -1) { //Real notes
@@ -323,7 +333,7 @@ class EditorPlayState extends MusicBeatState
 
 						var susLength:Float = swagNote.sustainLength;
 
-						susLength = susLength / Conductor.stepCrochet;
+						susLength = susLength / curStepCrochet;
 						unspawnNotes.push(swagNote);
 
 						var floorSus:Int = Math.floor(susLength);
@@ -332,7 +342,7 @@ class EditorPlayState extends MusicBeatState
 							{
 								oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-								var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + (Conductor.stepCrochet / FlxMath.roundDecimal(PlayState.SONG.speed, 2)), daNoteData, oldNote, true, false, keys);
+								var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / FlxMath.roundDecimal(PlayState.SONG.speed, 2)), daNoteData, oldNote, true, false, keys);
 								sustainNote.mustPress = gottaHitNote;
 								sustainNote.noteType = swagNote.noteType;
 								sustainNote.scrollFactor.set();
@@ -435,7 +445,6 @@ class EditorPlayState extends MusicBeatState
 		
 		if (generatedMusic)
 		{
-			var fakeCrochet:Float = (60 / Conductor.bpm) * 1000;
 			notes.forEachAlive(function(daNote:Note)
 			{
 				/*if (daNote.y > FlxG.height)
@@ -473,8 +482,8 @@ class EditorPlayState extends MusicBeatState
 						if (daNote.isSustainNote) {
 							//Jesus fuck this took me so much mother fucking time AAAAAAAAAA
 							if (daNote.animation.curAnim.name.endsWith('end')) {
-								daNote.y += 10.5 * (fakeCrochet / 400) * 1.5 * roundedSpeed + (46 * (roundedSpeed - 1));
-								daNote.y -= 46 * (1 - (fakeCrochet / 600)) * roundedSpeed;
+								daNote.y += 10.5 * (Conductor.crochet / 400) * 1.5 * roundedSpeed + (46 * (roundedSpeed - 1));
+								daNote.y -= 46 * (1 - (Conductor.crochet / 600)) * roundedSpeed;
 								if(PlayState.isPixelStage) {
 									daNote.y += 8;
 								} else {
