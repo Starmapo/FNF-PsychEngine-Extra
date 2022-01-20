@@ -2390,10 +2390,13 @@ class PlayState extends MusicBeatState
 
 	override public function onFocus():Void
 	{
-		resyncVocals();
 		#if desktop
 		if (health > 0 && !paused)
 		{
+			if (FlxG.sound.music != null && !startingSong)
+			{
+				resyncVocals();
+			}
 			if (Conductor.songPosition > 0.0)
 			{
 				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - (Conductor.songPosition / playbackRate) - ClientPrefs.noteOffset);
