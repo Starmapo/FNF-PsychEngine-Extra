@@ -116,6 +116,8 @@ class PlayState extends MusicBeatState
 	public var dad:Character;
 	public var gf:Character;
 	public var boyfriend:Boyfriend;
+	var playerChar:Character;
+	var opponentChar:Character;
 
 	public var notes:FlxTypedGroup<Note>;
 	public var unspawnNotes:Array<Note> = [];
@@ -133,6 +135,7 @@ class PlayState extends MusicBeatState
 	public var opponentStrums:FlxTypedGroup<StrumNote>;
 	public var playerStrums:FlxTypedGroup<StrumNote>;
 	public var grpNoteSplashes:FlxTypedGroup<NoteSplash>;
+	public var grpNoteSplashesOpponent:FlxTypedGroup<NoteSplash>;
 
 	public var camZooming:Bool = false;
 	private var curSong:String = "";
@@ -148,6 +151,9 @@ class PlayState extends MusicBeatState
 
 	private var timeBarBG:AttachedSprite;
 	public var timeBar:FlxBar;
+
+	var underlayPlayer:FlxSprite;
+	var underlayOpponent:FlxSprite;
 	
 	public var sicks:Int = 0;
 	public var goods:Int = 0;
@@ -266,11 +272,12 @@ class PlayState extends MusicBeatState
 	var dadKeys:Int = 4;
 	public var playerKeys:Int = 4;
 	public var opponentKeys:Int = 4;
-	var playerChar:Character;
-	var opponentChar:Character;
+
 	var curSection:Int = 0;
-	public static var maniaArrangement:Array<String>;
+
 	public var uiSkin:SkinFile = null;
+	var playerColors:Array<String>;
+	var opponentColors:Array<String>;
 
 	override public function create()
 	{
@@ -323,6 +330,7 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camOther);
 		FlxG.cameras.setDefaultDrawTarget(camOther, false);
 		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
+		grpNoteSplashesOpponent = new FlxTypedGroup<NoteSplash>();
 
 		CustomFadeTransition.nextCamera = camOther;
 		//FlxG.cameras.setDefaultDrawTarget(camGame, true);
@@ -333,7 +341,8 @@ class PlayState extends MusicBeatState
 		if (SONG == null)
 			SONG = Song.loadFromJson('tutorial');
 
-		bfKeys = dadKeys = SONG.keyAmount;
+		bfKeys = SONG.playerKeyAmount;
+		dadKeys = SONG.opponentKeyAmount;
 		playerKeys = bfKeys;
 		if (opponentChart) {
 			playerKeys = dadKeys;
@@ -489,7 +498,7 @@ class PlayState extends MusicBeatState
 			maniaData = bad.mania[playerKeys - 1];
 		}
 		singAnimations = maniaData.singAnimations;
-		maniaArrangement = maniaData.colors;
+		playerColors = maniaData.colors;
 		//OPPONENT
 		var maniaData:ManiaArray = null;
 		for (i in uiSkin.mania) {
@@ -504,6 +513,7 @@ class PlayState extends MusicBeatState
 			maniaData = bad.mania[opponentKeys - 1];
 		}
 		dadSingAnimations = maniaData.singAnimations;
+		opponentColors = maniaData.colors;
 
 		Conductor.mapBPMChanges(SONG, playbackRate);
 		Conductor.changeBPM(SONG.bpm, playbackRate);
@@ -1020,8 +1030,15 @@ class PlayState extends MusicBeatState
 				insert(members.indexOf(dadGroup) - 1, evilTrail);
 		}
 
+		#if MODS_ALLOWED
+		var file:String = Paths.modsJson(songName + '/dialogue'); //Checks for json/Psych Engine dialogue
+		if (FileSystem.exists(file)) {
+			dialogueJson = DialogueBoxPsych.parseDialogue(file);
+		}
+		#end
+
 		var file:String = Paths.json(songName + '/dialogue'); //Checks for json/Psych Engine dialogue
-		if (OpenFlAssets.exists(file)) {
+		if (OpenFlAssets.exists(file) && dialogueJson == null) {
 			dialogueJson = DialogueBoxPsych.parseDialogue(file);
 		}
 
@@ -1040,7 +1057,7 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = -5000;
 
 		strumLine = new FlxSprite(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 50).makeGraphic(FlxG.width, 10);
-		if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 150;
+		if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 210;
 		strumLine.scrollFactor.set();
 
 		var showTime:Bool = (ClientPrefs.timeBarType != 'Disabled');
@@ -1088,9 +1105,24 @@ class PlayState extends MusicBeatState
 		add(timeTxt);
 		timeBarBG.sprTracker = timeBar;
 
+		underlayPlayer = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
+		underlayPlayer.scrollFactor.set();
+		underlayPlayer.alpha = ClientPrefs.underlayAlpha;
+		underlayPlayer.visible = false;
+		underlayPlayer.cameras = [camHUD];
+		add(underlayPlayer);
+
+		underlayOpponent = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
+		underlayOpponent.scrollFactor.set();
+		underlayOpponent.alpha = ClientPrefs.underlayAlpha;
+		underlayOpponent.visible = false;
+		underlayOpponent.cameras = [camHUD];
+		add(underlayOpponent);
+
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		add(strumLineNotes);
 		add(grpNoteSplashes);
+		add(grpNoteSplashesOpponent);
 
 		if(ClientPrefs.timeBarType == 'Song Name')
 		{
@@ -1100,6 +1132,7 @@ class PlayState extends MusicBeatState
 
 		var splash:NoteSplash = new NoteSplash(100, 100, null);
 		grpNoteSplashes.add(splash);
+		grpNoteSplashesOpponent.add(splash);
 		splash.alpha = 0.0;
 
 		opponentStrums = new FlxTypedGroup<StrumNote>();
@@ -1236,6 +1269,7 @@ class PlayState extends MusicBeatState
 
 		strumLineNotes.cameras = [camHUD];
 		grpNoteSplashes.cameras = [camHUD];
+		grpNoteSplashesOpponent.cameras = [camHUD];
 		notes.cameras = [camHUD];
 		healthBar.cameras = [camHUD];
 		healthBarBG.cameras = [camHUD];
@@ -2053,9 +2087,9 @@ class PlayState extends MusicBeatState
 		switch(songSpeedType)
 		{
 			case "multiplicative":
-				songSpeed = SONG.speed * ClientPrefs.getGameplaySetting('scrollspeed', 1) * (playbackRate * 0.95);
+				songSpeed = SONG.speed * ClientPrefs.getGameplaySetting('scrollspeed', 1) * playbackRate;
 			case "constant":
-				songSpeed = ClientPrefs.getGameplaySetting('scrollspeed', 1) * (playbackRate * 0.95);
+				songSpeed = ClientPrefs.getGameplaySetting('scrollspeed', 1) * playbackRate;
 		}
 		
 		var songData = SONG;
@@ -2112,21 +2146,26 @@ class PlayState extends MusicBeatState
 		for (section in noteData)
 		{
 			if (section.changeBPM) {
-				curBPM = section.bpm;
+				curBPM = section.bpm * playbackRate;
 				curStepCrochet = (((60 / curBPM) * 4000) / curDenominator) / 4;
 			}
 			if (section.changeSignature) {
 				curDenominator = section.denominator;
 				curStepCrochet = (((60 / curBPM) * 4000) / curDenominator) / 4;
 			}
+			var leftKeys = (section.mustHitSection ? SONG.playerKeyAmount : SONG.opponentKeyAmount);
+			var rightKeys = (!section.mustHitSection ? SONG.playerKeyAmount : SONG.opponentKeyAmount);
 			for (songNotes in section.sectionNotes)
 			{
 				var daStrumTime:Float = songNotes[0] / playbackRate;
-				var daNoteData:Int = Std.int(songNotes[1] % SONG.keyAmount);
+				var daNoteData:Int = songNotes[1];
+				if (songNotes[1] >= leftKeys) {
+					daNoteData = Std.int(songNotes[1] - leftKeys);
+				}
 
 				var gottaHitNote:Bool = section.mustHitSection;
 
-				if (songNotes[1] >= SONG.keyAmount)
+				if (songNotes[1] >= leftKeys)
 				{
 					gottaHitNote = !section.mustHitSection;
 				}
@@ -2147,24 +2186,21 @@ class PlayState extends MusicBeatState
 				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys, uiSkin);
 				swagNote.mustPress = gottaHitNote;
 				swagNote.sustainLength = songNotes[2] / playbackRate;
-				swagNote.gfNote = (section.gfSection && (songNotes[1] < SONG.keyAmount));
+				swagNote.gfNote = (section.gfSection && (songNotes[1] < rightKeys));
 				swagNote.noteType = songNotes[3];
 				swagNote.scrollFactor.set();
-
-				var susLength:Float = swagNote.sustainLength;
-
-				susLength = susLength / curStepCrochet;
 				unspawnNotes.push(swagNote);
 
+				var susLength:Float = swagNote.sustainLength / curStepCrochet;
 				var floorSus:Int = Math.floor(susLength);
 				if(floorSus > 0) {
 					for (susNote in 0...floorSus+1)
 					{
 						oldNote = unspawnNotes[unspawnNotes.length - 1];
 
-						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / FlxMath.roundDecimal(songSpeed, 2)), daNoteData, oldNote, true, false, keys, uiSkin);
+						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / FlxMath.roundDecimal(songSpeed, 2)), daNoteData, oldNote, true, false, keys, uiSkin, curStepCrochet);
 						sustainNote.mustPress = gottaHitNote;
-						sustainNote.gfNote = (section.gfSection && (songNotes[1] < SONG.keyAmount));
+						sustainNote.gfNote = swagNote.gfNote;
 						sustainNote.noteType = swagNote.noteType;
 						sustainNote.scrollFactor.set();
 						unspawnNotes.push(sustainNote);
@@ -2173,28 +2209,12 @@ class PlayState extends MusicBeatState
 						{
 							sustainNote.x += FlxG.width / 2; // general offset
 						}
-						else if(ClientPrefs.middleScroll)
-						{
-							sustainNote.x += 310;
-							if(daNoteData >= Math.floor(opponentKeys / 2))
-							{ //Up and Right
-								sustainNote.x += FlxG.width / 2 + 25;
-							}
-						}
 					}
 				}
 
 				if (swagNote.mustPress)
 				{
 					swagNote.x += FlxG.width / 2; // general offset
-				}
-				else if(ClientPrefs.middleScroll)
-				{
-					swagNote.x += 310;
-					if(daNoteData >= Math.floor(opponentKeys / 2)) //Up and Right
-					{
-						swagNote.x += FlxG.width / 2 + 25;
-					}
 				}
 
 				if(!noteTypeMap.exists(swagNote.noteType)) {
@@ -2279,6 +2299,7 @@ class PlayState extends MusicBeatState
 		var delay = 0.5;
 		var delay2 = 0.2;
 		switch (keys) {
+			case 1 | 2 | 3 | 4:
 			case 5:
 				delay = 0.3;
 			case 6 | 7:
@@ -2287,6 +2308,8 @@ class PlayState extends MusicBeatState
 			case 8 | 9:
 				delay = 0.1;
 				delay2 = 0.05;
+			default:
+				delay2 = 0;
 		}
 
 		for (i in 0...keys)
@@ -2296,6 +2319,7 @@ class PlayState extends MusicBeatState
 			if ((player < 1 && ClientPrefs.middleScroll && !opponentChart) || (player > 0 && ClientPrefs.middleScroll && opponentChart)) targetAlpha = 0.35;
 
 			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, player, keys, uiSkin);
+			babyArrow.y += 80 - (babyArrow.height / 2);
 			babyArrow.downScroll = ClientPrefs.downScroll;
 			if (!isStoryMode)
 			{
@@ -2313,7 +2337,7 @@ class PlayState extends MusicBeatState
 				if(ClientPrefs.middleScroll && opponentChart)
 				{
 					babyArrow.x += 310;
-					if(i >= Math.floor(bfKeys/2)) {
+					if(i >= Math.floor(keys / 2)) {
 						babyArrow.x += FlxG.width / 2 + 25;
 					}
 				}
@@ -2324,7 +2348,7 @@ class PlayState extends MusicBeatState
 				if(ClientPrefs.middleScroll && !opponentChart)
 				{
 					babyArrow.x += 310;
-					if(i >= Math.floor(dadKeys / 2)) {
+					if(i >= Math.floor(keys / 2)) {
 						babyArrow.x += FlxG.width / 2 + 25;
 					}
 				}
@@ -2334,6 +2358,21 @@ class PlayState extends MusicBeatState
 			strumLineNotes.add(babyArrow);
 			babyArrow.postAddedToGroup();
 		}
+
+		var strums = playerStrums;
+		var underlay = underlayPlayer;
+		if (player == 0) {
+			strums = opponentStrums;
+			underlay = underlayOpponent;
+		}
+
+		var fullWidth = 0.0;
+		for (i in strums) {
+			fullWidth += i.width - (i.width - i.swagWidth);
+		}
+		underlay.makeGraphic(Math.ceil(fullWidth), FlxG.height * 2, FlxColor.BLACK);
+		underlay.x = strums.members[0].x;
+		underlay.visible = true;
 	}
 
 	override function openSubState(SubState:FlxSubState)
@@ -2847,6 +2886,7 @@ class PlayState extends MusicBeatState
 				var strumAlpha:Float = 0;
 				var strumDirection:Float = 0;
 				var strumScroll:Bool = false;
+				var strumHeight:Float = 0;
 				var strums = playerStrums;
 				if (daNote.mustPress == opponentChart) {
 					strums = opponentStrums;
@@ -2857,12 +2897,13 @@ class PlayState extends MusicBeatState
 				strumDirection = strums.members[daNote.noteData].direction;
 				strumAlpha = strums.members[daNote.noteData].alpha;
 				strumScroll = strums.members[daNote.noteData].downScroll;
+				strumHeight = strums.members[daNote.noteData].height;
 
 				strumX += daNote.offsetX;
 				strumY += daNote.offsetY;
 				strumAngle += daNote.offsetAngle;
 				strumAlpha *= daNote.multAlpha;
-				var center:Float = strumY + daNote.height / 2;
+				var center:Float = strumY + strumHeight / 2;
 
 				//if(daNote.copyX) {
 				//	daNote.x = strumX;
@@ -2882,17 +2923,17 @@ class PlayState extends MusicBeatState
 						daNote.x = strumX + Math.cos(angleDir) * daNote.distance;
 						daNote.y = strumY + Math.sin(angleDir) * daNote.distance;
 						if (daNote.isSustainNote){
-							daNote.angle = strumDirection-90;
+							daNote.angle = strumDirection - 90;
 						}
 					
 						if (daNote.isSustainNote && !ClientPrefs.keSustains) {
 							//Jesus fuck this took me so much mother fucking time AAAAAAAAAA
 							if (daNote.animation.curAnim.name.endsWith('end')) {
-								daNote.y += 10.5 * (Conductor.crochet / 400) * 1.5 * roundedSpeed + (46 * (roundedSpeed - 1));
-								daNote.y -= 46 * (1 - (Conductor.crochet / 600)) * roundedSpeed;
+								daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * roundedSpeed + (46 * (roundedSpeed - 1));
+								daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * roundedSpeed;
 								daNote.y += uiSkin.tailYOffset;
 							} 
-							daNote.y += (daNote.height / 2) - (60.5 * (roundedSpeed - 1));
+							daNote.y += (strumHeight / 2) - (60.5 * (roundedSpeed - 1));
 							daNote.y += 27.5 * ((Conductor.bpm / 100) - 1) * (roundedSpeed - 1);
 
 							if(daNote.mustPress || !daNote.ignoreNote)
@@ -2917,7 +2958,7 @@ class PlayState extends MusicBeatState
 						daNote.x = strumX + Math.cos(angleDir) * daNote.distance;
 						daNote.y = strumY + Math.sin(angleDir) * daNote.distance;
 						if (daNote.isSustainNote){
-							daNote.angle = strumDirection-90;
+							daNote.angle = strumDirection - 90;
 						}
 						if(!ClientPrefs.keSustains)
 						{
@@ -2985,6 +3026,9 @@ class PlayState extends MusicBeatState
 				playerChar.dance();
 			}
 		}
+
+		underlayPlayer.x = playerStrums.members[0].x;
+		underlayOpponent.x = opponentStrums.members[0].x;
 		
 		#if debug
 		if(!endingSong && !startingSong) {
@@ -3903,7 +3947,7 @@ class PlayState extends MusicBeatState
 		seperatedScore.push(combo % 10);
 
 		if (combo >= 10 || combo == 0) {
-			insert(members.indexOf(strumLineNotes), comboSpr);
+			//insert(members.indexOf(strumLineNotes), comboSpr);
 		}
 
 		var daLoop:Int = 0;
@@ -4290,6 +4334,11 @@ class PlayState extends MusicBeatState
 		StrumPlayAnim(true, note.noteData, time);
 		note.hitByOpponent = true;
 
+		if(!note.noteSplashDisabled && !note.isSustainNote)
+		{
+			spawnNoteSplashOnNote(note);
+		}
+
 		callOnLuas('opponentNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote]);
 
 		if (!note.isSustainNote)
@@ -4418,9 +4467,9 @@ class PlayState extends MusicBeatState
 	}
 
 	function spawnNoteSplashOnNote(note:Note) {
-		if(ClientPrefs.noteSplashes && note != null) {
+		if(note != null && ((ClientPrefs.noteSplashes && note.mustPress) || (ClientPrefs.noteSplashesOpponent && !note.mustPress))) {
 			var strum:StrumNote = playerStrums.members[note.noteData];
-			if (opponentChart) strum = opponentStrums.members[note.noteData];
+			if (opponentChart == note.mustPress) strum = opponentStrums.members[note.noteData];
 			if(strum != null) {
 				spawnNoteSplash(strum.x, strum.y, note.noteData, note);
 			}
@@ -4440,9 +4489,18 @@ class PlayState extends MusicBeatState
 			brt = note.noteSplashBrt;
 		}
 
-		var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
-		splash.setupNoteSplash(x, y, note, skin, hue, sat, brt, playerKeys);
-		grpNoteSplashes.add(splash);
+		var group = grpNoteSplashes;
+		var colors = playerColors;
+		var keys = playerKeys;
+		if (opponentChart == note.mustPress) {
+			group = grpNoteSplashesOpponent;
+			colors = opponentColors;
+			keys = opponentKeys;
+		}
+
+		var splash:NoteSplash = group.recycle(NoteSplash);
+		splash.setupNoteSplash(x, y, note, skin, hue, sat, brt, keys, colors);
+		group.add(splash);
 	}
 
 	var fastCarCanDrive:Bool = true;

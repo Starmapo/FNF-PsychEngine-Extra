@@ -18,10 +18,12 @@ To install LuaJIT do this: `haxelib git linc_luajit https://github.com/AndreiRud
 * bbpanzu - Assistant Coding
 
 * Starmapo - He copy and pasted some code????? idk
-* KadeDev & GitHub Contributors - Made Kade Engine (and is smarter)
-* Leather128 & GitHub Contributors - Made Leather Engine (and is smarter)
 
 ### Special Thanks
+* KadeDev & GitHub Contributors - Made Kade Engine (and is smarter)
+* Leather128 & GitHub Contributors - Made Leather Engine (and is smarter)
+* srPerez - Made VS Shaggy & original 9 key notes
+
 * shubs - New Input System
 * SqirraRNG - Chart Editor's Sound Waveform base code
 * iFlicky - Delay/Combo Menu Song Composer + Dialogue Sounds
@@ -33,18 +35,18 @@ To install LuaJIT do this: `haxelib git linc_luajit https://github.com/AndreiRud
 _____________________________________
 
 # New Features
-* Different key amounts (1 - 9)
-* Different time signatures (3/4, 4/8, etc.)
-* Custom note skins
-* Play opponent's chart
-* Song playback speed
+* Custom key amounts (1 - 13)
+* Custom time signatures (3/4, 4/8, etc.)
+* Custom UI skins (notes, splashes, ratings, countdown, etc.)
+* Gameplay Changers: Play opponent's chart, Song playback speed
 * More Lua functions
 * Separate files for player and opponent characters
 
 # New Options
 * Sort Freeplay songs alphabetically
 * Change instrumentals and voices volume
+* Show note splashes for the opponent
 
 # Minor Touches
-* Camera bump in Freeplay (@Stilic)
-* Difficulty dropdown in charting menu (@CerBor)
+* Camera bump in Freeplay (from @Stilic)
+* Difficulty dropdown in charting menu (from @CerBor)

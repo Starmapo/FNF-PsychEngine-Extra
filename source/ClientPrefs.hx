@@ -12,6 +12,7 @@ class ClientPrefs {
 	public static var flashing:Bool = true;
 	public static var globalAntialiasing:Bool = true;
 	public static var noteSplashes:Bool = true;
+	public static var noteSplashesOpponent:Bool = false;
 	public static var lowQuality:Bool = false;
 	public static var framerate:Int = 60;
 	public static var cursing:Bool = true;
@@ -31,6 +32,10 @@ class ClientPrefs {
 	public static var screenResTemp:String = "1280 x 720"; // dummy value that isn't saved, used so that if the player cancels instead of hitting space the resolution isn't applied
 	public static var screenScaleMode:String = "Letterbox";
 	public static var screenScaleModeTemp:String = "Letterbox";
+	public static var freeplayAlphabetic:Bool = false;
+	public static var instVolume:Float = 1;
+	public static var voicesVolume:Float = 1;
+	public static var underlayAlpha:Float = 0;
 	public static var gameplaySettings:Map<String, Dynamic> = [
 		'scrollspeed' => 1.0,
 		'scrolltype' => 'multiplicative', 
@@ -60,10 +65,6 @@ class ClientPrefs {
 	public static var goodWindow:Int = 90;
 	public static var badWindow:Int = 135;
 	public static var safeFrames:Float = 10;
-
-	public static var freeplayAlphabetic:Bool = false;
-	public static var instVolume:Float = 1;
-	public static var voicesVolume:Float = 1;
 
 	//Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx and Controls.hx
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
@@ -160,6 +161,7 @@ class ClientPrefs {
 		FlxG.save.data.flashing = flashing;
 		FlxG.save.data.globalAntialiasing = globalAntialiasing;
 		FlxG.save.data.noteSplashes = noteSplashes;
+		FlxG.save.data.noteSplashesOpponent = noteSplashesOpponent;
 		FlxG.save.data.lowQuality = lowQuality;
 		FlxG.save.data.framerate = framerate;
 		//FlxG.save.data.cursing = cursing;
@@ -191,6 +193,7 @@ class ClientPrefs {
 		FlxG.save.data.freeplayAlphabetic = freeplayAlphabetic;
 		FlxG.save.data.instVolume = instVolume;
 		FlxG.save.data.voicesVolume = voicesVolume;
+		FlxG.save.data.underlayAlpha = underlayAlpha;
 	
 		FlxG.save.flush();
 
@@ -222,6 +225,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.noteSplashes != null) {
 			noteSplashes = FlxG.save.data.noteSplashes;
+		}
+		if(FlxG.save.data.noteSplashesOpponent != null) {
+			noteSplashesOpponent = FlxG.save.data.noteSplashesOpponent;
 		}
 		if(FlxG.save.data.lowQuality != null) {
 			lowQuality = FlxG.save.data.lowQuality;
@@ -314,6 +320,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.voicesVolume != null) {
 			voicesVolume = FlxG.save.data.voicesVolume;
+		}
+		if(FlxG.save.data.underlayAlpha != null) {
+			underlayAlpha = FlxG.save.data.underlayAlpha;
 		}
 		
 		// flixel automatically saves your volume!

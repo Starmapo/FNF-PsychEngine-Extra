@@ -23,8 +23,6 @@ class CoolUtil
 
 	public static var difficulties:Array<String> = [];
 
-	public static var difficultiesMap:Map<String, Array<String>> = new Map<String, Array<String>>();
-
 	public static function getDifficultyFilePath(num:Null<Int> = null)
 	{
 		if(num == null) num = PlayState.storyDifficulty;
@@ -130,15 +128,28 @@ class CoolUtil
 	}
 
 	public static function getDifficulties(?song:String = '', ?remove:Bool = false) {
-		var mapKey:String = WeekData.weeksList[PlayState.storyWeek] + Paths.formatToSongPath(song); //incase there is more than one song with the same name
-		if (difficultiesMap.exists(mapKey)) {
-			difficulties = difficultiesMap.get(mapKey);
-			return;
-		}
+		song = Paths.formatToSongPath(song);
 		difficulties = defaultDifficulties.copy();
 		var diffStr:String = WeekData.getCurrentWeek().difficulties;
+		if((diffStr == null || diffStr.length == 0) && song.length > 0) {
+			var num:Int = 0;
+			for (i in WeekData.weeksLoaded.keys()) {
+				var songs:Array<Dynamic> = WeekData.weeksLoaded.get(i).songs;
+				for (daSong in songs) {
+					var name:String = daSong[0];
+					name.toLowerCase().trim();
+					if (name == song) {
+						PlayState.storyWeek = num;
+						diffStr = WeekData.getCurrentWeek().difficulties;
+						//trace('found difficulties');
+						break;
+					}
+				}
+				num++;
+			}
+		}
 		if(diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
-		diffStr.trim(); //Fuck you HTML5
+		diffStr = diffStr.trim(); //Fuck you HTML5
 
 		if(diffStr != null && diffStr.length > 0)
 		{
@@ -151,22 +162,26 @@ class CoolUtil
 					diffs[i] = diffs[i].trim();
 					if(diffs[i].length < 1) diffs.remove(diffs[i]);
 				}
+				else
+				{
+					diffs.remove(diffs[i]);
+				}
 				--i;
 			}
 			
 			if (remove && song.length > 0) {
 				for (i in 0...diffs.length) {
-					var suffix = '-' + diffs[i];
-					if (diffs[i].toLowerCase() == defaultDifficulty.toLowerCase()) {
+					var suffix = '-' + Paths.formatToSongPath(diffs[i]);
+					if (Paths.formatToSongPath(diffs[i]) == defaultDifficulty.toLowerCase()) {
 						suffix = '';
 					}
 					var poop:String = song + suffix;
-					try {
-						var daSong:Song.SwagSong = Song.loadFromJson(poop, song);
-						if (daSong == null) {
-							diffs.remove(diffs[i]);
-						}
-					} catch (e:Any) {
+					#if MODS_ALLOWED
+					if (!FileSystem.exists(Paths.modsJson('$song/$poop')) && !FileSystem.exists(Paths.json('$song/$poop')))
+					#else
+					if (!Assets.exists(Paths.json('$song/$poop')))
+					#end
+					{
 						diffs.remove(diffs[i]);
 					}
 				}
@@ -177,57 +192,40 @@ class CoolUtil
 				difficulties = diffs;
 			}
 		}
-		if (!difficultiesMap.exists(mapKey)) {
-			difficultiesMap.set(mapKey, difficulties);
-		}
 	}
 
 	public static function getProperty(variable:String):Dynamic {
 		var killMe:Array<String> = variable.split('.');
 		if(killMe.length > 1) {
-			var coverMeInPiss:Dynamic = null;
-			if(PlayState.instance.modchartSprites.exists(killMe[0])) {
-				coverMeInPiss = PlayState.instance.modchartSprites.get(killMe[0]);
-			} else if(PlayState.instance.modchartTexts.exists(killMe[0])) {
-				coverMeInPiss = PlayState.instance.modchartTexts.get(killMe[0]);
-			} else {
-				coverMeInPiss = Reflect.getProperty(getInstance(), killMe[0]);
-			}
+			var coverMeInPiss:Dynamic = Reflect.getProperty(FlxG.state, killMe[0]);
 
 			for (i in 1...killMe.length-1) {
 				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
 			}
 			return Reflect.getProperty(coverMeInPiss, killMe[killMe.length-1]);
 		}
-		return Reflect.getProperty(getInstance(), variable);
+		return Reflect.getProperty(FlxG.state, variable);
 	}
 
 	public static function setProperty(variable:String, value:Dynamic) {
 		var killMe:Array<String> = variable.split('.');
 		if(killMe.length > 1) {
-			var coverMeInPiss:Dynamic = null;
-			if(PlayState.instance.modchartSprites.exists(killMe[0])) {
-				coverMeInPiss = PlayState.instance.modchartSprites.get(killMe[0]);
-			} else if(PlayState.instance.modchartTexts.exists(killMe[0])) {
-				coverMeInPiss = PlayState.instance.modchartTexts.get(killMe[0]);
-			} else {
-				coverMeInPiss = Reflect.getProperty(getInstance(), killMe[0]);
-			}
+			var coverMeInPiss:Dynamic = Reflect.getProperty(FlxG.state, killMe[0]);
 
 			for (i in 1...killMe.length-1) {
 				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
 			}
 			return Reflect.setProperty(coverMeInPiss, killMe[killMe.length-1], value);
 		}
-		return Reflect.setProperty(getInstance(), variable, value);
+		return Reflect.setProperty(FlxG.state, variable, value);
 	}
 
 	public static function getPropertyFromGroup(obj:String, index:Int, variable:Dynamic):Dynamic {
-		if(Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedGroup)) {
-			return getGroupStuff(Reflect.getProperty(getInstance(), obj).members[index], variable);
+		if(Std.isOfType(Reflect.getProperty(FlxG.state, obj), FlxTypedGroup)) {
+			return getGroupStuff(Reflect.getProperty(FlxG.state, obj).members[index], variable);
 		}
 
-		var leArray:Dynamic = Reflect.getProperty(getInstance(), obj)[index];
+		var leArray:Dynamic = Reflect.getProperty(FlxG.state, obj)[index];
 		if(leArray != null) {
 			if(Type.typeof(variable) == ValueType.TInt) {
 				return leArray[variable];
@@ -239,12 +237,12 @@ class CoolUtil
 	}
 
 	public static function setPropertyFromGroup(obj:String, index:Int, variable:Dynamic, value:Dynamic) {
-		if(Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedGroup)) {
-			setGroupStuff(Reflect.getProperty(getInstance(), obj).members[index], variable, value);
+		if(Std.isOfType(Reflect.getProperty(FlxG.state, obj), FlxTypedGroup)) {
+			setGroupStuff(Reflect.getProperty(FlxG.state, obj).members[index], variable, value);
 			return;
 		}
 
-		var leArray:Dynamic = Reflect.getProperty(getInstance(), obj)[index];
+		var leArray:Dynamic = Reflect.getProperty(FlxG.state, obj)[index];
 		if(leArray != null) {
 			if(Type.typeof(variable) == ValueType.TInt) {
 				leArray[variable] = value;
@@ -276,11 +274,6 @@ class CoolUtil
 			return Reflect.setProperty(coverMeInPiss, killMe[killMe.length-1], value);
 		}
 		return Reflect.setProperty(Type.resolveClass(classVar), variable, value);
-	}
-
-	public static inline function getInstance():FlxState
-	{
-		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
 	}
 
 	public static function getGroupStuff(leArray:Dynamic, variable:String):Dynamic {

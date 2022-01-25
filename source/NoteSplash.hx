@@ -12,7 +12,9 @@ class NoteSplash extends FlxSprite
 	public var colorSwap:ColorSwap = null;
 	private var idleAnim:String;
 	private var textureLoaded:String = null;
+
 	var daNote:Note = null;
+	var colors:Array<String>;
 
 	public function new(x:Float = 0, y:Float = 0, ?note:Note = null) {
 		super(x, y);
@@ -28,10 +30,13 @@ class NoteSplash extends FlxSprite
 		antialiasing = ClientPrefs.globalAntialiasing;
 	}
 
-	public function setupNoteSplash(x:Float, y:Float, note:Note = null, texture:String = null, hueColor:Float = 0, satColor:Float = 0, brtColor:Float = 0, keyAmount:Int = 4) {
-		daNote = note;
+	public function setupNoteSplash(x:Float, y:Float, note:Note = null, texture:String = null, hueColor:Float = 0, satColor:Float = 0, brtColor:Float = 0, keyAmount:Int = 4, ?colors:Array<String>) {
 		if (note != null) {
+			daNote = note;
 			setGraphicSize(Std.int(note.width * 2.68), Std.int(note.height * 2.77));
+		}
+		if (colors != null) {
+			this.colors = colors;
 		}
 		updateHitbox();
 		alpha = 0.6;
@@ -67,13 +72,7 @@ class NoteSplash extends FlxSprite
 			animation.addByPrefix("note0-1", "note splash left 1", 24, false);
 		} else {
 			var uiFile:String = daNote.uiSkin.name;
-			if (uiFile == null || uiFile.length < 1) {
-				uiFile == 'default';
-			}
 			var uiSkin = UIData.getUIFile(uiFile);
-			if (uiSkin == null) {
-				uiSkin == UIData.getUIFile('default');
-			}
 			antialiasing = ClientPrefs.globalAntialiasing;
 			if (uiSkin.noAntialiasing) {
 				antialiasing = false;
@@ -88,7 +87,7 @@ class NoteSplash extends FlxSprite
 			}
 			frames = Paths.getSparrowAtlas(path);
 			for (i in 1...3) {
-				animation.addByPrefix("note" + daNote.noteData + '-$i', "note splash " + PlayState.maniaArrangement[daNote.noteData] + ' $i', 24, false);
+				animation.addByPrefix("note" + daNote.noteData + '-$i', "note splash " + colors[daNote.noteData] + ' $i', 24, false);
 			}
 		}
 	}

@@ -19,6 +19,8 @@ class MusicBeatState extends FlxUIState
 	public var scaleRatio = ClientPrefs.getResolution()[1] / 720;
 	var modeRatio:RatioScaleMode;
 	var modeStage:StageSizeScaleMode;
+	#else
+	public var scaleRatio = 1;
 	#end
 
 	private var controls(get, never):Controls;

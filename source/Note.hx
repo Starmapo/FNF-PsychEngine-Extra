@@ -76,6 +76,7 @@ class Note extends FlxSprite
 	var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
 	public var uiSkin:SkinFile;
+	public var stepCrochet:Float = 150;
 
 	private function set_texture(value:String):String {
 		if(texture != value) {
@@ -126,7 +127,7 @@ class Note extends FlxSprite
 		return value;
 	}
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?keyAmount:Int = 4, ?uiSkin:SkinFile = null)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?keyAmount:Int = 4, ?uiSkin:SkinFile = null, ?stepCrochet:Float = 150)
 	{
 		super();
 
@@ -142,6 +143,7 @@ class Note extends FlxSprite
 		this.inEditor = inEditor;
 		this.keyAmount = keyAmount;
 		this.uiSkin = uiSkin;
+		this.stepCrochet = stepCrochet;
 
 		var maniaData:ManiaArray = null;
 		for (i in uiSkin.mania) {
@@ -201,14 +203,13 @@ class Note extends FlxSprite
 			updateHitbox();
 
 			offsetX -= width / 2;
-
 			offsetX += uiSkin.sustainXOffset;
 
 			if (prevNote.isSustainNote)
 			{
 				prevNote.animation.play(colors[prevNote.noteData % keyAmount] + 'hold');
 
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
+				prevNote.scale.y *= stepCrochet / 100 * 1.05;
 				if(PlayState.instance != null)
 				{
 					prevNote.scale.y *= PlayState.instance.songSpeed;

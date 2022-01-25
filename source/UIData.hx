@@ -35,8 +35,8 @@ typedef ManiaArray = {
 
 class UIData {
     public static function getUIFile(skin:String):SkinFile {
-        var daFile:SkinFile = null;
         if (skin == null || skin.length < 1) skin = 'default';
+        var daFile:SkinFile = null;
         var rawJson:String = null;
         var path:String = Paths.getPath('images/uiskins/' + skin + '.json', TEXT);
     

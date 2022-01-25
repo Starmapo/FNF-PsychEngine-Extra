@@ -11,7 +11,6 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.addons.effects.FlxTrail;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
@@ -24,7 +23,6 @@ import flixel.util.FlxColor;
 import openfl.display.BlendMode;
 #if sys
 import sys.FileSystem;
-import sys.io.File;
 #end
 import Shaders;
 import Type.ValueType;
@@ -89,9 +87,8 @@ class FunkinLua {
 		set('stepCrochet', Conductor.stepCrochet);
 		set('numerator', Conductor.numerator);
 		set('denominator', Conductor.denominator);
-		set('songKeyAmount', PlayState.SONG.keyAmount);
-		set('playerKeyAmount', PlayState.instance.playerKeys);
-		set('opponentKeyAmount', PlayState.instance.opponentKeys);
+		set('playerKeyAmount', PlayState.SONG.playerKeyAmount);
+		set('opponentKeyAmount', PlayState.SONG.opponentKeyAmount);
 		set('uiSkin', PlayState.instance.uiSkin.name);
 		set('songLength', FlxG.sound.music.length);
 		set('songName', PlayState.SONG.song);

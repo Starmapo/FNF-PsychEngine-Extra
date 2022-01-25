@@ -32,10 +32,12 @@ class PauseSubState extends MusicBeatSubstate
 		super();
 		if(CoolUtil.difficulties.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
 
-		if(PlayState.chartingMode)
-		{
+		if (PlayState.chartingMode) {
 			menuItemsOG.insert(2, 'Toggle Practice Mode');
 			menuItemsOG.insert(3, 'Toggle Botplay');
+		}
+		if (PlayState.isStoryMode && PlayState.seenCutscene) {
+			menuItemsOG.insert(2, 'Restart Cutscene');
 		}
 		menuItems = menuItemsOG;
 
@@ -176,6 +178,9 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.changedDifficulty = true;
 					practiceText.visible = PlayState.instance.practiceMode;
 				case "Restart Song":
+					restartSong();
+				case "Restart Cutscene":
+					PlayState.seenCutscene = false;
 					restartSong();
 				case 'Toggle Botplay':
 					PlayState.instance.cpuControlled = !PlayState.instance.cpuControlled;

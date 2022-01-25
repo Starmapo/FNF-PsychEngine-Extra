@@ -59,7 +59,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Instrumental Volume',
 			'Sets the volume for the song instrumentals.',
 			'instVolume',
-			'float',
+			'percent',
 			1);
 		option.scrollSpeed = 5;
 		option.minValue = 0;
@@ -70,7 +70,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Vocals Volume',
 			'Sets the volume for the song vocals.',
 			'voicesVolume',
-			'float',
+			'percent',
 			1);
 		option.scrollSpeed = 5;
 		option.minValue = 0;

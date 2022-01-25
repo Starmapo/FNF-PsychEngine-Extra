@@ -28,7 +28,8 @@ typedef SwagSong =
 	var arrowSkin:String;
 	var validScore:Bool;
 
-	var keyAmount:Null<Int>;
+	var playerKeyAmount:Null<Int>;
+	var opponentKeyAmount:Null<Int>;
 	var numerator:Null<Int>;
 	var denominator:Null<Int>;
 }
@@ -100,16 +101,14 @@ class Song
 			songJson.player3 = null;
 		}
 		
-		if(songJson.keyAmount == null)
+		if(songJson.playerKeyAmount == null)
 		{
-			songJson.keyAmount = 4;
+			songJson.playerKeyAmount = 4;
+			songJson.opponentKeyAmount = 4;
 		}
 		if(songJson.numerator == null)
 		{
 			songJson.numerator = 4;
-		}
-		if(songJson.denominator == null)
-		{
 			songJson.denominator = 4;
 		}
 
@@ -188,17 +187,19 @@ class Song
 		if (tempSong.mania != null && !Math.isNaN(tempSong.mania)) {
 			switch (tempSong.mania) {
 				case 1:
-					swagShit.keyAmount = 6;
+					swagShit.playerKeyAmount = 6;
 				case 2:
-					swagShit.keyAmount = 7;
+					swagShit.playerKeyAmount = 7;
 				case 3:
-					swagShit.keyAmount = 9;
+					swagShit.playerKeyAmount = 9;
 				default:
-					swagShit.keyAmount = 4;
+					swagShit.playerKeyAmount = 4;
 			}
+			swagShit.opponentKeyAmount = swagShit.playerKeyAmount;
 		}
 		if (tempSong.keyCount != null && !Math.isNaN(tempSong.keyCount)) {
-			swagShit.keyAmount = tempSong.keyCount;
+			swagShit.playerKeyAmount = tempSong.keyCount;
+			swagShit.opponentKeyAmount = swagShit.playerKeyAmount;
 		}
 		if (tempSong.timescale != null && tempSong.timescale.length == 2) {
 			swagShit.numerator = tempSong.timescale[0];

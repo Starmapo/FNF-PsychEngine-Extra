@@ -9,11 +9,18 @@ class VisualsUISubState extends BaseOptionsMenu
 		title = 'Visuals and UI';
 		rpcTitle = 'Visuals & UI Settings Menu'; //for Discord Rich Presence
 
-		var option:Option = new Option('Note Splashes',
+		var option:Option = new Option('Player Note Splashes',
 			"If unchecked, hitting \"Sick!\" notes won't show particles.",
 			'noteSplashes',
 			'bool',
 			true);
+		addOption(option);
+
+		var option:Option = new Option('Opponent Note Splashes',
+			"If unchecked, the opponent hitting \"Sick!\" notes won't show particles.",
+			'noteSplashesOpponent',
+			'bool',
+			false);
 		addOption(option);
 
 		var option:Option = new Option('Hide HUD',
@@ -50,6 +57,18 @@ class VisualsUISubState extends BaseOptionsMenu
 			'scoreZoom',
 			'bool',
 			true);
+		addOption(option);
+
+		var option:Option = new Option('Note Underlay Transparency',
+			'How much transparent should the note backgrounds be.',
+			'underlayAlpha',
+			'percent',
+			0);
+		option.scrollSpeed = 1.6;
+		option.minValue = 0.0;
+		option.maxValue = 1;
+		option.changeValue = 0.1;
+		option.decimals = 1;
 		addOption(option);
 
 		var option:Option = new Option('Health Bar Transparency',

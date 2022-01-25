@@ -77,7 +77,8 @@ class EditorPlayState extends MusicBeatState
 			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_right'))
 		];
 
-		bfKeys = dadKeys = PlayState.SONG.keyAmount;
+		bfKeys = PlayState.SONG.playerKeyAmount;
+		dadKeys = PlayState.SONG.opponentKeyAmount;
 		switch (bfKeys) {
 			case 1:
 				keysArray = [
@@ -359,16 +360,21 @@ class EditorPlayState extends MusicBeatState
 				curDenominator = section.denominator;
 				curStepCrochet = (((60 / curBPM) * 4000) / curDenominator) / 4;
 			}
+			var leftKeys = (section.mustHitSection ? PlayState.SONG.playerKeyAmount : PlayState.SONG.opponentKeyAmount);
+			var rightKeys = (!section.mustHitSection ? PlayState.SONG.playerKeyAmount : PlayState.SONG.opponentKeyAmount);
 			for (songNotes in section.sectionNotes)
 			{
 				if(songNotes[1] > -1) { //Real notes
 					var daStrumTime:Float = songNotes[0];
 					if(daStrumTime >= startPos) {
-						var daNoteData:Int = Std.int(songNotes[1] % PlayState.SONG.keyAmount);
+						var daNoteData:Int = songNotes[1];
+						if (songNotes[1] >= leftKeys) {
+							daNoteData = Std.int(songNotes[1] - leftKeys);
+						}
 
 						var gottaHitNote:Bool = section.mustHitSection;
 
-						if (songNotes[1] >= PlayState.SONG.keyAmount)
+						if (songNotes[1] >= PlayState.SONG.playerKeyAmount)
 						{
 							gottaHitNote = !section.mustHitSection;
 						}
@@ -399,7 +405,7 @@ class EditorPlayState extends MusicBeatState
 							{
 								oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-								var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / FlxMath.roundDecimal(PlayState.SONG.speed, 2)), daNoteData, oldNote, true, false, keys);
+								var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / FlxMath.roundDecimal(PlayState.SONG.speed, 2)), daNoteData, oldNote, true, false, keys, curStepCrochet);
 								sustainNote.mustPress = gottaHitNote;
 								sustainNote.noteType = swagNote.noteType;
 								sustainNote.scrollFactor.set();
@@ -518,17 +524,16 @@ class EditorPlayState extends MusicBeatState
 				// i am so fucking sorry for this if condition
 				var strumX:Float = 0;
 				var strumY:Float = 0;
-				if(daNote.mustPress) {
-					strumX = playerStrums.members[daNote.noteData].x;
-					strumY = playerStrums.members[daNote.noteData].y;
-				} else {
-					strumX = opponentStrums.members[daNote.noteData].x;
-					strumY = opponentStrums.members[daNote.noteData].y;
-				}
+				var strumHeight:Float = 0;
+				var strums = playerStrums;
+				if (!daNote.mustPress) strums = opponentStrums;
+				strumX = strums.members[daNote.noteData].x;
+				strumY = strums.members[daNote.noteData].y;
+				strumHeight = strums.members[daNote.noteData].height;
 
 				strumX += daNote.offsetX;
 				strumY += daNote.offsetY;
-				var center:Float = strumY + daNote.swagWidth / 2;
+				var center:Float = strumY + strumHeight / 2;
 
 				if(daNote.copyX) {
 					daNote.x = strumX;
@@ -539,15 +544,15 @@ class EditorPlayState extends MusicBeatState
 						if (daNote.isSustainNote) {
 							//Jesus fuck this took me so much mother fucking time AAAAAAAAAA
 							if (daNote.animation.curAnim.name.endsWith('end')) {
-								daNote.y += 10.5 * (Conductor.crochet / 400) * 1.5 * roundedSpeed + (46 * (roundedSpeed - 1));
-								daNote.y -= 46 * (1 - (Conductor.crochet / 600)) * roundedSpeed;
+								daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * roundedSpeed + (46 * (roundedSpeed - 1));
+								daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * roundedSpeed;
 								if(PlayState.isPixelStage) {
 									daNote.y += 8;
 								} else {
 									daNote.y -= 19;
 								}
 							} 
-							daNote.y += (daNote.swagWidth / 2) - (60.5 * (roundedSpeed - 1));
+							daNote.y += (strumHeight / 2) - (60.5 * (roundedSpeed - 1));
 							daNote.y += 27.5 * ((Conductor.bpm / 100) - 1) * (roundedSpeed - 1);
 
 							if(daNote.mustPress || !daNote.ignoreNote)

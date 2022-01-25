@@ -670,6 +670,13 @@ class ModsMenuState extends MusicBeatState
 	}*/
 }
 
+typedef PackFile = {
+	var colors:Array<Int>;
+	var description:String;
+	var name:String;
+	var restart:Bool;
+}
+
 class ModMetadata
 {
 	public var folder:String;
@@ -689,45 +696,38 @@ class ModMetadata
 		this.restart = false;
 		
 		//Try loading json
+		var stuff:PackFile = null;
+		var rawJson:String = null;
 		var path = Paths.mods(folder + '/pack.json');
-		if(FileSystem.exists(path)) {
-			var rawJson:String = File.getContent(path);
-			if(rawJson != null && rawJson.length > 0) {
-				var stuff:Dynamic = Json.parse(rawJson);
-					//using reflects cuz for some odd reason my haxe hates the stuff.var shit
-					var colors:Array<Int> = Reflect.getProperty(stuff, "color");
-					var description:String = Reflect.getProperty(stuff, "description");
-					var name:String = Reflect.getProperty(stuff, "name");
-					var restart:Bool = Reflect.getProperty(stuff, "restart");
-					
-				if(name != null && name.length > 0)
-				{
-					this.name = name;
-				}
-				if(description != null && description.length > 0)
-				{
-					this.description = description;
-				}
-				if(colors != null && colors.length > 2)
-				{
-					this.color = FlxColor.fromRGB(colors[0], colors[1], colors[2]);
-				}
-				
-				this.restart = restart;
-				/*
-				if(stuff.name != null && stuff.name.length > 0)
-				{
-					this.name = stuff.name;
-				}
-				if(stuff.description != null && stuff.description.length > 0)
-				{
-					this.description = stuff.description;
-				}
-				if(stuff.color != null && stuff.color.length > 2)
-				{
-					this.color = FlxColor.fromRGB(stuff.color[0], stuff.color[1], stuff.color[2]);
-				}*/
+		if(FileSystem.exists(path)) rawJson = File.getContent(path);
+		stuff = cast Json.parse(rawJson);
+		if(stuff != null) {	
+			if(stuff.name != null && stuff.name.length > 0)
+			{
+				this.name = stuff.name;
 			}
+			if(stuff.description != null && stuff.description.length > 0)
+			{
+				this.description = stuff.description;
+			}
+			if(stuff.colors != null && stuff.colors.length > 2)
+			{
+				this.color = FlxColor.fromRGB(stuff.colors[0], stuff.colors[1], stuff.colors[2]);
+			}
+			this.restart = stuff.restart;
+			/*
+			if(stuff.name != null && stuff.name.length > 0)
+			{
+				this.name = stuff.name;
+			}
+			if(stuff.description != null && stuff.description.length > 0)
+			{
+				this.description = stuff.description;
+			}
+			if(stuff.color != null && stuff.color.length > 2)
+			{
+				this.color = FlxColor.fromRGB(stuff.color[0], stuff.color[1], stuff.color[2]);
+			}*/
 		}
 	}
 }

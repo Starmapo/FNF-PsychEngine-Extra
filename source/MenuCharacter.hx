@@ -45,6 +45,7 @@ class MenuCharacter extends FlxSprite
 				visible = false;
 				dontPlayAnim = true;
 			default:
+				var charFile:MenuCharacterFile = null;
 				var characterPath:String = 'images/menucharacters/' + character + '.json';
 				var rawJson = null;
 
@@ -67,7 +68,8 @@ class MenuCharacter extends FlxSprite
 				rawJson = Assets.getText(path);
 				#end
 				
-				var charFile:MenuCharacterFile = cast Json.parse(rawJson);
+				charFile = cast Json.parse(rawJson);
+
 				frames = Paths.getSparrowAtlas('menucharacters/' + charFile.image);
 				animation.addByPrefix('idle', charFile.idle_anim, 24);
 				animation.addByPrefix('confirm', charFile.confirm_anim, 24, false);

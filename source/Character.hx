@@ -43,6 +43,7 @@ class Character extends FlxSprite
 	public var debugMode:Bool = false;
 
 	public var isPlayer:Bool = false;
+	public var opponentPlay:Bool = false;
 	public var curCharacter:String = DEFAULT_CHARACTER;
 
 	public var colorTween:FlxTween;
@@ -70,8 +71,6 @@ class Character extends FlxSprite
 	public var originalFlipX:Bool = false;
 	public var healthColorArray:Array<Int> = [255, 0, 0];
 
-	public var opponentPlay:Bool = false;
-
 	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
 	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false, ?opponentPlay:Bool = false, ?ignorePlayerCheck:Bool = false)
 	{
@@ -93,6 +92,7 @@ class Character extends FlxSprite
 			//case 'your character name in case you want to hardcode them instead':
 
 			default:
+				var json:CharacterFile = null;
 				var characterPath:String = 'characters/player/' + curCharacter + '.json';
 				var characterPath2:String = 'characters/' + curCharacter + '.json'; //incase there is an opponent file but no player file
 				#if MODS_ALLOWED
@@ -128,7 +128,8 @@ class Character extends FlxSprite
 				var rawJson = Assets.getText(path);
 				#end
 
-				var json:CharacterFile = cast Json.parse(rawJson);
+				json = cast Json.parse(rawJson);
+
 				var spriteType = "sparrow";
 				//sparrow
 				//packer
