@@ -260,9 +260,9 @@
 		},
 		{
 			"keys": 11,
-			"noteSize": 0.3,
-			"noteSpacing": 48,
-			"xOffset": 14,
+			"noteSize": 0.33,
+			"noteSpacing": 52.8,
+			"xOffset": -12,
 			"colors": [
 				"left",
 				"down",
@@ -305,9 +305,9 @@
 		},
 		{
 			"keys": 12,
-			"noteSize": 0.25,
-			"noteSpacing": 40,
-			"xOffset": 38,
+			"noteSize": 0.3,
+			"noteSpacing": 48,
+			"xOffset": -10,
 			"colors": [
 				"left",
 				"down",

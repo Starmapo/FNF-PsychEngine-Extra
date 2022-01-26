@@ -291,7 +291,11 @@ class Note extends FlxSprite
 			}
 		}
 
-		setGraphicSize(Std.int((width * noteSize) * uiSkin.scale * uiSkin.noteScale));
+		if (isSustainNote) {
+			setGraphicSize(Std.int((width * noteSize) * uiSkin.scale * uiSkin.noteScale), Std.int((height * 0.7) * uiSkin.scale * uiSkin.noteScale));
+		} else {
+			setGraphicSize(Std.int((width * noteSize) * uiSkin.scale * uiSkin.noteScale));
+		}
 		updateHitbox();
 	}
 

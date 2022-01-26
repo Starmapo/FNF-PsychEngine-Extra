@@ -26,6 +26,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 import haxe.Json;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
@@ -191,6 +192,8 @@ class ChartingState extends MusicBeatState
 	var totalKeys:Int = 8;
 
 	public var uiSkin:SkinFile = null;
+
+	var autosaveTimer:FlxTimer;
 
 	override function create()
 	{
@@ -382,6 +385,10 @@ class ChartingState extends MusicBeatState
 		add(zoomTxt);
 		
 		updateGrid();
+
+		autosaveTimer = new FlxTimer().start(60, function(tmr:FlxTimer) {
+			autosaveSong();
+		}, 0);
 		super.create();
 	}
 
@@ -633,6 +640,7 @@ class ChartingState extends MusicBeatState
 
 		var clear_events:FlxButton = new FlxButton(FlxG.width - 100, UI_songTitle.y, 'Clear events', function()
 		{
+			autosaveSong();
 			clearEvents();
 		});
 		clear_events.color = FlxColor.RED;
@@ -640,6 +648,7 @@ class ChartingState extends MusicBeatState
 
 		var clear_notes:FlxButton = new FlxButton(clear_events.x, clear_events.y + clear_events.height, 'Clear notes', function()
 		{
+			autosaveSong();
 			for (sec in 0..._song.notes.length) {
 				_song.notes[sec].sectionNotes = [];
 			}
@@ -845,6 +854,7 @@ class ChartingState extends MusicBeatState
 
 		var clearSectionButton:FlxButton = new FlxButton(10, 210, "Clear", function()
 		{
+			autosaveSong();
 			_song.notes[curSection].sectionNotes = [];
 			
 			var i:Int = _song.events.length - 1;
@@ -877,6 +887,22 @@ class ChartingState extends MusicBeatState
 			}
 			updateGrid();
 		});
+
+		var swapMustHitSection:FlxButton = new FlxButton(110, swapSection.y, "Swap must hit section", function()
+		{
+			for (i in 0..._song.notes[curSection].sectionNotes.length)
+			{
+				var note:Array<Dynamic> = _song.notes[curSection].sectionNotes[i];
+				if (note[1] >= rightKeys) {
+					note[1] -= rightKeys;
+				} else {
+					note[1] += leftKeys;
+				}
+			}
+			updateGrid();
+		});
+		swapMustHitSection.setGraphicSize(Std.int(swapMustHitSection.width), Std.int(swapMustHitSection.height * 2));
+		swapMustHitSection.label.y = swapMustHitSection.x + ((swapMustHitSection.height / 2) - (swapMustHitSection.label.height / 2));
 
 		var stepperCopy:FlxUINumericStepper = new FlxUINumericStepper(110, 276, 1, 1, -999, 999, 0);
 		blockPressWhileTypingOnStepper.push(stepperCopy);
@@ -976,6 +1002,7 @@ class ChartingState extends MusicBeatState
 		tab_group_section.add(pasteButton);
 		tab_group_section.add(clearSectionButton);
 		tab_group_section.add(swapSection);
+		tab_group_section.add(swapMustHitSection);
 		tab_group_section.add(stepperCopy);
 		tab_group_section.add(copyLastButton);
 		tab_group_section.add(duetButton);
@@ -1603,7 +1630,7 @@ class ChartingState extends MusicBeatState
 		FlxG.mouse.visible = true;//cause reasons. trust me 
 		camPos.y = strumLine.y;
 		if(!disableAutoScrolling.checked) {
-			if (Math.ceil(strumLine.y) >= (gridBG.height / 2))
+			if (Math.ceil(strumLine.y) >= (GRID_SIZE * _song.notes[curSection].lengthInSteps))
 			{
 				//trace(curStep);
 				//trace((_song.notes[curSection].lengthInSteps) * (curSection + 1));
@@ -2213,7 +2240,7 @@ class ChartingState extends MusicBeatState
 
 				var pixelsMin:Float = Math.abs(min * (GRID_SIZE * totalKeys));
 				var pixelsMax:Float = max * (GRID_SIZE * totalKeys);
-				waveformSprite.pixels.fillRect(new Rectangle(Std.int((GRID_SIZE * leftKeys) - pixelsMin), drawIndex, pixelsMin + pixelsMax, 1), FlxColor.BLUE);
+				waveformSprite.pixels.fillRect(new Rectangle(Std.int((GRID_SIZE * (totalKeys / 2)) - pixelsMin), drawIndex, pixelsMin + pixelsMax, 1), FlxColor.BLUE);
 				drawIndex++;
 
 				min = 0;
@@ -2931,6 +2958,7 @@ class ChartingState extends MusicBeatState
 			"song": _song
 		});
 		FlxG.save.flush();
+		autosaveTimer.reset(60);
 	}
 
 	function clearEvents() {
