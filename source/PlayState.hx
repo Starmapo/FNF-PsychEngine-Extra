@@ -98,6 +98,7 @@ class PlayState extends MusicBeatState
 	public var songSpeedTween:FlxTween;
 	public var songSpeed(default, set):Float = 1;
 	public var songSpeedType:String = "multiplicative";
+	public var noteKillOffset:Float = 350;
 	
 	public var boyfriendGroup:FlxTypedSpriteGroup<Boyfriend>;
 	public var dadGroup:FlxTypedSpriteGroup<Character>;
@@ -477,11 +478,11 @@ class PlayState extends MusicBeatState
 			opponentKeys = bfKeys;
 		}
 
-		if (SONG.arrowSkin == null || SONG.arrowSkin.length < 1) {
-			SONG.arrowSkin = 'default';
+		if (SONG.uiSkin == null || SONG.uiSkin.length < 1) {
+			SONG.uiSkin = 'default';
 		}
 		//PLAYER
-		uiSkin = UIData.getUIFile(SONG.arrowSkin);
+		uiSkin = UIData.getUIFile(SONG.uiSkin);
 		if (uiSkin == null) {
 			uiSkin = UIData.getUIFile('');
 		}
@@ -1075,15 +1076,7 @@ class PlayState extends MusicBeatState
 		}
 		updateTime = showTime;
 
-		var path:String = 'uiskins/' + uiSkin.name + '/timeBar';
-		#if MODS_ALLOWED
-		if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-		#else
-		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-		#end
-			path = 'uiskins/default/timeBar';
-		}
-		timeBarBG = new AttachedSprite(path);
+		timeBarBG = new AttachedSprite(UIData.checkImageFile('timeBar', uiSkin));
 		timeBarBG.x = timeTxt.x;
 		timeBarBG.y = timeTxt.y + (timeTxt.height / 4);
 		timeBarBG.scrollFactor.set();
@@ -1209,15 +1202,7 @@ class PlayState extends MusicBeatState
 		FlxG.fixedTimestep = false;
 		moveCameraSection(0);
 
-		var path:String = 'uiskins/' + uiSkin.name + '/healthBar';
-		#if MODS_ALLOWED
-		if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-		#else
-		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-		#end
-			path = 'uiskins/default/healthBar';
-		}
-		healthBarBG = new AttachedSprite(path);
+		healthBarBG = new AttachedSprite(UIData.checkImageFile('healthBar', uiSkin));
 		healthBarBG.y = FlxG.height * 0.89;
 		healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
@@ -1281,6 +1266,23 @@ class PlayState extends MusicBeatState
 		timeBarBG.cameras = [camHUD];
 		timeTxt.cameras = [camHUD];
 		doof.cameras = [camHUD];
+
+		#if LUA_ALLOWED
+		var doPush:Bool = false;
+		var luaFile:String = 'images/uiskins/' + uiSkin.name + '.lua';
+		if(FileSystem.exists(Paths.modFolders(luaFile))) {
+			luaFile = Paths.modFolders(luaFile);
+			doPush = true;
+		} else {
+			luaFile = Paths.getPreloadPath(luaFile);
+			if(FileSystem.exists(luaFile)) {
+				doPush = true;
+			}
+		}
+
+		if(doPush) 
+			luaArray.push(new FunkinLua(luaFile));
+		#end
 
 		// if (SONG.song == 'South')
 		// FlxG.camera.alpha = 0.7;
@@ -1409,6 +1411,7 @@ class PlayState extends MusicBeatState
 		super.create();
 
 		Paths.clearUnusedMemory();
+		CustomFadeTransition.nextCamera = camOther;
 	}
 
 	function set_songSpeed(value:Float):Float
@@ -1434,6 +1437,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 		songSpeed = value;
+		noteKillOffset = 350 / songSpeed;
 		return value;
 	}
 
@@ -1921,15 +1925,7 @@ class PlayState extends MusicBeatState
 					case 0:
 						FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
 					case 1:
-						var path:String = 'uiskins/' + uiSkin.name + '/' + introAlts[0];
-						#if MODS_ALLOWED
-						if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-						#else
-						if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-						#end
-							path = 'uiskins/default/' + introAlts[0];
-						}
-						countdownReady = new FlxSprite().loadGraphic(Paths.image(path));
+						countdownReady = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile(introAlts[0], uiSkin)));
 						countdownReady.scrollFactor.set();
 						countdownReady.updateHitbox();
 
@@ -1948,15 +1944,7 @@ class PlayState extends MusicBeatState
 						});
 						FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 					case 2:
-						var path:String = 'uiskins/' + uiSkin.name + '/' + introAlts[1];
-						#if MODS_ALLOWED
-						if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-						#else
-						if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-						#end
-							path = 'uiskins/default/' + introAlts[1];
-						}
-						countdownSet = new FlxSprite().loadGraphic(Paths.image(path));
+						countdownSet = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile(introAlts[1], uiSkin)));
 						countdownSet.scrollFactor.set();
 
 						countdownSet.setGraphicSize(Std.int(countdownSet.width * uiSkin.scale * uiSkin.countdownScale));
@@ -1975,15 +1963,7 @@ class PlayState extends MusicBeatState
 						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 					case 3:
 						if (!skipCountdown){
-							var path:String = 'uiskins/' + uiSkin.name + '/' + introAlts[2];
-							#if MODS_ALLOWED
-							if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-							#else
-							if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-							#end
-								path = 'uiskins/default/' + introAlts[2];
-							}
-							countdownGo = new FlxSprite().loadGraphic(Paths.image(path));
+							countdownGo = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile(introAlts[2], uiSkin)));
 							countdownGo.scrollFactor.set();
 
 							countdownGo.setGraphicSize(Std.int(countdownGo.width * uiSkin.scale * uiSkin.countdownScale));
@@ -2049,7 +2029,7 @@ class PlayState extends MusicBeatState
 		#if cpp
 		@:privateAccess
 		{
-			if (playbackRate != 1) {
+			if (playbackRate != 1 && FlxG.sound.music != null) {
 				lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, playbackRate);
 				if (vocals.playing)
 					lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, playbackRate);
@@ -2480,7 +2460,7 @@ class PlayState extends MusicBeatState
 		#if desktop
 		if (health > 0 && !paused)
 		{
-			if (FlxG.sound.music != null && !startingSong)
+			if (FlxG.sound.music != null && !startingSong && !endingSong)
 			{
 				resyncVocals();
 			}
@@ -2512,7 +2492,7 @@ class PlayState extends MusicBeatState
 
 	function resyncVocals():Void
 	{
-		if(startingSong || endingSong || finishTimer != null) return;
+		if(FlxG.sound.music == null || startingSong || endingSong || finishTimer != null) return;
 
 		vocals.pause();
 		FlxG.sound.music.pause();
@@ -2716,7 +2696,6 @@ class PlayState extends MusicBeatState
 				{
 					// gitaroo man easter egg
 					cancelMusicFadeTween();
-					CustomFadeTransition.nextCamera = camOther;
 					MusicBeatState.switchState(new GitarooPause());
 				}
 				else {*/
@@ -2781,7 +2760,6 @@ class PlayState extends MusicBeatState
 			persistentUpdate = false;
 			paused = true;
 			cancelMusicFadeTween();
-			CustomFadeTransition.nextCamera = camOther;
 			MusicBeatState.switchState(new CharacterEditorState(SONG.player2));
 		}
 
@@ -2848,11 +2826,10 @@ class PlayState extends MusicBeatState
 		}
 		doDeathCheck();
 
-		var roundedSpeed:Float = FlxMath.roundDecimal(songSpeed, 2);
 		if (unspawnNotes[0] != null)
 		{
 			var time:Float = 3000;//shit be werid on 4:3
-			if(roundedSpeed < 1) time /= roundedSpeed;
+			if(songSpeed < 1) time /= songSpeed;
 
 			while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
 			{
@@ -2868,114 +2845,56 @@ class PlayState extends MusicBeatState
 		{
 			notes.forEachAlive(function(daNote:Note)
 			{
-				/*if (daNote.y > FlxG.height)
-				{
-					daNote.active = false;
-					daNote.visible = false;
-				}
-				else
-				{
-					daNote.visible = true;
-					daNote.active = true;
-				}*/
+				var strumGroup:FlxTypedGroup<StrumNote> = playerStrums;
+				if(daNote.mustPress == opponentChart) strumGroup = opponentStrums;
 
-				// i am so fucking sorry for this if condition
-				var strumX:Float = 0;
-				var strumY:Float = 0;
-				var strumAngle:Float = 0;
-				var strumAlpha:Float = 0;
-				var strumDirection:Float = 0;
-				var strumScroll:Bool = false;
-				var strumHeight:Float = 0;
-				var strums = playerStrums;
-				if (daNote.mustPress == opponentChart) {
-					strums = opponentStrums;
-				}
-				strumX = strums.members[daNote.noteData].x;
-				strumY = strums.members[daNote.noteData].y;
-				strumAngle = strums.members[daNote.noteData].angle;
-				strumDirection = strums.members[daNote.noteData].direction;
-				strumAlpha = strums.members[daNote.noteData].alpha;
-				strumScroll = strums.members[daNote.noteData].downScroll;
-				strumHeight = strums.members[daNote.noteData].height;
+				var strumX:Float = strumGroup.members[daNote.noteData].x;
+				var strumY:Float = strumGroup.members[daNote.noteData].y;
+				var strumAngle:Float = strumGroup.members[daNote.noteData].angle;
+				var strumDirection:Float = strumGroup.members[daNote.noteData].direction;
+				var strumAlpha:Float = strumGroup.members[daNote.noteData].alpha;
+				var strumScroll:Bool = strumGroup.members[daNote.noteData].downScroll;
+				var strumHeight:Float = strumGroup.members[daNote.noteData].height;
 
 				strumX += daNote.offsetX;
 				strumY += daNote.offsetY;
 				strumAngle += daNote.offsetAngle;
 				strumAlpha *= daNote.multAlpha;
-				var center:Float = strumY + strumHeight / 2;
 
-				//if(daNote.copyX) {
-				//	daNote.x = strumX;
-				//}
-				if(daNote.copyAngle) {
-					daNote.angle = strumAngle;
+				if (strumScroll) //Downscroll
+				{
+					//daNote.y = (strumY + 0.45 * (Conductor.songPosition - daNote.strumTime) * songSpeed);
+					daNote.distance = (0.45 * (Conductor.songPosition - daNote.strumTime) * songSpeed);
 				}
-				if(daNote.copyAlpha) {
+				else //Upscroll
+				{
+					//daNote.y = (strumY - 0.45 * (Conductor.songPosition - daNote.strumTime) * songSpeed);
+					daNote.distance = (-0.45 * (Conductor.songPosition - daNote.strumTime) * songSpeed);
+				}
+
+				var angleDir = strumDirection * Math.PI / 180;
+				if (daNote.copyAngle)
+					daNote.angle = strumDirection - 90 + strumAngle;
+
+				if(daNote.copyAlpha)
 					daNote.alpha = strumAlpha;
-				}
+				
+				if(daNote.copyX)
+					daNote.x = strumX + Math.cos(angleDir) * daNote.distance;
+
 				if(daNote.copyY) {
-					if (strumScroll) {
-						//daNote.y = (strumY + 0.45 * (Conductor.songPosition - daNote.strumTime) * roundedSpeed);
-						daNote.distance = (0.45 * (Conductor.songPosition - daNote.strumTime) * roundedSpeed);
+					daNote.y = strumY + Math.sin(angleDir) * daNote.distance;
+
+					if (strumScroll && daNote.isSustainNote)
+					{
+						if (daNote.animation.curAnim.name.endsWith('end')) {
+							daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * songSpeed + (46 * (songSpeed - 1));
+							daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * songSpeed;
+							daNote.y += uiSkin.tailYOffset;
+						}
 						
-						var angleDir = strumDirection * Math.PI / 180;
-						daNote.x = strumX + Math.cos(angleDir) * daNote.distance;
-						daNote.y = strumY + Math.sin(angleDir) * daNote.distance;
-						if (daNote.isSustainNote){
-							daNote.angle = strumDirection - 90;
-						}
-					
-						if (daNote.isSustainNote && !ClientPrefs.keSustains) {
-							//Jesus fuck this took me so much mother fucking time AAAAAAAAAA
-							if (daNote.animation.curAnim.name.endsWith('end')) {
-								daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * roundedSpeed + (46 * (roundedSpeed - 1));
-								daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * roundedSpeed;
-								daNote.y += uiSkin.tailYOffset;
-							} 
-							daNote.y += (strumHeight / 2) - (60.5 * (roundedSpeed - 1));
-							daNote.y += 27.5 * ((Conductor.bpm / 100) - 1) * (roundedSpeed - 1);
-
-							if(daNote.mustPress || !daNote.ignoreNote)
-							{
-								if(daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= center
-									&& (!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
-								{
-									var swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
-									swagRect.height = (center - daNote.y) / daNote.scale.y;
-									swagRect.y = daNote.frameHeight - swagRect.height;
-
-									daNote.clipRect = swagRect;
-								}
-							}
-						}
-					} else {
-						//daNote.y = (strumY - 0.45 * (Conductor.songPosition - daNote.strumTime) * roundedSpeed);
-
-						daNote.distance = (-0.45 * (Conductor.songPosition - daNote.strumTime) * roundedSpeed);
-						
-						var angleDir = strumDirection * Math.PI / 180;
-						daNote.x = strumX + Math.cos(angleDir) * daNote.distance;
-						daNote.y = strumY + Math.sin(angleDir) * daNote.distance;
-						if (daNote.isSustainNote){
-							daNote.angle = strumDirection - 90;
-						}
-						if(!ClientPrefs.keSustains)
-						{
-							if(daNote.mustPress || !daNote.ignoreNote)
-							{
-								if (daNote.isSustainNote
-									&& daNote.y + daNote.offset.y * daNote.scale.y <= center
-									&& (!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
-								{
-									var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
-									swagRect.y = (center - daNote.y) / daNote.scale.y;
-									swagRect.height -= swagRect.y;
-
-									daNote.clipRect = swagRect;
-								}
-							}
-						}
+						daNote.y += (strumHeight / 2) - (60.5 * (songSpeed - 1));
+						daNote.y += 27.5 * ((Conductor.bpm / 100) - 1) * (songSpeed - 1);
 					}
 				}
 
@@ -2994,17 +2913,38 @@ class PlayState extends MusicBeatState
 					}
 				}
 
-				// WIP interpolation shit? Need to fix the pause issue
-				// daNote.y = (strumLine.y - (songTime - daNote.strumTime) * (0.45 * songSpeed));
-
-				var doKill:Bool = Conductor.songPosition > daNote.strumTime + ClientPrefs.badWindow + 30;//daNote.y < -daNote.height;
-				//if(strumScroll) doKill = //daNote.y > FlxG.height;
-
-				if(ClientPrefs.keSustains && daNote.isSustainNote && daNote.wasGoodHit) doKill = true;
-
-				if (doKill)
+				var center:Float = strumY + strumHeight / 2;
+				if(strumGroup.members[daNote.noteData].sustainReduce && daNote.isSustainNote && (daNote.mustPress || !daNote.ignoreNote) &&
+					(!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
 				{
-					if (daNote.mustPress && !cpuControlled && !daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit)) {
+					if (strumScroll)
+					{
+						if(daNote.distance - daNote.offset.y * daNote.scale.y + daNote.height >= center)
+						{
+							var swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
+							swagRect.height = (center - daNote.y) / daNote.scale.y;
+							swagRect.y = daNote.frameHeight - swagRect.height;
+
+							daNote.clipRect = swagRect;
+						}
+					}
+					else
+					{
+						if (daNote.distance + daNote.offset.y * daNote.scale.y <= center)
+						{
+							var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
+							swagRect.y = (center - daNote.y) / daNote.scale.y;
+							swagRect.height -= swagRect.y;
+
+							daNote.clipRect = swagRect;
+						}
+					}
+				}
+
+				// Kill extremely late notes and cause misses
+				if (Conductor.songPosition > noteKillOffset + daNote.strumTime)
+				{
+					if (daNote.mustPress && !cpuControlled &&!daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit)) {
 						noteMiss(daNote);
 					}
 
@@ -3091,7 +3031,6 @@ class PlayState extends MusicBeatState
 		persistentUpdate = false;
 		paused = true;
 		cancelMusicFadeTween();
-		CustomFadeTransition.nextCamera = camOther;
 		MusicBeatState.switchState(new ChartingState());
 		chartingMode = true;
 
@@ -3122,7 +3061,11 @@ class PlayState extends MusicBeatState
 				for (timer in modchartTimers) {
 					timer.active = true;
 				}
-				openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
+				if (ClientPrefs.instantRestart) {
+					MusicBeatState.resetState();
+				} else {
+					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
+				}
 
 				// MusicBeatState.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 				
@@ -3695,7 +3638,6 @@ class PlayState extends MusicBeatState
 					#end
 
 					cancelMusicFadeTween();
-					CustomFadeTransition.nextCamera = camOther;
 					if(FlxTransitionableState.skipNextTransIn) {
 						CustomFadeTransition.nextCamera = null;
 					}
@@ -3758,7 +3700,6 @@ class PlayState extends MusicBeatState
 			{
 				trace('WENT BACK TO FREEPLAY??');
 				cancelMusicFadeTween();
-				CustomFadeTransition.nextCamera = camOther;
 				if(FlxTransitionableState.skipNextTransIn) {
 					CustomFadeTransition.nextCamera = null;
 				}
@@ -3834,12 +3775,15 @@ class PlayState extends MusicBeatState
 		{
 			case "shit": // shit
 				totalNotesHit += 0;
+				score = 50;
 				shits++;
 			case "bad": // bad
 				totalNotesHit += 0.5;
+				score = 100;
 				bads++;
 			case "good": // good
 				totalNotesHit += 0.75;
+				score = 200;
 				goods++;
 			case "sick": // sick
 				totalNotesHit += 1;
@@ -3881,16 +3825,7 @@ class PlayState extends MusicBeatState
 				daRating = 'bad';
 		 */
 
-		var path:String = 'uiskins/' + uiSkin.name + '/$daRating';
-		#if MODS_ALLOWED
-		if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-		#else
-		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-		#end
-			path = 'uiskins/default/$daRating';
-		}
-
-		rating.loadGraphic(Paths.image(path));
+		rating.loadGraphic(Paths.image(UIData.checkImageFile(daRating, uiSkin)));
 		rating.cameras = [camHUD];
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
@@ -3902,16 +3837,7 @@ class PlayState extends MusicBeatState
 		rating.x += ClientPrefs.comboOffset[0];
 		rating.y -= ClientPrefs.comboOffset[1];
 
-		var path:String = 'uiskins/' + uiSkin.name + '/combo';
-		#if MODS_ALLOWED
-		if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-		#else
-		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-		#end
-			path = 'uiskins/default/combo';
-		}
-
-		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(path));
+		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('combo', uiSkin)));
 		comboSpr.cameras = [camHUD];
 		comboSpr.screenCenter();
 		comboSpr.x = coolText.x + 80;
@@ -3953,15 +3879,7 @@ class PlayState extends MusicBeatState
 		var daLoop:Int = 0;
 		for (i in seperatedScore)
 		{
-			var path:String = 'uiskins/' + uiSkin.name + '/' + 'num' + Std.int(i);
-			#if MODS_ALLOWED
-			if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-			#else
-			if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-			#end
-				path = 'uiskins/default/' + 'num' + Std.int(i);
-			}
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(path));
+			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('num${Std.int(i)}', uiSkin)));
 			numScore.cameras = [camHUD];
 			numScore.screenCenter();
 			numScore.x = coolText.x + (43 * daLoop) - 90;
@@ -3982,7 +3900,7 @@ class PlayState extends MusicBeatState
 			numScore.velocity.x = FlxG.random.float(-5, 5);
 			numScore.visible = !ClientPrefs.hideHud;
 
-			if (combo >= 10 || combo == 0)
+			//if (combo >= 10 || combo == 0)
 				insert(members.indexOf(strumLineNotes), numScore);
 
 			FlxTween.tween(numScore, {alpha: 0}, 0.2, {

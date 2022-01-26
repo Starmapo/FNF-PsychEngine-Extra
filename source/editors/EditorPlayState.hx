@@ -364,84 +364,82 @@ class EditorPlayState extends MusicBeatState
 			var rightKeys = (!section.mustHitSection ? PlayState.SONG.playerKeyAmount : PlayState.SONG.opponentKeyAmount);
 			for (songNotes in section.sectionNotes)
 			{
-				if(songNotes[1] > -1) { //Real notes
-					var daStrumTime:Float = songNotes[0];
-					if(daStrumTime >= startPos) {
-						var daNoteData:Int = songNotes[1];
-						if (songNotes[1] >= leftKeys) {
-							daNoteData = Std.int(songNotes[1] - leftKeys);
-						}
+				var daStrumTime:Float = songNotes[0];
+				if(daStrumTime >= startPos) {
+					var daNoteData:Int = songNotes[1];
+					if (songNotes[1] >= leftKeys) {
+						daNoteData = Std.int(songNotes[1] - leftKeys);
+					}
 
-						var gottaHitNote:Bool = section.mustHitSection;
+					var gottaHitNote:Bool = section.mustHitSection;
 
-						if (songNotes[1] >= PlayState.SONG.playerKeyAmount)
+					if (songNotes[1] >= PlayState.SONG.playerKeyAmount)
+					{
+						gottaHitNote = !section.mustHitSection;
+					}
+
+					var oldNote:Note;
+					if (unspawnNotes.length > 0)
+						oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
+					else
+						oldNote = null;
+
+					var keys:Int = bfKeys;
+					if (!gottaHitNote) keys = dadKeys;
+
+					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys);
+					swagNote.mustPress = gottaHitNote;
+					swagNote.sustainLength = songNotes[2];
+					swagNote.noteType = songNotes[3];
+					swagNote.scrollFactor.set();
+
+					var susLength:Float = swagNote.sustainLength;
+
+					susLength = susLength / curStepCrochet;
+					unspawnNotes.push(swagNote);
+
+					var floorSus:Int = Math.floor(susLength);
+					if(floorSus > 0) {
+						for (susNote in 0...floorSus+1)
 						{
-							gottaHitNote = !section.mustHitSection;
-						}
-
-						var oldNote:Note;
-						if (unspawnNotes.length > 0)
 							oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
-						else
-							oldNote = null;
 
-						var keys:Int = bfKeys;
-						if (!gottaHitNote) keys = dadKeys;
+							var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / FlxMath.roundDecimal(PlayState.SONG.speed, 2)), daNoteData, oldNote, true, false, keys, curStepCrochet);
+							sustainNote.mustPress = gottaHitNote;
+							sustainNote.noteType = swagNote.noteType;
+							sustainNote.scrollFactor.set();
+							unspawnNotes.push(sustainNote);
 
-						var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys);
-						swagNote.mustPress = gottaHitNote;
-						swagNote.sustainLength = songNotes[2];
-						swagNote.noteType = songNotes[3];
-						swagNote.scrollFactor.set();
-
-						var susLength:Float = swagNote.sustainLength;
-
-						susLength = susLength / curStepCrochet;
-						unspawnNotes.push(swagNote);
-
-						var floorSus:Int = Math.floor(susLength);
-						if(floorSus > 0) {
-							for (susNote in 0...floorSus+1)
+							if (sustainNote.mustPress)
 							{
-								oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
-
-								var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / FlxMath.roundDecimal(PlayState.SONG.speed, 2)), daNoteData, oldNote, true, false, keys, curStepCrochet);
-								sustainNote.mustPress = gottaHitNote;
-								sustainNote.noteType = swagNote.noteType;
-								sustainNote.scrollFactor.set();
-								unspawnNotes.push(sustainNote);
-
-								if (sustainNote.mustPress)
-								{
-									sustainNote.x += FlxG.width / 2; // general offset
-								}
-								else if(ClientPrefs.middleScroll)
-								{
-									sustainNote.x += 310;
-									if(daNoteData >= Math.floor(dadKeys/2))
-									{ //Up and Right
-										sustainNote.x += FlxG.width / 2 + 25;
-									}
+								sustainNote.x += FlxG.width / 2; // general offset
+							}
+							else if(ClientPrefs.middleScroll)
+							{
+								sustainNote.x += 310;
+								if(daNoteData >= Math.floor(dadKeys/2))
+								{ //Up and Right
+									sustainNote.x += FlxG.width / 2 + 25;
 								}
 							}
 						}
+					}
 
-						if (swagNote.mustPress)
+					if (swagNote.mustPress)
+					{
+						swagNote.x += FlxG.width / 2; // general offset
+					}
+					else if(ClientPrefs.middleScroll)
+					{
+						swagNote.x += 310;
+						if(daNoteData >= Math.floor(dadKeys/2)) //Up and Right
 						{
-							swagNote.x += FlxG.width / 2; // general offset
+							swagNote.x += FlxG.width / 2 + 25;
 						}
-						else if(ClientPrefs.middleScroll)
-						{
-							swagNote.x += 310;
-							if(daNoteData >= Math.floor(dadKeys/2)) //Up and Right
-							{
-								swagNote.x += FlxG.width / 2 + 25;
-							}
-						}
-						
-						if(!noteTypeMap.exists(swagNote.noteType)) {
-							noteTypeMap.set(swagNote.noteType, true);
-						}
+					}
+					
+					if(!noteTypeMap.exists(swagNote.noteType)) {
+						noteTypeMap.set(swagNote.noteType, true);
 					}
 				}
 			}
@@ -717,7 +715,7 @@ class EditorPlayState extends MusicBeatState
 				//var notesDatas:Array<Int> = [];
 				var notesStopped:Bool = false;
 
-				trace('test!');
+				//trace('test!');
 				var sortedNotesList:Array<Note> = [];
 				notes.forEachAlive(function(daNote:Note)
 				{
@@ -725,7 +723,7 @@ class EditorPlayState extends MusicBeatState
 					{
 						if(daNote.noteData == key && !daNote.isSustainNote)
 						{
-							trace('pushed note!');
+							//trace('pushed note!');
 							sortedNotesList.push(daNote);
 							//notesDatas.push(daNote.noteData);
 						}

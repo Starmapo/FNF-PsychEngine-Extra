@@ -17,6 +17,7 @@ class StrumNote extends FlxSprite
 	private var noteData:Int = 0;
 	public var direction:Float = 90;//plan on doing scroll directions soon -bb
 	public var downScroll:Bool = false;//plan on doing scroll directions soon -bb
+	public var sustainReduce:Bool = true;
 
 	private var player:Int;
 
@@ -88,17 +89,7 @@ class StrumNote extends FlxSprite
 			uiFile = 'default';
 		}
 
-		var path:String = 'uiskins/$uiFile/notes/$texture';
-		#if MODS_ALLOWED
-		if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-		#else
-		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-		#end
-			path = 'uiskins/default/notes/$texture';
-		}
-
-		frames = Paths.getSparrowAtlas(path);
-
+		frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/$texture', uiSkin));
 		animation.addByPrefix('static', 'arrow' + directions[noteData] + '0');
 		animation.addByPrefix('pressed', colors[noteData] + ' press', 24, false);
 		animation.addByPrefix('confirm', colors[noteData] + ' confirm', 24, false);

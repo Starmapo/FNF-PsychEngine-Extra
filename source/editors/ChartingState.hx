@@ -207,10 +207,10 @@ class ChartingState extends MusicBeatState
 				events: [],
 				bpm: 150.0,
 				needsVoices: true,
-				arrowSkin: '',
+				uiSkin: '',
+				uiSkinOpponent: '',
 				player1: 'bf',
 				player2: 'dad',
-				player3: null,
 				gfVersion: 'gf',
 				speed: 1,
 				stage: 'stage',
@@ -227,7 +227,7 @@ class ChartingState extends MusicBeatState
 		updateKeys();
 
 		// Paths.clearMemory();
-		uiSkin = UIData.getUIFile(_song.arrowSkin);
+		uiSkin = UIData.getUIFile(_song.uiSkin);
 		if (uiSkin == null) {
 			uiSkin = UIData.getUIFile('');
 		}
@@ -622,15 +622,15 @@ class ChartingState extends MusicBeatState
 		denominatorDropDown.selectedLabel = '' + _song.denominator;
 		blockPressWhileScrolling.push(denominatorDropDown);
 
-		var skin = _song.arrowSkin;
+		var skin = _song.uiSkin;
 		if(skin == null) skin = '';
 		noteSkinInputText = new FlxUIInputText(player2DropDown.x, player2DropDown.y + 50, 150, skin, 8);
 		blockPressWhileTypingOn.push(noteSkinInputText);
 
 		var reloadNotesButton:FlxButton = new FlxButton(noteSkinInputText.x + 5, noteSkinInputText.y + 55, 'Change Notes', function() {
-			_song.arrowSkin = noteSkinInputText.text;
+			_song.uiSkin = noteSkinInputText.text;
 			PlayState.SONG = _song;
-			uiSkin = UIData.getUIFile(PlayState.SONG.arrowSkin);
+			uiSkin = UIData.getUIFile(PlayState.SONG.uiSkin);
 			if (uiSkin == null) {
 				uiSkin = UIData.getUIFile('');
 			}
@@ -1510,7 +1510,6 @@ class ChartingState extends MusicBeatState
 			{
 				tempBpm = nums.value;
 				_song.bpm = tempBpm;
-				Conductor.mapBPMChanges(_song);
 				getLastBPM();
 			}
 			else if (wname == 'note_susLength')
@@ -3000,11 +2999,11 @@ class ChartingState extends MusicBeatState
 			bpm: _song.bpm,
 			needsVoices: _song.needsVoices,
 			speed: _song.speed,
-			arrowSkin: _song.arrowSkin,
+			uiSkin: _song.uiSkin,
+			uiSkinOpponent: _song.uiSkinOpponent,
 
 			player1: _song.player1,
 			player2: _song.player2,
-			player3: null,
 			gfVersion: _song.gfVersion,
 			stage: _song.stage,
 			playerKeyAmount: _song.playerKeyAmount,

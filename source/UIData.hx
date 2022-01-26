@@ -1,10 +1,11 @@
 package;
 
 import haxe.Json;
-import lime.utils.Assets;
 #if MODS_ALLOWED
 import sys.io.File;
 import sys.FileSystem;
+#else
+import lime.utils.Assets;
 #end
 
 using StringTools;
@@ -38,7 +39,7 @@ class UIData {
         if (skin == null || skin.length < 1) skin = 'default';
         var daFile:SkinFile = null;
         var rawJson:String = null;
-        var path:String = Paths.getPath('images/uiskins/' + skin + '.json', TEXT);
+        var path:String = Paths.getPreloadPath('images/uiskins/' + skin + '.json');
     
         #if MODS_ALLOWED
         var modPath:String = Paths.modFolders('images/uiskins/' + skin + '.json');
@@ -59,5 +60,17 @@ class UIData {
         daFile = cast Json.parse(rawJson);
         daFile.name = skin;
         return daFile;
+    }
+
+    public static function checkImageFile(file:String, uiSkin:SkinFile) {
+        var path:String = 'uiskins/${uiSkin.name}/$file';
+		#if MODS_ALLOWED
+		if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
+		#else
+		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
+		#end
+			path = 'uiskins/default/$file';
+		}
+        return path;
     }
 }

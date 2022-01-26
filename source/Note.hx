@@ -251,15 +251,7 @@ class Note extends FlxSprite
 		if (uiFile == null || uiFile.length < 1) {
 			uiFile = 'default';
 		}
-		var path:String = 'uiskins/$uiFile/notes/' + arraySkin.join('/');
-		#if MODS_ALLOWED
-		if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-		#else
-		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-		#end
-			path = 'uiskins/default/notes/' + arraySkin.join('/');
-		}
-		frames = Paths.getSparrowAtlas(path);
+		frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/${arraySkin.join('/')}', uiSkin));
 		loadNoteAnims();
 		antialiasing = ClientPrefs.globalAntialiasing;
 		if (uiSkin.noAntialiasing) {
@@ -267,9 +259,6 @@ class Note extends FlxSprite
 		}
 		if(isSustainNote) {
 			scale.y = lastScaleY;
-			if(ClientPrefs.keSustains) {
-				scale.y *= 0.75;
-			}
 		}
 		updateHitbox();
 
@@ -319,8 +308,11 @@ class Note extends FlxSprite
 		{
 			canBeHit = false;
 
-			if (strumTime <= Conductor.songPosition)
-				wasGoodHit = true;
+			if (strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * earlyHitMult))
+			{
+				if((isSustainNote && prevNote.wasGoodHit) || strumTime <= Conductor.songPosition)
+					wasGoodHit = true;
+			}
 		}
 
 		if (tooLate && !inEditor)

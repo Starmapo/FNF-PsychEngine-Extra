@@ -160,10 +160,14 @@ class TitleState extends MusicBeatState
 		super.create();
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
+
+		if(!initialized && FlxG.save.data != null && FlxG.save.data.fullscreen)
+		{
+			FlxG.fullscreen = FlxG.save.data.fullscreen;
+			//trace('LOADED FULLSCREEN SETTING!!');
+		}
 		
 		ClientPrefs.loadPrefs();
-
-		GraphicsSettingsSubState.onChangeRes();
 
 		Highscore.load();
 
@@ -402,11 +406,6 @@ class TitleState extends MusicBeatState
 			Conductor.songPosition = FlxG.sound.music.time;
 		// FlxG.watch.addQuick('amp', FlxG.sound.music.amplitude);
 
-		if (FlxG.keys.justPressed.F && ClientPrefs.screenScaleMode != "ADAPTIVE")
-		{
-			FlxG.fullscreen = !FlxG.fullscreen;
-		}
-
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER || controls.ACCEPT || FlxG.mouse.justPressed;
 
 		#if mobile
@@ -638,14 +637,6 @@ class TitleState extends MusicBeatState
 	}
 
 	var skippedIntro:Bool = false;
-	override public function fixAspectRatio() 
-	{
-		super.fixAspectRatio();
-
-		#if ACHIEVEMENTS_ALLOWED
-		Achievements.loadAchievements();
-		#end
-	}
 	function skipIntro():Void
 	{
 		if (!skippedIntro)

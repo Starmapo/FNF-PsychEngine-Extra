@@ -21,11 +21,11 @@ typedef SwagSong =
 
 	var player1:String;
 	var player2:String;
-	var player3:String; //deprecated, now replaced by gfVersion
 	var gfVersion:String;
 	var stage:String;
 
-	var arrowSkin:String;
+	var uiSkin:String;
+	var uiSkinOpponent:String;
 	var validScore:Bool;
 
 	var playerKeyAmount:Null<Int>;
@@ -36,9 +36,14 @@ typedef SwagSong =
 
 typedef DifferentJSON =
 {
+	var player3:String; //Psych Engine
+	var arrowSkin:String; //Psych Engine
 	var mania:Null<Int>; //Shaggy
+	var gf:String; //Leather Engine
 	var keyCount:Null<Int>; //Leather Engine
+	var playerKeyCount:Null<Int>; //Leather Engine
 	var timescale:Array<Int>; //Leather Engine
+	var ui_Skin:String; //Leather Engine
 }
 
 class Song
@@ -83,24 +88,13 @@ class Song
 			while(i < len)
 			{
 				var note:Array<Dynamic> = notes[i];
-				if (note[1] > -1) {
-					var daStrum:Float = note[0];
-					var daData:Int = note[1];
-					var daSusLength:Float = note[2];
-					var daType:String = note[3];
-					if(!Std.isOfType(note[3], String) && note[3] < 6) daType = editors.ChartingState.noteTypeList[note[3]];
-					sec.sectionNotes[i] = [daStrum, daData, daSusLength, daType];
-				}
+				var daType:String = note[3];
+				if(!Std.isOfType(note[3], String) && note[3] < 6) daType = editors.ChartingState.noteTypeList[note[3]];
+				sec.sectionNotes[i] = [note[0], note[1], note[2], daType];
 				i++;
 			}
 		}
 
-		if(songJson.gfVersion == null)
-		{
-			songJson.gfVersion = songJson.player3;
-			songJson.player3 = null;
-		}
-		
 		if(songJson.playerKeyAmount == null)
 		{
 			songJson.playerKeyAmount = 4;
@@ -182,9 +176,16 @@ class Song
 	public static function parseJSONshit(rawJson:String):SwagSong
 	{
 		var tempSong:DifferentJSON = cast Json.parse(rawJson).song;
-
 		var swagShit:SwagSong = cast Json.parse(rawJson).song;
-		if (tempSong.mania != null && !Math.isNaN(tempSong.mania)) {
+
+		if(tempSong.player3 != null) {
+			swagShit.gfVersion = tempSong.player3;
+		}
+		if(tempSong.arrowSkin != null) {
+			swagShit.uiSkin = tempSong.arrowSkin;
+			swagShit.uiSkinOpponent = tempSong.arrowSkin;
+		}
+		if (tempSong.mania != null) {
 			switch (tempSong.mania) {
 				case 1:
 					swagShit.playerKeyAmount = 6;
@@ -197,14 +198,21 @@ class Song
 			}
 			swagShit.opponentKeyAmount = swagShit.playerKeyAmount;
 		}
-		if (tempSong.keyCount != null && !Math.isNaN(tempSong.keyCount)) {
+		if(tempSong.gf != null && swagShit.gfVersion == null) {
+			swagShit.gfVersion = tempSong.gf;
+		}
+		if (tempSong.keyCount != null) {
 			swagShit.playerKeyAmount = tempSong.keyCount;
-			swagShit.opponentKeyAmount = swagShit.playerKeyAmount;
+			swagShit.opponentKeyAmount = tempSong.keyCount;
+		}
+		if (tempSong.playerKeyCount != null) {
+			swagShit.playerKeyAmount = tempSong.playerKeyCount;
 		}
 		if (tempSong.timescale != null && tempSong.timescale.length == 2) {
 			swagShit.numerator = tempSong.timescale[0];
 			swagShit.denominator = tempSong.timescale[1];
 		}
+
 		swagShit.validScore = true;
 		return swagShit;
 	}
