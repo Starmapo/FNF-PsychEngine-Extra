@@ -2962,7 +2962,7 @@ class PlayState extends MusicBeatState
 		if (!inCutscene) {
 			if(!cpuControlled) {
 				keyShit();
-			} else if(playerChar.holdTimer > Conductor.stepCrochet * 0.001 * playerChar.singDuration && playerChar.animation.curAnim.name.startsWith('sing') && !playerChar.animation.curAnim.name.endsWith('miss')) {
+			} else if(playerChar.holdTimer > Conductor.stepCrochet * 0.001 * playerChar.singDuration * (Conductor.denominator / 4) && playerChar.animation.curAnim.name.startsWith('sing') && !playerChar.animation.curAnim.name.endsWith('miss')) {
 				playerChar.dance();
 			}
 		}
@@ -4100,7 +4100,7 @@ class PlayState extends MusicBeatState
 					startAchievement(achieve);
 				}
 				#end
-			} else if (playerChar.holdTimer > Conductor.stepCrochet * 0.001 * playerChar.singDuration && playerChar.animation.curAnim.name.startsWith('sing')
+			} else if (playerChar.holdTimer > Conductor.stepCrochet * 0.001 * playerChar.singDuration * (Conductor.denominator / 4) && playerChar.animation.curAnim.name.startsWith('sing')
 			&& !playerChar.animation.curAnim.name.endsWith('miss'))
 				playerChar.dance();
 		}
