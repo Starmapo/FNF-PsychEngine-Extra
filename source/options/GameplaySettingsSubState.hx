@@ -45,6 +45,13 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			false);
 		addOption(option);
 
+		var option:Option = new Option('Instant Restart',
+			"If checked, you will automatically restart after a game over.",
+			'instantRestart',
+			'bool',
+			false);
+		addOption(option);
+
 		/*var option:Option = new Option('Note Delay',
 			'Changes how late a note is spawned.\nUseful for preventing audio lag from wireless earphones.',
 			'noteOffset',

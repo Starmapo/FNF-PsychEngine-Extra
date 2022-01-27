@@ -902,7 +902,7 @@ class ChartingState extends MusicBeatState
 			updateGrid();
 		});
 		swapMustHitSection.setGraphicSize(Std.int(swapMustHitSection.width), Std.int(swapMustHitSection.height * 2));
-		swapMustHitSection.label.y = swapMustHitSection.x + ((swapMustHitSection.height / 2) - (swapMustHitSection.label.height / 2));
+		swapMustHitSection.label.y = swapMustHitSection.x + ((swapMustHitSection.height / 2) - 5);
 
 		var stepperCopy:FlxUINumericStepper = new FlxUINumericStepper(110, 276, 1, 1, -999, 999, 0);
 		blockPressWhileTypingOnStepper.push(stepperCopy);
@@ -1629,7 +1629,7 @@ class ChartingState extends MusicBeatState
 		FlxG.mouse.visible = true;//cause reasons. trust me 
 		camPos.y = strumLine.y;
 		if(!disableAutoScrolling.checked) {
-			if (Math.ceil(strumLine.y) >= (GRID_SIZE * _song.notes[curSection].lengthInSteps))
+			if (Math.ceil(strumLine.y) >= (GRID_SIZE * _song.notes[curSection].lengthInSteps * zoomList[curZoom]))
 			{
 				//trace(curStep);
 				//trace((_song.notes[curSection].lengthInSteps) * (curSection + 1));
@@ -2077,7 +2077,7 @@ class ChartingState extends MusicBeatState
 								soundToPlay = 'GF_' + Std.string(data + 1);
 							}*/
 							
-							FlxG.sound.play(Paths.sound(soundToPlay)).pan = note.noteData < rightKeys ? -0.3 : 0.3; //would be coolio
+							FlxG.sound.play(Paths.sound(soundToPlay)).pan = note.noteData < leftKeys ? -0.3 : 0.3; //would be coolio
 							playedSound[note.noteData] = true;
 						}
 					}
@@ -2867,37 +2867,23 @@ class ChartingState extends MusicBeatState
 	}
 
 	function getLastBPM():Void {
-		if (_song.notes[curSection].changeBPM && _song.notes[curSection].bpm > 0)
-		{
-			Conductor.changeBPM(_song.notes[curSection].bpm);
-			//trace('BPM of this section:');
+		// get last bpm
+		var daBPM:Float = tempBpm;
+		for (i in 0...curSection + 1) {
+			if (_song.notes[i].changeBPM)
+				daBPM = _song.notes[i].bpm;
 		}
-		else
-		{
-			// get last bpm
-			var daBPM:Float = tempBpm;
-			for (i in 0...curSection + 1) {
-				if (_song.notes[i].changeBPM)
-					daBPM = _song.notes[i].bpm;
+		Conductor.changeBPM(daBPM);
+		
+		var daNumerator:Int = _song.numerator;
+		var daDenominator:Int = _song.denominator;
+		for (i in 0...curSection + 1) {
+			if (_song.notes[i].changeSignature) {
+				daNumerator = _song.notes[i].numerator;
+				daDenominator = _song.notes[i].denominator;
 			}
-			Conductor.changeBPM(daBPM);
 		}
-		if (_song.notes[curSection].changeSignature)
-		{
-			Conductor.changeSignature(_song.notes[curSection].numerator, _song.notes[curSection].denominator);
-		}
-		else
-		{
-			var daNumerator:Int = _song.numerator;
-			var daDenominator:Int = _song.denominator;
-			for (i in 0...curSection + 1) {
-				if (_song.notes[i].changeSignature) {
-					daNumerator = _song.notes[i].numerator;
-					daDenominator = _song.notes[i].denominator;
-				}
-			}
-			Conductor.changeSignature(daNumerator, daDenominator);
-		}
+		Conductor.changeSignature(daNumerator, daDenominator);
 	}
 
 	function updateSectionLengths():Void {

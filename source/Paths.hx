@@ -92,7 +92,9 @@ class Paths
 		}	
 		// flags everything to be cleared out next unused memory clear
 		localTrackedAssets = [];
+		#if PRELOAD_ALL
 		openfl.Assets.cache.clear("songs");
+		#end
 	}
 
 	static public var currentModDirectory:String = '';
@@ -178,8 +180,12 @@ class Paths
 
 	static public function sound(key:String, ?library:String):Dynamic
 	{
+		#if NO_PRELOAD_ALL
+		return getPath('sounds/$key.$SOUND_EXT', SOUND, library);
+		#else
 		var sound:Sound = returnSound('sounds', key, library);
 		return sound;
+		#end
 	}
 	
 	inline static public function soundRandom(key:String, min:Int, max:Int, ?library:String)
@@ -189,29 +195,45 @@ class Paths
 
 	inline static public function music(key:String, ?library:String):Dynamic
 	{
+		#if NO_PRELOAD_ALL
+		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
+		#else
 		var file:Sound = returnSound('music', key, library);
 		return file;
+		#end
 	}
 
 	inline static public function voices(song:String):Any
 	{
+		#if NO_PRELOAD_ALL
+		return 'songs:assets/songs/${formatToSongPath(song)}/Voices.$SOUND_EXT';
+		#else
 		var songKey:String = '${formatToSongPath(song)}/Voices';
 		var voices = returnSound('songs', songKey);
 		return voices;
+		#end
 	}
 
 	inline static public function inst(song:String):Any
 	{
+		#if NO_PRELOAD_ALL
+		return 'songs:assets/songs/${formatToSongPath(song)}/Inst.$SOUND_EXT';
+		#else
 		var songKey:String = '${formatToSongPath(song)}/Inst';
 		var inst = returnSound('songs', songKey);
 		return inst;
+		#end
 	}
 
 	inline static public function image(key:String, ?library:String):Dynamic
 	{
+		#if NO_PRELOAD_ALL
+		return getPath('images/$key.png', IMAGE, library);
+		#else
 		// streamlined the assets process more
 		var returnAsset:FlxGraphic = returnGraphic(key, library);
 		return returnAsset;
+		#end
 	}
 	
 	static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String

@@ -4676,7 +4676,7 @@ class PlayState extends MusicBeatState
 		{
 			moveCameraSection(curSection);
 		}
-		if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curBeat % Conductor.numerator == 0)
+		if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && getCurBeat() % Conductor.numerator == 0)
 		{
 			FlxG.camera.zoom += 0.015;
 			camHUD.zoom += 0.03;
@@ -4735,7 +4735,7 @@ class PlayState extends MusicBeatState
 				if (!trainMoving)
 					trainCooldown += 1;
 
-				if (curBeat % Conductor.numerator == 0)
+				if (getCurBeat() % Conductor.numerator == 0)
 				{
 					phillyCityLights.forEach(function(light:BGSprite)
 					{
@@ -4748,7 +4748,7 @@ class PlayState extends MusicBeatState
 					phillyCityLights.members[curLight].alpha = 1;
 				}
 
-				if (curBeat % (Conductor.numerator * 2) == Conductor.numerator && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
+				if (getCurBeat() % (Conductor.numerator * 2) == Conductor.numerator && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
 				{
 					trainCooldown = FlxG.random.int(-4, 0);
 					trainStart();
@@ -4782,6 +4782,20 @@ class PlayState extends MusicBeatState
 			daPos++;
 		}
 		return daPos;
+	}
+
+	function getCurBeat():Int {
+		var daPos = 0;
+		var daNumerator = SONG.numerator;
+		for (i in 0...SONG.notes.length) {
+			if (curBeat >= daPos) {
+				if (SONG.notes[i].changeSignature) {
+					daNumerator = SONG.notes[i].numerator;
+				}
+				daPos += daNumerator;
+			}
+		}
+		return curBeat - daPos;
 	}
 
 	public var closeLuas:Array<FunkinLua> = [];

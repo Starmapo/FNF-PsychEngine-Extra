@@ -106,7 +106,7 @@ class Song
 			songJson.denominator = 4;
 		}
 
-		if(songJson.notes[0].changeSignature == null)
+		if(songJson.notes.length > 0 && songJson.notes[0].changeSignature == null)
 		{
 			for (secNum in 0...songJson.notes.length)
 			{
