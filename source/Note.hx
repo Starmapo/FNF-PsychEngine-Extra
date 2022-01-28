@@ -44,6 +44,8 @@ class Note extends FlxSprite
 	public static var GREEN_NOTE:Int = 2;
 	public static var BLUE_NOTE:Int = 1;
 	public static var RED_NOTE:Int = 3;
+	
+	public static var MAX_KEYS:Int = 13;
 
 	// Lua shit
 	public var noteSplashDisabled:Bool = false;
@@ -89,9 +91,9 @@ class Note extends FlxSprite
 	private function set_noteType(value:String):String {
 		if(noteData > -1) {
 			noteSplashTexture = 'noteSplashes';
-			colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
-			colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
-			colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
+			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount][noteData][0] / 360;
+			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount][noteData][1] / 100;
+			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount][noteData][2] / 100;
 			if(noteType != value) {
 				switch(value) {
 					case 'Hurt Note':

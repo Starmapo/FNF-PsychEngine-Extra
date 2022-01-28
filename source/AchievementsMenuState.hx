@@ -72,7 +72,7 @@ class AchievementsMenuState extends MusicBeatState
 		super.update(elapsed);
 
 		if (FlxG.mouse.wheel != 0) {
-			changeSelection(FlxG.mouse.wheel * -1);
+			changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 		}
 		if (controls.UI_UP_P) {
 			changeSelection(-1);

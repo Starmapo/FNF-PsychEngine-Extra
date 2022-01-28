@@ -168,7 +168,7 @@ class CreditsState extends MusicBeatState
 
 		if (!warningText.visible) {
 			if (FlxG.mouse.wheel != 0) {
-				changeSelection(FlxG.mouse.wheel * -1);
+				changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 			}
 			if (upP)
 			{

@@ -83,10 +83,10 @@ class MasterEditorMenu extends MusicBeatState
 		if (FlxG.mouse.wheel != 0) {
 			#if MODS_ALLOWED
 			if (FlxG.keys.pressed.SHIFT) {
-				changeDirectory(FlxG.mouse.wheel);
+				changeDirectory(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
 			} else {
 			#end
-				changeSelection(FlxG.mouse.wheel * -1);
+				changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 			#if MODS_ALLOWED
 			}
 			#end

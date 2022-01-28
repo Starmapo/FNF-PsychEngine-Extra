@@ -471,12 +471,12 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.name = 'song_speed';
 		blockPressWhileTypingOnStepper.push(stepperSpeed);
 
-		var stepperPlayerKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBPM.x + 80, stepperBPM.y, 1, 4, 1, 13);
+		var stepperPlayerKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBPM.x + 80, stepperBPM.y, 1, 4, 1, Note.MAX_KEYS);
 		stepperPlayerKeys.value = _song.playerKeyAmount;
 		stepperPlayerKeys.name = 'song_playerKeys';
 		blockPressWhileTypingOnStepper.push(stepperPlayerKeys);
 
-		var stepperOpponentKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperPlayerKeys.x, stepperPlayerKeys.y + stepperPlayerKeys.height + 15, 1, 4, 1, 13);
+		var stepperOpponentKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperPlayerKeys.x, stepperPlayerKeys.y + stepperPlayerKeys.height + 15, 1, 4, 1, Note.MAX_KEYS);
 		stepperOpponentKeys.value = _song.opponentKeyAmount;
 		stepperOpponentKeys.name = 'song_opponentKeys';
 		blockPressWhileTypingOnStepper.push(stepperOpponentKeys);
@@ -902,7 +902,10 @@ class ChartingState extends MusicBeatState
 			updateGrid();
 		});
 		swapMustHitSection.setGraphicSize(Std.int(swapMustHitSection.width), Std.int(swapMustHitSection.height * 2));
-		swapMustHitSection.label.y = swapMustHitSection.x + ((swapMustHitSection.height / 2) - 5);
+		for (i in swapMustHitSection.labelOffsets) {
+			i.set(i.x, i.y - 6);
+		}
+		swapMustHitSection.y += 0;
 
 		var stepperCopy:FlxUINumericStepper = new FlxUINumericStepper(110, 276, 1, 1, -999, 999, 0);
 		blockPressWhileTypingOnStepper.push(stepperCopy);
@@ -1840,10 +1843,10 @@ class ChartingState extends MusicBeatState
 			if (FlxG.mouse.wheel != 0)
 			{
 				if (FlxG.keys.pressed.CONTROL) {
-					camPos.x += FlxG.mouse.wheel * GRID_SIZE;
+					camPos.x += Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * GRID_SIZE;
 				} else {
 					FlxG.sound.music.pause();
-					FlxG.sound.music.time -= (FlxG.mouse.wheel * Conductor.stepCrochet * 0.8);
+					FlxG.sound.music.time -= (Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * Conductor.stepCrochet * 0.8);
 					if(vocals != null) {
 						vocals.pause();
 						vocals.time = FlxG.sound.music.time;
@@ -2557,13 +2560,21 @@ class ChartingState extends MusicBeatState
 
 	function setupNoteData(i:Array<Dynamic>, isNextSection:Bool):Note
 	{
+		var usedLeftKeys = leftKeys;
+		var usedRightKeys = rightKeys;
+		if (isNextSection) {
+			usedLeftKeys = (_song.notes[curSection + 1].mustHitSection ? _song.playerKeyAmount : _song.opponentKeyAmount);
+			usedRightKeys = (!_song.notes[curSection + 1].mustHitSection ? _song.playerKeyAmount : _song.opponentKeyAmount);
+		}
+
 		var daNoteInfo = i[1];
 		var trueData = daNoteInfo;
-		if (i[1] >= leftKeys) trueData -= leftKeys;
+		if (i[1] >= usedLeftKeys) trueData -= usedLeftKeys;
 		var daStrumTime = i[0];
 		var daSus:Dynamic = i[2];
-		var keys = leftKeys;
-		if (i[1] >= leftKeys) keys = rightKeys;
+		
+		var keys = usedLeftKeys;
+		if (i[1] >= usedLeftKeys) keys = usedRightKeys;
 
 		var note:Note = new Note(daStrumTime, trueData, null, null, true, keys, uiSkin);
 		if(daSus != null) { //Common note
@@ -2577,7 +2588,7 @@ class ChartingState extends MusicBeatState
 			}
 			note.sustainLength = daSus;
 			note.mustPress = _song.notes[curSection].mustHitSection;
-			if(daNoteInfo >= leftKeys) note.mustPress = !note.mustPress;
+			if(daNoteInfo >= usedLeftKeys) note.mustPress = !note.mustPress;
 			note.noteType = i[3];
 		} else { //Event note
 			note.loadGraphic(Paths.image('eventArrow'));
@@ -2596,10 +2607,10 @@ class ChartingState extends MusicBeatState
 		note.updateHitbox();
 		note.x = Math.floor(daNoteInfo * GRID_SIZE) + GRID_SIZE;
 		if(isNextSection && _song.notes[curSection].mustHitSection != _song.notes[curSection+1].mustHitSection) {
-			if(daNoteInfo >= leftKeys) {
-				note.x -= GRID_SIZE * leftKeys;
+			if(daNoteInfo >= usedLeftKeys) {
+				note.x -= GRID_SIZE * usedLeftKeys;
 			} else if(daSus != null) {
-				note.x += GRID_SIZE * leftKeys;
+				note.x += GRID_SIZE * usedLeftKeys;
 			}
 		}
 

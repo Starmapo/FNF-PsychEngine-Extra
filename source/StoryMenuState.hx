@@ -203,9 +203,9 @@ class StoryMenuState extends MusicBeatState
 			var downP = controls.UI_DOWN_P;
 			if (FlxG.mouse.wheel != 0) {
 				if (FlxG.keys.pressed.SHIFT) {
-					changeDifficulty(FlxG.mouse.wheel);
+					changeDifficulty(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
 				} else {
-					changeWeek(FlxG.mouse.wheel * -1);
+					changeWeek(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				}
 			}

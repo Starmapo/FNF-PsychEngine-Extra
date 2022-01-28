@@ -274,8 +274,6 @@ class PlayState extends MusicBeatState
 	public var playerKeys:Int = 4;
 	public var opponentKeys:Int = 4;
 
-	var curSection:Int = 0;
-
 	public var uiSkin:SkinFile = null;
 	var playerColors:Array<String>;
 	var opponentColors:Array<String>;
@@ -1031,6 +1029,20 @@ class PlayState extends MusicBeatState
 				insert(members.indexOf(dadGroup) - 1, evilTrail);
 		}
 
+		underlayPlayer = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
+		underlayPlayer.scrollFactor.set();
+		underlayPlayer.alpha = ClientPrefs.underlayAlpha;
+		underlayPlayer.visible = false;
+		underlayPlayer.cameras = [camHUD];
+		add(underlayPlayer);
+
+		underlayOpponent = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
+		underlayOpponent.scrollFactor.set();
+		underlayOpponent.alpha = ClientPrefs.underlayAlpha;
+		underlayOpponent.visible = false;
+		underlayOpponent.cameras = [camHUD];
+		add(underlayOpponent);
+
 		#if MODS_ALLOWED
 		var file:String = Paths.modsJson(songName + '/dialogue'); //Checks for json/Psych Engine dialogue
 		if (FileSystem.exists(file)) {
@@ -1097,20 +1109,6 @@ class PlayState extends MusicBeatState
 		add(timeBar);
 		add(timeTxt);
 		timeBarBG.sprTracker = timeBar;
-
-		underlayPlayer = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
-		underlayPlayer.scrollFactor.set();
-		underlayPlayer.alpha = ClientPrefs.underlayAlpha;
-		underlayPlayer.visible = false;
-		underlayPlayer.cameras = [camHUD];
-		add(underlayPlayer);
-
-		underlayOpponent = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
-		underlayOpponent.scrollFactor.set();
-		underlayOpponent.alpha = ClientPrefs.underlayAlpha;
-		underlayOpponent.visible = false;
-		underlayOpponent.cameras = [camHUD];
-		add(underlayOpponent);
 
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		add(strumLineNotes);
@@ -2207,7 +2205,7 @@ class PlayState extends MusicBeatState
 		{
 			for (i in 0...event[1].length)
 			{
-				var newEventNote:Array<Dynamic> = [event[0], event[1][i][0], event[1][i][1], event[1][i][2]];
+				var newEventNote:Array<Dynamic> = [event[0] / playbackRate, event[1][i][0], event[1][i][1], event[1][i][2]];
 				var subEvent:Array<Dynamic> = [newEventNote[0] + ClientPrefs.noteOffset - eventNoteEarlyTrigger(newEventNote), newEventNote[1], newEventNote[2], newEventNote[3]];
 				eventNotes.push(subEvent);
 				eventPushed(subEvent);
@@ -2672,6 +2670,11 @@ class PlayState extends MusicBeatState
 
 		super.update(elapsed);
 
+		if (generatedMusic && PlayState.SONG.notes[getCurSection()] != null && !endingSong && !isCameraOnForcedPos)
+		{
+			moveCameraSection(getCurSection());
+		}
+
 		if(ratingName == '?') {
 			scoreTxt.text = 'Score: ' + songScore + ' | Misses: ' + songMisses + ' | Rating: ' + ratingName;
 		} else {
@@ -2737,7 +2740,7 @@ class PlayState extends MusicBeatState
 			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, healthBar.numDivisions, 0) * division)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, healthBar.numDivisions, 0) * division)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 		} else {
-			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 0, healthBar.numDivisions) * division)) + (150 * iconP1.scale.x - 150) / 2 + iconOffset;
+			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 0, healthBar.numDivisions) * division)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 0, healthBar.numDivisions) * division)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 		}
 
@@ -4396,17 +4399,6 @@ class PlayState extends MusicBeatState
 
 	public function spawnNoteSplash(x:Float, y:Float, data:Int, ?note:Note = null) {
 		var skin:String = 'noteSplashes';
-		
-		var hue:Float = ClientPrefs.arrowHSV[data % 4][0] / 360;
-		var sat:Float = ClientPrefs.arrowHSV[data % 4][1] / 100;
-		var brt:Float = ClientPrefs.arrowHSV[data % 4][2] / 100;
-		if(note != null) {
-			skin = note.noteSplashTexture;
-			hue = note.noteSplashHue;
-			sat = note.noteSplashSat;
-			brt = note.noteSplashBrt;
-		}
-
 		var group = grpNoteSplashes;
 		var colors = playerColors;
 		var keys = playerKeys;
@@ -4414,6 +4406,16 @@ class PlayState extends MusicBeatState
 			group = grpNoteSplashesOpponent;
 			colors = opponentColors;
 			keys = opponentKeys;
+		}
+		
+		var hue:Float = ClientPrefs.arrowHSV[keys][data][0] / 360;
+		var sat:Float = ClientPrefs.arrowHSV[keys][data][1] / 100;
+		var brt:Float = ClientPrefs.arrowHSV[keys][data][2] / 100;
+		if(note != null) {
+			skin = note.noteSplashTexture;
+			hue = note.noteSplashHue;
+			sat = note.noteSplashSat;
+			brt = note.noteSplashBrt;
 		}
 
 		var splash:NoteSplash = group.recycle(NoteSplash);
@@ -4637,8 +4639,6 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
-		curSection = Math.floor(curStep / (Conductor.numerator * 4));
-
 		if (generatedMusic)
 		{
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
@@ -4672,10 +4672,6 @@ class PlayState extends MusicBeatState
 		}
 		// FlxG.log.add('change bpm' + SONG.notes[Std.int(curStep / 16)].changeBPM);
 
-		if (generatedMusic && PlayState.SONG.notes[curSection] != null && !endingSong && !isCameraOnForcedPos)
-		{
-			moveCameraSection(curSection);
-		}
 		if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && getCurBeat() % Conductor.numerator == 0)
 		{
 			FlxG.camera.zoom += 0.015;

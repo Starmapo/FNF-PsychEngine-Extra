@@ -5,6 +5,7 @@ import Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import Controls;
 
@@ -12,7 +13,7 @@ using StringTools;
 
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = [/*'Note Colors', */'Controls', 'Adjust Delay and Combo', 'Graphics', 'Visuals and UI', 'Gameplay'];
+	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Visuals and UI', 'Gameplay'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -20,7 +21,9 @@ class OptionsState extends MusicBeatState
 	function openSelectedSubstate(label:String) {
 		switch(label) {
 			case 'Note Colors':
-				openSubState(new options.NotesSubState());
+				FlxTransitionableState.skipNextTransIn = true;
+				FlxTransitionableState.skipNextTransOut = true;
+				MusicBeatState.switchState(new options.NotesChooseState());
 			case 'Controls':
 				openSubState(new options.ControlsSubState());
 			case 'Graphics':
@@ -79,7 +82,7 @@ class OptionsState extends MusicBeatState
 		super.update(elapsed);
 
 		if (FlxG.mouse.wheel != 0) {
-			changeSelection(FlxG.mouse.wheel * -1);
+			changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 		}
 		if (controls.UI_UP_P) {
 			changeSelection(-1);

@@ -159,7 +159,7 @@ class ControlsSubState extends MusicBeatSubstate {
 				if (FlxG.keys.pressed.SHIFT) {
 					changeAlt();
 				} else {
-					changeSelection(FlxG.mouse.wheel * -1);
+					changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 				}
 			}
 			var shiftMult:Int = 1;

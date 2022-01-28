@@ -20,7 +20,7 @@ class ClientPrefs {
 	public static var camZooms:Bool = true;
 	public static var hideHud:Bool = false;
 	public static var noteOffset:Int = 0;
-	public static var arrowHSV:Array<Array<Int>> = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
+	public static var arrowHSV:Array<Array<Array<Int>>> = [];
 	public static var imagesPersist:Bool = false;
 	public static var ghostTapping:Bool = true;
 	public static var timeBarType:String = 'Time Left';
@@ -142,6 +142,14 @@ class ClientPrefs {
 	public static function loadDefaultKeys() {
 		defaultKeys = keyBinds.copy();
 		//trace(defaultKeys);
+
+		for (i in 0...Note.MAX_KEYS) {
+			arrowHSV.push([]);
+			for (j in 0...i + 1) {
+				arrowHSV[i].push([0, 0, 0]);
+			}
+		}
+		//trace(arrowHSV.length);
 	}
 
 	public static function saveSettings() {
@@ -246,7 +254,7 @@ class ClientPrefs {
 		if(FlxG.save.data.noteOffset != null) {
 			noteOffset = FlxG.save.data.noteOffset;
 		}
-		if(FlxG.save.data.arrowHSV != null) {
+		if(FlxG.save.data.arrowHSV != null && FlxG.save.data.arrowHSV.length == Note.MAX_KEYS) {
 			arrowHSV = FlxG.save.data.arrowHSV;
 		}
 		if(FlxG.save.data.ghostTapping != null) {

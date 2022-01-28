@@ -1,14 +1,18 @@
 package options;
 
+import flixel.FlxCamera;
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import Controls;
 
 using StringTools;
 
-class NotesSubState extends MusicBeatSubstate
+class NotesState extends MusicBeatState
 {
 	private static var curSelected:Int = 0;
 	private static var typeSelected:Int = 0;
@@ -18,22 +22,52 @@ class NotesSubState extends MusicBeatSubstate
 	var curValue:Float = 0;
 	var holdTime:Float = 0;
 	var nextAccept:Int = 5;
+	var keyAmount:Int = 4;
+	var currentData:Array<Array<Int>>;
 
 	var blackBG:FlxSprite;
 	var hsbText:Alphabet;
 
+	private var camGame:FlxCamera;
+	var camFollow:FlxObject;
+	var camFollowPos:FlxObject;
+
+	static var daUI = UIData.getUIFile('default');
+
 	var posX = 230;
-	public function new() {
+	public function new(keyAmount:Int = 4) {
 		super();
+		this.keyAmount = keyAmount;
+		currentData = ClientPrefs.arrowHSV[keyAmount - 1];
+	}
+
+	override function create()
+	{
+		camGame = new FlxCamera();
+		FlxG.cameras.reset(camGame);
+		FlxG.cameras.setDefaultDrawTarget(camGame, true);
+		FlxG.camera.zoom = 0.9;
 		
+		var scr:Float = Math.max(currentData.length - 4, 0) * 0.135 - (0.1 * Math.max(currentData.length - 11, 0));
+
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xFFea71fd;
+		bg.setGraphicSize(Std.int(bg.width * 1.175));
+		bg.updateHitbox();
 		bg.screenCenter();
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		bg.scrollFactor.set();
 		add(bg);
+
+		camFollow = new FlxObject(0, 0, 1, 1);
+		camFollowPos = new FlxObject(0, 0, 1, 1);
+		add(camFollow);
+		add(camFollowPos);
+		FlxG.camera.follow(camFollowPos, null, 1);
 		
 		blackBG = new FlxSprite(posX - 25).makeGraphic(870, 200, FlxColor.BLACK);
 		blackBG.alpha = 0.4;
+		blackBG.scrollFactor.set(0, scr);
 		add(blackBG);
 
 		grpNotes = new FlxTypedGroup<FlxSprite>();
@@ -41,43 +75,51 @@ class NotesSubState extends MusicBeatSubstate
 		grpNumbers = new FlxTypedGroup<Alphabet>();
 		add(grpNumbers);
 
-		for (i in 0...ClientPrefs.arrowHSV.length) {
-			var yPos:Float = (165 * i) + 35;
+		for (i in 0...currentData.length) {
+			var offset:Float = 35 - (Math.max(currentData.length, 4) - 4) * 90;
+			var yPos:Float = (165 * i) + offset;
 			for (j in 0...3) {
-				var optionText:Alphabet = new Alphabet(0, yPos + 60, Std.string(ClientPrefs.arrowHSV[i][j]), true);
+				var optionText:Alphabet = new Alphabet(0, yPos + 60, Std.string(currentData[i][j]), true);
 				optionText.x = posX + (225 * j) + 250;
+				optionText.scrollFactor.set(0, scr);
 				grpNumbers.add(optionText);
 			}
 
 			var note:FlxSprite = new FlxSprite(posX, yPos);
 			note.frames = Paths.getSparrowAtlas('uiskins/default/notes/NOTE_assets');
-			var animations:Array<String> = ['left0', 'down0', 'up0', 'right0'];
-			note.animation.addByPrefix('idle', animations[i]);
+			var animations:Array<String> = daUI.mania[keyAmount - 1].colors;
+			note.animation.addByPrefix('idle', animations[i] + '0');
 			note.animation.play('idle');
 			note.antialiasing = ClientPrefs.globalAntialiasing;
+			note.scrollFactor.set(0, scr);
 			grpNotes.add(note);
 
 			var newShader:ColorSwap = new ColorSwap();
 			note.shader = newShader.shader;
-			newShader.hue = ClientPrefs.arrowHSV[i][0] / 360;
-			newShader.saturation = ClientPrefs.arrowHSV[i][1] / 100;
-			newShader.brightness = ClientPrefs.arrowHSV[i][2] / 100;
+			newShader.hue = currentData[i][0] / 360;
+			newShader.saturation = currentData[i][1] / 100;
+			newShader.brightness = currentData[i][2] / 100;
 			shaderArray.push(newShader);
 		}
 
 		hsbText = new Alphabet(0, 0, "Hue    Saturation  Brightness", false, false, 0, 0.65);
 		hsbText.x = posX + 240;
+		hsbText.scrollFactor.set(0, scr);
 		add(hsbText);
 
 		changeSelection();
+		super.create();
 	}
 
 	var changingNote:Bool = false;
 	override function update(elapsed:Float) {
+		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
+		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
+		
 		if(changingNote) {
 			if(holdTime < 0.5) {
 				if (FlxG.mouse.wheel != 0) {
-					updateValue(FlxG.mouse.wheel);
+					updateValue(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				}
 				if(controls.UI_LEFT_P) {
@@ -113,9 +155,9 @@ class NotesSubState extends MusicBeatSubstate
 		} else {
 			if (FlxG.mouse.wheel != 0) {
 				if (FlxG.keys.pressed.SHIFT) {
-					changeType(FlxG.mouse.wheel);
+					changeType(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
 				} else {
-					changeSelection(FlxG.mouse.wheel * -1);
+					changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				}
 			}
@@ -166,7 +208,11 @@ class NotesSubState extends MusicBeatSubstate
 
 		if (controls.BACK || (changingNote && (controls.ACCEPT || FlxG.mouse.justPressed))) {
 			if(!changingNote) {
-				close();
+				//FlxG.camera.zoom = 1;
+				//FlxG.camera.follow(null);
+				FlxTransitionableState.skipNextTransIn = true;
+				FlxTransitionableState.skipNextTransOut = true;
+				MusicBeatState.switchState(new options.NotesChooseState());
 			} else {
 				changeSelection();
 			}
@@ -183,11 +229,11 @@ class NotesSubState extends MusicBeatSubstate
 	function changeSelection(change:Int = 0) {
 		curSelected += change;
 		if (curSelected < 0)
-			curSelected = ClientPrefs.arrowHSV.length-1;
-		if (curSelected >= ClientPrefs.arrowHSV.length)
+			curSelected = currentData.length-1;
+		if (curSelected >= currentData.length)
 			curSelected = 0;
 
-		curValue = ClientPrefs.arrowHSV[curSelected][typeSelected];
+		curValue = currentData[curSelected][typeSelected];
 		updateValue();
 
 		for (i in 0...grpNumbers.length) {
@@ -206,6 +252,7 @@ class NotesSubState extends MusicBeatSubstate
 				item.scale.set(1, 1);
 				hsbText.y = item.y - 70;
 				blackBG.y = item.y - 20;
+				camFollow.setPosition(item.getGraphicMidpoint().x, item.getGraphicMidpoint().y);
 			}
 		}
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
@@ -218,7 +265,7 @@ class NotesSubState extends MusicBeatSubstate
 		if (typeSelected > 2)
 			typeSelected = 0;
 
-		curValue = ClientPrefs.arrowHSV[curSelected][typeSelected];
+		curValue = currentData[curSelected][typeSelected];
 		updateValue();
 
 		for (i in 0...grpNumbers.length) {
@@ -232,7 +279,7 @@ class NotesSubState extends MusicBeatSubstate
 
 	function resetValue(selected:Int, type:Int) {
 		curValue = 0;
-		ClientPrefs.arrowHSV[selected][type] = 0;
+		ClientPrefs.arrowHSV[keyAmount - 1][selected][type] = 0;
 		switch(type) {
 			case 0: shaderArray[selected].hue = 0;
 			case 1: shaderArray[selected].saturation = 0;
@@ -257,7 +304,7 @@ class NotesSubState extends MusicBeatSubstate
 			curValue = max;
 		}
 		roundedValue = Math.round(curValue);
-		ClientPrefs.arrowHSV[curSelected][typeSelected] = roundedValue;
+		ClientPrefs.arrowHSV[keyAmount - 1][curSelected][typeSelected] = roundedValue;
 
 		switch(typeSelected) {
 			case 0: shaderArray[curSelected].hue = roundedValue / 360;

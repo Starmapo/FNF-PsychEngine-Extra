@@ -36,7 +36,7 @@ _____________________________________
 
 # New Features
 * Custom key amounts (1 - 13)
-* Custom time signatures (3/4, 4/8, etc.)
+* Custom time signatures (3/4, 8/8, etc.)
 * Custom UI skins (notes, splashes, ratings, countdown, etc.)
 * Gameplay Changers: Play opponent's chart, Song playback speed
 * More Lua functions

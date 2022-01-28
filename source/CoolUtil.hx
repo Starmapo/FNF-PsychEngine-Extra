@@ -154,6 +154,7 @@ class CoolUtil
 		}
 		if(diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
 		diffStr = diffStr.trim(); //Fuck you HTML5
+		//trace('real: $diffStr');
 
 		if(diffStr != null && diffStr.length > 0)
 		{
@@ -164,7 +165,7 @@ class CoolUtil
 				if(diffs[i] != null)
 				{
 					diffs[i] = diffs[i].trim();
-					if(diffs[i].length < 1) diffs.remove(diffs[i]);
+					if(diffs[i].length < 1 || diffs[i] == null) diffs.remove(diffs[i]);
 				}
 				else
 				{
@@ -172,20 +173,25 @@ class CoolUtil
 				}
 				--i;
 			}
+			//trace(diffs);
 			
 			if (remove && song.length > 0) {
 				for (i in 0...diffs.length) {
-					var suffix = '-' + Paths.formatToSongPath(diffs[i]);
-					if (Paths.formatToSongPath(diffs[i]) == defaultDifficulty.toLowerCase()) {
-						suffix = '';
-					}
-					var poop:String = song + suffix;
-					#if MODS_ALLOWED
-					if (!FileSystem.exists(Paths.modsJson('$song/$poop')) && !FileSystem.exists(Paths.json('$song/$poop')))
-					#else
-					if (!Assets.exists(Paths.json('$song/$poop')))
-					#end
-					{
+					if (diffs[i] != null) {
+						var suffix = '-' + Paths.formatToSongPath(diffs[i]);
+						if (Paths.formatToSongPath(diffs[i]) == defaultDifficulty.toLowerCase()) {
+							suffix = '';
+						}
+						var poop:String = song + suffix;
+						#if MODS_ALLOWED
+						if (!FileSystem.exists(Paths.modsJson('$song/$poop')) && !FileSystem.exists(Paths.json('$song/$poop')))
+						#else
+						if (!Assets.exists(Paths.json('$song/$poop')))
+						#end
+						{
+							diffs.remove(diffs[i]);
+						}
+					} else {
 						diffs.remove(diffs[i]);
 					}
 				}

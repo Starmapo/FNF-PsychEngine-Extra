@@ -137,7 +137,7 @@ class PauseSubState extends MusicBeatSubstate
 		var accepted = controls.ACCEPT || FlxG.mouse.justPressed;
 
 		if (FlxG.mouse.wheel != 0) {
-			changeSelection(FlxG.mouse.wheel * -1);
+			changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 		}
 		if (upP)
 		{

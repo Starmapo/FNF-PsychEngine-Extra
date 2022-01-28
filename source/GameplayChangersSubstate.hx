@@ -147,7 +147,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	override function update(elapsed:Float)
 	{
 		if (FlxG.mouse.wheel != 0 && !FlxG.keys.pressed.SHIFT) {
-			changeSelection(FlxG.mouse.wheel * -1);
+			changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 		}
 		if (controls.UI_UP_P)
 		{
@@ -190,7 +190,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 							var add:Dynamic = null;
 							if(curOption.type != 'string') {
 								if (useWheel) {
-									add = curOption.changeValue * FlxG.mouse.wheel;
+									add = curOption.changeValue * Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1));
 								} else {
 									add = controls.UI_LEFT ? -curOption.changeValue : curOption.changeValue;
 								}
@@ -216,7 +216,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 								case 'string':
 									var num:Int = curOption.curOption; //lol
-									if (useWheel) num += FlxG.mouse.wheel;
+									if (useWheel) num += Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1));
 									else if(controls.UI_LEFT_P) --num;
 									else num++;
 

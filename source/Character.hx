@@ -111,13 +111,13 @@ class Character extends FlxSprite
 				#else
 				var path:String = Paths.getPreloadPath(characterPath);
 				if (!Assets.exists(path) || ignorePlayerCheck) {
-					path = characterPath2;
+					path = Paths.getPreloadPath(characterPath2);
 				}
 
 				if (!Assets.exists(path))
 				#end
 				{
-					path = Paths.getPreloadPath('characters/' + (isPlayer ? 'player/' : '') + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
+					path = Paths.getPreloadPath('characters/' + (isPlayer ? 'player/' : '') + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change them to BF just to prevent a crash
 				}
 
 				//trace('character path for ' + curCharacter + ': ' + path);

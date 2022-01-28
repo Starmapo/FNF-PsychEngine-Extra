@@ -240,8 +240,8 @@ class Paths
 	{
 		#if sys
 		#if MODS_ALLOWED
-		if (!ignoreMods && FileSystem.exists(mods(key)))
-			return File.getContent(mods(key));
+		if (!ignoreMods && FileSystem.exists(modFolders(key)))
+			return File.getContent(modFolders(key));
 		#end
 
 		if (FileSystem.exists(getPreloadPath(key)))
@@ -283,7 +283,7 @@ class Paths
 		}
 		#end
 		
-		if(OpenFlAssets.exists(Paths.getPath(key, type))) {
+		if(OpenFlAssets.exists(getPath(key, type))) {
 			return true;
 		}
 		return false;
@@ -292,7 +292,7 @@ class Paths
 	inline static public function getSparrowAtlas(key:String, ?library:String):FlxAtlasFrames
 	{
 		#if MODS_ALLOWED
-		var graphic:FlxGraphic = Paths.image(key, library);
+		var graphic:FlxGraphic = image(key, library);
 		var xmlExists:Bool = false;
 		if(FileSystem.exists(modsXml(key))) {
 			xmlExists = true;
@@ -422,11 +422,11 @@ class Paths
 
 	static public function getModDirectories():Array<String> {
 		var list:Array<String> = [];
-		var modsFolder:String = Paths.mods();
+		var modsFolder:String = mods();
 		if(FileSystem.exists(modsFolder)) {
 			for (folder in FileSystem.readDirectory(modsFolder)) {
 				var path = haxe.io.Path.join([modsFolder, folder]);
-				if (sys.FileSystem.isDirectory(path) && !Paths.ignoreModFolders.contains(folder) && !list.contains(folder)) {
+				if (sys.FileSystem.isDirectory(path) && !ignoreModFolders.contains(folder) && !list.contains(folder)) {
 					list.push(folder);
 				}
 			}

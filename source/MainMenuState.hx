@@ -125,7 +125,7 @@ class MainMenuState extends MusicBeatState
 
 		FlxG.camera.follow(camFollowPos, null, 1);
 
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Psych Engine v" + psychEngineVersion, 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Psych Engine Extra v" + psychEngineVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
@@ -178,7 +178,7 @@ class MainMenuState extends MusicBeatState
 		{
 			if (FlxG.mouse.wheel != 0) {
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				changeItem(FlxG.mouse.wheel * -1);
+				changeItem(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 			}
 			if (controls.UI_UP_P)
 			{

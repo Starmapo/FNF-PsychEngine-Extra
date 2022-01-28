@@ -272,9 +272,9 @@ class FreeplayState extends MusicBeatState
 
 		if (FlxG.mouse.wheel != 0) {
 			if (FlxG.keys.pressed.SHIFT) {
-				changeDiff(FlxG.mouse.wheel);
+				changeDiff(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
 			} else if (songs.length > 1) {
-				changeSelection(FlxG.mouse.wheel * -1);
+				changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 			}
 		}
 
