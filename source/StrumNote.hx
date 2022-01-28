@@ -27,6 +27,7 @@ class StrumNote extends FlxSprite
 	public var swagWidth:Float = 160 * 0.7;
 	var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
+	
 	public var uiSkin:SkinFile;
 	
 	public var texture(default, set):String = null;
@@ -141,9 +142,9 @@ class StrumNote extends FlxSprite
 			colorSwap.saturation = 0;
 			colorSwap.brightness = 0;
 		} else {
-			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount][noteData][0] / 360;
-			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount][noteData][1] / 100;
-			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount][noteData][2] / 100;
+			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount - 1][noteData][0] / 360;
+			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount - 1][noteData][1] / 100;
+			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount - 1][noteData][2] / 100;
 
 			if(animation.curAnim.name == 'confirm') {
 				centerOrigin();

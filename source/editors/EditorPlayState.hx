@@ -1136,9 +1136,9 @@ class EditorPlayState extends MusicBeatState
 	function spawnNoteSplash(x:Float, y:Float, data:Int, ?note:Note = null) {
 		var skin:String = 'noteSplashes';
 		
-		var hue:Float = ClientPrefs.arrowHSV[bfKeys][data][0] / 360;
-		var sat:Float = ClientPrefs.arrowHSV[bfKeys][data][1] / 100;
-		var brt:Float = ClientPrefs.arrowHSV[bfKeys][data][2] / 100;
+		var hue:Float = ClientPrefs.arrowHSV[bfKeys - 1][data][0] / 360;
+		var sat:Float = ClientPrefs.arrowHSV[bfKeys - 1][data][1] / 100;
+		var brt:Float = ClientPrefs.arrowHSV[bfKeys - 1][data][2] / 100;
 		if(note != null) {
 			skin = note.noteSplashTexture;
 			hue = note.noteSplashHue;

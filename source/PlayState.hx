@@ -2911,7 +2911,7 @@ class PlayState extends MusicBeatState
 						if(daNote.canBeHit) {
 							goodNoteHit(daNote);
 						}
-					} else if(daNote.strumTime <= Conductor.songPosition || (daNote.isSustainNote && daNote.canBeHit && daNote.mustPress)) {
+					} else if(daNote.strumTime <= Conductor.songPosition) {
 						goodNoteHit(daNote);
 					}
 				}
@@ -4399,18 +4399,18 @@ class PlayState extends MusicBeatState
 
 	public function spawnNoteSplash(x:Float, y:Float, data:Int, ?note:Note = null) {
 		var skin:String = 'noteSplashes';
-		var group = grpNoteSplashes;
+		var splashGroup = grpNoteSplashes;
 		var colors = playerColors;
 		var keys = playerKeys;
 		if (opponentChart == note.mustPress) {
-			group = grpNoteSplashesOpponent;
+			splashGroup = grpNoteSplashesOpponent;
 			colors = opponentColors;
 			keys = opponentKeys;
 		}
 		
-		var hue:Float = ClientPrefs.arrowHSV[keys][data][0] / 360;
-		var sat:Float = ClientPrefs.arrowHSV[keys][data][1] / 100;
-		var brt:Float = ClientPrefs.arrowHSV[keys][data][2] / 100;
+		var hue:Float = ClientPrefs.arrowHSV[keys - 1][data][0] / 360;
+		var sat:Float = ClientPrefs.arrowHSV[keys - 1][data][1] / 100;
+		var brt:Float = ClientPrefs.arrowHSV[keys - 1][data][2] / 100;
 		if(note != null) {
 			skin = note.noteSplashTexture;
 			hue = note.noteSplashHue;
@@ -4418,9 +4418,9 @@ class PlayState extends MusicBeatState
 			brt = note.noteSplashBrt;
 		}
 
-		var splash:NoteSplash = group.recycle(NoteSplash);
+		var splash:NoteSplash = splashGroup.recycle(NoteSplash);
 		splash.setupNoteSplash(x, y, note, skin, hue, sat, brt, keys, colors);
-		group.add(splash);
+		splashGroup.add(splash);
 	}
 
 	var fastCarCanDrive:Bool = true;

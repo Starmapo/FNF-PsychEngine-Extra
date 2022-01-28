@@ -21,8 +21,8 @@ class Note extends FlxSprite
 	public var wasGoodHit:Bool = false;
 	public var ignoreNote:Bool = false;
 	public var hitByOpponent:Bool = false;
-	public var noteWasHit:Bool = false;
 	public var prevNote:Note;
+	public var stepCrochet:Float = 150;
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
@@ -40,10 +40,6 @@ class Note extends FlxSprite
 	private var earlyHitMult:Float = 0.5;
 
 	public var swagWidth:Float = 160 * 0.7;
-	public static var PURP_NOTE:Int = 0;
-	public static var GREEN_NOTE:Int = 2;
-	public static var BLUE_NOTE:Int = 1;
-	public static var RED_NOTE:Int = 3;
 	
 	public static var MAX_KEYS:Int = 13;
 
@@ -77,8 +73,8 @@ class Note extends FlxSprite
 	var colors:Array<String> = ['left', 'down', 'up', 'right'];
 	var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
+
 	public var uiSkin:SkinFile;
-	public var stepCrochet:Float = 150;
 
 	private function set_texture(value:String):String {
 		if(texture != value) {
@@ -91,9 +87,9 @@ class Note extends FlxSprite
 	private function set_noteType(value:String):String {
 		if(noteData > -1) {
 			noteSplashTexture = 'noteSplashes';
-			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount][noteData][0] / 360;
-			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount][noteData][1] / 100;
-			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount][noteData][2] / 100;
+			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount - 1][noteData][0] / 360;
+			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount - 1][noteData][1] / 100;
+			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount - 1][noteData][2] / 100;
 			if(noteType != value) {
 				switch(value) {
 					case 'Hurt Note':
