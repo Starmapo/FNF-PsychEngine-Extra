@@ -177,8 +177,6 @@ class DialogueBoxPsych extends FlxSpriteGroup
 	var curCharacter:String = "";
 	//var charPositionList:Array<String> = ['left', 'center', 'right'];
 
-	static var dialogueMap:Map<String, DialogueFile> = new Map<String, DialogueFile>();
-
 	public function new(dialogueList:DialogueFile, ?song:String = null)
 	{
 		super();
@@ -512,15 +510,12 @@ class DialogueBoxPsych extends FlxSpriteGroup
 	}
 
 	public static function parseDialogue(path:String):DialogueFile {
-		if (dialogueMap.exists(path)) return dialogueMap.get(path);
 		#if MODS_ALLOWED
 		if(FileSystem.exists(path))
 		{
-			dialogueMap.set(path, cast Json.parse(File.getContent(path)));
 			return cast Json.parse(File.getContent(path));
 		}
 		#end
-		dialogueMap.set(path, cast Json.parse(Assets.getText(path)));
 		return cast Json.parse(Assets.getText(path));
 	}
 

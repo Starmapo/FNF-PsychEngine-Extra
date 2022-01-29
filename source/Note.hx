@@ -3,10 +3,6 @@ package;
 import flixel.FlxSprite;
 import editors.ChartingState;
 import UIData;
-#if MODS_ALLOWED
-import sys.FileSystem;
-#end
-import openfl.utils.Assets;
 
 using StringTools;
 
@@ -74,7 +70,7 @@ class Note extends FlxSprite
 	var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
 
-	public var uiSkin:SkinFile;
+	public var uiSkin(default, set):SkinFile = null;
 
 	private function set_texture(value:String):String {
 		if(texture != value) {
@@ -125,23 +121,11 @@ class Note extends FlxSprite
 		return value;
 	}
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?keyAmount:Int = 4, ?uiSkin:SkinFile = null, ?stepCrochet:Float = 150)
-	{
-		super();
-
-		if (prevNote == null)
-			prevNote = this;
-
-		if (uiSkin == null) {
-			uiSkin = UIData.getUIFile('');
+	private function set_uiSkin(value:SkinFile):SkinFile {
+		if(uiSkin != value && texture != null) {
+			reloadNote('', texture);
 		}
-
-		this.prevNote = prevNote;
-		isSustainNote = sustainNote;
-		this.inEditor = inEditor;
-		this.keyAmount = keyAmount;
-		this.uiSkin = uiSkin;
-		this.stepCrochet = stepCrochet;
+		uiSkin = value;
 
 		var maniaData:ManiaArray = null;
 		for (i in uiSkin.mania) {
@@ -165,6 +149,27 @@ class Note extends FlxSprite
 		xOff = maniaData.xOffset;
 		noteSize = maniaData.noteSize;
 
+		return value;
+	}
+
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?keyAmount:Int = 4, ?uiSkin:SkinFile = null, ?stepCrochet:Float = 150)
+	{
+		super();
+
+		if (prevNote == null)
+			prevNote = this;
+
+		if (uiSkin == null) {
+			uiSkin = UIData.getUIFile('');
+		}
+
+		this.prevNote = prevNote;
+		isSustainNote = sustainNote;
+		this.inEditor = inEditor;
+		this.keyAmount = keyAmount;
+		this.uiSkin = uiSkin;
+		this.stepCrochet = stepCrochet;
+
 		x += (ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + xOff;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
@@ -187,39 +192,8 @@ class Note extends FlxSprite
 
 		// trace(prevNote);
 
-		if (isSustainNote && prevNote != null)
-		{
-			alpha = 0.6;
-			multAlpha = 0.6;
-			if(ClientPrefs.downScroll) flipY = true;
-
-			offsetX += width / 2;
-			copyAngle = false;
-
-			animation.play(colors[data] + 'holdend');
-
-			updateHitbox();
-
-			offsetX -= width / 2;
-			offsetX += uiSkin.sustainXOffset;
-
-			if (prevNote.isSustainNote)
-			{
-				prevNote.animation.play(colors[prevNote.noteData % keyAmount] + 'hold');
-
-				prevNote.scale.y *= stepCrochet / 100 * 1.05;
-				if(PlayState.instance != null)
-				{
-					prevNote.scale.y *= PlayState.instance.songSpeed;
-				}
-
-				prevNote.scale.y *= uiSkin.sustainYScale;
-				prevNote.updateHitbox();
-				// prevNote.setGraphicSize();
-			}
-
-			scale.y *= uiSkin.scale;
-			updateHitbox();
+		if (isSustainNote && prevNote != null) {
+			setSustainData();
 		} else if(!isSustainNote) {
 			earlyHitMult = 1;
 		}
@@ -245,10 +219,6 @@ class Note extends FlxSprite
 		arraySkin[arraySkin.length-1] = prefix + arraySkin[arraySkin.length-1] + suffix;
 
 		var lastScaleY:Float = scale.y;
-		var uiFile:String = uiSkin.name;
-		if (uiFile == null || uiFile.length < 1) {
-			uiFile = 'default';
-		}
 		frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/${arraySkin.join('/')}', uiSkin));
 		loadNoteAnims();
 		antialiasing = ClientPrefs.globalAntialiasing;
@@ -260,8 +230,10 @@ class Note extends FlxSprite
 		}
 		updateHitbox();
 
-		if(animName != null)
+		if(animName != null) {
 			animation.play(animName, true);
+			if (isSustainNote) setSustainData();
+		}
 
 		if(inEditor) {
 			setGraphicSize(ChartingState.GRID_SIZE, ChartingState.GRID_SIZE);
@@ -283,6 +255,41 @@ class Note extends FlxSprite
 		} else {
 			setGraphicSize(Std.int((width * noteSize) * uiSkin.scale * uiSkin.noteScale));
 		}
+		updateHitbox();
+	}
+	
+	function setSustainData() {
+		offsetX = 0;
+		alpha = 0.6;
+		multAlpha = 0.6;
+		if(ClientPrefs.downScroll) flipY = true;
+
+		offsetX += width / 2;
+		copyAngle = false;
+
+		animation.play(colors[noteData] + 'holdend');
+
+		updateHitbox();
+
+		offsetX -= width / 2;
+		offsetX += uiSkin.sustainXOffset;
+
+		if (prevNote.isSustainNote)
+		{
+			prevNote.animation.play(colors[prevNote.noteData % keyAmount] + 'hold');
+
+			prevNote.scale.y *= stepCrochet / 100 * 1.05;
+			if(PlayState.instance != null)
+			{
+				prevNote.scale.y *= PlayState.instance.songSpeed;
+			}
+
+			prevNote.scale.y *= uiSkin.sustainYScale;
+			prevNote.updateHitbox();
+			// prevNote.setGraphicSize();
+		}
+
+		scale.y *= uiSkin.scale;
 		updateHitbox();
 	}
 

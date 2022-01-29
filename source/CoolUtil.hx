@@ -51,7 +51,7 @@ class CoolUtil
 	public static function coolTextFile(path:String):Array<String>
 	{
 		var daList:Array<String> = [];
-		#if sys
+		#if MODS_ALLOWED
 		if(FileSystem.exists(path)) daList = File.getContent(path).trim().split('\n');
 		#else
 		if(Assets.exists(path)) daList = Assets.getText(path).trim().split('\n');
@@ -177,14 +177,14 @@ class CoolUtil
 			
 			if (remove && song.length > 0) {
 				for (i in 0...diffs.length) {
-					if (diffs[i] != null) {
+					if (diffs[i] != null) { //HTML5 why does this need to happen nulls should already be removed????
 						var suffix = '-' + Paths.formatToSongPath(diffs[i]);
 						if (Paths.formatToSongPath(diffs[i]) == defaultDifficulty.toLowerCase()) {
 							suffix = '';
 						}
 						var poop:String = song + suffix;
 						#if MODS_ALLOWED
-						if (!FileSystem.exists(Paths.modsJson('$song/$poop')) && !FileSystem.exists(Paths.json('$song/$poop')))
+						if (!FileSystem.exists(Paths.modsJson('$song/$poop')) && !Assets.exists(Paths.json('$song/$poop')))
 						#else
 						if (!Assets.exists(Paths.json('$song/$poop')))
 						#end
@@ -202,112 +202,5 @@ class CoolUtil
 				difficulties = diffs;
 			}
 		}
-	}
-
-	public static function getProperty(variable:String):Dynamic {
-		var killMe:Array<String> = variable.split('.');
-		if(killMe.length > 1) {
-			var coverMeInPiss:Dynamic = Reflect.getProperty(FlxG.state, killMe[0]);
-
-			for (i in 1...killMe.length-1) {
-				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
-			}
-			return Reflect.getProperty(coverMeInPiss, killMe[killMe.length-1]);
-		}
-		return Reflect.getProperty(FlxG.state, variable);
-	}
-
-	public static function setProperty(variable:String, value:Dynamic) {
-		var killMe:Array<String> = variable.split('.');
-		if(killMe.length > 1) {
-			var coverMeInPiss:Dynamic = Reflect.getProperty(FlxG.state, killMe[0]);
-
-			for (i in 1...killMe.length-1) {
-				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
-			}
-			return Reflect.setProperty(coverMeInPiss, killMe[killMe.length-1], value);
-		}
-		return Reflect.setProperty(FlxG.state, variable, value);
-	}
-
-	public static function getPropertyFromGroup(obj:String, index:Int, variable:Dynamic):Dynamic {
-		if(Std.isOfType(Reflect.getProperty(FlxG.state, obj), FlxTypedGroup)) {
-			return getGroupStuff(Reflect.getProperty(FlxG.state, obj).members[index], variable);
-		}
-
-		var leArray:Dynamic = Reflect.getProperty(FlxG.state, obj)[index];
-		if(leArray != null) {
-			if(Type.typeof(variable) == ValueType.TInt) {
-				return leArray[variable];
-			}
-			return getGroupStuff(leArray, variable);
-		}
-		trace("Object #" + index + " from group: " + obj + " doesn't exist!");
-		return null;
-	}
-
-	public static function setPropertyFromGroup(obj:String, index:Int, variable:Dynamic, value:Dynamic) {
-		if(Std.isOfType(Reflect.getProperty(FlxG.state, obj), FlxTypedGroup)) {
-			setGroupStuff(Reflect.getProperty(FlxG.state, obj).members[index], variable, value);
-			return;
-		}
-
-		var leArray:Dynamic = Reflect.getProperty(FlxG.state, obj)[index];
-		if(leArray != null) {
-			if(Type.typeof(variable) == ValueType.TInt) {
-				leArray[variable] = value;
-				return;
-			}
-			setGroupStuff(leArray, variable, value);
-		}
-	}
-
-	public static function getPropertyFromClass(classVar:String, variable:String):Dynamic {
-		var killMe:Array<String> = variable.split('.');
-		if(killMe.length > 1) {
-			var coverMeInPiss:Dynamic = Reflect.getProperty(Type.resolveClass(classVar), killMe[0]);
-			for (i in 1...killMe.length-1) {
-				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
-			}
-			return Reflect.getProperty(coverMeInPiss, killMe[killMe.length-1]);
-		}
-		return Reflect.getProperty(Type.resolveClass(classVar), variable);
-	}
-
-	public static function setPropertyFromClass(classVar:String, variable:String, value:Dynamic) {
-		var killMe:Array<String> = variable.split('.');
-		if(killMe.length > 1) {
-			var coverMeInPiss:Dynamic = Reflect.getProperty(Type.resolveClass(classVar), killMe[0]);
-			for (i in 1...killMe.length-1) {
-				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
-			}
-			return Reflect.setProperty(coverMeInPiss, killMe[killMe.length-1], value);
-		}
-		return Reflect.setProperty(Type.resolveClass(classVar), variable, value);
-	}
-
-	public static function getGroupStuff(leArray:Dynamic, variable:String):Dynamic {
-		var killMe:Array<String> = variable.split('.');
-		if(killMe.length > 1) {
-			var coverMeInPiss:Dynamic = Reflect.getProperty(leArray, killMe[0]);
-			for (i in 1...killMe.length-1) {
-				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
-			}
-			return Reflect.getProperty(coverMeInPiss, killMe[killMe.length-1]);
-		}
-		return Reflect.getProperty(leArray, variable);
-	}
-
-	public static function setGroupStuff(leArray:Dynamic, variable:String, value:Dynamic) {
-		var killMe:Array<String> = variable.split('.');
-		if(killMe.length > 1) {
-			var coverMeInPiss:Dynamic = Reflect.getProperty(leArray, killMe[0]);
-			for (i in 1...killMe.length-1) {
-				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
-			}
-			Reflect.setProperty(coverMeInPiss, killMe[killMe.length-1], value);
-			return;
-		}
-		Reflect.setProperty(leArray, variable, value);
 	}
 }

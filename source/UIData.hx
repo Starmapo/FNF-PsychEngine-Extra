@@ -4,9 +4,8 @@ import haxe.Json;
 #if MODS_ALLOWED
 import sys.io.File;
 import sys.FileSystem;
-#else
-import lime.utils.Assets;
 #end
+import lime.utils.Assets;
 
 using StringTools;
 
@@ -64,8 +63,9 @@ class UIData {
 
     public static function checkImageFile(file:String, uiSkin:SkinFile) {
         var path:String = 'uiskins/${uiSkin.name}/$file';
+        //trace(Paths.getPath('images/$path.png', IMAGE));
 		#if MODS_ALLOWED
-		if (!FileSystem.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
+		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
 		#else
 		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
 		#end

@@ -3,10 +3,6 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import UIData;
-#if MODS_ALLOWED
-import sys.FileSystem;
-#end
-import openfl.utils.Assets;
 
 using StringTools;
 
@@ -20,6 +16,7 @@ class StrumNote extends FlxSprite
 	public var sustainReduce:Bool = true;
 
 	private var player:Int;
+	var originalX:Float = 0;
 
 	var keyAmount:Int = 4;
 	var directions:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
@@ -28,14 +25,40 @@ class StrumNote extends FlxSprite
 	var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
 	
-	public var uiSkin:SkinFile;
-	
 	public var texture(default, set):String = null;
 	private function set_texture(value:String):String {
 		if(texture != value) {
 			texture = value;
 			reloadNote();
 		}
+		return value;
+	}
+
+	public var uiSkin(default, set):SkinFile = null;
+	private function set_uiSkin(value:SkinFile):SkinFile {
+		if(uiSkin != value && texture != null) {
+			var maniaData:ManiaArray = null;
+			for (i in uiSkin.mania) {
+				if (i.keys == keyAmount) {
+					maniaData = i;
+					break;
+				}
+			}
+			if (maniaData == null) {
+				var bad:SkinFile = UIData.getUIFile('default');
+				maniaData = bad.mania[keyAmount - 1];
+			}
+
+			directions = maniaData.directions;
+			colors = maniaData.colors;
+			swagWidth = maniaData.noteSpacing;
+			xOff = maniaData.xOffset;
+			noteSize = maniaData.noteSize;
+			reloadNote();
+			x = originalX;
+			postAddedToGroup();
+		}
+		uiSkin = value;
 		return value;
 	}
 
@@ -51,29 +74,7 @@ class StrumNote extends FlxSprite
 		this.keyAmount = keyAmount;
 		this.uiSkin = uiSkin;
 		super(x, y);
-
-		var maniaData:ManiaArray = null;
-		for (i in uiSkin.mania) {
-			if (i.keys == keyAmount) {
-				maniaData = i;
-				break;
-			}
-		}
-		if (maniaData == null) {
-			var bad:SkinFile = UIData.getUIFile('default');
-			for (i in bad.mania) {
-				if (i.keys == keyAmount) {
-					maniaData = i;
-					break;
-				}
-			}
-		}
-
-		directions = maniaData.directions;
-		colors = maniaData.colors;
-		swagWidth = maniaData.noteSpacing;
-		xOff = maniaData.xOffset;
-		noteSize = maniaData.noteSize;
+		originalX = x;
 
 		var skin:String = 'NOTE_assets';
 		texture = skin; //Load texture and anims

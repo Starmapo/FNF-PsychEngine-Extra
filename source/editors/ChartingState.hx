@@ -117,6 +117,8 @@ class ChartingState extends MusicBeatState
 	var nextRenderedSustains:FlxTypedGroup<FlxSprite>;
 	var nextRenderedNotes:FlxTypedGroup<Note>;
 
+	var beatSeps:FlxTypedGroup<FlxSprite>;
+
 	var gridBG:FlxSprite;
 	var gridMult:Int = 2;
 
@@ -191,9 +193,16 @@ class ChartingState extends MusicBeatState
 	var rightKeys:Int = 4;
 	var totalKeys:Int = 8;
 
-	public var uiSkin:SkinFile = null;
+	public var uiSkinMap:Map<String, SkinFile> = new Map<String, SkinFile>();
 
 	var autosaveTimer:FlxTimer;
+
+	var fromMasterMenu = false;
+	public function new(fromMasterMenu:Bool = false)
+	{
+		super();
+		this.fromMasterMenu = fromMasterMenu;
+	}
 
 	override function create()
 	{
@@ -227,10 +236,7 @@ class ChartingState extends MusicBeatState
 		updateKeys();
 
 		// Paths.clearMemory();
-		uiSkin = UIData.getUIFile(_song.uiSkin);
-		if (uiSkin == null) {
-			uiSkin = UIData.getUIFile('');
-		}
+		setSkins();
 
 		#if desktop
 		// Updating Discord Rich Presence
@@ -248,6 +254,9 @@ class ChartingState extends MusicBeatState
 
 		waveformSprite = new FlxSprite(GRID_SIZE, 0).makeGraphic(FlxG.width, FlxG.height, 0x00FFFFFF);
 		add(waveformSprite);
+
+		beatSeps = new FlxTypedGroup<FlxSprite>();
+		add(beatSeps);
 
 		var eventIcon:FlxSprite = new FlxSprite(-GRID_SIZE - 5, -90).loadGraphic(Paths.image('eventArrow'));
 		leftIcon = new HealthIcon('bf');
@@ -398,6 +407,7 @@ class ChartingState extends MusicBeatState
 	var playSoundDad:FlxUICheckBox = null;
 	var UI_songTitle:FlxUIInputText;
 	var noteSkinInputText:FlxUIInputText;
+	var noteSkinOpponentInputText:FlxUIInputText;
 	var noteSplashesInputText:FlxUIInputText;
 	var stageDropDown:FlxUIDropDownMenuCustom;
 	function addSongUI():Void
@@ -444,7 +454,7 @@ class ChartingState extends MusicBeatState
 			var songName:String = Paths.formatToSongPath(_song.song);
 			var file:String = Paths.json(songName + '/events');
 			#if sys
-			if (#if MODS_ALLOWED FileSystem.exists(Paths.modsJson(songName + '/events')) || #end FileSystem.exists(file))
+			if (#if MODS_ALLOWED FileSystem.exists(Paths.modsJson(songName + '/events')) || #end OpenFlAssets.exists(file))
 			#else
 			if (OpenFlAssets.exists(file))
 			#end
@@ -627,13 +637,16 @@ class ChartingState extends MusicBeatState
 		noteSkinInputText = new FlxUIInputText(player2DropDown.x, player2DropDown.y + 50, 150, skin, 8);
 		blockPressWhileTypingOn.push(noteSkinInputText);
 
-		var reloadNotesButton:FlxButton = new FlxButton(noteSkinInputText.x + 5, noteSkinInputText.y + 55, 'Change Notes', function() {
+		var skin = _song.uiSkinOpponent;
+		if(skin == null) skin = '';
+		noteSkinOpponentInputText = new FlxUIInputText(noteSkinInputText.x, noteSkinInputText.y + 30, 150, skin, 8);
+		blockPressWhileTypingOn.push(noteSkinOpponentInputText);
+
+		var reloadNotesButton:FlxButton = new FlxButton(noteSkinInputText.x + 5, noteSkinOpponentInputText.y + 30, 'Change Notes', function() {
 			_song.uiSkin = noteSkinInputText.text;
-			PlayState.SONG = _song;
-			uiSkin = UIData.getUIFile(PlayState.SONG.uiSkin);
-			if (uiSkin == null) {
-				uiSkin = UIData.getUIFile('');
-			}
+			_song.uiSkinOpponent = noteSkinOpponentInputText.text;
+			setSkins();
+			//trace('PLAYER SHOULD BE ' + uiSkinMap.get('player').name);
 			updateGrid();
 			makeStrumNotes();
 		});
@@ -676,6 +689,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(stepperOpponentKeys);
 		tab_group_song.add(reloadNotesButton);
 		tab_group_song.add(noteSkinInputText);
+		tab_group_song.add(noteSkinOpponentInputText);
 		tab_group_song.add(new FlxText(stepperBPM.x, stepperBPM.y - 15, 0, 'Song BPM:'));
 		tab_group_song.add(new FlxText(stepperSpeed.x, stepperSpeed.y - 15, 0, 'Song Speed:'));
 		tab_group_song.add(new FlxText(stepperPlayerKeys.x, stepperPlayerKeys.y - 15, 0, 'Player Key Amount:'));
@@ -686,7 +700,8 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(new FlxText(stageDropDown.x, stageDropDown.y - 15, 0, 'Stage:'));
 		tab_group_song.add(new FlxText(difficultyDropDown.x, difficultyDropDown.y - 15, 0, 'Difficulty:'));
 		tab_group_song.add(new FlxText(numeratorDropDown.x, numeratorDropDown.y - 15, 0, 'Time Signature:'));
-		tab_group_song.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'UI Skin:'));
+		tab_group_song.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'Player UI Skin:'));
+		tab_group_song.add(new FlxText(noteSkinOpponentInputText.x, noteSkinOpponentInputText.y - 15, 0, 'Opponent UI Skin:'));
 		tab_group_song.add(player2DropDown);
 		tab_group_song.add(player3DropDown);
 		tab_group_song.add(player1DropDown);
@@ -1776,10 +1791,16 @@ class ChartingState extends MusicBeatState
 			}
 			
 			if (FlxG.keys.justPressed.BACKSPACE) {
-				//if(onMasterEditor) {
+				if (fromMasterMenu) {
 					MusicBeatState.switchState(new editors.MasterEditorMenu());
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-				//}
+				} else {
+					if (PlayState.isStoryMode) {
+						MusicBeatState.switchState(new StoryMenuState());
+					} else {
+						MusicBeatState.switchState(new FreeplayState());
+					}
+				}
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				FlxG.mouse.visible = false;
 				return;
 			}
@@ -2146,6 +2167,7 @@ class ChartingState extends MusicBeatState
 	}
 	function reloadGridLayer() {
 		gridLayer.clear();
+		beatSeps.clear();
 		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * (totalKeys + 1), Std.int(GRID_SIZE * _song.notes[curSection].lengthInSteps * 2 * zoomList[curZoom]));
 		gridLayer.add(gridBG);
 
@@ -2164,7 +2186,7 @@ class ChartingState extends MusicBeatState
 
 		for (i in 1...Conductor.numerator){
 			var beatsep1:FlxSprite = new FlxSprite(gridBG.x,(GRID_SIZE * (4 * curZoom)) * i).makeGraphic(Std.int(gridBG.width), 1, 0x44FF0000);
-			if(vortex) gridLayer.add(beatsep1);
+			if(vortex) beatSeps.add(beatsep1);
 		}
 
 		gridBlackLine = new FlxSprite(gridBG.x + GRID_SIZE).makeGraphic(2, Std.int(gridBG.height), FlxColor.BLACK);
@@ -2560,11 +2582,16 @@ class ChartingState extends MusicBeatState
 
 	function setupNoteData(i:Array<Dynamic>, isNextSection:Bool):Note
 	{
+		var sectionUsed = curSection;
+		if (isNextSection) {
+			sectionUsed += 1;
+		}
+
 		var usedLeftKeys = leftKeys;
 		var usedRightKeys = rightKeys;
 		if (isNextSection) {
-			usedLeftKeys = (_song.notes[curSection + 1].mustHitSection ? _song.playerKeyAmount : _song.opponentKeyAmount);
-			usedRightKeys = (!_song.notes[curSection + 1].mustHitSection ? _song.playerKeyAmount : _song.opponentKeyAmount);
+			usedLeftKeys = (_song.notes[sectionUsed].mustHitSection ? _song.playerKeyAmount : _song.opponentKeyAmount);
+			usedRightKeys = (!_song.notes[sectionUsed].mustHitSection ? _song.playerKeyAmount : _song.opponentKeyAmount);
 		}
 
 		var daNoteInfo = i[1];
@@ -2576,7 +2603,7 @@ class ChartingState extends MusicBeatState
 		var keys = usedLeftKeys;
 		if (i[1] >= usedLeftKeys) keys = usedRightKeys;
 
-		var note:Note = new Note(daStrumTime, trueData, null, null, true, keys, uiSkin);
+		var note:Note = new Note(daStrumTime, trueData, null, null, true, keys, _song.notes[sectionUsed].mustHitSection == (i[1] >= usedLeftKeys) ? uiSkinMap.get('opponent') : uiSkinMap.get('player'));
 		if(daSus != null) { //Common note
 			if(!Std.isOfType(i[3], String)) //Convert old note type to new note type format
 			{
@@ -2587,7 +2614,7 @@ class ChartingState extends MusicBeatState
 				i.remove(i[3]);
 			}
 			note.sustainLength = daSus;
-			note.mustPress = _song.notes[curSection].mustHitSection;
+			note.mustPress = _song.notes[sectionUsed].mustHitSection;
 			if(daNoteInfo >= usedLeftKeys) note.mustPress = !note.mustPress;
 			note.noteType = i[3];
 		} else { //Event note
@@ -2606,7 +2633,7 @@ class ChartingState extends MusicBeatState
 		note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 		note.updateHitbox();
 		note.x = Math.floor(daNoteInfo * GRID_SIZE) + GRID_SIZE;
-		if(isNextSection && _song.notes[curSection].mustHitSection != _song.notes[curSection+1].mustHitSection) {
+		if(isNextSection && _song.notes[curSection].mustHitSection != _song.notes[sectionUsed].mustHitSection) {
 			if(daNoteInfo >= usedLeftKeys) {
 				note.x -= GRID_SIZE * usedLeftKeys;
 			} else if(daSus != null) {
@@ -2614,7 +2641,7 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
-		note.y = (GRID_SIZE * (isNextSection ? _song.notes[curSection].lengthInSteps : 0)) * zoomList[curZoom] + Math.floor(getYfromStrum((daStrumTime - sectionStartTime(isNextSection ? 1 : 0)) % (Conductor.stepCrochet * _song.notes[curSection + (isNextSection ? 1 : 0)].lengthInSteps), false));
+		note.y = (GRID_SIZE * (isNextSection ? _song.notes[curSection].lengthInSteps : 0)) * zoomList[curZoom] + Math.floor(getYfromStrum((daStrumTime - sectionStartTime(isNextSection ? 1 : 0)) % (Conductor.stepCrochet * _song.notes[sectionUsed].lengthInSteps), false));
 		return note;
 	}
 
@@ -2865,9 +2892,9 @@ class ChartingState extends MusicBeatState
 		}
 		strumLineNotes.clear();
 		for (i in 0...totalKeys){
-			var note:StrumNote = new StrumNote(GRID_SIZE * (i+1), strumLine.y, i, 0, leftKeys, uiSkin);
+			var note:StrumNote = new StrumNote(GRID_SIZE * (i+1), strumLine.y, i, 0, leftKeys, _song.notes[curSection].mustHitSection == (i >= leftKeys) ? uiSkinMap.get('opponent') : uiSkinMap.get('player'));
 			if (i >= leftKeys) {
-				note = new StrumNote(GRID_SIZE * (i+1), strumLine.y, i - leftKeys, 0, rightKeys, uiSkin);
+				note = new StrumNote(GRID_SIZE * (i+1), strumLine.y, i - leftKeys, 0, rightKeys, _song.notes[curSection].mustHitSection == (i >= leftKeys) ? uiSkinMap.get('opponent') : uiSkinMap.get('player'));
 			}
 			note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 			note.updateHitbox();
@@ -2916,6 +2943,20 @@ class ChartingState extends MusicBeatState
 		leftKeys = (_song.notes[curSection].mustHitSection ? _song.playerKeyAmount : _song.opponentKeyAmount);
 		rightKeys = (!_song.notes[curSection].mustHitSection ? _song.playerKeyAmount : _song.opponentKeyAmount);
 		totalKeys = leftKeys + rightKeys;
+	}
+
+	function setSkins():Void {
+		var uiSkin = UIData.getUIFile(_song.uiSkin);
+		if (uiSkin == null) {
+			uiSkin = UIData.getUIFile('');
+		}
+		uiSkinMap.set('player', uiSkin);
+
+		var uiSkin = UIData.getUIFile(_song.uiSkinOpponent);
+		if (uiSkin == null) {
+			uiSkin = UIData.getUIFile('');
+		}
+		uiSkinMap.set('opponent', uiSkin);
 	}
 	
 	private var daSpacing:Float = 0.3;

@@ -14,9 +14,6 @@ import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
 import flixel.system.FlxSound;
 import WeekData;
-#if MODS_ALLOWED
-import sys.FileSystem;
-#end
 
 using StringTools;
 
@@ -374,9 +371,9 @@ class FreeplayState extends MusicBeatState
 			var songLowercase:String = songs[curSelected].songName;
 			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 			/*#if MODS_ALLOWED
-			if(!sys.FileSystem.exists(Paths.modsJson(songLowercase + '/' + poop)) && !sys.FileSystem.exists(Paths.json(songLowercase + '/' + poop))) {
+			if(!FileSystem.exists(Paths.modsJson(songLowercase + '/' + poop)) && !openfl.utils.Assets.exists(Paths.json(songLowercase + '/' + poop))) {
 			#else
-			if(!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop))) {
+			if(!openfl.utils.Assets.exists(Paths.json(songLowercase + '/' + poop))) {
 			#end
 				poop = songLowercase;
 				curDifficulty = 1;

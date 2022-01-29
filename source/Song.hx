@@ -88,9 +88,7 @@ class Song
 			while(i < len)
 			{
 				var note:Array<Dynamic> = notes[i];
-				var daType:String = note[3];
-				if(!Std.isOfType(note[3], String) && note[3] < 6) daType = editors.ChartingState.noteTypeList[note[3]];
-				sec.sectionNotes[i] = [note[0], note[1], note[2], daType];
+				if(Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
 				i++;
 			}
 		}
@@ -198,7 +196,7 @@ class Song
 			}
 			swagShit.opponentKeyAmount = swagShit.playerKeyAmount;
 		}
-		if(tempSong.gf != null && swagShit.gfVersion == null) {
+		if(tempSong.gf != null) {
 			swagShit.gfVersion = tempSong.gf;
 		}
 		if (tempSong.keyCount != null) {
@@ -211,6 +209,10 @@ class Song
 		if (tempSong.timescale != null && tempSong.timescale.length == 2) {
 			swagShit.numerator = tempSong.timescale[0];
 			swagShit.denominator = tempSong.timescale[1];
+		}
+		if(tempSong.ui_Skin != null) {
+			swagShit.uiSkin = tempSong.ui_Skin;
+			swagShit.uiSkinOpponent = tempSong.ui_Skin;
 		}
 
 		swagShit.validScore = true;

@@ -176,7 +176,8 @@ class TitleState extends MusicBeatState
 			StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
 		}
 
-		Paths.excludeAsset(Paths.getPath('images/alphabet.png', IMAGE));
+		Paths.excludeAsset(Paths.getPreloadPath('images/alphabet.png'));
+		Paths.excludeAsset(Paths.getPreloadPath('music/freakyMenu.${Paths.SOUND_EXT}'));
 
 		FlxG.mouse.visible = false;
 		#if FREEPLAY

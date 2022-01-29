@@ -2,10 +2,6 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-#if MODS_ALLOWED
-import sys.FileSystem;
-#end
-import openfl.utils.Assets;
 
 class NoteSplash extends FlxSprite
 {

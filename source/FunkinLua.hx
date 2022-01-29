@@ -24,6 +24,7 @@ import openfl.display.BlendMode;
 #if sys
 import sys.FileSystem;
 #end
+import openfl.utils.Assets;
 import Shaders;
 import Type.ValueType;
 import DialogueBoxPsych;
@@ -89,7 +90,8 @@ class FunkinLua {
 		set('denominator', Conductor.denominator);
 		set('playerKeyAmount', PlayState.SONG.playerKeyAmount);
 		set('opponentKeyAmount', PlayState.SONG.opponentKeyAmount);
-		set('uiSkin', PlayState.instance.uiSkin.name);
+		set('playerSkin', PlayState.instance.uiSkinMap.get('player').name);
+		set('opponentSkin', PlayState.instance.uiSkinMap.get('opponent').name);
 		set('songLength', FlxG.sound.music.length);
 		set('songName', PlayState.SONG.song);
 		set('startedCountdown', false);
@@ -1199,7 +1201,7 @@ class FunkinLua {
 			}
 			luaTrace('Trying to load dialogue: ' + path);
 
-			if(FileSystem.exists(path)) {
+			if(FileSystem.exists(path) || Assets.exists(path)) {
 				var shit:DialogueFile = DialogueBoxPsych.parseDialogue(path);
 				if(shit.dialogue.length > 0) {
 					PlayState.instance.startDialogue(shit, music);
@@ -1730,6 +1732,9 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "snapCamFollow", function(?x:Float = 0, ?y:Float = 0) {
 			PlayState.instance.snapCamFollowToPos(x, y);
+		});
+		Lua_helper.add_callback(lua, "getSkinFile", function(name:String = '') {
+			return UIData.getUIFile(name);
 		});
 		
 		Discord.DiscordClient.addLuaCallbacks(lua);
