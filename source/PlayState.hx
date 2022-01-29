@@ -1360,6 +1360,18 @@ class PlayState extends MusicBeatState
 		}
 		RecalculateRating();
 
+		//preloading assets
+		for (i in uiSkinMap.keys()) {
+			Paths.returnGraphic(UIData.checkImageFile('shit', uiSkinMap.get(i)));
+			Paths.returnGraphic(UIData.checkImageFile('bad', uiSkinMap.get(i)));
+			Paths.returnGraphic(UIData.checkImageFile('good', uiSkinMap.get(i)));
+			Paths.returnGraphic(UIData.checkImageFile('sick', uiSkinMap.get(i)));
+			Paths.returnGraphic(UIData.checkImageFile('combo', uiSkinMap.get(i)));
+			for (j in 0...10) {
+				Paths.returnGraphic(UIData.checkImageFile('num' + j, uiSkinMap.get(i)));
+			}
+		}
+
 		//PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
 		CoolUtil.precacheSound('missnote1');
 		CoolUtil.precacheSound('missnote2');
@@ -1868,10 +1880,6 @@ class PlayState extends MusicBeatState
 					}
 				}
 
-				var introAssets:Map<String, Array<String>> = new Map<String, Array<String>>();
-				introAssets.set('default', ['ready', 'set', 'go']);
-
-				var introAlts:Array<String> = introAssets.get('default');
 				var antialias:Bool = ClientPrefs.globalAntialiasing;
 				if (uiSkinMap.get('player').noAntialiasing) {
 					antialias = false;
@@ -1891,7 +1899,7 @@ class PlayState extends MusicBeatState
 					case 0:
 						FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
 					case 1:
-						countdownReady = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile(introAlts[0], uiSkinMap.get('player'))));
+						countdownReady = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('ready', uiSkinMap.get('player'))));
 						countdownReady.scrollFactor.set();
 						countdownReady.updateHitbox();
 
@@ -1910,7 +1918,7 @@ class PlayState extends MusicBeatState
 						});
 						FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 					case 2:
-						countdownSet = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile(introAlts[1], uiSkinMap.get('player'))));
+						countdownSet = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('set', uiSkinMap.get('player'))));
 						countdownSet.scrollFactor.set();
 
 						countdownSet.setGraphicSize(Std.int(countdownSet.width * uiSkinMap.get('player').scale * uiSkinMap.get('player').countdownScale));
@@ -1929,7 +1937,7 @@ class PlayState extends MusicBeatState
 						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 					case 3:
 						if (!skipCountdown){
-							countdownGo = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile(introAlts[2], uiSkinMap.get('player'))));
+							countdownGo = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('go', uiSkinMap.get('player'))));
 							countdownGo.scrollFactor.set();
 
 							countdownGo.setGraphicSize(Std.int(countdownGo.width * uiSkinMap.get('player').scale * uiSkinMap.get('player').countdownScale));

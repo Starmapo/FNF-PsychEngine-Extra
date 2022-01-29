@@ -111,12 +111,8 @@ class CoolUtil
 
 	//uhhhh does this even work at all? i'm starting to doubt
 	public static function precacheSound(sound:String, ?library:String = null):Void {
-		#if NO_PRELOAD_ALL
-		var EmbeddedSound = Paths.getPath('sounds/$sound.${Paths.SOUND_EXT}', SOUND, library);
-		#else
 		var EmbeddedSound = Paths.sound(sound, library);
-		#end
-		if (Assets.exists(EmbeddedSound, SOUND) || Assets.exists(EmbeddedSound, MUSIC))
+		if (Std.isOfType(EmbeddedSound, String) && (Assets.exists(EmbeddedSound, SOUND) || Assets.exists(EmbeddedSound, MUSIC)))
 			Assets.getSound(EmbeddedSound, true);
 	}
 

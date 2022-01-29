@@ -698,9 +698,9 @@ class ModMetadata
 		var stuff:PackFile = null;
 		var rawJson:String = null;
 		var path = Paths.mods(folder + '/pack.json');
-		if(FileSystem.exists(path)) rawJson = File.getContent(path);
-		stuff = cast Json.parse(rawJson);
-		if(stuff != null) {	
+		if (FileSystem.exists(path)) rawJson = File.getContent(path);
+		if (rawJson != null) stuff = cast Json.parse(rawJson);
+		if (stuff != null) {	
 			if(stuff.name != null && stuff.name.length > 0)
 			{
 				this.name = stuff.name;

@@ -36,7 +36,9 @@ class StrumNote extends FlxSprite
 
 	public var uiSkin(default, set):SkinFile = null;
 	private function set_uiSkin(value:SkinFile):SkinFile {
-		if(uiSkin != value && texture != null) {
+		if(uiSkin != value) {
+			uiSkin = value;
+			
 			var maniaData:ManiaArray = null;
 			for (i in uiSkin.mania) {
 				if (i.keys == keyAmount) {
@@ -46,7 +48,12 @@ class StrumNote extends FlxSprite
 			}
 			if (maniaData == null) {
 				var bad:SkinFile = UIData.getUIFile('default');
-				maniaData = bad.mania[keyAmount - 1];
+				for (i in bad.mania) {
+					if (i.keys == keyAmount) {
+						maniaData = i;
+						break;
+					}
+				}
 			}
 
 			directions = maniaData.directions;
@@ -54,11 +61,12 @@ class StrumNote extends FlxSprite
 			swagWidth = maniaData.noteSpacing;
 			xOff = maniaData.xOffset;
 			noteSize = maniaData.noteSize;
-			reloadNote();
-			x = originalX;
-			postAddedToGroup();
+			if (texture != null) {
+				reloadNote();
+				x = originalX;
+				postAddedToGroup();
+			}
 		}
-		uiSkin = value;
 		return value;
 	}
 

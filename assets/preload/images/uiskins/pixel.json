@@ -2,7 +2,7 @@
 	"mania": [
 		{
 			"keys": 1,
-			"noteSize": 0.7,
+			"noteSize": 1,
 			"noteSpacing": 112,
 			"xOffset": 222,
 			"colors": [
@@ -17,7 +17,7 @@
 		},
 		{
 			"keys": 2,
-			"noteSize": 0.7,
+			"noteSize": 1,
 			"noteSpacing": 112,
 			"xOffset": 166,
 			"colors": [
@@ -35,7 +35,7 @@
 		},
 		{
 			"keys": 3,
-			"noteSize": 0.7,
+			"noteSize": 1,
 			"noteSpacing": 112,
 			"xOffset": 110,
 			"colors": [
@@ -56,7 +56,7 @@
 		},
 		{
 			"keys": 4,
-			"noteSize": 0.7,
+			"noteSize": 1,
 			"noteSpacing": 112,
 			"xOffset": 54,
 			"colors": [
@@ -80,7 +80,7 @@
 		},
 		{
 			"keys": 6,
-			"noteSize": 0.6,
+			"noteSize": 0.9,
 			"noteSpacing": 96,
 			"xOffset": -10,
 			"colors": [
@@ -110,7 +110,7 @@
 		},
 		{
 			"keys": 7,
-			"noteSize": 0.5,
+			"noteSize": 0.8,
 			"noteSpacing": 80,
 			"xOffset": -2,
 			"colors": [
@@ -143,7 +143,7 @@
 		},
 		{
 			"keys": 8,
-			"noteSize": 0.45,
+			"noteSize": 0.75,
 			"noteSpacing": 72,
 			"xOffset": -10,
 			"colors": [
@@ -179,7 +179,7 @@
 		},
 		{
 			"keys": 9,
-			"noteSize": 0.4,
+			"noteSize": 0.7,
 			"noteSpacing": 64,
 			"xOffset": -10,
 			"colors": [
@@ -218,7 +218,7 @@
 		},
 		{
 			"keys": 10,
-			"noteSize": 0.35,
+			"noteSize": 0.65,
 			"noteSpacing": 56,
 			"xOffset": -2,
 			"colors": [
@@ -260,7 +260,7 @@
 		},
 		{
 			"keys": 11,
-			"noteSize": 0.33,
+			"noteSize": 0.63,
 			"noteSpacing": 52.8,
 			"xOffset": -12,
 			"colors": [
@@ -305,7 +305,7 @@
 		},
 		{
 			"keys": 12,
-			"noteSize": 0.3,
+			"noteSize": 0.6,
 			"noteSpacing": 48,
 			"xOffset": -10,
 			"colors": [
@@ -353,7 +353,7 @@
 		}
 	],
 	"scale": 6,
-	"noteScale": 1.3,
+	"noteScale": 1,
 	"sustainYScale": 1.19,
 	"countdownScale": 1,
 	"ratingScale": 0.85,

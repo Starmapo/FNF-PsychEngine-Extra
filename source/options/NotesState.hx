@@ -156,18 +156,20 @@ class NotesState extends MusicBeatState
 			if (FlxG.mouse.wheel != 0) {
 				if (FlxG.keys.pressed.SHIFT) {
 					changeType(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
-				} else {
+				} else if (currentData.length > 1) {
 					changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				}
 			}
-			if (controls.UI_UP_P) {
-				changeSelection(-1);
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-			}
-			if (controls.UI_DOWN_P) {
-				changeSelection(1);
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+			if (currentData.length > 1) {
+				if (controls.UI_UP_P) {
+					changeSelection(-1);
+					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				}
+				if (controls.UI_DOWN_P) {
+					changeSelection(1);
+					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				}
 			}
 			if (controls.UI_LEFT_P) {
 				changeType(-1);

@@ -122,9 +122,6 @@ class Note extends FlxSprite
 	}
 
 	private function set_uiSkin(value:SkinFile):SkinFile {
-		if(uiSkin != value && texture != null) {
-			reloadNote('', texture);
-		}
 		uiSkin = value;
 
 		var maniaData:ManiaArray = null;
@@ -148,6 +145,10 @@ class Note extends FlxSprite
 		swagWidth = maniaData.noteSpacing;
 		xOff = maniaData.xOffset;
 		noteSize = maniaData.noteSize;
+
+		if(texture != null) {
+			reloadNote('', texture);
+		}
 
 		return value;
 	}
