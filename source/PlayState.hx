@@ -1669,27 +1669,22 @@ class PlayState extends MusicBeatState
 
 			(new FlxVideo(fileName)).finishCallback = function() {
 				remove(bg);
-				if(endingSong) {
-					endSong();
-				} else {
-					startCountdown();
-				}
+				startAndEnd();
 			}
 			return;
 		} else {
 			FlxG.log.warn('Couldnt find video file: ' + fileName);
-			if(endingSong) {
-				endSong();
-			} else {
-				startCountdown();
-			}
+			startAndEnd();
 		}
 		#end
-		if(endingSong) {
+		startAndEnd();
+	}
+
+	function startAndEnd() {
+		if(endingSong)
 			endSong();
-		} else {
+		else
 			startCountdown();
-		}
 	}
 
 	var dialogueCount:Int = 0;

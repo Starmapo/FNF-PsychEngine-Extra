@@ -71,6 +71,7 @@ class Main extends Sprite
 		#end
 
 		ClientPrefs.loadDefaultKeys();
+		Achievements.loadAchievements();
 		#if PRELOAD_ALL
 		// fuck you, persistent caching stays ON during sex
 		FlxGraphic.defaultPersist = true;
