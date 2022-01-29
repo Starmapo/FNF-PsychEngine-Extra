@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
 import haxe.Json;
-#if sys
+#if MODS_ALLOWED
 import sys.FileSystem;
 import sys.io.File;
 #end

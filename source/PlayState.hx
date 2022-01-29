@@ -43,7 +43,7 @@ import DialogueBoxPsych;
 import FunkinLua;
 import Shaders;
 import StageData;
-#if sys
+#if MODS_ALLOWED
 import sys.FileSystem;
 #end
 
@@ -1616,7 +1616,7 @@ class PlayState extends MusicBeatState
 		#if VIDEOS_ALLOWED
 		var foundFile:Bool = false;
 		var fileName:String = #if MODS_ALLOWED Paths.modFolders('videos/' + name + '.' + Paths.VIDEO_EXT); #else ''; #end
-		#if sys
+		#if MODS_ALLOWED
 		if(FileSystem.exists(fileName)) {
 			foundFile = true;
 		}
@@ -1624,7 +1624,7 @@ class PlayState extends MusicBeatState
 
 		if(!foundFile) {
 			fileName = Paths.video(name);
-			#if sys
+			#if MODS_ALLOWED
 			if(FileSystem.exists(fileName)) {
 			#else
 			if(OpenFlAssets.exists(fileName)) {
@@ -2068,7 +2068,7 @@ class PlayState extends MusicBeatState
 
 		var songName:String = Paths.formatToSongPath(SONG.song);
 		var file:String = Paths.json(songName + '/events');
-		#if sys
+		#if MODS_ALLOWED
 		if (FileSystem.exists(Paths.modsJson(songName + '/events')) || OpenFlAssets.exists(file)) {
 		#else
 		if (OpenFlAssets.exists(file)) {

@@ -453,7 +453,7 @@ class ChartingState extends MusicBeatState
 		{
 			var songName:String = Paths.formatToSongPath(_song.song);
 			var file:String = Paths.json(songName + '/events');
-			#if sys
+			#if MODS_ALLOWED
 			if (#if MODS_ALLOWED FileSystem.exists(Paths.modsJson(songName + '/events')) || #end OpenFlAssets.exists(file))
 			#else
 			if (OpenFlAssets.exists(file))
@@ -2800,7 +2800,7 @@ class ChartingState extends MusicBeatState
 		//curUndoIndex++;
 		//var newsong = _song.notes;
 		//	undos.push(newsong);
-		trace(undos);
+		//trace(undos);
 		var noteStrum = getStrumTime(dummyArrow.y, false) + sectionStartTime();
 		var noteData = Math.floor((FlxG.mouse.x - GRID_SIZE) / GRID_SIZE);
 		var noteSus = 0;

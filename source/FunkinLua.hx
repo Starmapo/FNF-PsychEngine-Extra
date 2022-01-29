@@ -21,7 +21,7 @@ import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
 import flixel.util.FlxColor;
 import openfl.display.BlendMode;
-#if sys
+#if MODS_ALLOWED
 import sys.FileSystem;
 #end
 import openfl.utils.Assets;
@@ -1108,14 +1108,7 @@ class FunkinLua {
 			return false;
 		});
 		Lua_helper.add_callback(lua, "screenCenter", function(obj:String, pos:String = 'xy') {
-			var spr:FlxSprite;
-			if(PlayState.instance.modchartSprites.exists(obj)) {
-				spr = PlayState.instance.modchartSprites.get(obj);
-			} else if(PlayState.instance.modchartTexts.exists(obj)) {
-				spr = PlayState.instance.modchartTexts.get(obj);
-			} else {
-				spr = Reflect.getProperty(getInstance(), obj);
-			}
+			var spr:FlxSprite = getObjectDirectly(obj);
 
 			if(spr != null)
 			{
@@ -1139,15 +1132,7 @@ class FunkinLua {
 			var objectsArray:Array<FlxSprite> = [];
 			for (i in 0...namesArray.length)
 			{
-				if(PlayState.instance.modchartSprites.exists(namesArray[i])) {
-					objectsArray.push(PlayState.instance.modchartSprites.get(namesArray[i]));
-				}
-				else if(PlayState.instance.modchartTexts.exists(namesArray[i])) {
-					objectsArray.push(PlayState.instance.modchartTexts.get(namesArray[i]));
-				}
-				else {
-					objectsArray.push(Reflect.getProperty(getInstance(), namesArray[i]));
-				}
+				objectsArray.push(getObjectDirectly(namesArray[i]));
 			}
 
 			if(!objectsArray.contains(null))
@@ -1157,14 +1142,7 @@ class FunkinLua {
 			return false;
 		});
 		Lua_helper.add_callback(lua, "getPixelColor", function(obj:String, x:Int, y:Int) {
-			var spr:FlxSprite = null;
-			if(PlayState.instance.modchartSprites.exists(obj)) {
-				spr = PlayState.instance.modchartSprites.get(obj);
-			} else if(PlayState.instance.modchartTexts.exists(obj)) {
-				spr = PlayState.instance.modchartTexts.get(obj);
-			} else {
-				spr = Reflect.getProperty(getInstance(), obj);
-			}
+			var spr:FlxSprite = getObjectDirectly(obj);
 
 			if(spr != null)
 			{
@@ -1172,6 +1150,56 @@ class FunkinLua {
 				return spr.pixels.getPixel32(x, y);
 			}
 			return 0;
+		});
+		Lua_helper.add_callback(lua, "getMidpoint", function(obj:String, ?type:String = 'x') {
+			if(PlayState.instance.modchartSprites.exists(obj)) {
+				var cock:ModchartSprite = PlayState.instance.modchartSprites.get(obj);
+				switch (type) {
+					case 'y':
+						return cock.getMidpoint().y;
+				}
+				return cock.getMidpoint().x;
+			}
+			if(PlayState.instance.modchartTexts.exists(obj)) {
+				var cock:ModchartText = PlayState.instance.modchartTexts.get(obj);
+				switch (type) {
+					case 'y':
+						return cock.getMidpoint().y;
+				}
+				return cock.getMidpoint().x;
+			}
+			
+			var cock:FlxSprite = Reflect.getProperty(getInstance(), obj);
+			switch (type) {
+				case 'y':
+					return cock.getMidpoint().y;
+			}
+			return cock.getMidpoint().x;
+		});
+		Lua_helper.add_callback(lua, "getGraphicMidpoint", function(obj:String, ?type:String = 'x') {
+			if(PlayState.instance.modchartSprites.exists(obj)) {
+				var cock:ModchartSprite = PlayState.instance.modchartSprites.get(obj);
+				switch (type) {
+					case 'y':
+						return cock.getGraphicMidpoint().y;
+				}
+				return cock.getGraphicMidpoint().x;
+			}
+			if(PlayState.instance.modchartTexts.exists(obj)) {
+				var cock:ModchartText = PlayState.instance.modchartTexts.get(obj);
+				switch (type) {
+					case 'y':
+						return cock.getGraphicMidpoint().y;
+				}
+				return cock.getGraphicMidpoint().x;
+			}
+			
+			var cock:FlxSprite = Reflect.getProperty(getInstance(), obj);
+			switch (type) {
+				case 'y':
+					return cock.getGraphicMidpoint().y;
+			}
+			return cock.getGraphicMidpoint().x;
 		});
 		Lua_helper.add_callback(lua, "getRandomInt", function(min:Int, max:Int = FlxMath.MAX_VALUE_INT, exclude:String = '') {
 			var excludeArray:Array<String> = exclude.split(',');
@@ -1679,57 +1707,6 @@ class FunkinLua {
 			PlayState.instance.clearShaderFromCamera(camera);
 		});
 
-		//custom functions
-		Lua_helper.add_callback(lua, "getMidpoint", function(obj:String, ?type:String = 'x') {
-			if(PlayState.instance.modchartSprites.exists(obj)) {
-				var cock:ModchartSprite = PlayState.instance.modchartSprites.get(obj);
-				switch (type) {
-					case 'y':
-						return cock.getMidpoint().y;
-				}
-				return cock.getMidpoint().x;
-			}
-			if(PlayState.instance.modchartTexts.exists(obj)) {
-				var cock:ModchartText = PlayState.instance.modchartTexts.get(obj);
-				switch (type) {
-					case 'y':
-						return cock.getMidpoint().y;
-				}
-				return cock.getMidpoint().x;
-			}
-			
-			var cock:FlxSprite = Reflect.getProperty(getInstance(), obj);
-			switch (type) {
-				case 'y':
-					return cock.getMidpoint().y;
-			}
-			return cock.getMidpoint().x;
-		});
-		Lua_helper.add_callback(lua, "getGraphicMidpoint", function(obj:String, ?type:String = 'x') {
-			if(PlayState.instance.modchartSprites.exists(obj)) {
-				var cock:ModchartSprite = PlayState.instance.modchartSprites.get(obj);
-				switch (type) {
-					case 'y':
-						return cock.getGraphicMidpoint().y;
-				}
-				return cock.getGraphicMidpoint().x;
-			}
-			if(PlayState.instance.modchartTexts.exists(obj)) {
-				var cock:ModchartText = PlayState.instance.modchartTexts.get(obj);
-				switch (type) {
-					case 'y':
-						return cock.getGraphicMidpoint().y;
-				}
-				return cock.getGraphicMidpoint().x;
-			}
-			
-			var cock:FlxSprite = Reflect.getProperty(getInstance(), obj);
-			switch (type) {
-				case 'y':
-					return cock.getGraphicMidpoint().y;
-			}
-			return cock.getGraphicMidpoint().x;
-		});
 		Lua_helper.add_callback(lua, "snapCamFollow", function(?x:Float = 0, ?y:Float = 0) {
 			PlayState.instance.snapCamFollowToPos(x, y);
 		});

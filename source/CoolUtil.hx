@@ -1,11 +1,8 @@
 package;
 
 import flixel.FlxG;
-import flixel.FlxState;
-import flixel.group.FlxGroup.FlxTypedGroup;
 import openfl.utils.Assets;
-import Type.ValueType;
-#if sys
+#if MODS_ALLOWED
 import sys.io.File;
 import sys.FileSystem;
 #end
