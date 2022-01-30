@@ -11,6 +11,7 @@ class NoteSplash extends FlxSprite
 
 	var daNote:Note = null;
 	var colors:Array<String>;
+	var alphaMult:Float = 0.6;
 
 	public function new(x:Float = 0, y:Float = 0, ?note:Note = null) {
 		super(x, y);
@@ -35,7 +36,7 @@ class NoteSplash extends FlxSprite
 			this.colors = colors;
 		}
 		updateHitbox();
-		alpha = 0.6;
+		alphaMult = 0.6;
 
 		if(texture == null || texture.length < 1) {
 			texture = 'noteSplashes';
@@ -84,7 +85,7 @@ class NoteSplash extends FlxSprite
 
 		if (daNote != null) {
 			setPosition(daNote.x - (daNote.width), daNote.y - (daNote.height));
-			alpha = daNote.alpha;
+			alpha = daNote.alpha * alphaMult;
 			angle = daNote.angle;
 		}
 

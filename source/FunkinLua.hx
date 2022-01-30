@@ -1261,6 +1261,9 @@ class FunkinLua {
 			}
 			#end
 		});
+		Lua_helper.add_callback(lua, "getSkinFile", function(name:String = '') {
+			return UIData.getUIFile(name);
+		});
 		
 		Lua_helper.add_callback(lua, "playMusic", function(sound:String, volume:Float = 1, loop:Bool = false) {
 			FlxG.sound.playMusic(Paths.music(sound), volume, loop);
@@ -1705,13 +1708,6 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
 			PlayState.instance.clearShaderFromCamera(camera);
-		});
-
-		Lua_helper.add_callback(lua, "snapCamFollow", function(?x:Float = 0, ?y:Float = 0) {
-			PlayState.instance.snapCamFollowToPos(x, y);
-		});
-		Lua_helper.add_callback(lua, "getSkinFile", function(name:String = '') {
-			return UIData.getUIFile(name);
 		});
 		
 		Discord.DiscordClient.addLuaCallbacks(lua);

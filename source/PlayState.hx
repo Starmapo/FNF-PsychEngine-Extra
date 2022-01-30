@@ -3525,7 +3525,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	public function snapCamFollowToPos(x:Float, y:Float) {
+	function snapCamFollowToPos(x:Float, y:Float) {
 		camFollow.set(x, y);
 		camFollowPos.setPosition(x, y);
 	}
