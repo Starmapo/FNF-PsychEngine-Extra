@@ -63,7 +63,7 @@
 		0
 	],
 	"healthicon": "mom",
-	"flip_x": false,
+	"flip_x": true,
 	"healthbar_colors": [
 		216,
 		85,

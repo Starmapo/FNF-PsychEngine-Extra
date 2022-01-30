@@ -15,19 +15,6 @@ class Boyfriend extends Character
 	{
 		if (!debugMode && animation.curAnim != null)
 		{
-			if (animation.curAnim.name.startsWith('sing'))
-			{
-				holdTimer += elapsed;
-			}
-			else
-				holdTimer = 0;
-
-			if (opponentPlay && holdTimer >= Conductor.stepCrochet * 0.001 * singDuration * (Conductor.denominator / 4))
-			{
-				dance();
-				holdTimer = 0;
-			}
-
 			if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished && !debugMode)
 			{
 				playAnim('idle', true, false, 10);

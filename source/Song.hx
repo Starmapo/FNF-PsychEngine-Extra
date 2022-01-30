@@ -80,19 +80,6 @@ class Song
 			}
 		}
 
-		for (secNum in 0...songJson.notes.length) { //removing int note types
-			var sec:SwagSection = songJson.notes[secNum];
-			var i:Int = 0;
-			var notes:Array<Dynamic> = sec.sectionNotes;
-			var len:Int = notes.length;
-			while(i < len)
-			{
-				var note:Array<Dynamic> = notes[i];
-				if(Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
-				i++;
-			}
-		}
-
 		if(songJson.playerKeyAmount == null)
 		{
 			songJson.playerKeyAmount = 4;
@@ -103,14 +90,24 @@ class Song
 			songJson.numerator = 4;
 			songJson.denominator = 4;
 		}
-
-		if(songJson.notes.length > 0 && songJson.notes[0].changeSignature == null)
-		{
-			for (secNum in 0...songJson.notes.length)
+		
+		for (secNum in 0...songJson.notes.length) {
+			var sec:SwagSection = songJson.notes[secNum];
+			if (sec.gfSection == null) sec.gfSection = false;
+			if (sec.bpm == null) sec.bpm = songJson.bpm;
+			if (sec.changeBPM == null) sec.changeBPM = false;
+			if (sec.numerator == null) sec.numerator = songJson.numerator;
+			if (sec.denominator == null) sec.denominator = songJson.denominator;
+			if (sec.changeSignature == null) sec.changeSignature = false;
+			if (sec.altAnim == null) sec.altAnim = false;
+			var i:Int = 0;
+			var notes:Array<Dynamic> = sec.sectionNotes;
+			var len:Int = notes.length;
+			while(i < len)
 			{
-				songJson.notes[secNum].changeSignature = false;
-				songJson.notes[secNum].numerator = songJson.numerator;
-				songJson.notes[secNum].denominator = songJson.denominator;
+				var note:Array<Dynamic> = notes[i];
+				if(note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
+				i++;
 			}
 		}
 	}

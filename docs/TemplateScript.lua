@@ -161,22 +161,11 @@ function onTimerCompleted(tag, loops, loopsLeft)
 	-- loops = how many loops it will have done when it ends completely
 	-- loopsLeft = how many are remaining
 end
-function onCheckForAchievement(name)
 
-	--deals with achievement checks
+function onBPMChange()
+	--triggered when the song bpm is changed
+end
 
-	--EX:
---[[
-  if name == 'sick-full-combo' and getProperty('bads') == 0 and getProperty('goods') == 0 and getProperty('shits') == 0 and getProperty('endingSong') then
-    return Function_Continue
-  end
-  if name == 'bad-health-finish' and getProperty('health') < 0.01 and getProperty('endingSong') then
-    return Function_Continue
-  end
-  if name == 'halfway' and getSongPosition >  getPropertyFromClass('flixel.FlxG','sound.music.length')/2 then
-    return Function_Continue
-  end
-	
-	
-	]]--
+function onSignatureChange()
+	--triggered when the song time signature is changed
 end

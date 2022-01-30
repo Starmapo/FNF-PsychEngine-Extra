@@ -94,7 +94,7 @@
 		200
 	],
 	"healthicon": "spooky",
-	"flip_x": false,
+	"flip_x": true,
 	"healthbar_colors": [
 		213,
 		126,

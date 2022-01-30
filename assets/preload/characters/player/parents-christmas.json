@@ -251,7 +251,7 @@
 		0
 	],
 	"healthicon": "parents",
-	"flip_x": false,
+	"flip_x": true,
 	"healthbar_colors": [
 		196,
 		94,

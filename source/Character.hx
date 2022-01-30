@@ -37,13 +37,24 @@ typedef AnimArray = {
 	var offsets:Array<Int>;
 }
 
+typedef CharacterGroupFile = {
+	var characters:Array<CharArray>;
+	var healthicon:String;
+	var camera_position:Array<Float>;
+	var healthbar_colors:Array<Int>;
+}
+
+typedef CharArray = {
+	var name:String;
+	var position:Array<Int>;
+}
+
 class Character extends FlxSprite
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
 
 	public var isPlayer:Bool = false;
-	public var opponentPlay:Bool = false;
 	public var curCharacter:String = DEFAULT_CHARACTER;
 
 	public var colorTween:FlxTween;
@@ -55,6 +66,7 @@ class Character extends FlxSprite
 	public var singDuration:Float = 4; //Multiplier of how long a character holds the sing pose
 	public var idleSuffix:String = '';
 	public var danceIdle:Bool = false; //Character use "danceLeft" and "danceRight" instead of "idle"
+	public var danceSpeed:Int = 2;
 
 	public var healthIcon:String = 'face';
 	public var animationsArray:Array<AnimArray> = [];
@@ -72,7 +84,7 @@ class Character extends FlxSprite
 	public var healthColorArray:Array<Int> = [255, 0, 0];
 
 	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
-	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false, ?opponentPlay:Bool = false, ?ignorePlayerCheck:Bool = false)
+	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false, ?ignorePlayerCheck:Bool = false)
 	{
 		super(x, y);
 
@@ -83,52 +95,14 @@ class Character extends FlxSprite
 		#end
 		curCharacter = character;
 		this.isPlayer = isPlayer;
-		this.opponentPlay = opponentPlay;
 		antialiasing = ClientPrefs.globalAntialiasing;
 
-		var library:String = null;
 		switch (curCharacter)
 		{
 			//case 'your character name in case you want to hardcode them instead':
 
 			default:
-				var json:CharacterFile = null;
-				var characterPath:String = 'characters/player/' + curCharacter + '.json';
-				var characterPath2:String = 'characters/' + curCharacter + '.json'; //incase there is an opponent file but no player file
-				#if MODS_ALLOWED
-				var path:String = Paths.modFolders(characterPath);
-				if (!FileSystem.exists(path) || ignorePlayerCheck) {
-					path = Paths.modFolders(characterPath2);
-				}
-				if (!FileSystem.exists(path) && !ignorePlayerCheck) {
-					path = Paths.getPreloadPath(characterPath);
-				}
-				if (!FileSystem.exists(path)) {
-					path = Paths.getPreloadPath(characterPath2);
-				}
-
-				if (!FileSystem.exists(path))
-				#else
-				var path:String = Paths.getPreloadPath(characterPath);
-				if (!Assets.exists(path) || ignorePlayerCheck) {
-					path = Paths.getPreloadPath(characterPath2);
-				}
-
-				if (!Assets.exists(path))
-				#end
-				{
-					path = Paths.getPreloadPath('characters/' + (isPlayer ? 'player/' : '') + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change them to BF just to prevent a crash
-				}
-
-				//trace('character path for ' + curCharacter + ': ' + path);
-
-				#if MODS_ALLOWED
-				var rawJson = File.getContent(path);
-				#else
-				var rawJson = Assets.getText(path);
-				#end
-
-				json = cast Json.parse(rawJson);
+				var json:CharacterFile = getFile(curCharacter, ignorePlayerCheck);
 
 				var spriteType = "sparrow";
 				//sparrow
@@ -227,7 +201,7 @@ class Character extends FlxSprite
 
 		if (isPlayer)
 		{
-			flipX = !flipX;
+			//flipX = !flipX;
 
 			/*// Doesn't flip for BF, since his are already in the right place???
 			if (!curCharacter.startsWith('bf'))
@@ -273,14 +247,23 @@ class Character extends FlxSprite
 				dance();
 			}
 
-			if (!isPlayer)
+			if (isPlayer)
+			{
+				if (animation.curAnim.name.startsWith('sing'))
+				{
+					holdTimer += elapsed;
+				}
+				else
+					holdTimer = 0;
+			}
+			else
 			{
 				if (animation.curAnim.name.startsWith('sing'))
 				{
 					holdTimer += elapsed;
 				}
 
-				if (!opponentPlay && holdTimer >= Conductor.stepCrochet * 0.001 * singDuration * (Conductor.denominator / 4))
+				if (holdTimer >= Conductor.stepCrochet * 0.001 * singDuration * (Conductor.denominator / 4))
 				{
 					dance();
 					holdTimer = 0;
@@ -352,6 +335,9 @@ class Character extends FlxSprite
 
 	public function recalculateDanceIdle() {
 		danceIdle = (animation.getByName('danceLeft' + idleSuffix) != null && animation.getByName('danceRight' + idleSuffix) != null);
+		if (danceIdle) {
+			danceSpeed = 1;
+		}
 	}
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)
@@ -362,5 +348,48 @@ class Character extends FlxSprite
 	public function quickAnimAdd(name:String, anim:String)
 	{
 		animation.addByPrefix(name, anim, 24, false);
+	}
+
+	public static function getFile(name:String, ignorePlayerCheck:Bool = false):Dynamic {
+		var characterPath:String = 'characters/player/' + name + '.json';
+		var characterPath2:String = 'characters/' + name + '.json'; //incase there is an opponent file but no player file
+		#if MODS_ALLOWED
+		var path:String = Paths.modFolders(characterPath);
+		if (!FileSystem.exists(path) || ignorePlayerCheck) {
+			path = Paths.modFolders(characterPath2);
+		}
+		if (!FileSystem.exists(path) && !ignorePlayerCheck) {
+			path = Paths.getPreloadPath(characterPath);
+		}
+		if (!FileSystem.exists(path)) {
+			path = Paths.getPreloadPath(characterPath2);
+		}
+
+		if (!FileSystem.exists(path))
+		#else
+		var path:String = Paths.getPreloadPath(characterPath);
+		if (!Assets.exists(path) || ignorePlayerCheck) {
+			path = Paths.getPreloadPath(characterPath2);
+		}
+
+		if (!Assets.exists(path))
+		#end
+		{
+			path = Paths.getPreloadPath('characters/player/$DEFAULT_CHARACTER.json'); //If a character couldn't be found, change them to BF just to prevent a crash
+		}
+
+		//trace('character path for ' + curCharacter + ': ' + path);
+
+		#if MODS_ALLOWED
+		var rawJson = File.getContent(path);
+		#else
+		var rawJson = Assets.getText(path);
+		#end
+
+		if (rawJson == null) {
+			return null;
+		}
+
+		return cast Json.parse(rawJson);
 	}
 }

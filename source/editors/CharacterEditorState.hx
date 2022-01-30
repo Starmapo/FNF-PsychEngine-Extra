@@ -555,11 +555,9 @@ class CharacterEditorState extends MusicBeatState
 
 		flipXCheckBox = new FlxUICheckBox(singDurationStepper.x + 80, singDurationStepper.y, null, null, "Flip X", 50);
 		flipXCheckBox.checked = char.flipX;
-		if(char.isPlayer) flipXCheckBox.checked = !flipXCheckBox.checked;
 		flipXCheckBox.callback = function() {
 			char.originalFlipX = !char.originalFlipX;
 			char.flipX = char.originalFlipX;
-			if(char.isPlayer) char.flipX = !char.flipX;
 			
 			ghostChar.flipX = char.flipX;
 		};
@@ -927,11 +925,11 @@ class CharacterEditorState extends MusicBeatState
 			--i;
 		}
 		charLayer.clear();
-		ghostChar = new Character(0, 0, daAnim, !isDad, false, (check_playerFile != null ? !check_playerFile.checked : false));
+		ghostChar = new Character(0, 0, daAnim, !isDad, (check_playerFile != null ? !check_playerFile.checked : false));
 		ghostChar.debugMode = true;
 		ghostChar.alpha = 0.6;
 
-		char = new Character(0, 0, daAnim, !isDad, false, (check_playerFile != null ? !check_playerFile.checked : false));
+		char = new Character(0, 0, daAnim, !isDad, (check_playerFile != null ? !check_playerFile.checked : false));
 		if(char.animationsArray[0] != null) {
 			char.playAnim(char.animationsArray[0].anim, true);
 		}

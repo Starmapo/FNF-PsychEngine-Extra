@@ -127,7 +127,7 @@
 		0
 	],
 	"healthicon": "dad",
-	"flip_x": false,
+	"flip_x": true,
 	"healthbar_colors": [
 		175,
 		102,

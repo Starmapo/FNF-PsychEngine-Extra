@@ -127,6 +127,9 @@ class FunkinLua {
 		set('mustHitSection', false);
 		set('altAnim', false);
 		set('gfSection', false);
+		set('lengthInSteps', 16);
+		set('changeBPM', false);
+		set('changeSignature', false);
 
 		// Gameplay settings
 		set('healthGainMult', PlayState.instance.healthGain);
@@ -134,12 +137,14 @@ class FunkinLua {
 		set('instakillOnMiss', PlayState.instance.instakillOnMiss);
 		set('botPlay', PlayState.instance.cpuControlled);
 		set('practice', PlayState.instance.practiceMode);
+		set('opponentPlay', PlayState.instance.opponentChart);
+		set('playbackRate', PlayState.instance.playbackRate);
 
-		for (i in 0...PlayState.instance.playerKeys) {
+		for (i in 0...PlayState.instance.bfKeys) {
 			set('defaultPlayerStrumX' + i, 0);
 			set('defaultPlayerStrumY' + i, 0);
 		}
-		for (i in 0...PlayState.instance.opponentKeys) {
+		for (i in 0...PlayState.instance.dadKeys) {
 			set('defaultOpponentStrumX' + i, 0);
 			set('defaultOpponentStrumY' + i, 0);
 		}
