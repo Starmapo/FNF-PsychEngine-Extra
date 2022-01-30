@@ -122,6 +122,7 @@ class Note extends FlxSprite
 	}
 
 	private function set_uiSkin(value:SkinFile):SkinFile {
+		if (texture != null) value = UIData.checkSkinFile('notes/$texture', value);
 		uiSkin = value;
 
 		var maniaData:ManiaArray = null;
@@ -132,7 +133,7 @@ class Note extends FlxSprite
 			}
 		}
 		if (maniaData == null) {
-			var bad:SkinFile = UIData.getUIFile('default');
+			var bad:SkinFile = UIData.DEFAULT_SKIN;
 			for (i in bad.mania) {
 				if (i.keys == keyAmount) {
 					maniaData = i;
@@ -161,7 +162,7 @@ class Note extends FlxSprite
 			prevNote = this;
 
 		if (uiSkin == null) {
-			uiSkin = UIData.getUIFile('');
+			uiSkin = UIData.DEFAULT_SKIN;
 		}
 
 		this.prevNote = prevNote;

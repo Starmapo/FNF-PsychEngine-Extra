@@ -36,36 +36,35 @@ class StrumNote extends FlxSprite
 
 	public var uiSkin(default, set):SkinFile = null;
 	private function set_uiSkin(value:SkinFile):SkinFile {
-		if(uiSkin != value) {
-			uiSkin = value;
-			
-			var maniaData:ManiaArray = null;
-			for (i in uiSkin.mania) {
+		if (texture != null) value = UIData.checkSkinFile('notes/$texture', value);
+		uiSkin = value;
+
+		var maniaData:ManiaArray = null;
+		for (i in uiSkin.mania) {
+			if (i.keys == keyAmount) {
+				maniaData = i;
+				break;
+			}
+		}
+		if (maniaData == null) {
+			var bad:SkinFile = UIData.DEFAULT_SKIN;
+			for (i in bad.mania) {
 				if (i.keys == keyAmount) {
 					maniaData = i;
 					break;
 				}
 			}
-			if (maniaData == null) {
-				var bad:SkinFile = UIData.getUIFile('default');
-				for (i in bad.mania) {
-					if (i.keys == keyAmount) {
-						maniaData = i;
-						break;
-					}
-				}
-			}
+		}
 
-			directions = maniaData.directions;
-			colors = maniaData.colors;
-			swagWidth = maniaData.noteSpacing;
-			xOff = maniaData.xOffset;
-			noteSize = maniaData.noteSize;
-			if (texture != null) {
-				reloadNote();
-				x = originalX;
-				postAddedToGroup();
-			}
+		directions = maniaData.directions;
+		colors = maniaData.colors;
+		swagWidth = maniaData.noteSpacing;
+		xOff = maniaData.xOffset;
+		noteSize = maniaData.noteSize;
+		if (texture != null) {
+			reloadNote();
+			x = originalX;
+			postAddedToGroup();
 		}
 		return value;
 	}
@@ -75,7 +74,7 @@ class StrumNote extends FlxSprite
 		shader = colorSwap.shader;
 		noteData = leData;
 		if (uiSkin == null) {
-			uiSkin = UIData.getUIFile('');
+			uiSkin = UIData.DEFAULT_SKIN;
 		}
 		this.player = player;
 		this.noteData = leData;

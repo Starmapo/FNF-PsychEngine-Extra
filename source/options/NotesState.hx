@@ -32,8 +32,6 @@ class NotesState extends MusicBeatState
 	var camFollow:FlxObject;
 	var camFollowPos:FlxObject;
 
-	static var daUI = UIData.getUIFile('default');
-
 	var posX = 230;
 	public function new(keyAmount:Int = 4) {
 		super();
@@ -87,7 +85,7 @@ class NotesState extends MusicBeatState
 
 			var note:FlxSprite = new FlxSprite(posX, yPos);
 			note.frames = Paths.getSparrowAtlas('uiskins/default/notes/NOTE_assets');
-			var animations:Array<String> = daUI.mania[keyAmount - 1].colors;
+			var animations:Array<String> = UIData.DEFAULT_SKIN.mania[keyAmount - 1].colors;
 			note.animation.addByPrefix('idle', animations[i] + '0');
 			note.animation.play('idle');
 			note.antialiasing = ClientPrefs.globalAntialiasing;

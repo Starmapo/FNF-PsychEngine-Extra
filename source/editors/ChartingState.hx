@@ -2948,13 +2948,13 @@ class ChartingState extends MusicBeatState
 	function setSkins():Void {
 		var uiSkin = UIData.getUIFile(_song.uiSkin);
 		if (uiSkin == null) {
-			uiSkin = UIData.getUIFile('');
+			uiSkin = UIData.DEFAULT_SKIN;
 		}
 		uiSkinMap.set('player', uiSkin);
 
 		var uiSkin = UIData.getUIFile(_song.uiSkinOpponent);
 		if (uiSkin == null) {
-			uiSkin = UIData.getUIFile('');
+			uiSkin = UIData.DEFAULT_SKIN;
 		}
 		uiSkinMap.set('opponent', uiSkin);
 	}

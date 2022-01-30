@@ -1040,6 +1040,27 @@ class PlayState extends MusicBeatState
 
 		Conductor.songPosition = -5000;
 
+		var imagesToCheck = [
+			'shit',
+			'bad',
+			'good',
+			'sick',
+			'combo',
+			'ready',
+			'set',
+			'go',
+			'healthBar',
+			'timeBar'
+		];
+		for (i in 0...10) {
+			imagesToCheck.push('num$i');
+		} 
+
+		for (i in imagesToCheck) {
+			uiSkinMap.set(i, UIData.checkSkinFile(i, opponentChart ? uiSkinMap.get('opponent') : uiSkinMap.get('player')));
+			Paths.returnGraphic(UIData.checkImageFile(i, uiSkinMap.get(i)));
+		}
+
 		strumLine = new FlxSprite(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 50).makeGraphic(FlxG.width, 10);
 		if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 210;
 		strumLine.scrollFactor.set();
@@ -1059,7 +1080,7 @@ class PlayState extends MusicBeatState
 		}
 		updateTime = showTime;
 
-		timeBarBG = new AttachedSprite(UIData.checkImageFile('timeBar', uiSkinMap.get('player')));
+		timeBarBG = new AttachedSprite(UIData.checkImageFile('timeBar', uiSkinMap.get('timeBar')));
 		timeBarBG.x = timeTxt.x;
 		timeBarBG.y = timeTxt.y + (timeTxt.height / 4);
 		timeBarBG.scrollFactor.set();
@@ -1171,7 +1192,7 @@ class PlayState extends MusicBeatState
 		FlxG.fixedTimestep = false;
 		moveCameraSection(0);
 
-		healthBarBG = new AttachedSprite(UIData.checkImageFile('healthBar', uiSkinMap.get('player')));
+		healthBarBG = new AttachedSprite(UIData.checkImageFile('healthBar', uiSkinMap.get('healthBar')));
 		healthBarBG.y = FlxG.height * 0.89;
 		healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
@@ -1271,8 +1292,10 @@ class PlayState extends MusicBeatState
 		#end
 
 		#if LUA_ALLOWED
-		var doPush:Bool = false;
+		var pushedFiles:Array<String> = [];
 		for (i in uiSkinMap.keys()) {
+			if (pushedFiles.contains(uiSkinMap.get(i).name)) continue;
+			var doPush:Bool = false;
 			var luaFile:String = 'images/uiskins/' + uiSkinMap.get(i).name + '.lua';
 			if(FileSystem.exists(Paths.modFolders(luaFile))) {
 				luaFile = Paths.modFolders(luaFile);
@@ -1283,10 +1306,12 @@ class PlayState extends MusicBeatState
 					doPush = true;
 				}
 			}
-		}
 
-		if(doPush) 
-			luaArray.push(new FunkinLua(luaFile));
+			if(doPush) {
+				pushedFiles.push(uiSkinMap.get(i).name);
+				luaArray.push(new FunkinLua(luaFile));
+			}
+		}
 		#end
 		
 		var daSong:String = Paths.formatToSongPath(curSong);
@@ -1359,18 +1384,6 @@ class PlayState extends MusicBeatState
 			startCountdown();
 		}
 		RecalculateRating();
-
-		//preloading assets
-		for (i in uiSkinMap.keys()) {
-			Paths.returnGraphic(UIData.checkImageFile('shit', uiSkinMap.get(i)));
-			Paths.returnGraphic(UIData.checkImageFile('bad', uiSkinMap.get(i)));
-			Paths.returnGraphic(UIData.checkImageFile('good', uiSkinMap.get(i)));
-			Paths.returnGraphic(UIData.checkImageFile('sick', uiSkinMap.get(i)));
-			Paths.returnGraphic(UIData.checkImageFile('combo', uiSkinMap.get(i)));
-			for (j in 0...10) {
-				Paths.returnGraphic(UIData.checkImageFile('num' + j, uiSkinMap.get(i)));
-			}
-		}
 
 		//PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
 		CoolUtil.precacheSound('missnote1');
@@ -1880,11 +1893,6 @@ class PlayState extends MusicBeatState
 					}
 				}
 
-				var antialias:Bool = ClientPrefs.globalAntialiasing;
-				if (uiSkinMap.get('player').noAntialiasing) {
-					antialias = false;
-				}
-
 				// head bopping for bg characters on Mall
 				if(curStage == 'mall') {
 					if(!ClientPrefs.lowQuality)
@@ -1899,13 +1907,17 @@ class PlayState extends MusicBeatState
 					case 0:
 						FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
 					case 1:
-						countdownReady = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('ready', uiSkinMap.get('player'))));
+						countdownReady = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('ready', uiSkinMap.get('ready'))));
 						countdownReady.scrollFactor.set();
 						countdownReady.updateHitbox();
 
-						countdownReady.setGraphicSize(Std.int(countdownReady.width * uiSkinMap.get('player').scale * uiSkinMap.get('player').countdownScale));
+						countdownReady.setGraphicSize(Std.int(countdownReady.width * uiSkinMap.get('ready').scale * uiSkinMap.get('ready').countdownScale));
 
 						countdownReady.screenCenter();
+						var antialias:Bool = ClientPrefs.globalAntialiasing;
+						if (uiSkinMap.get('ready').noAntialiasing) {
+							antialias = false;
+						}
 						countdownReady.antialiasing = antialias;
 						add(countdownReady);
 						FlxTween.tween(countdownReady, {/*y: countdownReady.y + 100,*/ alpha: 0}, modifiedCrochet / 1000, {
@@ -1918,12 +1930,16 @@ class PlayState extends MusicBeatState
 						});
 						FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 					case 2:
-						countdownSet = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('set', uiSkinMap.get('player'))));
+						countdownSet = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('set', uiSkinMap.get('set'))));
 						countdownSet.scrollFactor.set();
 
-						countdownSet.setGraphicSize(Std.int(countdownSet.width * uiSkinMap.get('player').scale * uiSkinMap.get('player').countdownScale));
+						countdownSet.setGraphicSize(Std.int(countdownSet.width * uiSkinMap.get('set').scale * uiSkinMap.get('set').countdownScale));
 
 						countdownSet.screenCenter();
+						var antialias:Bool = ClientPrefs.globalAntialiasing;
+						if (uiSkinMap.get('set').noAntialiasing) {
+							antialias = false;
+						}
 						countdownSet.antialiasing = antialias;
 						add(countdownSet);
 						FlxTween.tween(countdownSet, {/*y: countdownSet.y + 100,*/ alpha: 0}, modifiedCrochet / 1000, {
@@ -1937,14 +1953,18 @@ class PlayState extends MusicBeatState
 						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 					case 3:
 						if (!skipCountdown){
-							countdownGo = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('go', uiSkinMap.get('player'))));
+							countdownGo = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('go', uiSkinMap.get('go'))));
 							countdownGo.scrollFactor.set();
 
-							countdownGo.setGraphicSize(Std.int(countdownGo.width * uiSkinMap.get('player').scale * uiSkinMap.get('player').countdownScale));
+							countdownGo.setGraphicSize(Std.int(countdownGo.width * uiSkinMap.get('go').scale * uiSkinMap.get('go').countdownScale));
 
 							countdownGo.updateHitbox();
 
 							countdownGo.screenCenter();
+							var antialias:Bool = ClientPrefs.globalAntialiasing;
+							if (uiSkinMap.get('go').noAntialiasing) {
+								antialias = false;
+							}
 							countdownGo.antialiasing = antialias;
 							add(countdownGo);
 							FlxTween.tween(countdownGo, {/*y: countdownGo.y + 100,*/ alpha: 0}, modifiedCrochet / 1000, {
@@ -2137,7 +2157,7 @@ class PlayState extends MusicBeatState
 				var keys = playerKeys;
 				if (!gottaHitNote) keys = opponentKeys;
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys, gottaHitNote ? uiSkinMap.get('player') : uiSkinMap.get('opponent'));
+				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys, gottaHitNote != opponentChart ? uiSkinMap.get('player') : uiSkinMap.get('opponent'));
 				swagNote.mustPress = gottaHitNote;
 				swagNote.sustainLength = songNotes[2] / playbackRate;
 				swagNote.gfNote = (section.gfSection && (songNotes[1] < rightKeys));
@@ -2152,7 +2172,7 @@ class PlayState extends MusicBeatState
 					{
 						oldNote = unspawnNotes[unspawnNotes.length - 1];
 
-						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / FlxMath.roundDecimal(songSpeed, 2)), daNoteData, oldNote, true, false, keys, gottaHitNote ? uiSkinMap.get('player') : uiSkinMap.get('opponent'), curStepCrochet);
+						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / FlxMath.roundDecimal(songSpeed, 2)), daNoteData, oldNote, true, false, keys, gottaHitNote != opponentChart ? uiSkinMap.get('player') : uiSkinMap.get('opponent'), curStepCrochet);
 						sustainNote.mustPress = gottaHitNote;
 						sustainNote.gfNote = swagNote.gfNote;
 						sustainNote.noteType = swagNote.noteType;
@@ -2272,7 +2292,7 @@ class PlayState extends MusicBeatState
 			var targetAlpha:Float = 1;
 			if ((player < 1 && ClientPrefs.middleScroll && !opponentChart) || (player > 0 && ClientPrefs.middleScroll && opponentChart)) targetAlpha = 0.35;
 
-			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, player, keys, (player > 0) == !opponentChart ? uiSkinMap.get('player') : uiSkinMap.get('opponent'));
+			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, player, keys, player > 0 ? uiSkinMap.get('player') : uiSkinMap.get('opponent'));
 			babyArrow.y += 80 - (babyArrow.height / 2);
 			babyArrow.downScroll = ClientPrefs.downScroll;
 			if (!isStoryMode)
@@ -3805,7 +3825,7 @@ class PlayState extends MusicBeatState
 				daRating = 'bad';
 		 */
 
-		rating.loadGraphic(Paths.image(UIData.checkImageFile(daRating, uiSkinMap.get('player'))));
+		rating.loadGraphic(Paths.image(UIData.checkImageFile(daRating, uiSkinMap.get(daRating))));
 		rating.cameras = [camHUD];
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
@@ -3817,7 +3837,7 @@ class PlayState extends MusicBeatState
 		rating.x += ClientPrefs.comboOffset[0];
 		rating.y -= ClientPrefs.comboOffset[1];
 
-		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('combo', uiSkinMap.get('player'))));
+		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('combo', uiSkinMap.get('combo'))));
 		comboSpr.cameras = [camHUD];
 		comboSpr.screenCenter();
 		comboSpr.x = coolText.x + 80;
@@ -3831,12 +3851,14 @@ class PlayState extends MusicBeatState
 		comboSpr.velocity.x += FlxG.random.int(1, 10);
 		insert(members.indexOf(strumLineNotes), rating);
 
-		rating.setGraphicSize(Std.int(rating.width * uiSkinMap.get('player').scale * uiSkinMap.get('player').ratingScale));
-		comboSpr.setGraphicSize(Std.int(comboSpr.width * uiSkinMap.get('player').scale * uiSkinMap.get('player').ratingScale));
+		rating.setGraphicSize(Std.int(rating.width * uiSkinMap.get(daRating).scale * uiSkinMap.get(daRating).ratingScale));
+		comboSpr.setGraphicSize(Std.int(comboSpr.width * uiSkinMap.get('combo').scale * uiSkinMap.get('combo').ratingScale));
 		rating.antialiasing = ClientPrefs.globalAntialiasing;
 		comboSpr.antialiasing = ClientPrefs.globalAntialiasing;
-		if (uiSkinMap.get('player').noAntialiasing) {
+		if (uiSkinMap.get(daRating).noAntialiasing) {
 			rating.antialiasing = false;
+		}
+		if (uiSkinMap.get('combo').noAntialiasing) {
 			comboSpr.antialiasing = false;
 		}
 
@@ -3859,7 +3881,7 @@ class PlayState extends MusicBeatState
 		var daLoop:Int = 0;
 		for (i in seperatedScore)
 		{
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('num${Std.int(i)}', uiSkinMap.get('player'))));
+			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('num${Std.int(i)}', uiSkinMap.get('num${Std.int(i)}'))));
 			numScore.cameras = [camHUD];
 			numScore.screenCenter();
 			numScore.x = coolText.x + (43 * daLoop) - 90;
@@ -3868,10 +3890,10 @@ class PlayState extends MusicBeatState
 			numScore.x += ClientPrefs.comboOffset[2];
 			numScore.y -= ClientPrefs.comboOffset[3];
 
-			numScore.setGraphicSize(Std.int(numScore.width * uiSkinMap.get('player').scale * uiSkinMap.get('player').comboNumScale));
+			numScore.setGraphicSize(Std.int(numScore.width * uiSkinMap.get('num${Std.int(i)}').scale * uiSkinMap.get('num${Std.int(i)}').comboNumScale));
 			numScore.updateHitbox();
 			numScore.antialiasing = ClientPrefs.globalAntialiasing;
-			if (uiSkinMap.get('player').noAntialiasing) {
+			if (uiSkinMap.get('num${Std.int(i)}').noAntialiasing) {
 				numScore.antialiasing = false;
 			}
 
@@ -4209,7 +4231,7 @@ class PlayState extends MusicBeatState
 			var curSection:Int = getCurSection();
 			if (SONG.notes[curSection] != null)
 			{
-				if (SONG.notes[curSection].altAnim || note.noteType == 'Alt Animation') {
+				if ((SONG.notes[curSection].altAnim && !opponentChart) || note.noteType == 'Alt Animation') {
 					altAnim = '-alt';
 				}
 			}
@@ -4299,7 +4321,7 @@ class PlayState extends MusicBeatState
 
 			if(!note.noAnimation) {
 				var daAlt = '';
-				if(note.noteType == 'Alt Animation') daAlt = '-alt';
+				if((SONG.notes[getCurSection()].altAnim && opponentChart) || note.noteType == 'Alt Animation') daAlt = '-alt';
 	
 				var animToPlay:String = singAnimations[note.noteData];
 
@@ -4754,7 +4776,7 @@ class PlayState extends MusicBeatState
 			daStep += daNumerator * 4;
 			daPos++;
 		}
-		return daPos;
+		return Std.int(Math.max(daPos, 0));
 	}
 
 	function getCurBeat():Int {
@@ -4775,7 +4797,7 @@ class PlayState extends MusicBeatState
 		//PLAYER
 		var uiSkin = UIData.getUIFile(SONG.uiSkin);
 		if (uiSkin == null) {
-			uiSkin = UIData.getUIFile('');
+			uiSkin = UIData.DEFAULT_SKIN;
 		}
 		var maniaData:ManiaArray = null;
 		for (i in uiSkin.mania) {
@@ -4786,21 +4808,17 @@ class PlayState extends MusicBeatState
 		}
 		if (maniaData == null) {
 			FlxG.log.warn('Couldn\'t get ' + playerKeys + 'K data for ' + uiSkin.name + '!');
-			uiSkin = UIData.getUIFile('');
+			uiSkin = UIData.DEFAULT_SKIN;
 			maniaData = uiSkin.mania[playerKeys - 1];
 		}
 		singAnimations = maniaData.singAnimations;
 		playerColors = maniaData.colors;
-		if (opponentChart) {
-			uiSkinMap.set('opponent', uiSkin);
-		} else {
-			uiSkinMap.set('player', uiSkin);
-		}
+		uiSkinMap.set('player', uiSkin);
 		
 		//OPPONENT
 		var uiSkin = UIData.getUIFile(SONG.uiSkinOpponent);
 		if (uiSkin == null) {
-			uiSkin = UIData.getUIFile('');
+			uiSkin = UIData.DEFAULT_SKIN;
 		}
 		var maniaData:ManiaArray = null;
 		for (i in uiSkin.mania) {
@@ -4811,16 +4829,12 @@ class PlayState extends MusicBeatState
 		}
 		if (maniaData == null) {
 			FlxG.log.warn('Couldn\'t get ' + opponentKeys + 'K data for ' + uiSkin.name + '!');
-			uiSkin = UIData.getUIFile('');
+			uiSkin = UIData.DEFAULT_SKIN;
 			maniaData = uiSkin.mania[opponentKeys - 1];
 		}
 		dadSingAnimations = maniaData.singAnimations;
 		opponentColors = maniaData.colors;
-		if (opponentChart) {
-			uiSkinMap.set('player', uiSkin);
-		} else {
-			uiSkinMap.set('opponent', uiSkin);
-		}
+		uiSkinMap.set('opponent', uiSkin);
 	}
 
 	public var closeLuas:Array<FunkinLua> = [];

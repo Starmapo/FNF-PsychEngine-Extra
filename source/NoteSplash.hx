@@ -67,11 +67,12 @@ class NoteSplash extends FlxSprite
 			frames = Paths.getSparrowAtlas('uiskins/default/splashes/noteSplashes');
 			animation.addByPrefix("note0-1", "note splash left 1", 24, false);
 		} else {
+			var uiSkin = UIData.checkSkinFile('splashes/$skin', daNote.uiSkin);
 			antialiasing = ClientPrefs.globalAntialiasing;
-			if (daNote.uiSkin.noAntialiasing) {
+			if (uiSkin.noAntialiasing) {
 				antialiasing = false;
 			}
-			frames = Paths.getSparrowAtlas(UIData.checkImageFile('splashes/$skin', daNote.uiSkin));
+			frames = Paths.getSparrowAtlas(UIData.checkImageFile('splashes/$skin', uiSkin));
 			for (i in 1...3) {
 				animation.addByPrefix("note" + daNote.noteData + '-$i', "note splash " + colors[daNote.noteData] + ' $i', 24, false);
 			}

@@ -34,6 +34,8 @@ typedef ManiaArray = {
 }
 
 class UIData {
+    public static var DEFAULT_SKIN = getUIFile('');
+
     public static function getUIFile(skin:String):SkinFile {
         if (skin == null || skin.length < 1) skin = 'default';
         var daFile:SkinFile = null;
@@ -61,9 +63,8 @@ class UIData {
         return daFile;
     }
 
-    public static function checkImageFile(file:String, uiSkin:SkinFile) {
+    public static function checkImageFile(file:String, uiSkin:SkinFile):String {
         var path:String = 'uiskins/${uiSkin.name}/$file';
-        //trace(Paths.getPath('images/$path.png', IMAGE));
 		#if MODS_ALLOWED
 		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
 		#else
@@ -72,5 +73,17 @@ class UIData {
 			path = 'uiskins/default/$file';
 		}
         return path;
+    }
+
+    public static function checkSkinFile(file:String, uiSkin:SkinFile):SkinFile {
+        var path:String = 'uiskins/${uiSkin.name}/$file';
+		#if MODS_ALLOWED
+		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
+		#else
+		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
+		#end
+			return DEFAULT_SKIN;
+		}
+        return uiSkin;
     }
 }
