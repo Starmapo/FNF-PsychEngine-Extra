@@ -19,6 +19,7 @@ class Note extends FlxSprite
 	public var hitByOpponent:Bool = false;
 	public var prevNote:Note;
 	public var stepCrochet:Float = 150;
+	public var characters:Array<Int> = [0];
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
@@ -55,6 +56,7 @@ class Note extends FlxSprite
 	public var copyY:Bool = true;
 	public var copyAngle:Bool = true;
 	public var copyAlpha:Bool = true;
+	public var copyScale:Bool = true;
 
 	public var hitHealth:Float = 0.023;
 	public var missHealth:Float = 0.0475;

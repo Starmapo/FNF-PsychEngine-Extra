@@ -406,7 +406,6 @@ class CharacterEditorState extends MusicBeatState
 		}';
 
 	var charDropDown:FlxUIDropDownMenuCustom;
-	var check_playerFile:FlxUICheckBox;
 	function addSettingsUI() {
 		var tab_group = new FlxUI(null, UI_box);
 		tab_group.name = "Settings";
@@ -425,11 +424,6 @@ class CharacterEditorState extends MusicBeatState
 		charDropDown = new FlxUIDropDownMenuCustom(10, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(character:String)
 		{
 			daAnim = characterList[Std.parseInt(character)];
-			#if MODS_ALLOWED
-			check_player.checked = check_playerFile.checked && (FileSystem.exists(Paths.modFolders('characters/player/' + daAnim + '.json')) || FileSystem.exists(Paths.getPreloadPath('characters/player/' + daAnim + '.json')));
-			#else
-			check_player.checked = check_playerFile.checked && Assets.exists(Paths.getPreloadPath('characters/player/' + daAnim + '.json'));
-			#end
 			loadChar(!check_player.checked);
 			updatePresence();
 			reloadCharacterDropDown();
@@ -442,19 +436,6 @@ class CharacterEditorState extends MusicBeatState
 			loadChar(!check_player.checked);
 			reloadCharacterDropDown();
 		});
-
-		check_playerFile = new FlxUICheckBox(140, 50, null, null, "Check for Player File", 100);
-		check_playerFile.checked = false;
-		check_playerFile.callback = function()
-		{
-			#if MODS_ALLOWED
-			check_player.checked = check_playerFile.checked && (FileSystem.exists(Paths.modFolders('characters/player/' + daAnim + '.json')) || FileSystem.exists(Paths.getPreloadPath('characters/player/' + daAnim + '.json')));
-			#else
-			check_player.checked = check_playerFile.checked && Assets.exists(Paths.getPreloadPath('characters/player/' + daAnim + '.json'));
-			#end
-			loadChar(!check_player.checked);
-			reloadCharacterDropDown();
-		};
 
 		var templateCharacter:FlxButton = new FlxButton(140, 80, "Load Template", function()
 		{
@@ -500,7 +481,6 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.add(reloadCharacter);
 		tab_group.add(charDropDown);
 		tab_group.add(reloadCharacter);
-		tab_group.add(check_playerFile);
 		tab_group.add(templateCharacter);
 		UI_box.addGroup(tab_group);
 	}
@@ -925,11 +905,11 @@ class CharacterEditorState extends MusicBeatState
 			--i;
 		}
 		charLayer.clear();
-		ghostChar = new Character(0, 0, daAnim, !isDad, (check_playerFile != null ? !check_playerFile.checked : false));
+		ghostChar = new Character(0, 0, daAnim, !isDad);
 		ghostChar.debugMode = true;
 		ghostChar.alpha = 0.6;
 
-		char = new Character(0, 0, daAnim, !isDad, (check_playerFile != null ? !check_playerFile.checked : false));
+		char = new Character(0, 0, daAnim, !isDad);
 		if(char.animationsArray[0] != null) {
 			char.playAnim(char.animationsArray[0].anim, true);
 		}
@@ -1059,8 +1039,11 @@ class CharacterEditorState extends MusicBeatState
 					if (!sys.FileSystem.isDirectory(path) && file.endsWith('.json')) {
 						var charToCheck:String = file.substr(0, file.length - 5);
 						if(!charsLoaded.exists(charToCheck)) {
-							characterList.push(charToCheck);
-							charsLoaded.set(charToCheck, true);
+							var fileCheck = Character.getFile(charToCheck);
+							if (fileCheck.characters == null) { //don't add group characters
+								characterList.push(charToCheck);
+								charsLoaded.set(charToCheck, true);
+							}
 						}
 					}
 				}

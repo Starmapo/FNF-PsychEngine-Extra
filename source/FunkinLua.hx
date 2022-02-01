@@ -777,43 +777,55 @@ class FunkinLua {
 		});
 
 		Lua_helper.add_callback(lua, "getCharacterX", function(type:String) {
-			switch(type.toLowerCase()) {
-				case 'dad' | 'opponent':
-					return PlayState.instance.dadGroup.x;
-				case 'gf' | 'girlfriend':
-					return PlayState.instance.gfGroup.x;
+			var charData = type.split(',');
+			var index = 0;
+			if (charData[1] != null) index = Std.parseInt(charData[1]);
+			switch(charData[0].toLowerCase()) {
+				case 'dad' | 'opponent' | '1':
+					return PlayState.instance.dadGroup.members[index].x;
+				case 'gf' | 'girlfriend' | '2':
+					return PlayState.instance.gfGroup.members[index].x;
 				default:
-					return PlayState.instance.boyfriendGroup.x;
+					return PlayState.instance.boyfriendGroup.members[index].x;
 			}
 		});
 		Lua_helper.add_callback(lua, "setCharacterX", function(type:String, value:Float) {
-			switch(type.toLowerCase()) {
-				case 'dad' | 'opponent':
-					PlayState.instance.dadGroup.x = value;
-				case 'gf' | 'girlfriend':
-					PlayState.instance.gfGroup.x = value;
+			var charData = type.split(',');
+			var index = 0;
+			if (charData[1] != null) index = Std.parseInt(charData[1]);
+			switch(charData[0].toLowerCase()) {
+				case 'dad' | 'opponent' | '1':
+					PlayState.instance.dadGroup.members[Std.int(index)].x = value;
+				case 'gf' | 'girlfriend' | '2':
+					PlayState.instance.gfGroup.members[Std.int(index)].x = value;
 				default:
-					PlayState.instance.boyfriendGroup.x = value;
+					PlayState.instance.boyfriendGroup.members[Std.int(index)].x = value;
 			}
 		});
 		Lua_helper.add_callback(lua, "getCharacterY", function(type:String) {
-			switch(type.toLowerCase()) {
-				case 'dad' | 'opponent':
-					return PlayState.instance.dadGroup.y;
-				case 'gf' | 'girlfriend':
-					return PlayState.instance.gfGroup.y;
+			var charData = type.split(',');
+			var index = 0;
+			if (charData[1] != null) index = Std.parseInt(charData[1]);
+			switch(charData[0].toLowerCase()) {
+				case 'dad' | 'opponent' | '1':
+					return PlayState.instance.dadGroup.members[index].y;
+				case 'gf' | 'girlfriend' | '2':
+					return PlayState.instance.gfGroup.members[index].y;
 				default:
-					return PlayState.instance.boyfriendGroup.y;
+					return PlayState.instance.boyfriendGroup.members[index].y;
 			}
 		});
 		Lua_helper.add_callback(lua, "setCharacterY", function(type:String, value:Float) {
-			switch(type.toLowerCase()) {
-				case 'dad' | 'opponent':
-					PlayState.instance.dadGroup.y = value;
-				case 'gf' | 'girlfriend':
-					PlayState.instance.gfGroup.y = value;
+			var charData = type.split(',');
+			var index = 0;
+			if (charData[1] != null) index = Std.parseInt(charData[1]);
+			switch(charData[0].toLowerCase()) {
+				case 'dad' | 'opponent' | '1':
+					PlayState.instance.dadGroup.members[Std.int(index)].y = value;
+				case 'gf' | 'girlfriend' | '2':
+					PlayState.instance.gfGroup.members[Std.int(index)].y = value;
 				default:
-					PlayState.instance.boyfriendGroup.y = value;
+					PlayState.instance.boyfriendGroup.members[Std.int(index)].y = value;
 			}
 		});
 		Lua_helper.add_callback(lua, "cameraSetTarget", function(target:String) {
@@ -855,23 +867,29 @@ class FunkinLua {
 			return FlxG.mouse.getScreenPosition(cam).y;
 		});
 		Lua_helper.add_callback(lua, "characterPlayAnim", function(character:String, anim:String, ?forced:Bool = false) {
-			switch(character.toLowerCase()) {
-				case 'dad':
-					if(PlayState.instance.dad.animOffsets.exists(anim))
-						PlayState.instance.dad.playAnim(anim, forced);
-				case 'gf' | 'girlfriend':
-					if(PlayState.instance.gf.animOffsets.exists(anim))
-						PlayState.instance.gf.playAnim(anim, forced);
+			var charData = character.split(',');
+			var index = 0;
+			if (charData[1] != null) index = Std.parseInt(charData[1]);
+			switch(charData[0].toLowerCase()) {
+				case 'dad' | '1':
+					if(PlayState.instance.dadGroup.members[index].animOffsets.exists(anim))
+						PlayState.instance.dadGroup.members[index].playAnim(anim, forced);
+				case 'gf' | 'girlfriend' | '2':
+					if(PlayState.instance.gfGroup.members[index].animOffsets.exists(anim))
+						PlayState.instance.gfGroup.members[index].playAnim(anim, forced);
 				default: 
-					if(PlayState.instance.boyfriend.animOffsets.exists(anim))
-						PlayState.instance.boyfriend.playAnim(anim, forced);
+					if(PlayState.instance.boyfriendGroup.members[index].animOffsets.exists(anim))
+						PlayState.instance.boyfriendGroup.members[index].playAnim(anim, forced);
 			}
 		});
 		Lua_helper.add_callback(lua, "characterDance", function(character:String) {
-			switch(character.toLowerCase()) {
-				case 'dad': PlayState.instance.dad.dance();
-				case 'gf' | 'girlfriend': PlayState.instance.gf.dance();
-				default: PlayState.instance.boyfriend.dance();
+			var charData = character.split(',');
+			var index = 0;
+			if (charData[1] != null) index = Std.parseInt(charData[1]);
+			switch(charData[0].toLowerCase()) {
+				case 'dad' | '1': PlayState.instance.dadGroup.members[index].dance();
+				case 'gf' | 'girlfriend' | '2': PlayState.instance.gfGroup.members[index].dance();
+				default: PlayState.instance.boyfriendGroup.members[index].dance();
 			}
 		});
 

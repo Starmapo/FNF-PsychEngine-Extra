@@ -144,7 +144,7 @@ function eventEarlyTrigger(name)
 	if name == 'Kill Henchmen'
 		return 280;
 
-	This makes the "Kill Henchmen" event be triggered 280 miliseconds earlier so that the kill sound is perfectly timed with the song
+	This makes the "Kill Henchmen" event be triggered 280 milliseconds earlier so that the kill sound is perfectly timed with the song
 	]]--
 
 	-- write your shit under this line, the new return value will override the ones hardcoded on the engine

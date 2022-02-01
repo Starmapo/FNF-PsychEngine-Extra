@@ -10,6 +10,7 @@ class HealthIcon extends FlxSprite
 	private var isOldIcon:Bool = false;
 	private var isPlayer:Bool = false;
 	private var char:String = '';
+	var originalChar:String = 'bf';
 
 	public function new(char:String = 'bf', isPlayer:Bool = false)
 	{
@@ -29,8 +30,8 @@ class HealthIcon extends FlxSprite
 	}
 
 	public function swapOldIcon() {
-		if(isOldIcon = !isOldIcon) changeIcon('bf-old');
-		else changeIcon('bf');
+		if(!isOldIcon) changeIcon('bf-old');
+		else changeIcon(originalChar);
 	}
 
 	private var iconOffsets:Array<Float> = [0, 0];
@@ -50,11 +51,14 @@ class HealthIcon extends FlxSprite
 			animation.add(char, [0, 1], 0, false, isPlayer);
 			animation.play(char);
 			this.char = char;
+			if (char != 'bf-old') originalChar = char;
 
 			antialiasing = ClientPrefs.globalAntialiasing;
 			if(char.endsWith('-pixel')) {
 				antialiasing = false;
 			}
+
+			isOldIcon = (char == 'bf-old');
 		}
 	}
 

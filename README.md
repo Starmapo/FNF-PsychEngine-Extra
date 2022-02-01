@@ -38,9 +38,9 @@ _____________________________________
 * Custom key amounts (1 - 13)
 * Custom time signatures (3/4, 8/8, etc.)
 * Custom UI skins (notes, splashes, ratings, countdown, etc.)
+* Character groups (more than one player, opponent, GF)
 * Gameplay Changers: Play opponent's chart, Song playback speed
 * More Lua functions
-* Separate files for player and opponent characters
 
 # New Options
 * Sort Freeplay songs alphabetically

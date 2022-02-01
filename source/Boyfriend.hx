@@ -6,9 +6,9 @@ class Boyfriend extends Character
 {
 	public var startedDeath:Bool = false;
 
-	public function new(x:Float, y:Float, ?char:String = 'bf', ?opponentPlay:Bool = false)
+	public function new(x:Float, y:Float, ?char:String = 'bf')
 	{
-		super(x, y, char, true, opponentPlay);
+		super(x, y, char, true);
 	}
 
 	override function update(elapsed:Float)

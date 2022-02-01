@@ -40,6 +40,8 @@ class EditorPlayState extends MusicBeatState
 	var bfKeys:Int = 4;
 	var dadKeys:Int = 4;
 
+	var playerColors:Array<String>;
+
 	public function new(startPos:Float) {
 		this.startPos = startPos;
 		Conductor.songPosition = startPos - startOffset;
@@ -204,6 +206,16 @@ class EditorPlayState extends MusicBeatState
 					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right3'))
 				];
 		}
+
+		var uiSkin = UIData.DEFAULT_SKIN;
+		var maniaData:UIData.ManiaArray = null;
+		for (i in uiSkin.mania) {
+			if (i.keys == bfKeys) {
+				maniaData = i;
+				break;
+			}
+		}
+		playerColors = maniaData.colors;
 		
 		strumLine = new FlxSprite(ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X, 50).makeGraphic(FlxG.width, 10);
 		if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 150;
@@ -1147,7 +1159,7 @@ class EditorPlayState extends MusicBeatState
 		}
 
 		var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
-		splash.setupNoteSplash(x, y, note, skin, hue, sat, brt, bfKeys);
+		splash.setupNoteSplash(x, y, note, skin, hue, sat, brt, bfKeys, playerColors);
 		grpNoteSplashes.add(splash);
 	}
 	

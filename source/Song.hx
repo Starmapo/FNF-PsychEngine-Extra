@@ -2,10 +2,11 @@ package;
 
 import Section.SwagSection;
 import haxe.Json;
-import lime.utils.Assets;
 #if MODS_ALLOWED
 import sys.io.File;
 import sys.FileSystem;
+#else
+import lime.utils.Assets;
 #end
 
 using StringTools;
@@ -48,10 +49,6 @@ typedef DifferentJSON =
 
 class Song
 {
-	public var song:String;
-	public var notes:Array<SwagSection>;
-	public var bpm:Float;
-
 	private static function onLoadJson(songJson:SwagSong) // Convert old charts to newest format
 	{
 		var songName:String = Paths.formatToSongPath(songJson.song);
@@ -107,16 +104,13 @@ class Song
 			{
 				var note:Array<Dynamic> = notes[i];
 				if(note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
+				else if (note[3] == null) note[3] = '';
+				if(note[4] == null || note[4].length < 1) note[4] = [0];
+				notes[i] = [note[0], note[1], note[2], note[3], note[4]];
 				i++;
 			}
+			songJson.notes[secNum] = sec;
 		}
-	}
-
-	public function new(song, notes, bpm)
-	{
-		this.song = song;
-		this.notes = notes;
-		this.bpm = bpm;
 	}
 
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong

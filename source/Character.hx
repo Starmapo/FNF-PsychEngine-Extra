@@ -39,6 +39,7 @@ typedef AnimArray = {
 
 typedef CharacterGroupFile = {
 	var characters:Array<CharArray>;
+	var position:Array<Float>;
 	var healthicon:String;
 	var camera_position:Array<Float>;
 	var healthbar_colors:Array<Int>;
@@ -46,7 +47,7 @@ typedef CharacterGroupFile = {
 
 typedef CharArray = {
 	var name:String;
-	var position:Array<Int>;
+	var position:Array<Float>;
 }
 
 class Character extends FlxSprite
@@ -84,7 +85,7 @@ class Character extends FlxSprite
 	public var healthColorArray:Array<Int> = [255, 0, 0];
 
 	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
-	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false, ?ignorePlayerCheck:Bool = false)
+	public function new(x:Float, y:Float, ?character:String = 'bf', ?flipped:Bool = false)
 	{
 		super(x, y);
 
@@ -94,7 +95,6 @@ class Character extends FlxSprite
 		animOffsets = new Map<String, Array<Dynamic>>();
 		#end
 		curCharacter = character;
-		this.isPlayer = isPlayer;
 		antialiasing = ClientPrefs.globalAntialiasing;
 
 		switch (curCharacter)
@@ -102,7 +102,7 @@ class Character extends FlxSprite
 			//case 'your character name in case you want to hardcode them instead':
 
 			default:
-				var json:CharacterFile = getFile(curCharacter, ignorePlayerCheck);
+				var json:CharacterFile = getFile(curCharacter);
 
 				var spriteType = "sparrow";
 				//sparrow
@@ -199,9 +199,9 @@ class Character extends FlxSprite
 		recalculateDanceIdle();
 		dance();
 
-		if (isPlayer)
+		if (flipped)
 		{
-			//flipX = !flipX;
+			flipX = !flipX;
 
 			/*// Doesn't flip for BF, since his are already in the right place???
 			if (!curCharacter.startsWith('bf'))
@@ -350,32 +350,21 @@ class Character extends FlxSprite
 		animation.addByPrefix(name, anim, 24, false);
 	}
 
-	public static function getFile(name:String, ignorePlayerCheck:Bool = false):Dynamic {
-		var characterPath:String = 'characters/player/' + name + '.json';
-		var characterPath2:String = 'characters/' + name + '.json'; //incase there is an opponent file but no player file
+	public static function getFile(name:String):Dynamic {
+		var characterPath:String = 'characters/' + name + '.json';
 		#if MODS_ALLOWED
 		var path:String = Paths.modFolders(characterPath);
-		if (!FileSystem.exists(path) || ignorePlayerCheck) {
-			path = Paths.modFolders(characterPath2);
-		}
-		if (!FileSystem.exists(path) && !ignorePlayerCheck) {
-			path = Paths.getPreloadPath(characterPath);
-		}
 		if (!FileSystem.exists(path)) {
-			path = Paths.getPreloadPath(characterPath2);
+			path = Paths.getPreloadPath(characterPath);
 		}
 
 		if (!FileSystem.exists(path))
 		#else
 		var path:String = Paths.getPreloadPath(characterPath);
-		if (!Assets.exists(path) || ignorePlayerCheck) {
-			path = Paths.getPreloadPath(characterPath2);
-		}
-
 		if (!Assets.exists(path))
 		#end
 		{
-			path = Paths.getPreloadPath('characters/player/$DEFAULT_CHARACTER.json'); //If a character couldn't be found, change them to BF just to prevent a crash
+			path = Paths.getPreloadPath('characters/$DEFAULT_CHARACTER.json'); //If a character couldn't be found, change them to BF just to prevent a crash
 		}
 
 		//trace('character path for ' + curCharacter + ': ' + path);
