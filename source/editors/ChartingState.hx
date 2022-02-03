@@ -535,6 +535,7 @@ class ChartingState extends MusicBeatState
 			updateHeads();
 		});
 		player3DropDown.selectedLabel = _song.gfVersion;
+		if (_song.gfVersion == null) player3DropDown.selectedLabel = 'gf';
 		blockPressWhileScrolling.push(player3DropDown);
 
 		var player2DropDown = new FlxUIDropDownMenuCustom(player1DropDown.x, player3DropDown.y + 40, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
@@ -1783,7 +1784,7 @@ class ChartingState extends MusicBeatState
 			if (FlxG.keys.justPressed.ESCAPE)
 			{
 				autosaveSong();
-				LoadingState.loadAndSwitchState(new editors.EditorPlayState(sectionStartTime()));
+				LoadingState.loadAndSwitchState(new PlayState(true, sectionStartTime()));
 			}
 			if (FlxG.keys.justPressed.ENTER)
 			{

@@ -411,7 +411,7 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.name = "Settings";
 
 		var check_player = new FlxUICheckBox(10, 60, null, null, "Playable Character", 100);
-		check_player.checked = daAnim.startsWith('bf');
+		check_player.checked = true;
 		check_player.callback = function()
 		{
 			char.isPlayer = !char.isPlayer;
@@ -537,7 +537,7 @@ class CharacterEditorState extends MusicBeatState
 		flipXCheckBox.checked = char.flipX;
 		flipXCheckBox.callback = function() {
 			char.originalFlipX = !char.originalFlipX;
-			char.flipX = char.originalFlipX;
+			char.flipX = !char.flipX;
 			
 			ghostChar.flipX = char.flipX;
 		};
@@ -906,10 +906,12 @@ class CharacterEditorState extends MusicBeatState
 		}
 		charLayer.clear();
 		ghostChar = new Character(0, 0, daAnim, !isDad);
+		ghostChar.isPlayer = !isDad;
 		ghostChar.debugMode = true;
 		ghostChar.alpha = 0.6;
 
 		char = new Character(0, 0, daAnim, !isDad);
+		char.isPlayer = !isDad;
 		if(char.animationsArray[0] != null) {
 			char.playAnim(char.animationsArray[0].anim, true);
 		}
@@ -1183,8 +1185,6 @@ class CharacterEditorState extends MusicBeatState
 				}
 
 				var controlArray:Array<Bool> = [FlxG.keys.justPressed.LEFT, FlxG.keys.justPressed.RIGHT, FlxG.keys.justPressed.UP, FlxG.keys.justPressed.DOWN];
-				
-				
 				
 				for (i in 0...controlArray.length) {
 					if(controlArray[i]) {

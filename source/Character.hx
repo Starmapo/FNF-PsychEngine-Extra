@@ -379,6 +379,8 @@ class Character extends FlxSprite
 			return null;
 		}
 
-		return cast Json.parse(rawJson);
+		var json:Dynamic = cast Json.parse(rawJson);
+
+		return json;
 	}
 }

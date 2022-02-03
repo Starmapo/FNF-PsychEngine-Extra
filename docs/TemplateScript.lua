@@ -89,15 +89,16 @@ end
 
 
 -- Note miss/hit
-function goodNoteHit(id, direction, noteType, isSustainNote)
+function goodNoteHit(id, direction, noteType, isSustainNote, characters)
 	-- Function called when you hit a note (after note hit calculations)
 	-- id: The note member id, you can get whatever variable you want from this note, example: "getPropertyFromGroup('notes', id, 'strumTime')"
 	-- noteData: 0 = Left, 1 = Down, 2 = Up, 3 = Right
 	-- noteType: The note type string/tag
 	-- isSustainNote: If it's a hold note, can be either true or false
+	-- characters: The characters that sing the note, by index
 end
 
-function opponentNoteHit(id, direction, noteType, isSustainNote)
+function opponentNoteHit(id, direction, noteType, isSustainNote, characters)
 	-- Works the same as goodNoteHit, but for Opponent's notes being hit
 end
 
@@ -106,7 +107,7 @@ function noteMissPress(direction)
 	-- Player pressed a button, but there was no note to hit (ghost miss)
 end
 
-function noteMiss(id, direction, noteType, isSustainNote)
+function noteMiss(id, direction, noteType, isSustainNote, characters)
 	-- Called after the note miss calculations
 	-- Player missed a note by letting it go offscreen
 end
