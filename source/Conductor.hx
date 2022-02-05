@@ -96,7 +96,7 @@ class Conductor
 
 			var deltaSteps:Int = song.notes[i].lengthInSteps;
 			totalSteps += deltaSteps;
-			totalPos += ((((60 /  curBPM) * 4000) / curDenominator) / 4) * deltaSteps;
+			totalPos += ((((60 / curBPM) * 4000) / curDenominator) / 4) * deltaSteps;
 		}
 		//trace("new BPM map BUDDY " + bpmChangeMap);
 		//trace("new signature map BUDDY " + signatureChangeMap);

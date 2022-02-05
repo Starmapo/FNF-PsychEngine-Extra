@@ -918,10 +918,7 @@ class ChartingState extends MusicBeatState
 			updateGrid();
 		});
 		swapMustHitSection.setGraphicSize(Std.int(swapMustHitSection.width), Std.int(swapMustHitSection.height * 2));
-		for (i in swapMustHitSection.labelOffsets) {
-			i.set(i.x, i.y - 6);
-		}
-		swapMustHitSection.y += 0;
+		changeAllLabelsOffset(swapMustHitSection, 0, -6);
 
 		var stepperCopy:FlxUINumericStepper = new FlxUINumericStepper(110, 276, 1, 1, -999, 999, 0);
 		blockPressWhileTypingOnStepper.push(stepperCopy);
@@ -1281,6 +1278,14 @@ class ChartingState extends MusicBeatState
 		for (point in button.labelOffsets)
 		{
 			point.set(x, y);
+		}
+	}
+
+	function changeAllLabelsOffset(button:FlxButton, x:Float, y:Float)
+	{
+		for (point in button.labelOffsets)
+		{
+			point.set(point.x + x, point.y + y);
 		}
 	}
 
@@ -2717,6 +2722,7 @@ class ChartingState extends MusicBeatState
 			}
 		}
 		
+		stepperSusLength.stepSize = Conductor.stepCrochet / 2;
 		stepperSusLength.max = Conductor.stepCrochet * (Conductor.numerator * 8);
 
 		updateGrid();
@@ -2832,6 +2838,7 @@ class ChartingState extends MusicBeatState
 		}
 
 		//trace(noteData + ', ' + noteStrum + ', ' + curSection);
+		stepperSusLength.stepSize = Conductor.stepCrochet / 2;
 		stepperSusLength.max = Conductor.stepCrochet * (Conductor.numerator * 8);
 
 		updateGrid();

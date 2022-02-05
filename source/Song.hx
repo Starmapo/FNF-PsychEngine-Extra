@@ -87,6 +87,11 @@ class Song
 			songJson.numerator = 4;
 			songJson.denominator = 4;
 		}
+		if(songJson.uiSkin == null)
+		{
+			songJson.uiSkin = '';
+			songJson.uiSkinOpponent = '';
+		}
 		
 		for (secNum in 0...songJson.notes.length) {
 			var sec:SwagSection = songJson.notes[secNum];

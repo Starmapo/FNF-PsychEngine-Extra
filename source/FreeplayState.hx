@@ -226,13 +226,13 @@ class FreeplayState extends MusicBeatState
 	}*/
 
 	var instPlaying:Int = -1;
-	var speedPlaying:Int = -1;
+	var speedPlaying:Float = -1;
 	private static var vocals:FlxSound = null;
 	var holdTime:Float = 0;
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music != null)
-			Conductor.songPosition = FlxG.sound.music.time;
+			Conductor.songPosition = FlxG.sound.music.time / ClientPrefs.getGameplaySetting('songspeed', 1);
 
 		if (FlxG.sound.music.volume < 0.7)
 		{
@@ -345,10 +345,8 @@ class FreeplayState extends MusicBeatState
 				vocals.persist = true;
 				vocals.looped = true;
 				vocals.volume = 0.7;
-				Conductor.numerator = PlayState.SONG.numerator;
-				Conductor.denominator = PlayState.SONG.denominator;
-				Conductor.mapBPMChanges(PlayState.SONG, ClientPrefs.getGameplaySetting('songspeed', 1));
 				Conductor.changeBPM(PlayState.SONG.bpm, ClientPrefs.getGameplaySetting('songspeed', 1));
+				Conductor.changeSignature(PlayState.SONG.numerator, PlayState.SONG.denominator);
 				instPlaying = curSelected;
 				speedPlaying = ClientPrefs.getGameplaySetting('songspeed', 1);
 				#if cpp
@@ -412,14 +410,7 @@ class FreeplayState extends MusicBeatState
 	override function beatHit() {
 		super.beatHit();
 
-		var curSection:Int = Math.floor(curStep / (Conductor.numerator * 4));
-
-		if (PlayState.SONG != null && PlayState.SONG.notes[curSection] != null && PlayState.SONG.notes[curSection].changeBPM)
-		{
-			Conductor.changeBPM(PlayState.SONG.notes[curSection].bpm, ClientPrefs.getGameplaySetting('songspeed', 1));
-		}
-
-		if (FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && instPlaying != -1)
+		if (curBeat % 2 == 0 && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && instPlaying != -1)
 			FlxG.camera.zoom += 0.005;
 	}
 
@@ -529,6 +520,29 @@ class FreeplayState extends MusicBeatState
 		scoreBG.x = FlxG.width - (scoreBG.scale.x / 2);
 		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
 		diffText.x -= diffText.width / 2;
+	}
+
+	override public function onFocus():Void
+	{
+		#if cpp
+		@:privateAccess
+		{
+			if (FlxG.sound.music != null && instPlaying > -1 && speedPlaying != 1) {
+				resyncVocals();
+			}
+		}
+		#end
+
+		super.onFocus();
+	}
+
+	function resyncVocals() {
+		@:privateAccess
+		{
+			lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+			if (vocals.playing)
+				lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+		}
 	}
 }
 
