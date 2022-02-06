@@ -6,6 +6,13 @@ import UIData;
 
 using StringTools;
 
+typedef EventNote = {
+	strumTime:Float,
+	event:String,
+	value1:String,
+	value2:String
+}
+
 class Note extends FlxSprite
 {
 	public var strumTime:Float = 0;
@@ -263,6 +270,8 @@ class Note extends FlxSprite
 	}
 	
 	function setSustainData() {
+		scale.y = 1;
+		updateHitbox();
 		offsetX = 0;
 		alpha = 0.6;
 		multAlpha = 0.6;

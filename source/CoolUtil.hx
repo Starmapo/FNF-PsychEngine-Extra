@@ -111,9 +111,18 @@ class CoolUtil
 
 	//uhhhh does this even work at all? i'm starting to doubt
 	public static function precacheSound(sound:String, ?library:String = null):Void {
-		var EmbeddedSound = Paths.sound(sound, library);
-		if (Std.isOfType(EmbeddedSound, String) && (Assets.exists(EmbeddedSound, SOUND) || Assets.exists(EmbeddedSound, MUSIC)))
-			Assets.getSound(EmbeddedSound, true);
+		Paths.returnSound('sounds', sound, library);
+		//precacheSoundFile(Paths.getPath('sounds/$sound.${Paths.SOUND_EXT}', SOUND, library));
+	}
+
+	public static function precacheMusic(sound:String, ?library:String = null):Void {
+		Paths.returnSound('music', sound, library);
+		//precacheSoundFile(Paths.getPath('music/$sound.${Paths.SOUND_EXT}', SOUND, library));
+	}
+
+	private static function precacheSoundFile(file:Dynamic):Void {
+		if (Assets.exists(file, SOUND) || Assets.exists(file, MUSIC))
+			Assets.getSound(file, true);
 	}
 
 	public static function browserLoad(site:String) {

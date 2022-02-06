@@ -1,4 +1,0 @@
--Mid-song key amount changes
--Port most spritesheets to Texture Atlas
--Custom default note skin
--Subcategories for key amounts in controls menu

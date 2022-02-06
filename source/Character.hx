@@ -89,11 +89,7 @@ class Character extends FlxSprite
 	{
 		super(x, y);
 
-		#if (haxe >= "4.0.0")
 		animOffsets = new Map();
-		#else
-		animOffsets = new Map<String, Array<Dynamic>>();
-		#end
 		curCharacter = character;
 		antialiasing = ClientPrefs.globalAntialiasing;
 
@@ -337,6 +333,8 @@ class Character extends FlxSprite
 		danceIdle = (animation.getByName('danceLeft' + idleSuffix) != null && animation.getByName('danceRight' + idleSuffix) != null);
 		if (danceIdle) {
 			danceSpeed = 1;
+		} else {
+			danceSpeed = 2;
 		}
 	}
 

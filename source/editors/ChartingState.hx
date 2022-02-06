@@ -54,7 +54,8 @@ class ChartingState extends MusicBeatState
 		'Hey!',
 		'Hurt Note',
 		'GF Sing',
-		'No Animation'
+		'No Animation',
+		'Trail Note'
 	];
 	private var noteTypeIntMap:Map<Int, String> = new Map<Int, String>();
 	private var noteTypeMap:Map<String, Null<Int>> = new Map<String, Null<Int>>();
@@ -1816,6 +1817,7 @@ class ChartingState extends MusicBeatState
 			}
 			
 			if (FlxG.keys.justPressed.BACKSPACE) {
+				PlayState.chartingMode = false;
 				if (fromMasterMenu) {
 					MusicBeatState.switchState(new editors.MasterEditorMenu());
 				} else {
@@ -2518,7 +2520,6 @@ class ChartingState extends MusicBeatState
 			if(note.y < -150) note.y = -150;
 
 			if(i[3] != null && note.noteType != null && note.noteType.length > 0) {
-				trace(i);
 				var typeInt:Null<Int> = noteTypeMap.get(i[3]);
 				var theType:String = '' + typeInt;
 				if(typeInt == null) theType = '?';

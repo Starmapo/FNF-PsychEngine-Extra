@@ -67,11 +67,7 @@ class FunkinLua {
 		scriptName = script;
 		trace('Lua file loaded succesfully:' + script);
 
-		#if (haxe >= "4.0.0")
 		accessedProps = new Map();
-		#else
-		accessedProps = new Map<String, Dynamic>();
-		#end
 
 		// Lua shit
 		set('Function_Stop', Function_Stop);
@@ -731,6 +727,9 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "precacheSound", function(name:String) {
 			CoolUtil.precacheSound(name);
+		});
+		Lua_helper.add_callback(lua, "precacheMusic", function(name:String) {
+			CoolUtil.precacheMusic(name);
 		});
 		Lua_helper.add_callback(lua, "triggerEvent", function(name:String, arg1:Dynamic, arg2:Dynamic) {
 			var value1:String = arg1;

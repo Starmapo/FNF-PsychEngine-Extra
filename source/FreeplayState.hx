@@ -398,12 +398,23 @@ class FreeplayState extends MusicBeatState
 			FlxG.sound.music.volume = 0;
 					
 			destroyFreeplayVocals();
+			instPlaying = -1;
 		}
 		else if(controls.RESET)
 		{
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		}
+		#if cpp
+		@:privateAccess
+		{
+			if (FlxG.sound.music.playing && instPlaying > -1 && speedPlaying != 1) {
+				lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+				if (vocals != null && vocals.playing)
+					lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+			}
+		}
+		#end
 		super.update(elapsed);
 	}
 
@@ -520,29 +531,6 @@ class FreeplayState extends MusicBeatState
 		scoreBG.x = FlxG.width - (scoreBG.scale.x / 2);
 		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
 		diffText.x -= diffText.width / 2;
-	}
-
-	override public function onFocus():Void
-	{
-		#if cpp
-		@:privateAccess
-		{
-			if (FlxG.sound.music != null && instPlaying > -1 && speedPlaying != 1) {
-				resyncVocals();
-			}
-		}
-		#end
-
-		super.onFocus();
-	}
-
-	function resyncVocals() {
-		@:privateAccess
-		{
-			lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
-			if (vocals.playing)
-				lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
-		}
 	}
 }
 
