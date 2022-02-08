@@ -133,8 +133,6 @@ class ChartingState extends MusicBeatState
 	**/
 	var curSelectedNote:Array<Dynamic> = null;
 
-	var tempBpm:Float = 0;
-
 	var vocals:FlxSound = null;
 
 	var leftIcon:HealthIcon;
@@ -289,7 +287,6 @@ class ChartingState extends MusicBeatState
 		FlxG.mouse.visible = true;
 		//FlxG.save.bind('funkin', 'ninjamuffin99');
 
-		tempBpm = _song.bpm;
 		Conductor.numerator = _song.numerator;
 		Conductor.denominator = _song.denominator;
 		updateSectionLengths();
@@ -1541,8 +1538,8 @@ class ChartingState extends MusicBeatState
 			}
 			else if (wname == 'song_bpm')
 			{
-				tempBpm = nums.value;
-				_song.bpm = tempBpm;
+				_song.bpm = nums.value;
+				Conductor.mapBPMChanges(_song);
 				getLastBPM();
 			}
 			else if (wname == 'note_susLength')
@@ -2068,8 +2065,6 @@ class ChartingState extends MusicBeatState
 				}
 			}
 		}
-
-		_song.bpm = tempBpm;
 
 		strumLineNotes.visible = quant.visible = vortex;
 			
@@ -2914,7 +2909,7 @@ class ChartingState extends MusicBeatState
 
 	function getLastBPM():Void {
 		// get last bpm
-		var daBPM:Float = tempBpm;
+		var daBPM:Float = _song.bpm;
 		for (i in 0...curSection + 1) {
 			if (_song.notes[i].changeBPM)
 				daBPM = _song.notes[i].bpm;

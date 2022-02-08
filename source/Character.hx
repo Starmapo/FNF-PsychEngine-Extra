@@ -77,6 +77,9 @@ class Character extends FlxSprite
 
 	public var hasMissAnimations:Bool = false;
 
+	//for double trails
+	public var lastAnim:String = '';
+
 	//Used on Character Editor
 	public var imageFile:String = '';
 	public var jsonScale:Float = 1;

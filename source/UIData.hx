@@ -10,7 +10,7 @@ import lime.utils.Assets;
 using StringTools;
 
 typedef SkinFile = {
-    var name:String; //just internal name to make it easier
+    var name:String; //just an internal name to make things easier
 	var mania:Array<ManiaArray>; //data for key amounts
     var scale:Float; //overall scale (all other scales are added ontop of this one)
     var noteScale:Float; //note scale (added ontop the mania one)
@@ -70,7 +70,14 @@ class UIData {
 		#else
 		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
 		#end
-			path = 'uiskins/default/$file';
+            path = file; //check for it outside of 'uiskins'
+            #if MODS_ALLOWED
+            if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
+            #else
+            if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
+            #end
+			    path = 'uiskins/default/$file';
+            }
 		}
         return path;
     }
@@ -82,7 +89,14 @@ class UIData {
 		#else
 		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
 		#end
-			return DEFAULT_SKIN;
+            path = file; //check for it outside of 'uiskins'
+            #if MODS_ALLOWED
+            if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
+            #else
+            if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
+            #end
+                return DEFAULT_SKIN;
+            }
 		}
         return uiSkin;
     }

@@ -2894,7 +2894,7 @@ class PlayState extends MusicBeatState
 			// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 			// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 
-			shownHealth = FlxMath.lerp(health, shownHealth, CoolUtil.boundTo(1 - (elapsed * 12), 0, 1));
+			shownHealth = FlxMath.lerp(shownHealth, health, CoolUtil.boundTo(elapsed * 4, 0, 1));
 
 			var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 1));
 			iconP1.scale.set(mult, mult);
@@ -3101,14 +3101,6 @@ class PlayState extends MusicBeatState
 				}
 
 				var center:Float = strumY + strumHeight / 2;
-				/*if (daNote.isSustainNote && !traced) {
-					trace('sustain reduce: ' + strumGroup.members[daNote.noteData].sustainReduce + 
-					'\nisnt ignore: ' + (daNote.mustPress || !daNote.ignoreNote) + 
-					'\nwas good hit: ' + daNote.wasGoodHit + 
-					'\nprev note was good hit: ' + daNote.prevNote.wasGoodHit + 
-					'\ncan be hit: ' + daNote.canBeHit);
-					traced = true;
-				}*/
 				if(strumGroup.members[daNote.noteData].sustainReduce && daNote.isSustainNote && (daNote.mustPress || !daNote.ignoreNote) &&
 					(!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
 				{
@@ -3139,7 +3131,7 @@ class PlayState extends MusicBeatState
 				// Kill extremely late notes and cause misses
 				if (Conductor.songPosition > noteKillOffset + daNote.strumTime)
 				{
-					if (daNote.mustPress && !cpuControlled &&!daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit)) {
+					if (daNote.mustPress && !cpuControlled && !daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit)) {
 						noteMiss(daNote);
 					}
 
@@ -3159,7 +3151,7 @@ class PlayState extends MusicBeatState
 				keyShit();
 			} else if (!inEditor) {
 				for (char in playerChar) {
-					if(char.holdTimer > Conductor.stepCrochet * 0.001 * char.singDuration * (Conductor.denominator / 4) && char.animation.curAnim.name.startsWith('sing') && !char.animation.curAnim.name.endsWith('miss')) {
+					if(char.holdTimer > Conductor.stepCrochet * 0.001 * char.singDuration * (Conductor.denominator / 4) && char.animation.curAnim.name.startsWith('sing') && (!char.animation.curAnim.name.endsWith('miss') || char.animation.curAnim.finished)) {
 						char.dance();
 					}
 				}
@@ -3179,7 +3171,7 @@ class PlayState extends MusicBeatState
 			char.scrollFactor.x = charGroup.members[char.ID].scrollFactor.x;
 			char.scrollFactor.y = charGroup.members[char.ID].scrollFactor.y;
 			char.alpha = charGroup.members[char.ID].alpha * 0.5;
-			if (char.animation.curAnim.name.startsWith('sing')) {
+			if (char.animation.curAnim.name == char.lastAnim) {
 				char.visible = charGroup.members[char.ID].visible;
 			} else {
 				char.visible = false;
@@ -4372,7 +4364,7 @@ class PlayState extends MusicBeatState
 				#end
 			} else if (!inEditor) {
 				for (char in playerChar) {
-					if(char.holdTimer > Conductor.stepCrochet * 0.001 * char.singDuration * (Conductor.denominator / 4) && char.animation.curAnim.name.startsWith('sing') && !char.animation.curAnim.name.endsWith('miss')) {
+					if(char.holdTimer > Conductor.stepCrochet * 0.001 * char.singDuration * (Conductor.denominator / 4) && char.animation.curAnim.name.startsWith('sing') && (!char.animation.curAnim.name.endsWith('miss') || char.animation.curAnim.finished)) {
 						char.dance();
 					}
 				}
@@ -4528,12 +4520,15 @@ class PlayState extends MusicBeatState
 						if (note.gfNote) {
 							doubleTrailMap.get('gf$char').playAnim(animToPlay, true);
 							doubleTrailMap.get('gf$char').holdTimer = 0;
+							doubleTrailMap.get('gf$char').lastAnim = animToPlay;
 						} else if (!opponentChart) {
 							doubleTrailMap.get('dad$char').playAnim(animToPlay, true);
 							doubleTrailMap.get('dad$char').holdTimer = 0;
+							doubleTrailMap.get('dad$char').lastAnim = animToPlay;
 						} else {
 							doubleTrailMap.get('bf$char').playAnim(animToPlay, true);
 							doubleTrailMap.get('bf$char').holdTimer = 0;
+							doubleTrailMap.get('bf$char').lastAnim = animToPlay;
 						}
 					} else if (!charGroup.members[char].specialAnim) {
 						charGroup.members[char].playAnim(animToPlay, true);
@@ -4558,7 +4553,11 @@ class PlayState extends MusicBeatState
 			spawnNoteSplashOnNote(note);
 		}
 
-		callOnLuas('opponentNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
+		if (opponentChart) {
+			callOnLuas('goodNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
+		} else {
+			callOnLuas('opponentNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
+		}
 
 		if (!note.isSustainNote)
 		{
@@ -4639,12 +4638,15 @@ class PlayState extends MusicBeatState
 						if (note.gfNote) {
 							doubleTrailMap.get('gf$i').playAnim(animToPlay + daAlt, true);
 							doubleTrailMap.get('gf$i').holdTimer = 0;
+							doubleTrailMap.get('gf$i').lastAnim = animToPlay + daAlt;
 						} else if (opponentChart) {
 							doubleTrailMap.get('dad$i').playAnim(animToPlay + daAlt, true);
 							doubleTrailMap.get('dad$i').holdTimer = 0;
+							doubleTrailMap.get('dad$i').lastAnim = animToPlay + daAlt;
 						} else {
 							doubleTrailMap.get('bf$i').playAnim(animToPlay + daAlt, true);
 							doubleTrailMap.get('bf$i').holdTimer = 0;
+							doubleTrailMap.get('bf$i').lastAnim = animToPlay + daAlt;
 						}
 					} else if (!charGroup.members[i].specialAnim) {
 						charGroup.members[i].playAnim(animToPlay + daAlt, true);
@@ -4691,11 +4693,11 @@ class PlayState extends MusicBeatState
 			note.wasGoodHit = true;
 			vocals.volume = ClientPrefs.voicesVolume;
 
-			var isSus:Bool = note.isSustainNote; //GET OUT OF MY HEAD, GET OUT OF MY HEAD, GET OUT OF MY HEAD
-			var leData:Int = note.noteData;
-			var leType:String = note.noteType;
-			var leChars:Array<Int> = note.characters;
-			callOnLuas('goodNoteHit', [notes.members.indexOf(note), leData, leType, isSus, leChars]);
+			if (!opponentChart) {
+				callOnLuas('goodNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
+			} else {
+				callOnLuas('opponentNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
+			}
 
 			if (!note.isSustainNote)
 			{

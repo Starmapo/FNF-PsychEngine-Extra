@@ -131,15 +131,12 @@ class Scanline extends FlxShader
 }
 
 class TiltshiftEffect extends Effect{
-	
 	public var shader:Tiltshift;
 	public function new (blurAmount:Float, center:Float){
 		shader = new Tiltshift();
 		shader.bluramount.value = [blurAmount];
 		shader.center.value = [center];
 	}
-	
-	
 }
 
 class Tiltshift extends FlxShader
@@ -228,6 +225,7 @@ class Tiltshift extends FlxShader
 		super();
 	}
 }
+
 class GreyscaleEffect extends Effect{
 	
 	public var shader:GreyscaleShader = new GreyscaleShader();
@@ -235,9 +233,8 @@ class GreyscaleEffect extends Effect{
 	public function new(){
 		
 	}
-	
-	
 }
+
 class GreyscaleShader extends FlxShader{
 	@:glFragmentSource('
 	#pragma header
@@ -253,19 +250,9 @@ class GreyscaleShader extends FlxShader{
 	public function new(){
 		super();
 	}
-	
-	
-	
 }
 
-
-
-
-
-
-
 class GrainEffect extends Effect {
-	
 	public var shader:Grain;
 	public function new (grainsize, lumamount,lockAlpha){
 		shader = new Grain();
@@ -278,10 +265,6 @@ class GrainEffect extends Effect {
 	public function update(elapsed){
 		shader.uTime.value[0] += elapsed;
 	}
-	
-	
-	
-	
 }
 
 
