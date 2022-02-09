@@ -4971,7 +4971,6 @@ class PlayState extends MusicBeatState
 			}
 			if (SONG.notes[curSection].changeSignature)
 			{
-				trace('changed signature');
 				Conductor.changeSignature(SONG.notes[Math.floor(curSection)].numerator, SONG.notes[Math.floor(curSection)].denominator);
 				//FlxG.log.add('CHANGED BPM!');
 				setOnLuas('numerator', Conductor.numerator);
@@ -5086,7 +5085,6 @@ class PlayState extends MusicBeatState
 	}
 
 	function setSkins():Void {
-		trace('setting skins');
 		//PLAYER
 		var uiSkin = UIData.getUIFile(SONG.uiSkin);
 		if (uiSkin == null) {
@@ -5107,7 +5105,6 @@ class PlayState extends MusicBeatState
 		singAnimations = maniaData.singAnimations;
 		playerColors = maniaData.colors;
 		uiSkinMap.set('player', uiSkin);
-		trace(uiSkinMap.get('player').name);
 		
 		//OPPONENT
 		var uiSkin = UIData.getUIFile(SONG.uiSkinOpponent);
@@ -5129,7 +5126,6 @@ class PlayState extends MusicBeatState
 		dadSingAnimations = maniaData.singAnimations;
 		opponentColors = maniaData.colors;
 		uiSkinMap.set('opponent', uiSkin);
-		trace(uiSkinMap.get('opponent').name);
 
 		var imagesToCheck = [
 			'shit',
@@ -5149,7 +5145,6 @@ class PlayState extends MusicBeatState
 
 		for (i in imagesToCheck) {
 			uiSkinMap.set(i, UIData.checkSkinFile(i, opponentChart ? uiSkinMap.get('opponent') : uiSkinMap.get('player')));
-			trace(i + uiSkinMap.get(i).name);
 		}
 	}
 
