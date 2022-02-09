@@ -369,6 +369,8 @@ class PlayState extends MusicBeatState
 
 		originalSong = Reflect.copy(SONG);
 
+		curSong = Paths.formatToSongPath(SONG.song);
+
 		bfKeys = SONG.playerKeyAmount;
 		dadKeys = SONG.opponentKeyAmount;
 		playerKeys = bfKeys;
@@ -515,8 +517,6 @@ class PlayState extends MusicBeatState
 		setSkins();
 
 		Conductor.mapBPMChanges(SONG, playbackRate);
-		Conductor.changeBPM(SONG.bpm, playbackRate);
-		Conductor.changeSignature(SONG.numerator, SONG.denominator);
 
 		if (PlayState.storyDifficulty > CoolUtil.difficulties.length - 1) {
 			PlayState.storyDifficulty = CoolUtil.difficulties.indexOf('Normal');
@@ -543,12 +543,11 @@ class PlayState extends MusicBeatState
 		#end
 
 		GameOverSubstate.resetVariables();
-		var songName:String = Paths.formatToSongPath(SONG.song);
 
 		curStage = PlayState.SONG.stage;
 		//trace('stage is: ' + curStage);
 		if(PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1) {
-			switch (songName)
+			switch (curSong)
 			{
 				case 'spookeez' | 'south' | 'monster':
 					curStage = 'spooky';
@@ -1188,7 +1187,7 @@ class PlayState extends MusicBeatState
 
 		// startCountdown();
 
-		generateSong(SONG.song);
+		generateSong();
 		#if LUA_ALLOWED
 		if (!inEditor) {
 			for (notetype in noteTypeMap.keys())
@@ -1236,18 +1235,18 @@ class PlayState extends MusicBeatState
 		var doof:DialogueBox = null;
 		if (!inEditor) {
 			#if MODS_ALLOWED
-			var file:String = Paths.modsJson(songName + '/dialogue'); //Checks for json/Psych Engine dialogue
+			var file:String = Paths.modsJson(curSong + '/dialogue'); //Checks for json/Psych Engine dialogue
 			if (FileSystem.exists(file)) {
 				dialogueJson = DialogueBoxPsych.parseDialogue(file);
 			}
 			#end
 
-			var file:String = Paths.json(songName + '/dialogue'); //Checks for json/Psych Engine dialogue
+			var file:String = Paths.json(curSong + '/dialogue'); //Checks for json/Psych Engine dialogue
 			if (OpenFlAssets.exists(file) && dialogueJson == null) {
 				dialogueJson = DialogueBoxPsych.parseDialogue(file);
 			}
 
-			var file:String = Paths.txt(songName + '/' + songName + 'Dialogue'); //Checks for vanilla/Senpai dialogue
+			var file:String = Paths.txt(curSong + '/' + curSong + 'Dialogue'); //Checks for vanilla/Senpai dialogue
 			if (OpenFlAssets.exists(file)) {
 				dialogue = CoolUtil.coolTextFile(file);
 			}
@@ -1392,12 +1391,12 @@ class PlayState extends MusicBeatState
 		#if LUA_ALLOWED
 		if (!inEditor) {
 			var filesPushed:Array<String> = [];
-			var foldersToCheck:Array<String> = [Paths.getPreloadPath('data/' + Paths.formatToSongPath(SONG.song) + '/')];
+			var foldersToCheck:Array<String> = [Paths.getPreloadPath('data/' + curSong + '/')];
 
 			#if MODS_ALLOWED
-			foldersToCheck.insert(0, Paths.mods('data/' + Paths.formatToSongPath(SONG.song) + '/'));
+			foldersToCheck.insert(0, Paths.mods('data/' + curSong + '/'));
 			if(Paths.currentModDirectory != null && Paths.currentModDirectory.length > 0)
-				foldersToCheck.insert(0, Paths.mods(Paths.currentModDirectory + '/data/' + Paths.formatToSongPath(SONG.song) + '/'));
+				foldersToCheck.insert(0, Paths.mods(Paths.currentModDirectory + '/data/' + curSong + '/'));
 			#end
 
 			for (folder in foldersToCheck)
@@ -1438,10 +1437,9 @@ class PlayState extends MusicBeatState
 		}
 		#end
 		
-		var daSong:String = Paths.formatToSongPath(curSong);
 		if (!inEditor && isStoryMode && !seenCutscene)
 		{
-			switch (daSong)
+			switch (curSong)
 			{
 				case "monster":
 					var whiteScreen:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.WHITE);
@@ -1499,7 +1497,7 @@ class PlayState extends MusicBeatState
 						});
 					});
 				case 'senpai' | 'roses' | 'thorns':
-					if(daSong == 'roses') FlxG.sound.play(Paths.sound('ANGRY'));
+					if(curSong == 'roses') FlxG.sound.play(Paths.sound('ANGRY'));
 					schoolIntro(doof);
 
 				default:
@@ -1860,12 +1858,11 @@ class PlayState extends MusicBeatState
 		senpaiEvil.screenCenter();
 		senpaiEvil.x += 300;
 
-		var songName:String = Paths.formatToSongPath(SONG.song);
-		if (songName == 'roses' || songName == 'thorns')
+		if (curSong == 'roses' || curSong == 'thorns')
 		{
 			remove(black);
 
-			if (songName == 'thorns')
+			if (curSong == 'thorns')
 			{
 				add(red);
 				camHUD.visible = false;
@@ -1884,7 +1881,7 @@ class PlayState extends MusicBeatState
 			{
 				if (dialogueBox != null)
 				{
-					if (Paths.formatToSongPath(SONG.song) == 'thorns')
+					if (curSong == 'thorns')
 					{
 						add(senpaiEvil);
 						senpaiEvil.alpha = 0;
@@ -1967,7 +1964,7 @@ class PlayState extends MusicBeatState
 				//if(ClientPrefs.middleScroll) opponentStrums.members[i].visible = false;
 			}
 
-			var modifiedCrochet:Float = (Conductor.crochet * (Conductor.denominator / 4)); //slows or speeds up to mimic normal quarter notes
+			var modifiedCrochet:Float = Conductor.crochet * (Conductor.denominator / 4); //slows or speeds up to mimic normal quarter notes
 
 			startedCountdown = true;
 			Conductor.songPosition = startPos;
@@ -2126,7 +2123,7 @@ class PlayState extends MusicBeatState
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
 
-		FlxG.sound.playMusic(Paths.inst(SONG.song), ClientPrefs.instVolume, false);
+		FlxG.sound.playMusic(Paths.inst(curSong), ClientPrefs.instVolume, false);
 		FlxG.sound.music.time = startPos;
 		//FlxG.sound.music.onComplete = finishSong;
 		vocals.time = startPos;
@@ -2168,7 +2165,7 @@ class PlayState extends MusicBeatState
 	var debugNum:Int = 0;
 	private var noteTypeMap:Map<String, Bool> = new Map<String, Bool>();
 	private var eventPushedMap:Map<String, Bool> = new Map<String, Bool>();
-	private function generateSong(dataPath:String):Void
+	private function generateSong():Void
 	{
 		// FlxG.log.add(ChartParser.parse());
 		if (!inEditor) {
@@ -2185,18 +2182,16 @@ class PlayState extends MusicBeatState
 			songSpeed = SONG.speed;
 		}
 		
-		var songData = SONG;
-		Conductor.changeBPM(songData.bpm, playbackRate);
-		
-		curSong = songData.song;
+		Conductor.changeBPM(SONG.bpm, playbackRate);
+		Conductor.changeSignature(SONG.numerator, SONG.denominator);
 
 		if (SONG.needsVoices)
-			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+			vocals = new FlxSound().loadEmbedded(Paths.voices(curSong));
 		else
 			vocals = new FlxSound();
 
 		FlxG.sound.list.add(vocals);
-		FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.inst(SONG.song)));
+		FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.inst(curSong)));
 
 		notes = new FlxTypedGroup<Note>();
 		add(notes);
@@ -2204,22 +2199,20 @@ class PlayState extends MusicBeatState
 		var noteData:Array<SwagSection>;
 
 		// NEW SHIT
-		noteData = songData.notes;
+		noteData = SONG.notes;
 
 		var playerCounter:Int = 0;
 
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
-
-		var songName:String = Paths.formatToSongPath(SONG.song);
 		
 		if (!inEditor) {
-			var file:String = Paths.json(songName + '/events');
+			var file:String = Paths.json(curSong + '/events');
 			#if MODS_ALLOWED
-			if (FileSystem.exists(Paths.modsJson(songName + '/events')) || OpenFlAssets.exists(file)) {
+			if (FileSystem.exists(Paths.modsJson(curSong + '/events')) || OpenFlAssets.exists(file)) {
 			#else
 			if (OpenFlAssets.exists(file)) {
 			#end
-				var eventsData:Array<Dynamic> = Song.loadFromJson('events', songName).events;
+				var eventsData:Array<Dynamic> = Song.loadFromJson('events', curSong).events;
 				for (event in eventsData) //Event Notes
 				{
 					for (i in 0...event[1].length)
@@ -2328,7 +2321,7 @@ class PlayState extends MusicBeatState
 			daBeats += 1;
 		}
 		if (!inEditor) {
-			for (event in songData.events) //Event Notes
+			for (event in SONG.events) //Event Notes
 			{
 				for (i in 0...event[1].length)
 				{
@@ -2413,21 +2406,7 @@ class PlayState extends MusicBeatState
 		var keys:Int = bfKeys;
 		if (player == 0) keys = dadKeys;
 
-		var delay = 0.5;
-		var delay2 = 0.2;
-		switch (keys) {
-			case 1 | 2 | 3 | 4:
-			case 5:
-				delay = 0.3;
-			case 6 | 7:
-				delay = 0.25;
-				delay2 = 0.1;
-			case 8 | 9:
-				delay = 0.1;
-				delay2 = 0.05;
-			default:
-				delay2 = 0;
-		}
+		var delay = (Conductor.crochet * (Conductor.denominator / 4)) / (4000 / keys);
 
 		for (i in 0...keys)
 		{
@@ -2442,7 +2421,7 @@ class PlayState extends MusicBeatState
 			{
 				babyArrow.y -= 10;
 				babyArrow.alpha = 0;
-				FlxTween.tween(babyArrow, {y: babyArrow.y + 10, alpha: targetAlpha}, 1, {ease: FlxEase.circOut, startDelay: delay + (delay2 * i)});
+				FlxTween.tween(babyArrow, {y: babyArrow.y + 10, alpha: targetAlpha}, delay, {ease: FlxEase.circOut, startDelay: delay * (i + 1)});
 			}
 			else
 			{
@@ -2840,9 +2819,9 @@ class PlayState extends MusicBeatState
 
 		super.update(elapsed);
 
-		if (!inEditor && generatedMusic && PlayState.SONG.notes[getCurSection()] != null && !endingSong && !isCameraOnForcedPos)
+		if (!inEditor && generatedMusic && PlayState.SONG.notes[Conductor.getCurSection(SONG, curStep)] != null && !endingSong && !isCameraOnForcedPos)
 		{
-			moveCameraSection(getCurSection());
+			moveCameraSection(Conductor.getCurSection(SONG, curStep));
 		}
 
 		if(ratingName == '?') {
@@ -3756,7 +3735,7 @@ class PlayState extends MusicBeatState
 				camFollow.y += boyfriend.cameraPosition[1];
 			}
 
-			if (Paths.formatToSongPath(SONG.song) == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1)
+			if (curSong == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1)
 			{
 				cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1}, (Conductor.crochet / 1000), {ease: FlxEase.elasticInOut, onComplete:
 					function (twn:FlxTween)
@@ -3769,7 +3748,7 @@ class PlayState extends MusicBeatState
 	}
 
 	function tweenCamIn() {
-		if (Paths.formatToSongPath(SONG.song) == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1.3) {
+		if (curSong == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1.3) {
 			cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1.3}, (Conductor.crochet / 1000), {ease: FlxEase.elasticInOut, onComplete:
 				function (twn:FlxTween) {
 					cameraTwn = null;
@@ -3864,7 +3843,7 @@ class PlayState extends MusicBeatState
 				#if !switch
 				var percent:Float = ratingPercent;
 				if(Math.isNaN(percent)) percent = 0;
-				Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
+				Highscore.saveScore(curSong, songScore, storyDifficulty, percent);
 				#end
 			}
 
@@ -3918,7 +3897,7 @@ class PlayState extends MusicBeatState
 					trace('LOADING NEXT SONG');
 					trace(Paths.formatToSongPath(PlayState.storyPlaylist[0]) + difficulty);
 
-					var winterHorrorlandNext = (Paths.formatToSongPath(SONG.song) == "eggnog");
+					var winterHorrorlandNext = (curSong == "eggnog");
 					if (winterHorrorlandNext)
 					{
 						var blackShit:FlxSprite = new FlxSprite(-FlxG.width * FlxG.camera.zoom,
@@ -4489,7 +4468,7 @@ class PlayState extends MusicBeatState
 
 	function opponentNoteHit(note:Note):Void
 	{
-		if (!opponentChart && Paths.formatToSongPath(SONG.song) != 'tutorial')
+		if (!opponentChart && curSong != 'tutorial')
 			camZooming = true;
 
 		if (!inEditor) {
@@ -4506,7 +4485,7 @@ class PlayState extends MusicBeatState
 				} else if(!note.noAnimation) {
 					var altAnim:String = "";
 
-					var curSection:Int = getCurSection();
+					var curSection:Int = Conductor.getCurSection(SONG, curStep);
 					if (SONG.notes[curSection] != null)
 					{
 						if ((SONG.notes[curSection].altAnim && !opponentChart) || note.noteType == 'Alt Animation') {
@@ -4573,7 +4552,7 @@ class PlayState extends MusicBeatState
 		{
 			if(cpuControlled && (note.ignoreNote || note.hitCausesMiss)) return;
 
-			if (opponentChart && Paths.formatToSongPath(SONG.song) != 'tutorial')
+			if (opponentChart && curSong != 'tutorial')
 				camZooming = true;
 
 			var charGroup = playerChar;
@@ -4626,8 +4605,8 @@ class PlayState extends MusicBeatState
 
 			if(!note.noAnimation && !inEditor) {
 				var daAlt = '';
-				if (SONG.notes[getCurSection()] != null) {
-					if((SONG.notes[getCurSection()].altAnim && opponentChart) || note.noteType == 'Alt Animation')
+				if (SONG.notes[Conductor.getCurSection(SONG, curStep)] != null) {
+					if((SONG.notes[Conductor.getCurSection(SONG, curStep)].altAnim && opponentChart) || note.noteType == 'Alt Animation')
 						daAlt = '-alt';
 				}
 	
@@ -4979,7 +4958,7 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
-		var curSection:Int = getCurSection();
+		var curSection:Int = Conductor.getCurSection(SONG, curStep);
 		if (SONG.notes[curSection] != null)
 		{
 			if (SONG.notes[curSection].changeBPM)
@@ -5014,7 +4993,7 @@ class PlayState extends MusicBeatState
 		// FlxG.log.add('change bpm' + SONG.notes[Std.int(curStep / 16)].changeBPM);
 
 		if (!inEditor) {
-			if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && getCurNumeratorBeat() % Conductor.numerator == 0)
+			if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && Conductor.getCurNumeratorBeat(SONG, curBeat) % Conductor.numerator == 0)
 			{
 				FlxG.camera.zoom += 0.015;
 				camHUD.zoom += 0.03;
@@ -5076,7 +5055,7 @@ class PlayState extends MusicBeatState
 					if (!trainMoving)
 						trainCooldown += 1;
 
-					if (getCurNumeratorBeat() % Conductor.numerator == 0)
+					if (Conductor.getCurNumeratorBeat(SONG, curBeat) % Conductor.numerator == 0)
 					{
 						phillyCityLights.forEach(function(light:BGSprite)
 						{
@@ -5089,7 +5068,7 @@ class PlayState extends MusicBeatState
 						phillyCityLights.members[curLight].alpha = 1;
 					}
 
-					if (getCurNumeratorBeat() % (Conductor.numerator * 2) == Conductor.numerator && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
+					if (Conductor.getCurNumeratorBeat(SONG, curBeat) % (Conductor.numerator * 2) == Conductor.numerator && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
 					{
 						trainCooldown = FlxG.random.int(-4, 0);
 						trainStart();
@@ -5105,41 +5084,6 @@ class PlayState extends MusicBeatState
 
 		setOnLuas('curBeat', curBeat);//DAWGG?????
 		callOnLuas('onBeatHit', []);
-	}
-
-	function getCurSection():Int {
-		var daNumerator:Int = SONG.numerator;
-		var daPos:Int = 0;
-		var daStep:Int = 0;
-		for (i in 0...SONG.notes.length) {
-			if (SONG.notes[i] != null) {
-				if (SONG.notes[i].changeSignature) {
-					daNumerator = SONG.notes[i].numerator;
-				}
-			}
-			if (daStep + (daNumerator * 4) >= curStep) {
-				return daPos + Math.floor((curStep - daStep) / (daNumerator * 4));
-			}
-			daStep += daNumerator * 4;
-			daPos++;
-		}
-		return Std.int(Math.max(daPos, 0));
-	}
-
-	function getCurNumeratorBeat():Int {
-		var lastBeat = 0;
-		var daBeat = 0;
-		var daNumerator = SONG.numerator;
-		for (i in 0...SONG.notes.length) {
-			if (SONG.notes[i] != null && curBeat >= daBeat) {
-				if (SONG.notes[i].changeSignature) {
-					daNumerator = SONG.notes[i].numerator;
-					lastBeat = daBeat;
-				}
-				daBeat += daNumerator;
-			}
-		}
-		return curBeat - lastBeat;
 	}
 
 	function setSkins():Void {
@@ -5364,7 +5308,7 @@ class PlayState extends MusicBeatState
 							unlock = true;
 						}
 					case 'debugger':
-						if(Paths.formatToSongPath(SONG.song) == 'test' && !usedPractice) {
+						if(curSong == 'test' && !usedPractice) {
 							unlock = true;
 						}
 				}

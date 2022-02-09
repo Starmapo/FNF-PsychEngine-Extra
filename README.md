@@ -13,16 +13,16 @@ To install LuaJIT do this: `haxelib git linc_luajit https://github.com/AndreiRud
 ...Or if you don't want your mod to be able to run .lua scripts, delete the "LUA_ALLOWED" line on Project.xml
 
 ## Credits:
+* Starmapo - Psych Engine Extra stuff
+
 * Shadow Mario - Coding
 * RiverOaken - Arts and Animations
 * bbpanzu - Assistant Coding
 
-* Starmapo - He copy and pasted some code????? idk
-
 ### Special Thanks
-* KadeDev & GitHub Contributors - Made Kade Engine (and is smarter)
-* Leather128 & GitHub Contributors - Made Leather Engine (and is smarter)
-* srPerez - Made VS Shaggy & original 9 key notes
+* KadeDev & GitHub Contributors - Made Kade Engine (some code is from there)
+* Leather128 & GitHub Contributors - Made Leather Engine (some code is from there)
+* srPerez - Made VS Shaggy & original 9K notes
 
 * shubs - New Input System
 * SqirraRNG - Chart Editor's Sound Waveform base code
@@ -38,11 +38,14 @@ _____________________________________
 * Custom key amounts (1 - 13)
 * Custom time signatures (3/4, 8/8, etc.)
 * Custom UI skins (notes, splashes, ratings, countdown, etc.)
-* Character groups (more than one player, opponent, GF)
+* Character groups (more than one player, opponent, and GF)
 * Gameplay Changers: Play opponent's chart, Song playback speed
+* Exit to options from in-game (you can exit right back to where you left!)
 * More Lua functions
 
 # New Options
+* Note underlays
+* Instant restart after dying
 * Sort Freeplay songs alphabetically
 * Change instrumentals and voices volume
 * Show note splashes for the opponent

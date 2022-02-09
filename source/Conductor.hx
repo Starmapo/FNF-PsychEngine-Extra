@@ -120,4 +120,60 @@ class Conductor
 		crochet = ((60 / bpm) * 4000) / denominator;
 		stepCrochet = crochet / 4;
 	}
+
+	public static function getLastBPM(song:SwagSong, section:Int, ?mult:Float = 1) {
+		var daBPM:Float = song.bpm * mult;
+		for (i in 0...section + 1) {
+			if (song.notes[i].changeBPM)
+				daBPM = song.notes[i].bpm * mult;
+		}
+		if (bpm != daBPM)
+			changeBPM(daBPM);
+		
+		var daNumerator:Int = song.numerator;
+		var daDenominator:Int = song.denominator;
+		for (i in 0...section + 1) {
+			if (song.notes[i].changeSignature) {
+				daNumerator = song.notes[i].numerator;
+				daDenominator = song.notes[i].denominator;
+			}
+		}
+		if (numerator != daNumerator || denominator != daDenominator)
+			changeSignature(daNumerator, daDenominator);
+	}
+
+	public static function getCurSection(song:SwagSong, step:Int):Int {
+		var daNumerator:Int = song.numerator;
+		var daPos:Int = 0;
+		var daStep:Int = 0;
+		for (i in 0...song.notes.length) {
+			if (song.notes[i] != null) {
+				if (song.notes[i].changeSignature) {
+					daNumerator = song.notes[i].numerator;
+				}
+			}
+			if (daStep + (daNumerator * 4) >= step) {
+				return daPos + Math.floor((step - daStep) / (daNumerator * 4));
+			}
+			daStep += daNumerator * 4;
+			daPos++;
+		}
+		return Std.int(Math.max(daPos, 0));
+	}
+
+	public static function getCurNumeratorBeat(song:SwagSong, beat:Int):Int {
+		var lastBeat = 0;
+		var daBeat = 0;
+		var daNumerator = song.numerator;
+		for (i in 0...song.notes.length) {
+			if (song.notes[i] != null && beat >= daBeat) {
+				if (song.notes[i].changeSignature) {
+					daNumerator = song.notes[i].numerator;
+					lastBeat = daBeat;
+				}
+				daBeat += daNumerator;
+			}
+		}
+		return beat - lastBeat;
+	}
 }

@@ -345,6 +345,7 @@ class FreeplayState extends MusicBeatState
 				vocals.persist = true;
 				vocals.looped = true;
 				vocals.volume = 0.7;
+				Conductor.mapBPMChanges(PlayState.SONG, ClientPrefs.getGameplaySetting('songspeed', 1));
 				Conductor.changeBPM(PlayState.SONG.bpm, ClientPrefs.getGameplaySetting('songspeed', 1));
 				Conductor.changeSignature(PlayState.SONG.numerator, PlayState.SONG.denominator);
 				instPlaying = curSelected;
@@ -421,8 +422,13 @@ class FreeplayState extends MusicBeatState
 	override function beatHit() {
 		super.beatHit();
 
-		if (curBeat % 2 == 0 && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && instPlaying != -1)
-			FlxG.camera.zoom += 0.005;
+		if (instPlaying > -1) {
+			Conductor.getLastBPM(PlayState.SONG, Conductor.getCurSection(PlayState.SONG, curStep), ClientPrefs.getGameplaySetting('songspeed', 1));
+
+			if (Conductor.getCurNumeratorBeat(PlayState.SONG, curBeat) % 2 == 0 && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms) {
+				FlxG.camera.zoom += 0.005;
+			}
+		}
 	}
 
 	public static function destroyFreeplayVocals() {

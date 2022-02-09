@@ -299,7 +299,7 @@ class ChartingState extends MusicBeatState
 		loadAudioBuffer();
 		reloadGridLayer();
 		loadSong();
-		getLastBPM();
+		Conductor.getLastBPM(_song, curSection);
 		Conductor.mapBPMChanges(_song);
 
 		strumLine = new FlxSprite(0, 50).makeGraphic(GRID_SIZE * (totalKeys + 1), 4);
@@ -614,7 +614,7 @@ class ChartingState extends MusicBeatState
 			_song.numerator = Std.parseInt(NUMERATORS[Std.parseInt(numerator)]);
 			updateSectionLengths();
 			Conductor.mapBPMChanges(_song);
-			getLastBPM();
+			Conductor.getLastBPM(_song, curSection);
 			reloadGridLayer();
 		});
 		numeratorDropDown.selectedLabel = '' + _song.numerator;
@@ -625,7 +625,7 @@ class ChartingState extends MusicBeatState
 			_song.denominator = Std.parseInt(DENOMINATORS[Std.parseInt(denominator)]);
 			updateSectionLengths();
 			Conductor.mapBPMChanges(_song);
-			getLastBPM();
+			Conductor.getLastBPM(_song, curSection);
 			reloadGridLayer();
 		});
 		denominatorDropDown.selectedLabel = '' + _song.denominator;
@@ -773,7 +773,7 @@ class ChartingState extends MusicBeatState
 			if (_song.notes[curSection].changeSignature) {
 				updateSectionLengths();
 				Conductor.mapBPMChanges(_song);
-				getLastBPM();
+				Conductor.getLastBPM(_song, curSection);
 				reloadGridLayer();
 			}
 		});
@@ -790,7 +790,7 @@ class ChartingState extends MusicBeatState
 			if (_song.notes[curSection].changeSignature) {
 				updateSectionLengths();
 				Conductor.mapBPMChanges(_song);
-				getLastBPM();
+				Conductor.getLastBPM(_song, curSection);
 				reloadGridLayer();
 			}
 		});
@@ -1540,7 +1540,7 @@ class ChartingState extends MusicBeatState
 			{
 				_song.bpm = nums.value;
 				Conductor.mapBPMChanges(_song);
-				getLastBPM();
+				Conductor.getLastBPM(_song, curSection);
 			}
 			else if (wname == 'note_susLength')
 			{
@@ -2486,7 +2486,7 @@ class ChartingState extends MusicBeatState
 		nextRenderedNotes.clear();
 		nextRenderedSustains.clear();
 
-		getLastBPM();
+		Conductor.getLastBPM(_song, curSection);
 
 		/* // PORT BULLSHIT, INCASE THERE'S NO SUSTAIN DATA FOR A NOTE
 			for (sec in 0..._song.notes.length)
@@ -2642,7 +2642,18 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
-		note.y = (GRID_SIZE * (isNextSection ? _song.notes[curSection].lengthInSteps : 0)) * zoomList[curZoom] + Math.floor(getYfromStrum((daStrumTime - sectionStartTime(isNextSection ? 1 : 0)) % (Conductor.stepCrochet * _song.notes[sectionUsed].lengthInSteps), false));
+		var usedStepCrochet = Conductor.stepCrochet;
+		if (isNextSection && (_song.notes[sectionUsed].changeBPM || _song.notes[sectionUsed].changeSignature)) {
+			var daBPM = Conductor.bpm;
+			var daDenominator = Conductor.denominator;
+			if (_song.notes[sectionUsed].changeBPM)
+				daBPM = _song.notes[sectionUsed].bpm;
+			if (_song.notes[sectionUsed].changeSignature)
+				daDenominator = _song.notes[sectionUsed].denominator;
+			usedStepCrochet = (((60 / daBPM) * 4000) / daDenominator) / 4;
+		}
+
+		note.y = (GRID_SIZE * (isNextSection ? _song.notes[curSection].lengthInSteps : 0)) * zoomList[curZoom] + Math.floor(getYfromStrum((daStrumTime - sectionStartTime(isNextSection ? 1 : 0)) % (usedStepCrochet * _song.notes[sectionUsed].lengthInSteps), false));
 		return note;
 	}
 
@@ -2907,26 +2918,6 @@ class ChartingState extends MusicBeatState
 		}
 	}
 
-	function getLastBPM():Void {
-		// get last bpm
-		var daBPM:Float = _song.bpm;
-		for (i in 0...curSection + 1) {
-			if (_song.notes[i].changeBPM)
-				daBPM = _song.notes[i].bpm;
-		}
-		Conductor.changeBPM(daBPM);
-		
-		var daNumerator:Int = _song.numerator;
-		var daDenominator:Int = _song.denominator;
-		for (i in 0...curSection + 1) {
-			if (_song.notes[i].changeSignature) {
-				daNumerator = _song.notes[i].numerator;
-				daDenominator = _song.notes[i].denominator;
-			}
-		}
-		Conductor.changeSignature(daNumerator, daDenominator);
-	}
-
 	function updateSectionLengths():Void {
 		var daNumerator:Int = _song.numerator;
 		for (i in 0..._song.notes.length)
@@ -2986,7 +2977,11 @@ class ChartingState extends MusicBeatState
 		try {
 			CoolUtil.getDifficulties(currentSongName);
 			PlayState.SONG = Song.loadFromJson(song + CoolUtil.getDifficultyFilePath(), song);
+			#if PRELOAD_ALL
 			MusicBeatState.resetState();
+			#else
+			LoadingState.loadAndSwitchState(new ChartingState());
+			#end
 		} catch (e:Any) {
 			trace("File " + Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath() + " is not found.");
 		}

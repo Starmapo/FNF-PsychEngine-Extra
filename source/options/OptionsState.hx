@@ -17,6 +17,13 @@ class OptionsState extends MusicBeatState
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
+	var goToPlayState:Bool = false;
+
+	public function new(?goToPlayState:Bool = false)
+	{
+		super();
+		this.goToPlayState = goToPlayState;
+	}
 
 	function openSelectedSubstate(label:String) {
 		switch(label) {
@@ -93,7 +100,12 @@ class OptionsState extends MusicBeatState
 
 		if (controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			MusicBeatState.switchState(new MainMenuState());
+			if (goToPlayState) {
+				StageData.loadDirectory(PlayState.SONG);
+				LoadingState.loadAndSwitchState(new PlayState(), true);
+			} else {
+				MusicBeatState.switchState(new MainMenuState());
+			}
 		}
 
 		if (controls.ACCEPT || FlxG.mouse.justPressed) {
