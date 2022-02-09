@@ -47,7 +47,7 @@ class StrumNote extends FlxSprite
 			}
 		}
 		if (maniaData == null) {
-			var bad:SkinFile = UIData.DEFAULT_SKIN;
+			var bad:SkinFile = UIData.getUIFile('');
 			for (i in bad.mania) {
 				if (i.keys == keyAmount) {
 					maniaData = i;
@@ -74,7 +74,7 @@ class StrumNote extends FlxSprite
 		shader = colorSwap.shader;
 		noteData = leData;
 		if (uiSkin == null) {
-			uiSkin = UIData.DEFAULT_SKIN;
+			uiSkin = UIData.getUIFile('');
 		}
 		this.player = player;
 		this.noteData = leData;

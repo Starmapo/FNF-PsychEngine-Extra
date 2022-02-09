@@ -46,7 +46,7 @@ class SkinEditorState extends MusicBeatState {
             uiSkin = UIData.getUIFile(fileName);
         }
         if (uiSkin == null) {
-            uiSkin = UIData.DEFAULT_SKIN;
+            uiSkin = UIData.getUIFile('');
         }
     }
 
@@ -124,7 +124,7 @@ class SkinEditorState extends MusicBeatState {
             uiSkin = UIData.getUIFile(UI_skinName.text);
             if (uiSkin == null) {
                 FlxG.log.warn('Failed to load skin!');
-                uiSkin = UIData.DEFAULT_SKIN;
+                uiSkin = UIData.getUIFile('');
             }
             loadFromSkin();
 		});

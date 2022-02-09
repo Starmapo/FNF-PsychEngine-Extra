@@ -85,7 +85,7 @@ class NotesState extends MusicBeatState
 
 			var note:FlxSprite = new FlxSprite(posX, yPos);
 			note.frames = Paths.getSparrowAtlas('uiskins/default/notes/NOTE_assets');
-			var animations:Array<String> = UIData.DEFAULT_SKIN.mania[keyAmount - 1].colors;
+			var animations:Array<String> = UIData.getUIFile('').mania[keyAmount - 1].colors;
 			note.animation.addByPrefix('idle', animations[i] + '0');
 			note.animation.play('idle');
 			note.antialiasing = ClientPrefs.globalAntialiasing;

@@ -180,12 +180,8 @@ class Paths
 
 	static public function sound(key:String, ?library:String):Dynamic
 	{
-		#if NO_PRELOAD_ALL
-		return getPath('sounds/$key.$SOUND_EXT', SOUND, library);
-		#else
 		var sound:Sound = returnSound('sounds', key, library);
 		return sound;
-		#end
 	}
 	
 	inline static public function soundRandom(key:String, min:Int, max:Int, ?library:String)
@@ -195,45 +191,29 @@ class Paths
 
 	inline static public function music(key:String, ?library:String):Dynamic
 	{
-		#if NO_PRELOAD_ALL
-		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
-		#else
 		var file:Sound = returnSound('music', key, library);
 		return file;
-		#end
 	}
 
 	inline static public function voices(song:String):Any
 	{
-		#if NO_PRELOAD_ALL
-		return 'songs:assets/songs/${formatToSongPath(song)}/Voices.$SOUND_EXT';
-		#else
-		var songKey:String = '${formatToSongPath(song)}/Voices';
-		var voices = returnSound('songs', songKey);
+		var songKey:String = '${song.toLowerCase().replace(' ', '-')}';
+		var voices = returnSound(songKey, 'Voices', 'songs');
 		return voices;
-		#end
 	}
 
 	inline static public function inst(song:String):Any
 	{
-		#if NO_PRELOAD_ALL
-		return 'songs:assets/songs/${formatToSongPath(song)}/Inst.$SOUND_EXT';
-		#else
-		var songKey:String = '${formatToSongPath(song)}/Inst';
-		var inst = returnSound('songs', songKey);
+		var songKey:String = '${song.toLowerCase().replace(' ', '-')}';
+		var inst = returnSound(songKey, 'Inst', 'songs');
 		return inst;
-		#end
 	}
 
-	inline static public function image(key:String, ?library:String):Dynamic
+	inline static public function image(key:String, ?library:String):FlxGraphic
 	{
-		#if NO_PRELOAD_ALL
-		return getPath('images/$key.png', IMAGE, library);
-		#else
 		// streamlined the assets process more
 		var returnAsset:FlxGraphic = returnGraphic(key, library);
 		return returnAsset;
-		#end
 	}
 	
 	static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
@@ -339,7 +319,7 @@ class Paths
 	public static var currentTrackedSounds:Map<String, Sound> = [];
 	public static function returnSound(path:String, key:String, ?library:String) {
 		#if MODS_ALLOWED
-		var file:String = modsSounds(path, key);
+		var file:String = modsSounds((library != null ? '$library/' : '') + path, key);
 		if(FileSystem.exists(file)) {
 			if(!currentTrackedSounds.exists(file)) {
 				currentTrackedSounds.set(file, Sound.fromFile(file));
@@ -350,13 +330,11 @@ class Paths
 		#end
 		// I hate this so god damn much
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);	
-		gottenPath = gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length);
-		// trace(gottenPath);
 		if(!currentTrackedSounds.exists(gottenPath)) 
 		#if MODS_ALLOWED
-			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath));
+			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length)));
 		#else
-			currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(getPath('$path/$key.$SOUND_EXT', SOUND, library)));
+			currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(gottenPath));
 		#end
 		localTrackedAssets.push(key);
 		return currentTrackedSounds.get(gottenPath);

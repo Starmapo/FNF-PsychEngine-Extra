@@ -71,11 +71,9 @@ class Main extends Sprite
 		#end
 
 		ClientPrefs.loadDefaultKeys();
-		#if PRELOAD_ALL
 		// fuck you, persistent caching stays ON during sex
 		FlxGraphic.defaultPersist = true;
 		// the reason for this is we're going to be handling our own cache smartly
-		#end
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		#if !mobile

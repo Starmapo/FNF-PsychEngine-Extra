@@ -142,7 +142,7 @@ class Note extends FlxSprite
 			}
 		}
 		if (maniaData == null) {
-			var bad:SkinFile = UIData.DEFAULT_SKIN;
+			var bad:SkinFile = UIData.getUIFile('');
 			for (i in bad.mania) {
 				if (i.keys == keyAmount) {
 					maniaData = i;
@@ -171,7 +171,7 @@ class Note extends FlxSprite
 			prevNote = this;
 
 		if (uiSkin == null) {
-			uiSkin = UIData.DEFAULT_SKIN;
+			uiSkin = UIData.getUIFile('');
 		}
 
 		this.prevNote = prevNote;

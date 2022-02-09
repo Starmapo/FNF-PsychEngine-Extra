@@ -214,7 +214,6 @@ class PlayState extends MusicBeatState
 	var heyTimer:Float;
 
 	var bgGirls:BackgroundGirls;
-	var wiggleShit:WiggleEffect = new WiggleEffect();
 	var bgGhouls:BGSprite;
 
 	public var songScore:Int = 0;
@@ -2133,7 +2132,7 @@ class PlayState extends MusicBeatState
 		#if cpp
 		@:privateAccess
 		{
-			if (playbackRate != 1 && FlxG.sound.music != null) {
+			if (playbackRate != 1 && FlxG.sound.music != null && FlxG.sound.music._channel != null) {
 				lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, playbackRate);
 				if (vocals.playing)
 					lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, playbackRate);
@@ -5087,10 +5086,11 @@ class PlayState extends MusicBeatState
 	}
 
 	function setSkins():Void {
+		trace('setting skins');
 		//PLAYER
 		var uiSkin = UIData.getUIFile(SONG.uiSkin);
 		if (uiSkin == null) {
-			uiSkin = UIData.DEFAULT_SKIN;
+			uiSkin = UIData.getUIFile('');
 		}
 		var maniaData:ManiaArray = null;
 		for (i in uiSkin.mania) {
@@ -5101,17 +5101,18 @@ class PlayState extends MusicBeatState
 		}
 		if (maniaData == null) {
 			FlxG.log.warn('Couldn\'t get ' + playerKeys + 'K data for ' + uiSkin.name + '!');
-			uiSkin = UIData.DEFAULT_SKIN;
+			uiSkin = UIData.getUIFile('');
 			maniaData = uiSkin.mania[playerKeys - 1];
 		}
 		singAnimations = maniaData.singAnimations;
 		playerColors = maniaData.colors;
 		uiSkinMap.set('player', uiSkin);
+		trace(uiSkinMap.get('player').name);
 		
 		//OPPONENT
 		var uiSkin = UIData.getUIFile(SONG.uiSkinOpponent);
 		if (uiSkin == null) {
-			uiSkin = UIData.DEFAULT_SKIN;
+			uiSkin = UIData.getUIFile('');
 		}
 		var maniaData:ManiaArray = null;
 		for (i in uiSkin.mania) {
@@ -5122,12 +5123,13 @@ class PlayState extends MusicBeatState
 		}
 		if (maniaData == null) {
 			FlxG.log.warn('Couldn\'t get ' + opponentKeys + 'K data for ' + uiSkin.name + '!');
-			uiSkin = UIData.DEFAULT_SKIN;
+			uiSkin = UIData.getUIFile('');
 			maniaData = uiSkin.mania[opponentKeys - 1];
 		}
 		dadSingAnimations = maniaData.singAnimations;
 		opponentColors = maniaData.colors;
 		uiSkinMap.set('opponent', uiSkin);
+		trace(uiSkinMap.get('opponent').name);
 
 		var imagesToCheck = [
 			'shit',
@@ -5147,6 +5149,7 @@ class PlayState extends MusicBeatState
 
 		for (i in imagesToCheck) {
 			uiSkinMap.set(i, UIData.checkSkinFile(i, opponentChart ? uiSkinMap.get('opponent') : uiSkinMap.get('player')));
+			trace(i + uiSkinMap.get(i).name);
 		}
 	}
 

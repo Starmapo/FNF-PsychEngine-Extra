@@ -34,8 +34,6 @@ typedef ManiaArray = {
 }
 
 class UIData {
-    public static var DEFAULT_SKIN = getUIFile('');
-
     public static function getUIFile(skin:String):SkinFile {
         if (skin == null || skin.length < 1) skin = 'default';
         var daFile:SkinFile = null;
@@ -95,7 +93,7 @@ class UIData {
             #else
             if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
             #end
-                return DEFAULT_SKIN;
+                return getUIFile('');
             }
 		}
         return uiSkin;
