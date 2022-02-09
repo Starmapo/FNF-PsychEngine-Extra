@@ -3055,7 +3055,7 @@ class PlayState extends MusicBeatState
 						if (daNote.animation.curAnim.name.endsWith('end')) {
 							daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * songSpeed + (46 * (songSpeed - 1));
 							daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * songSpeed;
-							daNote.y += daNote.mustPress != opponentChart ? uiSkinMap.get('player').tailYOffset : uiSkinMap.get('opponent').tailYOffset;
+							daNote.y += daNote.mustPress != opponentChart ? uiSkinMap.get('player').downscrollTailYOffset : uiSkinMap.get('opponent').downscrollTailYOffset;
 						}
 						
 						daNote.y += (strumHeight / 2) - (60.5 * (songSpeed - 1));
@@ -3148,7 +3148,11 @@ class PlayState extends MusicBeatState
 			char.scale.y = charGroup.members[char.ID].scale.y;
 			char.scrollFactor.x = charGroup.members[char.ID].scrollFactor.x;
 			char.scrollFactor.y = charGroup.members[char.ID].scrollFactor.y;
+			char.origin.x = charGroup.members[char.ID].origin.x;
+			char.origin.y = charGroup.members[char.ID].origin.y;
 			char.alpha = charGroup.members[char.ID].alpha * 0.5;
+			char.color = charGroup.members[char.ID].color;
+			char.blend = charGroup.members[char.ID].blend;
 			if (char.animation.curAnim.name == char.lastAnim) {
 				char.visible = charGroup.members[char.ID].visible;
 			} else {
@@ -4398,7 +4402,7 @@ class PlayState extends MusicBeatState
 			}
 
 			for (char in daNote.characters) {
-				if(charGroup.members[char].hasMissAnimations)
+				if(char < charGroup.members.length && charGroup.members[char].hasMissAnimations)
 				{
 					var daAlt = '';
 					if(daNote.noteType == 'Alt Animation') daAlt = '-alt';
@@ -4477,40 +4481,42 @@ class PlayState extends MusicBeatState
 			}
 
 			for (char in note.characters) {
-				if(note.noteType == 'Hey!' && charGroup.members[char].animOffsets.exists('hey')) {
-					charGroup.members[char].playAnim('hey', true);
-					charGroup.members[char].specialAnim = true;
-					charGroup.members[char].heyTimer = 0.6 / playbackRate;
-				} else if(!note.noAnimation) {
-					var altAnim:String = "";
+				if (char < charGroup.members.length) {
+					if(note.noteType == 'Hey!' && charGroup.members[char].animOffsets.exists('hey')) {
+						charGroup.members[char].playAnim('hey', true);
+						charGroup.members[char].specialAnim = true;
+						charGroup.members[char].heyTimer = 0.6 / playbackRate;
+					} else if(!note.noAnimation) {
+						var altAnim:String = "";
 
-					var curSection:Int = Conductor.getCurSection(SONG, curStep);
-					if (SONG.notes[curSection] != null)
-					{
-						if ((SONG.notes[curSection].altAnim && !opponentChart) || note.noteType == 'Alt Animation') {
-							altAnim = '-alt';
+						var curSection:Int = Conductor.getCurSection(SONG, curStep);
+						if (SONG.notes[curSection] != null)
+						{
+							if ((SONG.notes[curSection].altAnim && !opponentChart) || note.noteType == 'Alt Animation') {
+								altAnim = '-alt';
+							}
 						}
-					}
 
-					var animToPlay:String = dadSingAnimations[note.noteData] + altAnim;
+						var animToPlay:String = dadSingAnimations[note.noteData] + altAnim;
 
-					if (note.noteType == 'Trail Note') {
-						if (note.gfNote) {
-							doubleTrailMap.get('gf$char').playAnim(animToPlay, true);
-							doubleTrailMap.get('gf$char').holdTimer = 0;
-							doubleTrailMap.get('gf$char').lastAnim = animToPlay;
-						} else if (!opponentChart) {
-							doubleTrailMap.get('dad$char').playAnim(animToPlay, true);
-							doubleTrailMap.get('dad$char').holdTimer = 0;
-							doubleTrailMap.get('dad$char').lastAnim = animToPlay;
-						} else {
-							doubleTrailMap.get('bf$char').playAnim(animToPlay, true);
-							doubleTrailMap.get('bf$char').holdTimer = 0;
-							doubleTrailMap.get('bf$char').lastAnim = animToPlay;
+						if (note.noteType == 'Trail Note') {
+							if (note.gfNote) {
+								doubleTrailMap.get('gf$char').playAnim(animToPlay, true);
+								doubleTrailMap.get('gf$char').holdTimer = 0;
+								doubleTrailMap.get('gf$char').lastAnim = animToPlay;
+							} else if (!opponentChart) {
+								doubleTrailMap.get('dad$char').playAnim(animToPlay, true);
+								doubleTrailMap.get('dad$char').holdTimer = 0;
+								doubleTrailMap.get('dad$char').lastAnim = animToPlay;
+							} else {
+								doubleTrailMap.get('bf$char').playAnim(animToPlay, true);
+								doubleTrailMap.get('bf$char').holdTimer = 0;
+								doubleTrailMap.get('bf$char').lastAnim = animToPlay;
+							}
+						} else if (!charGroup.members[char].specialAnim) {
+							charGroup.members[char].playAnim(animToPlay, true);
+							charGroup.members[char].holdTimer = 0;
 						}
-					} else if (!charGroup.members[char].specialAnim) {
-						charGroup.members[char].playAnim(animToPlay, true);
-						charGroup.members[char].holdTimer = 0;
 					}
 				}
 			}
@@ -4576,9 +4582,11 @@ class PlayState extends MusicBeatState
 					case 'Hurt Note': //Hurt note
 						if (!inEditor) {
 							for (i in note.characters) {
-								if(charGroup.members[i].animation.getByName('hurt') != null) {
-									charGroup.members[i].playAnim('hurt', true);
-									charGroup.members[i].specialAnim = true;
+								if (i < charGroup.members.length) {
+									if(charGroup.members[i].animation.getByName('hurt') != null) {
+										charGroup.members[i].playAnim('hurt', true);
+										charGroup.members[i].specialAnim = true;
+									}
 								}
 							}
 						}
@@ -4612,29 +4620,31 @@ class PlayState extends MusicBeatState
 				var animToPlay:String = singAnimations[note.noteData];
 
 				for (i in note.characters) {
-					if (note.noteType == 'Trail Note') {
-						if (note.gfNote) {
-							doubleTrailMap.get('gf$i').playAnim(animToPlay + daAlt, true);
-							doubleTrailMap.get('gf$i').holdTimer = 0;
-							doubleTrailMap.get('gf$i').lastAnim = animToPlay + daAlt;
-						} else if (opponentChart) {
-							doubleTrailMap.get('dad$i').playAnim(animToPlay + daAlt, true);
-							doubleTrailMap.get('dad$i').holdTimer = 0;
-							doubleTrailMap.get('dad$i').lastAnim = animToPlay + daAlt;
-						} else {
-							doubleTrailMap.get('bf$i').playAnim(animToPlay + daAlt, true);
-							doubleTrailMap.get('bf$i').holdTimer = 0;
-							doubleTrailMap.get('bf$i').lastAnim = animToPlay + daAlt;
+					if (i < charGroup.members.length) {
+						if (note.noteType == 'Trail Note') {
+							if (note.gfNote) {
+								doubleTrailMap.get('gf$i').playAnim(animToPlay + daAlt, true);
+								doubleTrailMap.get('gf$i').holdTimer = 0;
+								doubleTrailMap.get('gf$i').lastAnim = animToPlay + daAlt;
+							} else if (opponentChart) {
+								doubleTrailMap.get('dad$i').playAnim(animToPlay + daAlt, true);
+								doubleTrailMap.get('dad$i').holdTimer = 0;
+								doubleTrailMap.get('dad$i').lastAnim = animToPlay + daAlt;
+							} else {
+								doubleTrailMap.get('bf$i').playAnim(animToPlay + daAlt, true);
+								doubleTrailMap.get('bf$i').holdTimer = 0;
+								doubleTrailMap.get('bf$i').lastAnim = animToPlay + daAlt;
+							}
+						} else if (!charGroup.members[i].specialAnim) {
+							charGroup.members[i].playAnim(animToPlay + daAlt, true);
+							charGroup.members[i].holdTimer = 0;
 						}
-					} else if (!charGroup.members[i].specialAnim) {
-						charGroup.members[i].playAnim(animToPlay + daAlt, true);
-						charGroup.members[i].holdTimer = 0;
 					}
 				}
 
 				if(note.noteType == 'Hey!') {
 					for (i in note.characters) {
-						if(charGroup.members[i].animOffsets.exists('hey')) {
+						if(i < charGroup.members.length && charGroup.members[i].animOffsets.exists('hey')) {
 							charGroup.members[i].playAnim('hey', true);
 							charGroup.members[i].specialAnim = true;
 							charGroup.members[i].heyTimer = 0.6 / playbackRate;

@@ -437,6 +437,6 @@
 	"ratingScale": 0.7,
 	"comboNumScale": 0.5,
 	"sustainXOffset": 0,
-	"tailYOffset": -19,
+	"downscrollTailYOffset": -19,
 	"noAntialiasing": false
 }

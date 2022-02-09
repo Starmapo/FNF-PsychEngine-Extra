@@ -359,6 +359,6 @@
 	"ratingScale": 0.85,
 	"comboNumScale": 1,
 	"sustainXOffset": 0,
-	"tailYOffset": 8,
+	"downscrollTailYOffset": 8,
 	"noAntialiasing": true
 }

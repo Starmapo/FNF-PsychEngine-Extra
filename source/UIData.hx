@@ -19,8 +19,12 @@ typedef SkinFile = {
     var ratingScale:Float; //rating and 'combo' sprites scale
     var comboNumScale:Float; //combo numbers scale
     var sustainXOffset:Float; //sustain note x offset
-    var tailYOffset:Float; //sustain tail note y offset for downscroll
+    var downscrollTailYOffset:Null<Float>; //sustain tail note y offset for downscroll
     var noAntialiasing:Bool; //whether to always have antialiasing disabled
+}
+
+typedef OldSkin = {
+    var tailYOffset:Null<Float>; //was renamed to be more clear as there's no ui editor yet
 }
 
 typedef ManiaArray = {
@@ -58,6 +62,12 @@ class UIData {
         }
         daFile = cast Json.parse(rawJson);
         daFile.name = skin;
+        
+        var testyFile:OldSkin = cast Json.parse(rawJson);
+        if (daFile.downscrollTailYOffset == null) {
+            daFile.downscrollTailYOffset = testyFile.tailYOffset;
+        }
+        
         return daFile;
     }
 

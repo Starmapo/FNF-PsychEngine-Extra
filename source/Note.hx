@@ -72,7 +72,7 @@ class Note extends FlxSprite
 
 	public var noAnimation:Bool = false;
 	public var hitCausesMiss:Bool = false;
-	public var distance:Float = 2000;//plan on doing scroll directions soon -bb
+	public var distance:Float = 2000;
 
 	var keyAmount:Int = 4;
 	var colors:Array<String> = ['left', 'down', 'up', 'right'];
