@@ -20,16 +20,17 @@ class CreditsState extends MusicBeatState
 {
 	var curSelected:Int = -1;
 
-	private var grpOptions:FlxTypedGroup<Alphabet>;
-	private var iconArray:Array<AttachedSprite> = [];
-	private var creditsStuff:Array<Array<String>> = [];
+	var grpOptions:FlxTypedGroup<Alphabet>;
+	var iconArray:Array<AttachedSprite> = [];
+	var creditsStuff:Array<Array<String>> = [];
 
 	var bg:FlxSprite;
 	var descText:FlxText;
 	var intendedColor:Int;
 	var colorTween:FlxTween;
 
-	public var warningText:FlxText;
+	var warningText:FlxText;
+	var warningBG:FlxSprite;
 
 	override function create()
 	{
@@ -78,6 +79,12 @@ class CreditsState extends MusicBeatState
 		#end
 
 		var pisspoop:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
+			['Psych Engine Extra'],
+			['srPerez',				'srperez',			'Original multi-key designs',							'https://twitter.com/NewSrPerez',									'FBCA20'],
+			['KadeDev',				'kade',				'Kade Engine Creator\n(some code is from there)',		'https://twitter.com/kade0912',										'4F6441'],
+			['Leather128',			'leather',			'Leather Engine Creator\n(some code is from there)',	'https://www.youtube.com/channel/UCbCtO-ghipZessWaOBx8u1g',			'01A1FF'],
+			['GitHub Contributors',	'github',			'Pull Requests to Psych Engine',						'https://github.com/ShadowMario/FNF-PsychEngine/pulls',				'546782'],
+			[''],
 			['Psych Engine Team'],
 			['Shadow Mario',		'shadowmario',		'Main Programmer of Psych Engine',						'https://twitter.com/Shadow_Mario_',	'444444'],
 			['RiverOaken',			'riveroaken',		'Main Artist/Animator of Psych Engine',					'https://twitter.com/river_oaken',		'C30085'],
@@ -90,7 +97,6 @@ class CreditsState extends MusicBeatState
 			['PolybiusProxy',		'polybiusproxy',	'.MP4 Video Loader Extension',							'https://twitter.com/polybiusproxy',	'FFEAA6'],
 			['Keoiki',				'keoiki',			'Note Splash Animations',								'https://twitter.com/Keoiki_',			'FFFFFF'],
 			['Smokey',				'smokey',			'Spritemap Texture Support',							'https://twitter.com/Smokey_5_',		'0033CC'],
-			[''],
 			[''],
 			["Funkin' Crew"],
 			['ninjamuffin99',		'ninjamuffin99',	"Programmer of Friday Night Funkin'",					'https://twitter.com/ninja_muffin99',	'F73838'],
@@ -137,11 +143,22 @@ class CreditsState extends MusicBeatState
 			}
 		}
 
+		var descBar = new FlxSprite(0, 550).makeGraphic(FlxG.width, FlxG.height - 550, FlxColor.BLACK);
+		descBar.alpha = 0.5;
+		descBar.scrollFactor.set();
+		add(descBar);
+
 		descText = new FlxText(50, 600, 1180, "", 32);
 		descText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		descText.scrollFactor.set();
 		descText.borderSize = 2.4;
 		add(descText);
+		
+		warningBG = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		warningBG.alpha = 0.5;
+		warningBG.visible = false;
+		warningBG.scrollFactor.set();
+		add(warningBG);
 
 		warningText = new FlxText(0, 0, FlxG.width, "", 48);
 		warningText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -202,6 +219,7 @@ class CreditsState extends MusicBeatState
 				warningText.visible = false;
 			}
 		}
+		warningBG.visible = warningText.visible;
 		super.update(elapsed);
 	}
 
