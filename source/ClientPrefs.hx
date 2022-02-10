@@ -234,7 +234,7 @@ class ClientPrefs {
 		if(FlxG.save.data.stageQuality != null) {
 			stageQuality = FlxG.save.data.stageQuality;
 		} else if(FlxG.save.data.lowQuality != null) {
-			stageQuality = (FlxG.save.data.lowQuality ? 'Normal' : 'Low');
+			stageQuality = (FlxG.save.data.lowQuality ? 'Low' : 'Normal');
 		}
 		if(FlxG.save.data.framerate != null) {
 			framerate = FlxG.save.data.framerate;
