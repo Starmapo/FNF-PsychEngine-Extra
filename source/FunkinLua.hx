@@ -171,8 +171,11 @@ class FunkinLua {
 		set('noteOffset', ClientPrefs.noteOffset);
 		set('healthBarAlpha', ClientPrefs.healthBarAlpha);
 		set('noResetButton', ClientPrefs.noReset);
-		set('lowQuality', ClientPrefs.lowQuality);
+		set('stageQuality', ClientPrefs.stageQuality);
 		set('instantRestart', ClientPrefs.instantRestart);
+
+		//FOR COMPATIBILITY REASONS
+		set('lowQuality', ClientPrefs.stageQuality != 'Normal');
 
 		// Block require and os, Should probably have a proper function but this should be good enough for now until someone smarter comes along and recreates a safe version of the OS library
 		set('require', false);
