@@ -1,5 +1,7 @@
 package options;
 
+import flixel.FlxG;
+
 using StringTools;
 
 class GameplaySettingsSubState extends BaseOptionsMenu
@@ -138,6 +140,21 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		option.minValue = 2;
 		option.maxValue = 10;
 		option.changeValue = 0.1;
+		addOption(option);
+
+		var option:Option = new Option('Auto Pause',
+			"If checked, the game will be paused when you\nswitch to another window.",
+			'autoPause',
+			'bool',
+			#if html5
+			false
+			#else
+			true
+			#end
+			);
+		option.onChange = function() {
+			FlxG.autoPause = ClientPrefs.autoPause;
+		}
 		addOption(option);
 
 		super();
