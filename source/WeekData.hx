@@ -222,7 +222,6 @@ class WeekData {
 		return weeksList[PlayState.storyWeek];
 	}
 
-	//Used on LoadingState, nothing really too relevant
 	public static function getCurrentWeek():WeekData {
 		return weeksLoaded.get(weeksList[PlayState.storyWeek]);
 	}

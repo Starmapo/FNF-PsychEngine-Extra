@@ -81,6 +81,6 @@ For Windows, you need to install Visual Studio Community 2019. While installing 
 
 This will take a while and requires about 4GB of space. Once that is done you can open up a command line in the project's directory and run `lime test windows -debug` (remove "-debug" for official releases). Once that command finishes (it takes forever even on a higher end PC), you can run FNF from the .exe file under export\release\windows\bin
 
-For Mac, you need to install [Xcode](https://apps.apple.com/us/app/xcode/id497799835). After that, run 'lime test mac -debug' (remove "-debug" for official releases) in the project's directory and then run the executable file in export/release/mac/bin.
+For Mac, you need to install [Xcode](https://apps.apple.com/us/app/xcode/id497799835). After that, run `lime test mac -debug` (remove "-debug" for official releases) in the project's directory and then run the executable file in export/release/mac/bin.
 
 For Linux, you only need to open a terminal in the project directory and run `lime test linux -debug` (remove "-debug" for official releases) and then run the executable file in export/release/linux/bin. 
