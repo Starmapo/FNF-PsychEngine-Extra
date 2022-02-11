@@ -206,7 +206,8 @@ class CreditsState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			MusicBeatState.switchState(new MainMenuState());
 		}
-		if((controls.ACCEPT || FlxG.mouse.justPressed) && !warningText.visible) {
+		if((controls.ACCEPT || FlxG.mouse.justPressed) && !warningText.visible 
+			&& creditsStuff[curSelected][3] != null && creditsStuff[curSelected][3].length > 0) {
 			warningText.text = "WARNING!!!\nYOU ARE ABOUT TO GO TO: \n" + creditsStuff[curSelected][3] + "\nARE YOU ABSOLUTELY SURE YOU WANT TO GO TO THIS URL? \n(Y - Yes, N - No)";
 			warningText.screenCenter();
 			warningText.visible = true;
