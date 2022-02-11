@@ -80,6 +80,7 @@ class CreditsState extends MusicBeatState
 
 		var pisspoop:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
 			['Psych Engine Extra'],
+			['Starmapo',			'star',				'Main Programmer/Artist',								'https://github.com/Starmapo',										'EADD8C'], // NO TWITTER !!
 			['srPerez',				'srperez',			'Original multi-key designs',							'https://twitter.com/NewSrPerez',									'FBCA20'],
 			['KadeDev',				'kade',				'Kade Engine Creator\n(some code is from there)',		'https://twitter.com/kade0912',										'4F6441'],
 			['Leather128',			'leather',			'Leather Engine Creator\n(some code is from there)',	'https://www.youtube.com/channel/UCbCtO-ghipZessWaOBx8u1g',			'01A1FF'],
