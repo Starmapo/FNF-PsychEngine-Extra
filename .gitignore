@@ -4,6 +4,9 @@ APIStuff.hx
 art/build_x32-officialrelease.bat
 art/build_x64-officialrelease.bat
 art/test_x64-debug-officialrelease.bat
+art/flashFiles/*.png
+art/flashFiles/*.svg
+!art/flashFiles/emptyAchievement.png
 
 ### VS Code
 export/*

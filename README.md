@@ -1,4 +1,5 @@
-# NOTE: THIS IS A WORK IN PROGRESS AND IS NOT MEANT TO BE USED YET!
+# NOTE: THIS ENGINE IS BEING WORKED ON AND IS NOT MEANT TO BE USED YET!
+## You can still use it, but bugs may be present
 
 # Friday Night Funkin' - Psych Engine Extra
 Modified version of Psych Engine adding more stuff.

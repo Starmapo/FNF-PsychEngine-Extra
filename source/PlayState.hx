@@ -2416,7 +2416,7 @@ class PlayState extends MusicBeatState
 		var keys:Int = bfKeys;
 		if (player == 0) keys = dadKeys;
 
-		var delay = (Conductor.crochet * (Conductor.denominator / 4)) / (4000 / keys);
+		var delay = (Conductor.crochet * (Conductor.denominator / 4)) / (250 * keys);
 
 		for (i in 0...keys)
 		{
