@@ -1,6 +1,8 @@
 # NOTE: THIS ENGINE IS BEING WORKED ON AND IS NOT MEANT TO BE USED YET!
 ## You can still use it, but bugs may be present
 
+![Psych Engine Extra](https://user-images.githubusercontent.com/85134252/153526241-9f265b56-ffd1-4452-bb61-c7500471a910.png)
+
 # Friday Night Funkin' - Psych Engine Extra
 Modified version of Psych Engine adding more stuff.
 
