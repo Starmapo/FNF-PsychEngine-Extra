@@ -40,18 +40,52 @@ class LoadingState extends MusicBeatState
 	}
 
 	var funkay:FlxSprite;
+	var funkayOGWidth:Float = FlxG.width;
 	var loadBar:FlxSprite;
 	override function create()
 	{
+		var curStage = PlayState.SONG.stage;
+		//trace('stage is: ' + curStage);
+		if (PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1) {
+			switch (Paths.formatToSongPath(PlayState.SONG.song)) {
+				case 'tutorial' | 'bopeebo' | 'fresh' | 'dadbattle' | 'dad-battle':
+					curStage = 'stage';
+				case 'spookeez' | 'south' | 'monster':
+					curStage = 'spooky';
+				case 'pico' | 'blammed' | 'philly' | 'philly-nice':
+					curStage = 'philly';
+				case 'milf' | 'satin-panties' | 'high':
+					curStage = 'limo';
+				case 'cocoa' | 'eggnog':
+					curStage = 'mall';
+				case 'winter-horrorland':
+					curStage = 'mallEvil';
+				case 'senpai' | 'roses':
+					curStage = 'school';
+				case 'thorns':
+					curStage = 'schoolEvil';
+				default:
+					curStage = 'funkay';
+			}
+		}
+
+		var imagePath = Paths.image('preloaders/funkay');
+		var imageSuffix = (PlayState.isStoryMode ? '-story' : '');
+		if (Assets.exists(Paths.getPath('images/preloaders/${curStage + imageSuffix}.png', IMAGE))) {
+			imagePath = Paths.image('preloaders/${curStage + imageSuffix}');
+		} else if (Assets.exists(Paths.getPath('images/preloaders/$curStage.png', IMAGE))) {
+			imagePath = Paths.image('preloaders/$curStage');
+		}
 		var bg:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d);
 		add(bg);
-		funkay = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/funkay.png', IMAGE));
+		funkay = new FlxSprite(0, 0).loadGraphic(imagePath);
 		funkay.setGraphicSize(0, FlxG.height);
 		funkay.updateHitbox();
 		funkay.antialiasing = ClientPrefs.globalAntialiasing;
 		add(funkay);
 		funkay.scrollFactor.set();
 		funkay.screenCenter();
+		funkayOGWidth = funkay.width;
 
 		loadBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width, 10, 0xffff16d2);
 		loadBar.screenCenter(X);
@@ -108,7 +142,8 @@ class LoadingState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		funkay.setGraphicSize(Std.int(0.88 * FlxG.width + 0.9 * (funkay.width - 0.88 * FlxG.width)));
+		funkay.setGraphicSize(Std.int(FlxMath.lerp(funkay.width, funkayOGWidth, CoolUtil.boundTo(elapsed * 12, 0, 1))));
+		//funkay.setGraphicSize(Std.int(0.88 * FlxG.width + 0.9 * (funkay.width - 0.88 * FlxG.width)));
 		funkay.updateHitbox();
 		if (controls.ACCEPT)
 		{

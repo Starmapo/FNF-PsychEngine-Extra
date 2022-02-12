@@ -520,9 +520,9 @@ class PlayState extends MusicBeatState
 
 		Conductor.mapBPMChanges(SONG, playbackRate);
 
-		if (PlayState.storyDifficulty > CoolUtil.difficulties.length - 1) {
-			PlayState.storyDifficulty = CoolUtil.difficulties.indexOf('Normal');
-			if (PlayState.storyDifficulty == -1) PlayState.storyDifficulty = 0;
+		if (storyDifficulty > CoolUtil.difficulties.length - 1) {
+			storyDifficulty = CoolUtil.difficulties.indexOf('Normal');
+			if (storyDifficulty == -1) storyDifficulty = 0;
 		}
 
 		#if DISCORD_ALLOWED
@@ -546,9 +546,9 @@ class PlayState extends MusicBeatState
 
 		GameOverSubstate.resetVariables();
 
-		curStage = PlayState.SONG.stage;
+		curStage = SONG.stage;
 		//trace('stage is: ' + curStage);
-		if (PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1) {
+		if (SONG.stage == null || SONG.stage.length < 1) {
 			switch (curSong)
 			{
 				case 'spookeez' | 'south' | 'monster':
@@ -1707,7 +1707,7 @@ class PlayState extends MusicBeatState
 				} else if (modchartTexts.exists(cam)) {
 					Reflect.setProperty(modchartTexts.get(cam),"shader",effect.shader);
 				} else {
-					var OBJ = Reflect.getProperty(PlayState.instance,cam);
+					var OBJ = Reflect.getProperty(instance,cam);
 					Reflect.setProperty(OBJ,"shader", effect.shader);
 				}	
 		}
@@ -2862,7 +2862,7 @@ class PlayState extends MusicBeatState
 
 		super.update(elapsed);
 
-		if (!inEditor && generatedMusic && PlayState.SONG.notes[Conductor.getCurSection(SONG, curStep)] != null && !endingSong && !isCameraOnForcedPos)
+		if (!inEditor && generatedMusic && SONG.notes[Conductor.getCurSection(SONG, curStep)] != null && !endingSong && !isCameraOnForcedPos)
 		{
 			moveCameraSection(Conductor.getCurSection(SONG, curStep));
 		}
@@ -3946,7 +3946,7 @@ class PlayState extends MusicBeatState
 					var difficulty:String = CoolUtil.getDifficultyFilePath();
 
 					trace('LOADING NEXT SONG');
-					trace(Paths.formatToSongPath(PlayState.storyPlaylist[0]) + difficulty);
+					trace(Paths.formatToSongPath(storyPlaylist[0]) + difficulty);
 
 					var winterHorrorlandNext = (curSong == "eggnog");
 					if (winterHorrorlandNext)
@@ -3966,7 +3966,7 @@ class PlayState extends MusicBeatState
 					prevCamFollow = camFollow;
 					prevCamFollowPos = camFollowPos;
 
-					PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
+					SONG = Song.loadFromJson(storyPlaylist[0] + difficulty, storyPlaylist[0]);
 					FlxG.sound.music.stop();
 
 					if (winterHorrorlandNext) {
