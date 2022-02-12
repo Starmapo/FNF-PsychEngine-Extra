@@ -2210,7 +2210,7 @@ class PlayState extends MusicBeatState
 
 			var file:Dynamic = Paths.voices(curSong, 'Dad');
 			vocalsDad = new FlxSound();
-			if (Std.isOfType(file, Sound) || OpenFlAssets.exists(file)) {
+			if (file != null) {
 				foundDadVocals = true;
 				vocalsDad.loadEmbedded(file);
 			}

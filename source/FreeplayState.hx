@@ -289,7 +289,7 @@ class FreeplayState extends MusicBeatState
 
 					var file:Dynamic = Paths.voices(Paths.formatToSongPath(PlayState.SONG.song), 'Dad');
 					vocalsDad = new FlxSound();
-					if (Std.isOfType(file, Sound) || Assets.exists(file)) {
+					if (file != null) {
 						vocalsDad.loadEmbedded(file);
 					}
 				} else {

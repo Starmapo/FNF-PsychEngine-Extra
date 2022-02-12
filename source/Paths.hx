@@ -329,7 +329,16 @@ class Paths
 		}
 		#end
 		// I hate this so god damn much
-		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);	
+		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
+		#if MODS_ALLOWED
+		if (!OpenFlAssets.exists(gottenPath) || !FileSystem.exists(gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length)))
+		#else
+		if (!OpenFlAssets.exists(gottenPath))
+		#end
+		{
+			trace('didnt find sound $key');
+			return null;
+		}
 		if(!currentTrackedSounds.exists(gottenPath)) 
 		#if MODS_ALLOWED
 			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length)));

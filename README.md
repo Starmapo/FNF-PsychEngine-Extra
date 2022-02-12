@@ -84,4 +84,8 @@ This will take a while and requires about 4GB of space. Once that is done you ca
 
 For Mac, you need to install [Xcode](https://apps.apple.com/us/app/xcode/id497799835). After that, run `lime test mac -debug` (remove "-debug" for official releases) in the project's directory and then run the executable file in export/release/mac/bin.
 
-For Linux, you only need to open a terminal in the project directory and run `lime test linux -debug` (remove "-debug" for official releases) and then run the executable file in export/release/linux/bin. 
+For Linux, you only need to open a terminal in the project directory and run `lime test linux -debug` (remove "-debug" for official releases) and then run the executable file in export/release/linux/bin.
+
+To build for 32-bit, just add `-32` to the `lime test` command.
+
+`lime test windows -32`

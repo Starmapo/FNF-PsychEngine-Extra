@@ -66,8 +66,10 @@ class LoadingState extends MusicBeatState
 				var introComplete = callbacks.add("introComplete");
 				if (PlayState.SONG != null) {
 					checkLoadSong(getSongPath());
-					if (PlayState.SONG.needsVoices)
+					if (PlayState.SONG.needsVoices) {
 						checkLoadSong(getVocalPath());
+						checkLoadSong(getDadVocalPath());
+					}
 				}
 				checkLibrary("shared");
 				if(directory != null && directory.length > 0 && directory != 'shared') {
@@ -83,14 +85,8 @@ class LoadingState extends MusicBeatState
 	
 	function checkLoadSong(path:String)
 	{
-		if (!Assets.cache.hasSound(path))
+		if (Assets.exists(path) && !Assets.cache.hasSound(path))
 		{
-			var library = Assets.getLibrary("songs");
-			final symbolPath = path.split(":").pop();
-			// @:privateAccess
-			// library.types.set(symbolPath, SOUND);
-			// @:privateAccess
-			// library.pathGroups.set(symbolPath, [library.__cacheBreak(symbolPath)]);
 			var callback = callbacks.add("song:" + path);
 			Assets.loadSound(path).onComplete(function (_) { callback(); });
 		}
@@ -143,6 +139,11 @@ class LoadingState extends MusicBeatState
 	{
 		return 'songs:assets/songs/${Paths.formatToSongPath(PlayState.SONG.song)}/Voices.${Paths.SOUND_EXT}';
 	}
+
+	static function getDadVocalPath()
+	{
+		return 'songs:assets/songs/${Paths.formatToSongPath(PlayState.SONG.song)}/VoicesDad.${Paths.SOUND_EXT}';
+	}
 	
 	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false)
 	{
@@ -163,7 +164,7 @@ class LoadingState extends MusicBeatState
 		#if NO_PRELOAD_ALL
 		var loaded:Bool = false;
 		if (PlayState.SONG != null) {
-			loaded = isSoundLoaded(getSongPath()) && (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath())) && isLibraryLoaded("shared") && isLibraryLoaded(directory);
+			loaded = isSoundLoaded(getSongPath()) && (!PlayState.SONG.needsVoices || (isSoundLoaded(getVocalPath()) && isSoundLoaded(getDadVocalPath()))) && isLibraryLoaded("shared") && isLibraryLoaded(directory);
 		}
 		
 		if (!loaded)
@@ -178,7 +179,7 @@ class LoadingState extends MusicBeatState
 	#if NO_PRELOAD_ALL
 	static function isSoundLoaded(path:String):Bool
 	{
-		return Assets.cache.hasSound(path);
+		return Assets.cache.hasSound(path) || !Assets.exists(path);
 	}
 	
 	static function isLibraryLoaded(library:String):Bool
