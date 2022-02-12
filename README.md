@@ -1,5 +1,5 @@
 # NOTE: THIS ENGINE IS BEING WORKED ON AND IS NOT MEANT TO BE USED YET!
-## You can still use it, but bugs may be present
+## You can still use it, just remember it's in prerelease state
 
 ![Psych Engine Extra](https://user-images.githubusercontent.com/85134252/153526241-9f265b56-ffd1-4452-bb61-c7500471a910.png)
 
@@ -7,7 +7,7 @@
 Modified version of Psych Engine adding more stuff. (see below)
 
 ## Credits:
-* Starmapo - Psych Engine Extra stuff
+* Starmapo - Psych Engine Extra Coding and Arts
 
 * Shadow Mario - Coding
 * RiverOaken - Arts and Animations
@@ -33,6 +33,7 @@ _____________________________________
 * Custom time signatures (3/4, 6/8, etc.)
 * Custom UI skins (notes, splashes, ratings, countdown, etc.)
 * Character groups (more than one player, opponent, and GF)
+* Separate voices for the player and opponent (by adding a 'VoicesDad' file)
 * Gameplay Changers: Play opponent's chart, Song playback speed
 * Go to options from in-game (no progress lost!)
 * More Lua functions
@@ -75,7 +76,7 @@ Do note that mod compatibility and Lua scripts are disabled in HTML5.
 #### Desktop
 To run it from your desktop (Windows, Mac, Linux) it can be a bit more involved.
 
-For Windows, you need to install Visual Studio Community 2019. While installing VSC, don't click on any of the options to install workloads. Instead, go to the individual components tab and choose the following:
+For Windows, you need to install [Visual Studio Community](https://visualstudio.microsoft.com/downloads/). While installing VSC, don't click on any of the options to install workloads. Instead, go to the individual components tab and choose the following:
 * MSVC v142 - VS 2019 C++ x64/x86 build tools (Latest)
 * Windows 10 SDK (10.0.17763.0)
 

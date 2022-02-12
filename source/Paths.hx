@@ -195,17 +195,17 @@ class Paths
 		return file;
 	}
 
-	inline static public function voices(song:String):Any
+	inline static public function voices(song:String, ?suffix:String = ''):Any
 	{
 		var songKey:String = '${song.toLowerCase().replace(' ', '-')}';
-		var voices = returnSound(songKey, 'Voices', 'songs');
+		var voices = returnSound(songKey, 'Voices$suffix', 'songs');
 		return voices;
 	}
 
-	inline static public function inst(song:String):Any
+	inline static public function inst(song:String, ?suffix:String = ''):Any
 	{
 		var songKey:String = '${song.toLowerCase().replace(' ', '-')}';
-		var inst = returnSound(songKey, 'Inst', 'songs');
+		var inst = returnSound(songKey, 'Inst$suffix', 'songs');
 		return inst;
 	}
 

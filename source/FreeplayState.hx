@@ -13,6 +13,13 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
 import flixel.system.FlxSound;
+import openfl.media.Sound;
+#if MODS_ALLOWED
+import sys.io.File;
+import sys.FileSystem;
+import flash.media.Sound;
+#end
+import openfl.utils.Assets;
 import WeekData;
 
 using StringTools;
@@ -170,6 +177,7 @@ class FreeplayState extends MusicBeatState
 	var instPlaying:Int = -1;
 	var speedPlaying:Float = -1;
 	private static var vocals:FlxSound = null;
+	private static var vocalsDad:FlxSound = null;
 	var holdTime:Float = 0;
 	override function update(elapsed:Float)
 	{
@@ -276,17 +284,30 @@ class FreeplayState extends MusicBeatState
 				Paths.currentModDirectory = songs[curSelected].folder;
 				var poop:String = Highscore.formatSong(songs[curSelected].songName, curDifficulty);
 				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName);
-				if (PlayState.SONG.needsVoices)
+				if (PlayState.SONG.needsVoices) {
 					vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
-				else
+
+					var file:Dynamic = Paths.voices(Paths.formatToSongPath(PlayState.SONG.song), 'Dad');
+					vocalsDad = new FlxSound();
+					if (Std.isOfType(file, Sound) || Assets.exists(file)) {
+						vocalsDad.loadEmbedded(file);
+					}
+				} else {
 					vocals = new FlxSound();
+					vocalsDad = new FlxSound();
+				}
 
 				FlxG.sound.list.add(vocals);
+				FlxG.sound.list.add(vocalsDad);
 				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.7);
 				vocals.play();
 				vocals.persist = true;
 				vocals.looped = true;
 				vocals.volume = 0.7;
+				vocalsDad.play();
+				vocalsDad.persist = true;
+				vocalsDad.looped = true;
+				vocalsDad.volume = 0.7;
 				Conductor.mapBPMChanges(PlayState.SONG, ClientPrefs.getGameplaySetting('songspeed', 1));
 				Conductor.changeBPM(PlayState.SONG.bpm, ClientPrefs.getGameplaySetting('songspeed', 1));
 				Conductor.changeSignature(PlayState.SONG.numerator, PlayState.SONG.denominator);
@@ -299,6 +320,8 @@ class FreeplayState extends MusicBeatState
 						lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
 						if (vocals.playing)
 							lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+						if (vocalsDad.playing)
+							lime.media.openal.AL.sourcef(vocalsDad._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
 					}
 				}
 				#end
@@ -355,6 +378,8 @@ class FreeplayState extends MusicBeatState
 				lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
 				if (vocals != null && vocals.playing)
 					lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+				if (vocalsDad != null && vocalsDad.playing)
+					lime.media.openal.AL.sourcef(vocalsDad._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
 			}
 		}
 		#end
@@ -379,6 +404,11 @@ class FreeplayState extends MusicBeatState
 			vocals.destroy();
 		}
 		vocals = null;
+		if(vocalsDad != null) {
+			vocalsDad.stop();
+			vocalsDad.destroy();
+		}
+		vocalsDad = null;
 	}
 
 	function changeDiff(change:Int = 0)

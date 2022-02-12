@@ -4,7 +4,6 @@ package editors;
 import Discord.DiscordClient;
 #end
 import UIData;
-import Conductor.BPMChangeEvent;
 import Section.SwagSection;
 import Song.SwagSong;
 import flixel.FlxG;
@@ -134,6 +133,7 @@ class ChartingState extends MusicBeatState
 	var curSelectedNote:Array<Dynamic> = null;
 
 	var vocals:FlxSound = null;
+	var vocalsDad:FlxSound = null;
 
 	var leftIcon:HealthIcon;
 	var rightIcon:HealthIcon;
@@ -892,11 +892,7 @@ class ChartingState extends MusicBeatState
 			for (i in 0..._song.notes[curSection].sectionNotes.length)
 			{
 				var note:Array<Dynamic> = _song.notes[curSection].sectionNotes[i];
-				if (note[1] >= leftKeys) {
-					note[1] = (note[1] - leftKeys) % leftKeys;
-				} else {
-					note[1] = (note[1] % rightKeys) + leftKeys;
-				}
+				note[1] = Math.floor((note[1] + totalKeys / 2)) % totalKeys;
 				_song.notes[curSection].sectionNotes[i] = note;
 			}
 			updateGrid();
@@ -1297,6 +1293,7 @@ class ChartingState extends MusicBeatState
 	#end
 	var instVolume:FlxUINumericStepper;
 	var voicesVolume:FlxUINumericStepper;
+	var voicesDadVolume:FlxUINumericStepper;
 	function addChartingUI() {
 		var tab_group_chart = new FlxUI(null, UI_box);
 		tab_group_chart.name = 'Charting';
@@ -1319,7 +1316,7 @@ class ChartingState extends MusicBeatState
 		};
 		#end
 
-		check_mute_inst = new FlxUICheckBox(10, 310, null, null, "Mute Instrumental (in editor)", 100);
+		check_mute_inst = new FlxUICheckBox(10, 210, null, null, "Mute Instrumental (in editor)", 100);
 		check_mute_inst.checked = false;
 		check_mute_inst.callback = function()
 		{
@@ -1355,7 +1352,21 @@ class ChartingState extends MusicBeatState
 			}
 		};
 
-		playSoundBf = new FlxUICheckBox(check_mute_inst.x, check_mute_vocals.y + 30, null, null, 'Play Sound (Boyfriend notes)', 100,
+		var check_mute_vocalsDad = new FlxUICheckBox(check_mute_vocals.x, check_mute_inst.y + 30, null, null, "Mute Opponent Vocals (in editor)", 100);
+		check_mute_vocalsDad.checked = false;
+		check_mute_vocalsDad.callback = function()
+		{
+			if(vocalsDad != null) {
+				var vol:Float = 1;
+
+				if (check_mute_vocalsDad.checked)
+					vol = 0;
+
+				vocalsDad.volume = vol;
+			}
+		};
+
+		playSoundBf = new FlxUICheckBox(check_mute_inst.x, check_mute_vocalsDad.y + 30, null, null, 'Play Sound (Boyfriend notes)', 100,
 			function() {
 				FlxG.save.data.chart_playSoundBf = playSoundBf.checked;
 			}
@@ -1392,20 +1403,26 @@ class ChartingState extends MusicBeatState
 		if (FlxG.save.data.chart_noAutoScroll == null) FlxG.save.data.chart_noAutoScroll = false;
 		disableAutoScrolling.checked = FlxG.save.data.chart_noAutoScroll;
 
-		instVolume = new FlxUINumericStepper(metronomeStepper.x, 270, 0.1, 1, 0, 1, 1);
+		instVolume = new FlxUINumericStepper(metronomeStepper.x, 170, 0.1, 1, 0, 1, 1);
 		instVolume.value = FlxG.sound.music.volume;
 		instVolume.name = 'inst_volume';
 		blockPressWhileTypingOnStepper.push(instVolume);
 
-		voicesVolume = new FlxUINumericStepper(instVolume.x + 100, instVolume.y, 0.1, 1, 0, 1, 1);
+		voicesVolume = new FlxUINumericStepper(instVolume.x + 60, instVolume.y, 0.1, 1, 0, 1, 1);
 		voicesVolume.value = vocals.volume;
 		voicesVolume.name = 'voices_volume';
 		blockPressWhileTypingOnStepper.push(voicesVolume);
+
+		voicesDadVolume = new FlxUINumericStepper(voicesVolume.x + 60, instVolume.y, 0.1, 1, 0, 1, 1);
+		voicesDadVolume.value = vocalsDad.volume;
+		voicesDadVolume.name = 'voicesDad_volume';
+		blockPressWhileTypingOnStepper.push(voicesDadVolume);
 
 		tab_group_chart.add(new FlxText(metronomeStepper.x, metronomeStepper.y - 15, 0, 'BPM:'));
 		tab_group_chart.add(new FlxText(metronomeOffsetStepper.x, metronomeOffsetStepper.y - 15, 0, 'Offset (ms):'));
 		tab_group_chart.add(new FlxText(instVolume.x, instVolume.y - 15, 0, 'Inst Volume'));
 		tab_group_chart.add(new FlxText(voicesVolume.x, voicesVolume.y - 15, 0, 'Voices Volume'));
+		tab_group_chart.add(new FlxText(voicesDadVolume.x, voicesDadVolume.y - 15, 0, 'Opponent Voices Volume'));
 		tab_group_chart.add(metronome);
 		tab_group_chart.add(disableAutoScrolling);
 		tab_group_chart.add(metronomeStepper);
@@ -1416,8 +1433,10 @@ class ChartingState extends MusicBeatState
 		#end
 		tab_group_chart.add(instVolume);
 		tab_group_chart.add(voicesVolume);
+		tab_group_chart.add(voicesDadVolume);
 		tab_group_chart.add(check_mute_inst);
 		tab_group_chart.add(check_mute_vocals);
+		tab_group_chart.add(check_mute_vocalsDad);
 		tab_group_chart.add(check_vortex);
 		tab_group_chart.add(playSoundBf);
 		tab_group_chart.add(playSoundDad);
@@ -1438,6 +1457,12 @@ class ChartingState extends MusicBeatState
 			vocals.loadEmbedded(file);
 			FlxG.sound.list.add(vocals);
 		}
+		var file:Dynamic = Paths.voices(currentSongName, 'Dad');
+		vocalsDad = new FlxSound();
+		if (Std.isOfType(file, Sound) || OpenFlAssets.exists(file)) {
+			vocalsDad.loadEmbedded(file);
+			FlxG.sound.list.add(vocalsDad);
+		}
 		generateSong();
 		FlxG.sound.music.pause();
 		Conductor.songPosition = sectionStartTime();
@@ -1457,11 +1482,16 @@ class ChartingState extends MusicBeatState
 				vocals.pause();
 				vocals.time = 0;
 			}
+			if(vocalsDad != null) {
+				vocalsDad.pause();
+				vocalsDad.time = 0;
+			}
 			changeSection();
 			curSection = 0;
 			updateGrid();
 			updateSectionUI();
 			vocals.play();
+			vocalsDad.play();
 		};
 	}
 
@@ -1563,6 +1593,10 @@ class ChartingState extends MusicBeatState
 			else if (wname == 'voices_volume')
 			{
 				vocals.volume = nums.value;
+			}
+			else if (wname == 'voicesDad_volume')
+			{
+				vocalsDad.volume = nums.value;
 			}
 			else if (wname == 'song_playerKeys')
 			{
@@ -1796,6 +1830,7 @@ class ChartingState extends MusicBeatState
 				PlayState.SONG = _song;
 				FlxG.sound.music.stop();
 				if(vocals != null) vocals.stop();
+				if(vocalsDad != null) vocalsDad.stop();
 
 				//if(_song.stage == null) _song.stage = stageDropDown.selectedLabel;
 				StageData.loadDirectory(_song);
@@ -1864,15 +1899,11 @@ class ChartingState extends MusicBeatState
 				{
 					FlxG.sound.music.pause();
 					if(vocals != null) vocals.pause();
+					if(vocalsDad != null) vocalsDad.stop();
 				}
 				else
 				{
-					if(vocals != null) {
-						vocals.play();
-						vocals.pause();
-						vocals.time = FlxG.sound.music.time;
-						vocals.play();
-					}
+					resyncVocals(true);
 					FlxG.sound.music.play();
 				}
 			}
@@ -1892,10 +1923,7 @@ class ChartingState extends MusicBeatState
 				} else {
 					FlxG.sound.music.pause();
 					FlxG.sound.music.time -= (Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * Conductor.stepCrochet * 0.8);
-					if(vocals != null) {
-						vocals.pause();
-						vocals.time = FlxG.sound.music.time;
-					}
+					resyncVocals();
 				}
 			}
 			if(camPos.x > gridBG.x + gridBG.width + CAM_OFFSET)
@@ -1921,10 +1949,7 @@ class ChartingState extends MusicBeatState
 				else
 					FlxG.sound.music.time += daTime;
 
-				if(vocals != null) {
-					vocals.pause();
-					vocals.time = FlxG.sound.music.time;
-				}
+				resyncVocals();
 			}
 			
 			var style = currentType;
@@ -2013,10 +2038,7 @@ class ChartingState extends MusicBeatState
 					 feces = FlxG.sound.music.time+ daTime;
 				}
 				FlxTween.tween(FlxG.sound.music, {time:feces}, 0.1, {ease:FlxEase.circOut});
-				if(vocals != null) {
-					vocals.pause();
-					vocals.time = FlxG.sound.music.time;
-				}
+				resyncVocals();
 				
 				var dastrum = 0;
 				
@@ -2182,6 +2204,24 @@ class ChartingState extends MusicBeatState
 			if (OpenFlAssets.exists(leVocals)) { //Vanilla voices
 				audioBuffers[1] = AudioBuffer.fromFile('./' + leVocals.substr(6));
 				//trace('Voices found, LETS FUCKING GOOOO');
+			}
+		#if MODS_ALLOWED
+		}
+		#end
+
+		if(audioBuffers[2] != null) {
+			audioBuffers[2].dispose();
+		}
+		audioBuffers[2] = null;
+		#if MODS_ALLOWED
+		if(FileSystem.exists(Paths.modFolders('songs/' + currentSongName + '/VoicesDad.ogg'))) {
+			audioBuffers[2] = AudioBuffer.fromFile(Paths.modFolders('songs/' + currentSongName + '/VoicesDad.ogg'));
+			//trace('Custom opponent vocals found');
+		} else { #end
+			var leVocals:String = Paths.getPath(currentSongName + '/VoicesDad.' + Paths.SOUND_EXT, SOUND, 'songs');
+			if (OpenFlAssets.exists(leVocals)) { //Vanilla voices
+				audioBuffers[2] = AudioBuffer.fromFile('./' + leVocals.substr(6));
+				//trace('Opponent voices found, LETS FUCKING GOOOO');
 			}
 		#if MODS_ALLOWED
 		}
@@ -2353,10 +2393,7 @@ class ChartingState extends MusicBeatState
 			curSection = 0;
 		}
 
-		if(vocals != null) {
-			vocals.pause();
-			vocals.time = FlxG.sound.music.time;
-		}
+		resyncVocals();
 		updateCurStep();
 
 		updateGrid();
@@ -2388,10 +2425,7 @@ class ChartingState extends MusicBeatState
 				}*/
 
 				FlxG.sound.music.time = sectionStartTime();
-				if(vocals != null) {
-					vocals.pause();
-					vocals.time = FlxG.sound.music.time;
-				}
+				resyncVocals();
 				updateCurStep();
 			}
 
@@ -2951,6 +2985,21 @@ class ChartingState extends MusicBeatState
 			uiSkin = UIData.getUIFile('');
 		}
 		uiSkinMap.set('opponent', uiSkin);
+	}
+
+	function resyncVocals(?play:Bool = false):Void {
+		if(vocals != null) {
+			if (play) vocals.play();
+			vocals.pause();
+			vocals.time = FlxG.sound.music.time;
+			if (play) vocals.play();
+		}
+		if(vocalsDad != null) {
+			if (play) vocalsDad.play();
+			vocalsDad.pause();
+			vocalsDad.time = FlxG.sound.music.time;
+			if (play) vocalsDad.play();
+		}
 	}
 	
 	private var daSpacing:Float = 0.3;
