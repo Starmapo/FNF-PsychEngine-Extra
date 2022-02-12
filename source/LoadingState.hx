@@ -44,9 +44,14 @@ class LoadingState extends MusicBeatState
 	var loadBar:FlxSprite;
 	override function create()
 	{
-		var curStage = PlayState.SONG.stage;
-		//trace('stage is: ' + curStage);
-		if (PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1) {
+		#if PSYCH_WATERMARKS
+		var curStage = 'funkay';
+		#else
+		var curStage = 'funkayCooler';
+		#end
+		if (PlayState.SONG != null && PlayState.SONG.stage != null && PlayState.SONG.stage.length > 0)
+			curStage = PlayState.SONG.stage;
+		else if (PlayState.SONG != null) {
 			switch (Paths.formatToSongPath(PlayState.SONG.song)) {
 				case 'tutorial' | 'bopeebo' | 'fresh' | 'dadbattle' | 'dad-battle':
 					curStage = 'stage';
@@ -64,12 +69,13 @@ class LoadingState extends MusicBeatState
 					curStage = 'school';
 				case 'thorns':
 					curStage = 'schoolEvil';
-				default:
-					curStage = 'funkay';
 			}
 		}
-
+		#if PSYCH_WATERMARKS
 		var imagePath = Paths.image('preloaders/funkay');
+		#else
+		var imagePath = Paths.image('preloaders/funkayCooler');
+		#end
 		var imageSuffix = (PlayState.isStoryMode ? '-story' : '');
 		if (Assets.exists(Paths.getPath('images/preloaders/${curStage + imageSuffix}.png', IMAGE))) {
 			imagePath = Paths.image('preloaders/${curStage + imageSuffix}');
@@ -86,6 +92,7 @@ class LoadingState extends MusicBeatState
 		funkay.scrollFactor.set();
 		funkay.screenCenter();
 		funkayOGWidth = funkay.width;
+		bg.makeGraphic(FlxG.width, FlxG.height, CoolUtil.dominantColor(funkay));
 
 		loadBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width, 10, 0xffff16d2);
 		loadBar.screenCenter(X);

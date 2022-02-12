@@ -251,6 +251,7 @@ class MainMenuState extends MusicBeatState
 									case 'credits':
 										MusicBeatState.switchState(new CreditsState());
 									case 'options':
+										PlayState.SONG = null;
 										LoadingState.loadAndSwitchState(new options.OptionsState());
 								}
 							});
@@ -258,7 +259,7 @@ class MainMenuState extends MusicBeatState
 					});
 				}
 			}
-			#if desktop
+			#if (desktop || debug)
 			else if (FlxG.keys.anyJustPressed(debugKeys))
 			{
 				selectedSomethin = true;
