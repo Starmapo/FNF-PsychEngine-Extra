@@ -79,8 +79,35 @@
 			]
 		},
 		{
+			"keys": 5,
+			"noteSize": 1,
+			"noteSpacing": 112,
+			"xOffset": -2,
+			"colors": [
+				"left",
+				"down",
+				"up",
+				"down",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"DOWN",
+				"UP",
+				"DOWN",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singDOWN",
+				"singRIGHT"
+			]
+		},
+		{
 			"keys": 6,
-			"noteSize": 0.9,
+			"noteSize": 0.86,
 			"noteSpacing": 96,
 			"xOffset": -10,
 			"colors": [
@@ -110,7 +137,7 @@
 		},
 		{
 			"keys": 7,
-			"noteSize": 0.8,
+			"noteSize": 0.71,
 			"noteSpacing": 80,
 			"xOffset": -2,
 			"colors": [
@@ -143,7 +170,7 @@
 		},
 		{
 			"keys": 8,
-			"noteSize": 0.75,
+			"noteSize": 0.64,
 			"noteSpacing": 72,
 			"xOffset": -10,
 			"colors": [
@@ -179,7 +206,7 @@
 		},
 		{
 			"keys": 9,
-			"noteSize": 0.7,
+			"noteSize": 0.57,
 			"noteSpacing": 64,
 			"xOffset": -10,
 			"colors": [
@@ -218,7 +245,7 @@
 		},
 		{
 			"keys": 10,
-			"noteSize": 0.65,
+			"noteSize": 0.5,
 			"noteSpacing": 56,
 			"xOffset": -2,
 			"colors": [
@@ -260,7 +287,7 @@
 		},
 		{
 			"keys": 11,
-			"noteSize": 0.63,
+			"noteSize": 0.47,
 			"noteSpacing": 52.8,
 			"xOffset": -12,
 			"colors": [
@@ -305,7 +332,7 @@
 		},
 		{
 			"keys": 12,
-			"noteSize": 0.6,
+			"noteSize": 0.43,
 			"noteSpacing": 48,
 			"xOffset": -10,
 			"colors": [
@@ -344,6 +371,57 @@
 				"singLEFT",
 				"singDOWN",
 				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT"
+			]
+		},
+		{
+			"keys": 13,
+			"noteSize": 0.39,
+			"noteSpacing": 43.2,
+			"xOffset": -3,
+			"colors": [
+				"left",
+				"down",
+				"up",
+				"right",
+				"left",
+				"down",
+				"up",
+				"down",
+				"right",
+				"left",
+				"down",
+				"up",
+				"right"
+			],
+			"directions": [
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT",
+				"LEFT",
+				"DOWN",
+				"UP",
+				"DOWN",
+				"RIGHT",
+				"LEFT",
+				"DOWN",
+				"UP",
+				"RIGHT"
+			],
+			"singAnimations": [
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singRIGHT",
+				"singLEFT",
+				"singDOWN",
+				"singUP",
+				"singDOWN",
 				"singRIGHT",
 				"singLEFT",
 				"singDOWN",
