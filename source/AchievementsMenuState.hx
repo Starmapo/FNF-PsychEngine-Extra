@@ -1,6 +1,6 @@
 package;
 
-#if desktop
+#if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
 import flixel.FlxG;
@@ -23,7 +23,7 @@ class AchievementsMenuState extends MusicBeatState
 	private var descText:FlxText;
 
 	override function create() {
-		#if desktop
+		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("Achievements Menu", null);
 		#end
 
@@ -39,7 +39,7 @@ class AchievementsMenuState extends MusicBeatState
 		
 		Achievements.loadAchievements();
 		for (i in 0...Achievements.achievementsStuff.length) {
-			if(!Achievements.achievementsStuff[i][4] || Achievements.achievementsMap.exists(Achievements.achievementsStuff[i][2])) {
+			if (!Achievements.achievementsStuff[i][4] || Achievements.achievementsMap.exists(Achievements.achievementsStuff[i][2])) {
 				options.push(Achievements.achievementsStuff[i]);
 				achievementIndex.push(i);
 			}
@@ -110,7 +110,7 @@ class AchievementsMenuState extends MusicBeatState
 
 		for (i in 0...achievementArray.length) {
 			achievementArray[i].alpha = 0.6;
-			if(i == curSelected) {
+			if (i == curSelected) {
 				achievementArray[i].alpha = 1;
 			}
 		}

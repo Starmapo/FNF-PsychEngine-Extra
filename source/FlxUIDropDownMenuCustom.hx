@@ -229,14 +229,14 @@ class FlxUIDropDownMenuCustom extends FlxUIGroup implements IFlxUIWidget impleme
 		var offset = dropPanel.y;
 		for (i in 0...currentScroll) { //Hides buttons that goes before the current scroll
 			var button:FlxUIButton = list[i];
-			if(button != null) {
+			if (button != null) {
 				button.y = -99999;
 			}
 		}
 		for (i in currentScroll...list.length)
 		{
 			var button:FlxUIButton = list[i];
-			if(button != null) {
+			if (button != null) {
 				button.y = offset;
 				offset += buttonHeight;
 			}
@@ -432,17 +432,17 @@ class FlxUIDropDownMenuCustom extends FlxUIGroup implements IFlxUIWidget impleme
 		#if FLX_MOUSE
 		if (dropPanel.visible)
 		{
-			if(list.length > 1 && canScroll) {
-				if(FlxG.mouse.wheel > 0 || FlxG.keys.justPressed.UP) {
+			if (list.length > 1 && canScroll) {
+				if (FlxG.mouse.wheel > 0 || FlxG.keys.justPressed.UP) {
 					// Go up
 					--currentScroll;
-					if(currentScroll < 0) currentScroll = 0;
+					if (currentScroll < 0) currentScroll = 0;
 					updateButtonPositions();
 				}
 				else if (FlxG.mouse.wheel < 0 || FlxG.keys.justPressed.DOWN) {
 					// Go down
 					currentScroll++;
-					if(currentScroll >= list.length) currentScroll = list.length-1;
+					if (currentScroll >= list.length) currentScroll = list.length-1;
 					updateButtonPositions();
 				}
 			}
@@ -475,7 +475,7 @@ class FlxUIDropDownMenuCustom extends FlxUIGroup implements IFlxUIWidget impleme
 		}
 
 		dropPanel.visible = b;
-		if(currentScroll != 0) {
+		if (currentScroll != 0) {
 			currentScroll = 0;
 			updateButtonPositions();
 		}

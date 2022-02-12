@@ -43,7 +43,7 @@ class Achievements {
 	}
 
 	public static function isAchievementUnlocked(name:String) {
-		if(achievementsMap.exists(name)) {
+		if (achievementsMap.exists(name)) {
 			return achievementsMap.get(name);
 		}
 		return false;
@@ -51,7 +51,7 @@ class Achievements {
 
 	public static function getAchievementIndex(name:String) {
 		for (i in 0...achievementsStuff.length) {
-			if(achievementsStuff[i][2] == name) {
+			if (achievementsStuff[i][2] == name) {
 				return i;
 			}
 		}
@@ -61,18 +61,18 @@ class Achievements {
 	public static function loadAchievements():Void {
 		achievementsStuff = achievementShits;
 
-		if(FlxG.save.data != null) {
-			if(FlxG.save.data.achievementsMap != null) {
+		if (FlxG.save.data != null) {
+			if (FlxG.save.data.achievementsMap != null) {
 				achievementsMap = FlxG.save.data.achievementsMap;
 			}
-			if(FlxG.save.data.achievementsUnlocked != null) {
+			if (FlxG.save.data.achievementsUnlocked != null) {
 				FlxG.log.add("Trying to load stuff");
 				var savedStuff:Array<String> = FlxG.save.data.achievementsUnlocked;
 				for (i in 0...savedStuff.length) {
 					achievementsMap.set(savedStuff[i], true);
 				}
 			}
-			if(henchmenDeath == 0 && FlxG.save.data.henchmenDeath != null) {
+			if (henchmenDeath == 0 && FlxG.save.data.henchmenDeath != null) {
 				henchmenDeath = FlxG.save.data.henchmenDeath;
 			}
 		}
@@ -109,7 +109,7 @@ class AttachedAchievement extends FlxSprite {
 	}
 
 	public function reloadAchievementImage() {
-		if(Achievements.isAchievementUnlocked(tag)) {
+		if (Achievements.isAchievementUnlocked(tag)) {
 			loadGraphic(Paths.image('achievementgrid'), true, 150, 150);
 			animation.add('icon', [Achievements.getAchievementIndex(tag)], 0, false, false);
 			animation.play('icon');
@@ -165,7 +165,7 @@ class AchievementObject extends FlxSpriteGroup {
 		add(achievementIcon);
 
 		@:privateAccess var cam:Array<FlxCamera> = FlxG.cameras.defaults;
-		if(camera != null) {
+		if (camera != null) {
 			cam = [camera];
 		}
 		alpha = 0;
@@ -179,14 +179,14 @@ class AchievementObject extends FlxSpriteGroup {
 				onComplete: function(twn:FlxTween) {
 					alphaTween = null;
 					remove(this);
-					if(onFinish != null) onFinish();
+					if (onFinish != null) onFinish();
 				}
 			});
 		}});
 	}
 
 	override function destroy() {
-		if(alphaTween != null) {
+		if (alphaTween != null) {
 			alphaTween.cancel();
 		}
 		super.destroy();

@@ -12,14 +12,14 @@ typedef ShaderEffect = {
 
 class BuildingEffect {
   public var shader:BuildingShader = new BuildingShader();
-  public function new(){
+  public function new() {
     shader.alphaShit.value = [0];
   }
-  public function addAlpha(alpha:Float){
+  public function addAlpha(alpha:Float) {
     trace(shader.alphaShit.value[0]);
     shader.alphaShit.value[0]+=alpha;
   }
-  public function setAlpha(alpha:Float){
+  public function setAlpha(alpha:Float) {
     shader.alphaShit.value[0]=alpha;
   }
 }
@@ -76,7 +76,7 @@ class ChromaticAberrationShader extends FlxShader
 class ChromaticAberrationEffect extends Effect
 {
 	public var shader:ChromaticAberrationShader;
-  public function new(offset:Float = 0.00){
+  public function new(offset:Float = 0.00) {
 	shader = new ChromaticAberrationShader();
     shader.rOffset.value = [offset];
     shader.gOffset.value = [0.0];
@@ -97,7 +97,7 @@ class ScanlineEffect extends Effect
 {
 	
 	public var shader:Scanline;
-	public function new (lockAlpha){
+	public function new (lockAlpha) {
 		shader = new Scanline();
 		shader.lockAlpha.value = [lockAlpha];
 	}
@@ -114,13 +114,13 @@ class Scanline extends FlxShader
 	uniform bool lockAlpha = false;
 		void main()
 		{
-			if (mod(floor(openfl_TextureCoordv.y * openfl_TextureSize.y / scale), 2.0) == 0.0 ){
+			if (mod(floor(openfl_TextureCoordv.y * openfl_TextureSize.y / scale), 2.0) == 0.0 ) {
 				float bitch = 1.0;
 	
 				vec4 texColor = texture2D(bitmap, openfl_TextureCoordv);
 				if (lockAlpha) bitch = texColor.a;
 				gl_FragColor = vec4(0.0, 0.0, 0.0, bitch);
-			}else{
+			} else {
 				gl_FragColor = texture2D(bitmap, openfl_TextureCoordv);
 			}
 		}')
@@ -132,7 +132,7 @@ class Scanline extends FlxShader
 
 class TiltshiftEffect extends Effect{
 	public var shader:Tiltshift;
-	public function new (blurAmount:Float, center:Float){
+	public function new (blurAmount:Float, center:Float) {
 		shader = new Tiltshift();
 		shader.bluramount.value = [blurAmount];
 		shader.center.value = [center];
@@ -230,7 +230,7 @@ class GreyscaleEffect extends Effect{
 	
 	public var shader:GreyscaleShader = new GreyscaleShader();
 	
-	public function new(){
+	public function new() {
 		
 	}
 }
@@ -247,14 +247,14 @@ class GreyscaleShader extends FlxShader{
 	
 	')
 	
-	public function new(){
+	public function new() {
 		super();
 	}
 }
 
 class GrainEffect extends Effect {
 	public var shader:Grain;
-	public function new (grainsize, lumamount,lockAlpha){
+	public function new (grainsize, lumamount,lockAlpha) {
 		shader = new Grain();
 		shader.lumamount.value = [lumamount];
 		shader.grainsize.value = [grainsize];
@@ -262,7 +262,7 @@ class GrainEffect extends Effect {
 		shader.uTime.value = [FlxG.random.float(0,8)];
 		PlayState.instance.shaderUpdates.push(update);
 	}
-	public function update(elapsed){
+	public function update(elapsed) {
 		shader.uTime.value[0] += elapsed;
 	}
 }
@@ -427,7 +427,7 @@ class Grain extends FlxShader
 class VCRDistortionEffect extends Effect
 {
   public var shader:VCRDistortionShader = new VCRDistortionShader();
-  public function new(glitchFactor:Float,distortion:Bool=true,perspectiveOn:Bool=true,vignetteMoving:Bool=true){
+  public function new(glitchFactor:Float,distortion:Bool=true,perspectiveOn:Bool=true,vignetteMoving:Bool=true) {
     shader.iTime.value = [0];
     shader.vignetteOn.value = [true];
     shader.perspectiveOn.value = [perspectiveOn];
@@ -441,32 +441,32 @@ class VCRDistortionEffect extends Effect
    PlayState.instance.shaderUpdates.push(update);
   }
 
-  public function update(elapsed:Float){
+  public function update(elapsed:Float) {
     shader.iTime.value[0] += elapsed;
     shader.iResolution.value = [Lib.current.stage.stageWidth,Lib.current.stage.stageHeight];
   }
 
-  public function setVignette(state:Bool){
+  public function setVignette(state:Bool) {
     shader.vignetteOn.value[0] = state;
   }
 
-  public function setPerspective(state:Bool){
+  public function setPerspective(state:Bool) {
     shader.perspectiveOn.value[0] = state;
   }
 
-  public function setGlitchModifier(modifier:Float){
+  public function setGlitchModifier(modifier:Float) {
     shader.glitchModifier.value[0] = modifier;
   }
 
-  public function setDistortion(state:Bool){
+  public function setDistortion(state:Bool) {
     shader.distortionOn.value[0] = state;
   }
 
-  public function setScanlines(state:Bool){
+  public function setScanlines(state:Bool) {
     shader.scanlinesOn.value[0] = state;
   }
 
-  public function setVignetteMoving(state:Bool){
+  public function setVignetteMoving(state:Bool) {
     shader.vignetteMoving.value[0] = state;
   }
 }
@@ -503,7 +503,7 @@ class VCRDistortionShader extends FlxShader // https://www.shadertoy.com/view/ld
     vec4 getVideo(vec2 uv)
       {
       	vec2 look = uv;
-        if(distortionOn){
+        if (distortionOn) {
         	float window = 1./(1.+20.*(look.y-mod(iTime/4.,1.))*(look.y-mod(iTime/4.,1.)));
         	look.x = look.x + (sin(look.y*10. + iTime)/50.*onOff(4.,4.,.3)*(1.+cos(iTime*80.))*window)*(glitchModifier*2);
         	float vShift = 0.4*onOff(2.,3.,.9)*(sin(iTime)*sin(iTime*20.) +
@@ -517,7 +517,7 @@ class VCRDistortionShader extends FlxShader // https://www.shadertoy.com/view/ld
 
     vec2 screenDistort(vec2 uv)
     {
-      if(perspectiveOn){
+      if (perspectiveOn) {
         uv = (uv - 0.5) * 2.0;
       	uv *= 1.1;
       	uv.x *= 1.0 + pow((abs(uv.y) / 5.0), 2.0);
@@ -577,18 +577,18 @@ class VCRDistortionShader extends FlxShader // https://www.shadertoy.com/view/ld
       video.b += 0.08*getVideo(0.75*vec2(x+-0.02, -0.018)+vec2(uv.x-0.002,uv.y+0.000)).z;
 
       video = clamp(video*0.6+0.4*video*video*1.0,0.0,1.0);
-      if(vignetteMoving)
+      if (vignetteMoving)
     	  vigAmt = 3.+.3*sin(iTime + 5.*cos(iTime*5.));
 
     	float vignette = (1.-vigAmt*(uv.y-.5)*(uv.y-.5))*(1.-vigAmt*(uv.x-.5)*(uv.x-.5));
 
-      if(vignetteOn)
+      if (vignetteOn)
     	 video *= vignette;
 
 
       gl_FragColor = mix(video,vec4(noise(uv * 75.)),.05);
 
-      if(curUV.x<0 || curUV.x>1 || curUV.y<0 || curUV.y>1){
+      if (curUV.x<0 || curUV.x>1 || curUV.y<0 || curUV.y>1) {
         gl_FragColor = vec4(0,0,0,0);
       }
 
@@ -605,7 +605,7 @@ class VCRDistortionShader extends FlxShader // https://www.shadertoy.com/view/ld
 class ThreeDEffect extends Effect{
 	
 	public var shader:ThreeDShader = new ThreeDShader();
-	public function new(xrotation:Float=0,yrotation:Float=0,zrotation:Float=0,depth:Float=0){
+	public function new(xrotation:Float=0,yrotation:Float=0,zrotation:Float=0,depth:Float=0) {
 		shader.xrot.value = [xrotation];
 		shader.yrot.value = [yrotation];
 		shader.zrot.value = [zrotation];
@@ -681,7 +681,7 @@ void main() {
 		
 		vec3 tex = flixel_texture2D(bitmap, uv).xyz;
 		float bitch = 1.0;
-		if (tex.z == 0.0){
+		if (tex.z == 0.0) {
 			bitch = 0.0;
 		}
 		
@@ -692,7 +692,7 @@ void main() {
 
 	')
 	
-	public function new(){
+	public function new() {
 		super();
 	}
 	
@@ -703,7 +703,7 @@ class FuckingTriangleEffect extends Effect{
 
 	public var shader:FuckingTriangle = new FuckingTriangle();
 
-	public function new(rotx:Float, roty:Float){
+	public function new(rotx:Float, roty:Float) {
 		shader.rotX.value = [rotx];
 		shader.rotY.value = [roty];
 	}
@@ -807,12 +807,12 @@ class FuckingTriangle extends FlxShader{
 			
 			vec3 tri = bary(v0.xy, v1.xy, v2.xy, ndc);
 			
-			if(tri.x < 0. || tri.x > 1. || tri.y < 0. || tri.y > 1. || tri.z < 0. || tri.z > 1.) {
+			if (tri.x < 0. || tri.x > 1. || tri.y < 0. || tri.y > 1. || tri.z < 0. || tri.z > 1.) {
 				return vec4(0.);
 			}
 			
 			float triDepth = baryLerp(v0.z, v1.z, v2.z, tri);
-			if(triDepth > depth || triDepth < -1. || triDepth > 1.) {
+			if (triDepth > depth || triDepth < -1. || triDepth > 1.) {
 				return vec4(0.);
 			}
 			
@@ -840,7 +840,7 @@ class FuckingTriangle extends FlxShader{
         gl_FragColor = vec4(outColor, 1.);
     }
 	')
-	public function new(){
+	public function new() {
 		super();
 	}
 }
@@ -848,7 +848,7 @@ class FuckingTriangle extends FlxShader{
 class BloomEffect extends Effect{
 	
 	public var shader:BloomShader = new BloomShader();
-	public function new(blurSize:Float, intensity:Float){
+	public function new(blurSize:Float, intensity:Float) {
 		shader.blurSize.value = [blurSize];
 		shader.intensity.value = [intensity];
 		
@@ -902,7 +902,7 @@ void main()
 
    //increase blur with intensity!
   gl_FragColor = sum*intensity + flixel_texture2D(bitmap, texcoord); 
-  // if(sin(iTime) > 0.0)
+  // if (sin(iTime) > 0.0)
    //    fragColor = sum * sin(iTime)+ texture(iChannel0, texcoord);
   // else
 	//   fragColor = sum * -sin(iTime)+ texture(iChannel0, texcoord);
@@ -911,7 +911,7 @@ void main()
 	
 	')
 	
-	public function new(){
+	public function new() {
 		super();
 	}
 	
@@ -1093,7 +1093,7 @@ class PulseEffect extends Effect
 class InvertColorsEffect extends Effect
 {
     public var shader:InvertShader = new InvertShader();
-	public function new(lockAlpha){
+	public function new(lockAlpha) {
 	//	shader.lockAlpha.value = [lockAlpha];
 	}
 
@@ -1287,7 +1287,7 @@ class PulseShader extends FlxShader
 
 
 class Effect {
-	public function setValue(shader:FlxShader, variable:String, value:Float){
+	public function setValue(shader:FlxShader, variable:String, value:Float) {
 		Reflect.setProperty(Reflect.getProperty(shader, 'variable'), 'value', [value]);
 	}
 	

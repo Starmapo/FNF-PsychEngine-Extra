@@ -22,7 +22,7 @@ class BackgroundGirls extends FlxSprite
 	public function swapDanceType():Void
 	{
 		isPissed = !isPissed;
-		if(!isPissed) { //Gets unpissed
+		if (!isPissed) { //Gets unpissed
 			animation.addByIndices('danceLeft', 'BG girls group', CoolUtil.numberArray(14), "", 24, false);
 			animation.addByIndices('danceRight', 'BG girls group', CoolUtil.numberArray(30, 15), "", 24, false);
 		} else { //Pisses

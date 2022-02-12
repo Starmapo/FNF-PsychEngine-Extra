@@ -69,7 +69,7 @@ class NoteOffsetState extends MusicBeatState
 		stageFront.updateHitbox();
 		add(stageFront);
 
-		if(ClientPrefs.stageQuality == 'Normal') {
+		if (ClientPrefs.stageQuality == 'Normal') {
 			var stageLight:BGSprite = new BGSprite('stage_light', -125, -100, 0.9, 0.9);
 			stageLight.setGraphicSize(Std.int(stageLight.width * 1.1));
 			stageLight.updateHitbox();
@@ -209,9 +209,9 @@ class NoteOffsetState extends MusicBeatState
 	override public function update(elapsed:Float)
 	{
 		var addNum:Int = 1;
-		if(FlxG.keys.pressed.SHIFT) addNum = 10;
+		if (FlxG.keys.pressed.SHIFT) addNum = 10;
 
-		if(onComboMenu)
+		if (onComboMenu)
 		{
 			var controlArray:Array<Bool> = [
 				FlxG.keys.justPressed.LEFT,
@@ -225,11 +225,11 @@ class NoteOffsetState extends MusicBeatState
 				FlxG.keys.justPressed.S
 			];
 
-			if(controlArray.contains(true))
+			if (controlArray.contains(true))
 			{
 				for (i in 0...controlArray.length)
 				{
-					if(controlArray[i])
+					if (controlArray[i])
 					{
 						switch(i)
 						{
@@ -278,14 +278,14 @@ class NoteOffsetState extends MusicBeatState
 					//trace('heya');
 				}
 			}
-			if(FlxG.mouse.justReleased) {
+			if (FlxG.mouse.justReleased) {
 				holdingObjectType = null;
 				//trace('dead');
 			}
 
-			if(holdingObjectType != null)
+			if (holdingObjectType != null)
 			{
-				if(FlxG.mouse.justMoved)
+				if (FlxG.mouse.justMoved)
 				{
 					var mousePos:FlxPoint = FlxG.mouse.getScreenPosition(camHUD);
 					var addNum:Int = holdingObjectType ? 2 : 0;
@@ -295,7 +295,7 @@ class NoteOffsetState extends MusicBeatState
 				}
 			}
 
-			if(controls.RESET)
+			if (controls.RESET)
 			{
 				for (i in 0...ClientPrefs.comboOffset.length)
 				{
@@ -306,34 +306,34 @@ class NoteOffsetState extends MusicBeatState
 		}
 		else
 		{
-			if(controls.UI_LEFT_P)
+			if (controls.UI_LEFT_P)
 			{
 				barPercent = Math.max(delayMin, Math.min(ClientPrefs.noteOffset - 1, delayMax));
 				updateNoteDelay();
 			}
-			else if(controls.UI_RIGHT_P)
+			else if (controls.UI_RIGHT_P)
 			{
 				barPercent = Math.max(delayMin, Math.min(ClientPrefs.noteOffset + 1, delayMax));
 				updateNoteDelay();
 			}
 
 			var mult:Int = 1;
-			if(controls.UI_LEFT || controls.UI_RIGHT)
+			if (controls.UI_LEFT || controls.UI_RIGHT)
 			{
 				holdTime += elapsed;
-				if(controls.UI_LEFT) mult = -1;
+				if (controls.UI_LEFT) mult = -1;
 			}
 
-			if(controls.UI_LEFT_R || controls.UI_RIGHT_R) holdTime = 0;
+			if (controls.UI_LEFT_R || controls.UI_RIGHT_R) holdTime = 0;
 
-			if(holdTime > 0.5)
+			if (holdTime > 0.5)
 			{
 				barPercent += 100 * elapsed * mult;
 				barPercent = Math.max(delayMin, Math.min(barPercent, delayMax));
 				updateNoteDelay();
 			}
 
-			if(controls.RESET)
+			if (controls.RESET)
 			{
 				holdTime = 0;
 				barPercent = 0;
@@ -341,16 +341,16 @@ class NoteOffsetState extends MusicBeatState
 			}
 		}
 
-		if(controls.ACCEPT)
+		if (controls.ACCEPT)
 		{
 			onComboMenu = !onComboMenu;
 			updateMode();
 		}
 
-		if(controls.BACK)
+		if (controls.BACK)
 		{
-			if(zoomTween != null) zoomTween.cancel();
-			if(beatTween != null) beatTween.cancel();
+			if (zoomTween != null) zoomTween.cancel();
+			if (beatTween != null) beatTween.cancel();
 
 			persistentUpdate = false;
 			CustomFadeTransition.nextCamera = camOther;
@@ -369,22 +369,22 @@ class NoteOffsetState extends MusicBeatState
 	{
 		super.beatHit();
 
-		if(lastBeatHit == curBeat)
+		if (lastBeatHit == curBeat)
 		{
 			return;
 		}
 
-		if(curBeat % 2 == 0)
+		if (curBeat % 2 == 0)
 		{
 			boyfriend.dance();
 			gf.dance();
 		}
 		
-		if(curBeat % 4 == 2)
+		if (curBeat % 4 == 2)
 		{
 			FlxG.camera.zoom = 1.15;
 
-			if(zoomTween != null) zoomTween.cancel();
+			if (zoomTween != null) zoomTween.cancel();
 			zoomTween = FlxTween.tween(FlxG.camera, {zoom: 1}, 1, {ease: FlxEase.circOut, onComplete: function(twn:FlxTween)
 				{
 					zoomTween = null;
@@ -394,7 +394,7 @@ class NoteOffsetState extends MusicBeatState
 			beatText.alpha = 1;
 			beatText.y = 320;
 			beatText.velocity.y = -150;
-			if(beatTween != null) beatTween.cancel();
+			if (beatTween != null) beatTween.cancel();
 			beatTween = FlxTween.tween(beatText, {alpha: 0}, 1, {ease: FlxEase.sineIn, onComplete: function(twn:FlxTween)
 				{
 					beatTween = null;
@@ -428,7 +428,7 @@ class NoteOffsetState extends MusicBeatState
 			dumbTexts.add(text);
 			text.cameras = [camHUD];
 
-			if(i > 1)
+			if (i > 1)
 			{
 				text.y += 24;
 			}
@@ -466,7 +466,7 @@ class NoteOffsetState extends MusicBeatState
 		timeTxt.visible = !onComboMenu;
 		beatText.visible = !onComboMenu;
 
-		if(onComboMenu)
+		if (onComboMenu)
 			changeModeText.text = '< Combo Offset (Press Accept to Switch) >';
 		else
 			changeModeText.text = '< Note/Beat Delay (Press Accept to Switch) >';

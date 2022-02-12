@@ -30,7 +30,7 @@ class CheckboxThingie extends FlxSprite
 	override function update(elapsed:Float) {
 		if (sprTracker != null) {
 			setPosition(sprTracker.x - 130 + offsetX, sprTracker.y + 30 + offsetY);
-			if(copyAlpha) {
+			if (copyAlpha) {
 				alpha = sprTracker.alpha;
 			}
 		}
@@ -38,12 +38,12 @@ class CheckboxThingie extends FlxSprite
 	}
 
 	private function set_daValue(check:Bool):Bool {
-		if(check) {
-			if(animation.curAnim.name != 'checked' && animation.curAnim.name != 'checking') {
+		if (check) {
+			if (animation.curAnim.name != 'checked' && animation.curAnim.name != 'checking') {
 				animation.play('checking', true);
 				offset.set(34, 25);
 			}
-		} else if(animation.curAnim.name != 'unchecked' && animation.curAnim.name != 'unchecking') {
+		} else if (animation.curAnim.name != 'unchecked' && animation.curAnim.name != 'unchecking') {
 			animation.play("unchecking", true);
 			offset.set(25, 28);
 		}

@@ -38,7 +38,7 @@ class Option
 		this.defaultValue = defaultValue;
 		this.options = options;
 
-		if(defaultValue == 'null variable value')
+		if (defaultValue == 'null variable value')
 		{
 			switch(type)
 			{
@@ -50,13 +50,13 @@ class Option
 					defaultValue = 1;
 				case 'string':
 					defaultValue = '';
-					if(options.length > 0) {
+					if (options.length > 0) {
 						defaultValue = options[0];
 					}
 			}
 		}
 
-		if(getValue() == null) {
+		if (getValue() == null) {
 			setValue(defaultValue);
 		}
 
@@ -64,7 +64,7 @@ class Option
 		{
 			case 'string':
 				var num:Int = options.indexOf(getValue());
-				if(num > -1) {
+				if (num > -1) {
 					curOption = num;
 				}
 	
@@ -81,7 +81,7 @@ class Option
 	public function change()
 	{
 		//nothing lol
-		if(onChange != null) {
+		if (onChange != null) {
 			onChange();
 		}
 	}
@@ -102,14 +102,14 @@ class Option
 
 	private function get_text()
 	{
-		if(child != null) {
+		if (child != null) {
 			return child.text;
 		}
 		return null;
 	}
 	private function set_text(newValue:String = '')
 	{
-		if(child != null) {
+		if (child != null) {
 			child.changeText(newValue);
 		}
 		return null;

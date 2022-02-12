@@ -1,6 +1,6 @@
 package editors;
 
-#if desktop
+#if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
 import flixel.FlxCamera;
@@ -100,7 +100,7 @@ class SkinEditorState extends MusicBeatState {
 
         FlxG.mouse.visible = true;
 
-        #if desktop
+        #if DISCORD_ALLOWED
 		DiscordClient.changePresence("UI Skin Editor", null);
 		#end
 
@@ -225,7 +225,7 @@ class SkinEditorState extends MusicBeatState {
     override function update(elapsed:Float) {
         var blockInput:Bool = false;
 		for (inputText in blockPressWhileTypingOn) {
-			if(inputText.hasFocus) {
+			if (inputText.hasFocus) {
 				FlxG.sound.muteKeys = [];
 				FlxG.sound.volumeDownKeys = [];
 				FlxG.sound.volumeUpKeys = [];
@@ -234,12 +234,12 @@ class SkinEditorState extends MusicBeatState {
 			}
 		}
 
-        if(!blockInput) {
+        if (!blockInput) {
 			for (stepper in blockPressWhileTypingOnStepper) {
 				@:privateAccess
 				var leText:Dynamic = stepper.text_field;
 				var leText:FlxUIInputText = leText;
-				if(leText.hasFocus) {
+				if (leText.hasFocus) {
 					FlxG.sound.muteKeys = [];
 					FlxG.sound.volumeDownKeys = [];
 					FlxG.sound.volumeUpKeys = [];
@@ -283,13 +283,13 @@ class SkinEditorState extends MusicBeatState {
     }
 
     override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>) {
-		if(id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
-			/*if(sender == healthIconInputText) {
+		if (id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
+			/*if (sender == healthIconInputText) {
 				leHealthIcon.changeIcon(healthIconInputText.text);
 				char.healthIcon = healthIconInputText.text;
 				updatePresence();
 			}*/
-		} else if(id == FlxUINumericStepper.CHANGE_EVENT && (sender is FlxUINumericStepper)) {
+		} else if (id == FlxUINumericStepper.CHANGE_EVENT && (sender is FlxUINumericStepper)) {
 			if (sender == scaleStepper) {
 				uiSkin.scale = sender.value;
                 reloadNotes();

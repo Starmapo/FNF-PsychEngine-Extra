@@ -207,38 +207,38 @@ class ClientPrefs {
 	}
 
 	public static function loadPrefs() {
-		if(FlxG.save.data.downScroll != null) {
+		if (FlxG.save.data.downScroll != null) {
 			downScroll = FlxG.save.data.downScroll;
 		}
-		if(FlxG.save.data.middleScroll != null) {
+		if (FlxG.save.data.middleScroll != null) {
 			middleScroll = FlxG.save.data.middleScroll;
 		}
-		if(FlxG.save.data.showFPS != null) {
+		if (FlxG.save.data.showFPS != null) {
 			showFPS = FlxG.save.data.showFPS;
-			if(Main.fpsVar != null) {
+			if (Main.fpsVar != null) {
 				Main.fpsVar.visible = showFPS;
 			}
 		}
-		if(FlxG.save.data.flashing != null) {
+		if (FlxG.save.data.flashing != null) {
 			flashing = FlxG.save.data.flashing;
 		}
-		if(FlxG.save.data.globalAntialiasing != null) {
+		if (FlxG.save.data.globalAntialiasing != null) {
 			globalAntialiasing = FlxG.save.data.globalAntialiasing;
 		}
-		if(FlxG.save.data.noteSplashes != null) {
+		if (FlxG.save.data.noteSplashes != null) {
 			noteSplashes = FlxG.save.data.noteSplashes;
 		}
-		if(FlxG.save.data.noteSplashesOpponent != null) {
+		if (FlxG.save.data.noteSplashesOpponent != null) {
 			noteSplashesOpponent = FlxG.save.data.noteSplashesOpponent;
 		}
-		if(FlxG.save.data.stageQuality != null) {
+		if (FlxG.save.data.stageQuality != null) {
 			stageQuality = FlxG.save.data.stageQuality;
-		} else if(FlxG.save.data.lowQuality != null) {
+		} else if (FlxG.save.data.lowQuality != null) {
 			stageQuality = (FlxG.save.data.lowQuality ? 'Low' : 'Normal');
 		}
-		if(FlxG.save.data.framerate != null) {
+		if (FlxG.save.data.framerate != null) {
 			framerate = FlxG.save.data.framerate;
-			if(framerate > FlxG.drawFramerate) {
+			if (framerate > FlxG.drawFramerate) {
 				FlxG.updateFramerate = framerate;
 				FlxG.drawFramerate = framerate;
 			} else {
@@ -246,62 +246,62 @@ class ClientPrefs {
 				FlxG.updateFramerate = framerate;
 			}
 		}
-		/*if(FlxG.save.data.cursing != null) {
+		/*if (FlxG.save.data.cursing != null) {
 			cursing = FlxG.save.data.cursing;
 		}
-		if(FlxG.save.data.violence != null) {
+		if (FlxG.save.data.violence != null) {
 			violence = FlxG.save.data.violence;
 		}*/
-		if(FlxG.save.data.camZooms != null) {
+		if (FlxG.save.data.camZooms != null) {
 			camZooms = FlxG.save.data.camZooms;
 		}
-		if(FlxG.save.data.hideHud != null) {
+		if (FlxG.save.data.hideHud != null) {
 			hideHud = FlxG.save.data.hideHud;
 		}
-		if(FlxG.save.data.noteOffset != null) {
+		if (FlxG.save.data.noteOffset != null) {
 			noteOffset = FlxG.save.data.noteOffset;
 		}
-		if(FlxG.save.data.arrowHSV != null && FlxG.save.data.arrowHSV.length == Note.MAX_KEYS) {
+		if (FlxG.save.data.arrowHSV != null && FlxG.save.data.arrowHSV.length == Note.MAX_KEYS) {
 			arrowHSV = FlxG.save.data.arrowHSV;
 		}
-		if(FlxG.save.data.ghostTapping != null) {
+		if (FlxG.save.data.ghostTapping != null) {
 			ghostTapping = FlxG.save.data.ghostTapping;
 		}
-		if(FlxG.save.data.timeBarType != null) {
+		if (FlxG.save.data.timeBarType != null) {
 			timeBarType = FlxG.save.data.timeBarType;
 		}
-		if(FlxG.save.data.scoreZoom != null) {
+		if (FlxG.save.data.scoreZoom != null) {
 			scoreZoom = FlxG.save.data.scoreZoom;
 		}
-		if(FlxG.save.data.noReset != null) {
+		if (FlxG.save.data.noReset != null) {
 			noReset = FlxG.save.data.noReset;
 		}
-		if(FlxG.save.data.healthBarAlpha != null) {
+		if (FlxG.save.data.healthBarAlpha != null) {
 			healthBarAlpha = FlxG.save.data.healthBarAlpha;
 		}
-		if(FlxG.save.data.comboOffset != null) {
+		if (FlxG.save.data.comboOffset != null) {
 			comboOffset = FlxG.save.data.comboOffset;
 		}
 		
-		if(FlxG.save.data.ratingOffset != null) {
+		if (FlxG.save.data.ratingOffset != null) {
 			ratingOffset = FlxG.save.data.ratingOffset;
 		}
-		if(FlxG.save.data.sickWindow != null) {
+		if (FlxG.save.data.sickWindow != null) {
 			sickWindow = FlxG.save.data.sickWindow;
 		}
-		if(FlxG.save.data.goodWindow != null) {
+		if (FlxG.save.data.goodWindow != null) {
 			goodWindow = FlxG.save.data.goodWindow;
 		}
-		if(FlxG.save.data.badWindow != null) {
+		if (FlxG.save.data.badWindow != null) {
 			badWindow = FlxG.save.data.badWindow;
 		}
-		if(FlxG.save.data.safeFrames != null) {
+		if (FlxG.save.data.safeFrames != null) {
 			safeFrames = FlxG.save.data.safeFrames;
 		}
-		if(FlxG.save.data.controllerMode != null) {
+		if (FlxG.save.data.controllerMode != null) {
 			//controllerMode = FlxG.save.data.controllerMode;
 		}
-		if(FlxG.save.data.gameplaySettings != null)
+		if (FlxG.save.data.gameplaySettings != null)
 		{
 			var savedMap:Map<String, Dynamic> = FlxG.save.data.gameplaySettings;
 			for (name => value in savedMap)
@@ -310,28 +310,28 @@ class ClientPrefs {
 			}
 		}
 
-		if(FlxG.save.data.freeplayAlphabetic != null) {
+		if (FlxG.save.data.freeplayAlphabetic != null) {
 			freeplayAlphabetic = FlxG.save.data.freeplayAlphabetic;
 		}
-		if(FlxG.save.data.instVolume != null) {
+		if (FlxG.save.data.instVolume != null) {
 			instVolume = FlxG.save.data.instVolume;
 		}
-		if(FlxG.save.data.voicesVolume != null) {
+		if (FlxG.save.data.voicesVolume != null) {
 			voicesVolume = FlxG.save.data.voicesVolume;
 		}
-		if(FlxG.save.data.underlayAlpha != null) {
+		if (FlxG.save.data.underlayAlpha != null) {
 			underlayAlpha = FlxG.save.data.underlayAlpha;
 		}
-		if(FlxG.save.data.instantRestart != null) {
+		if (FlxG.save.data.instantRestart != null) {
 			instantRestart = FlxG.save.data.instantRestart;
 		}
-		if(FlxG.save.data.autoPause != null) {
+		if (FlxG.save.data.autoPause != null) {
 			autoPause = FlxG.save.data.autoPause;
 			FlxG.autoPause = autoPause;
 		}
 		
 		// flixel automatically saves your volume!
-		if(FlxG.save.data.volume != null)
+		if (FlxG.save.data.volume != null)
 		{
 			FlxG.sound.volume = FlxG.save.data.volume;
 		}
@@ -342,7 +342,7 @@ class ClientPrefs {
 
 		var save:FlxSave = new FlxSave();
 		save.bind('controls_v2', 'ninjamuffin99');
-		if(save != null && save.data.customControls != null) {
+		if (save != null && save.data.customControls != null) {
 			var loadedControls:Map<String, Array<FlxKey>> = save.data.customControls;
 			for (control => keys in loadedControls) {
 				keyBinds.set(control, keys);
@@ -371,7 +371,7 @@ class ClientPrefs {
 		var len:Int = copiedArray.length;
 
 		while (i < len) {
-			if(copiedArray[i] == NONE) {
+			if (copiedArray[i] == NONE) {
 				copiedArray.remove(NONE);
 				--i;
 			}

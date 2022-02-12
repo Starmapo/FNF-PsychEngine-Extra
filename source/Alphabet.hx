@@ -93,7 +93,7 @@ class Alphabet extends FlxSpriteGroup
 		x = 0;
 		_finalText = newText;
 		text = newText;
-		if(newTypingSpeed != -1) {
+		if (newTypingSpeed != -1) {
 			typingSpeed = newTypingSpeed;
 		}
 
@@ -206,11 +206,11 @@ class Alphabet extends FlxSpriteGroup
 
 		// trace(arrayShit);
 
-		if(speed <= 0) {
+		if (speed <= 0) {
 			while(!finishedText) { 
 				timerCheck();
 			}
-			if(dialogueSound != null) dialogueSound.stop();
+			if (dialogueSound != null) dialogueSound.stop();
 			dialogueSound = FlxG.sound.play(Paths.sound('dialogue'));
 		} else {
 			typeTimer = new FlxTimer().start(0.1, function(tmr:FlxTimer) {
@@ -227,21 +227,21 @@ class Alphabet extends FlxSpriteGroup
 		if ((loopNum <= splitWords.length - 2 && splitWords[loopNum] == "\\" && splitWords[loopNum+1] == "n") ||
 			((autoBreak = true) && xPos >= FlxG.width * 0.65 && splitWords[loopNum] == ' ' ))
 		{
-			if(autoBreak) {
-				if(tmr != null) tmr.loops -= 1;
+			if (autoBreak) {
+				if (tmr != null) tmr.loops -= 1;
 				loopNum += 1;
 			} else {
-				if(tmr != null) tmr.loops -= 2;
+				if (tmr != null) tmr.loops -= 2;
 				loopNum += 2;
 			}
 			yMulti += 1;
 			xPosResetted = true;
 			xPos = 0;
 			curRow += 1;
-			if(curRow == 2) y += LONG_TEXT_ADD;
+			if (curRow == 2) y += LONG_TEXT_ADD;
 		}
 
-		if(loopNum <= splitWords.length && splitWords[loopNum] != null) {
+		if (loopNum <= splitWords.length && splitWords[loopNum] != null) {
 			var spaceChar:Bool = (splitWords[loopNum] == " " || (isBold && splitWords[loopNum] == "_"));
 			if (spaceChar)
 			{
@@ -307,8 +307,8 @@ class Alphabet extends FlxSpriteGroup
 				}
 				letter.x += 90;
 
-				if(tmr != null) {
-					if(dialogueSound != null) dialogueSound.stop();
+				if (tmr != null) {
+					if (dialogueSound != null) dialogueSound.stop();
 					dialogueSound = FlxG.sound.play(Paths.sound('dialogue'));
 				}
 
@@ -319,8 +319,8 @@ class Alphabet extends FlxSpriteGroup
 		}
 
 		loopNum++;
-		if(loopNum >= splitWords.length) {
-			if(tmr != null) {
+		if (loopNum >= splitWords.length) {
+			if (tmr != null) {
 				typeTimer = null;
 				tmr.cancel();
 				tmr.destroy();
@@ -337,7 +337,7 @@ class Alphabet extends FlxSpriteGroup
 
 			var lerpVal:Float = CoolUtil.boundTo(elapsed * 9.6, 0, 1);
 			y = FlxMath.lerp(y, (scaledY * yMult) + (FlxG.height * 0.48) + yAdd, lerpVal);
-			if(forceX != Math.NEGATIVE_INFINITY) {
+			if (forceX != Math.NEGATIVE_INFINITY) {
 				x = forceX;
 			} else {
 				x = FlxMath.lerp(x, (targetY * 20) + 90 + xAdd, lerpVal);
@@ -348,7 +348,7 @@ class Alphabet extends FlxSpriteGroup
 	}
 
 	public function killTheTimer() {
-		if(typeTimer != null) {
+		if (typeTimer != null) {
 			typeTimer.cancel();
 			typeTimer.destroy();
 		}

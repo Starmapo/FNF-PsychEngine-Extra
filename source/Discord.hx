@@ -1,9 +1,8 @@
 package;
 
+#if DISCORD_ALLOWED
 import Sys.sleep;
-#if desktop
 import discord_rpc.DiscordRpc;
-#end
 
 #if LUA_ALLOWED
 import llua.Lua;
@@ -71,7 +70,7 @@ class DiscordClient
 
 	public static function changePresence(details:String, state:Null<String>, ?smallImageKey : String, ?hasStartTimestamp : Bool, ?endTimestamp: Float)
 	{
-		var startTimestamp:Float = if(hasStartTimestamp) Date.now().getTime() else 0;
+		var startTimestamp:Float = if (hasStartTimestamp) Date.now().getTime() else 0;
 
 		if (endTimestamp > 0)
 		{
@@ -100,3 +99,4 @@ class DiscordClient
 	}
 	#end
 }
+#end

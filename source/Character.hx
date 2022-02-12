@@ -135,7 +135,7 @@ class Character extends FlxSprite
 				{
 					spriteType = "texture";
 				}
-				switch (spriteType){
+				switch (spriteType) {
 					case "packer":
 						frames = Paths.getPackerAtlas(json.image);
 					case "sparrow":
@@ -146,7 +146,7 @@ class Character extends FlxSprite
 				
 				imageFile = json.image;
 
-				if(json.scale != 1) {
+				if (json.scale != 1) {
 					jsonScale = json.scale;
 					setGraphicSize(Std.int(width * jsonScale));
 					updateHitbox();
@@ -158,32 +158,32 @@ class Character extends FlxSprite
 				healthIcon = json.healthicon;
 				singDuration = json.sing_duration;
 				flipX = !!json.flip_x;
-				if(json.no_antialiasing) {
+				if (json.no_antialiasing) {
 					antialiasing = false;
 					noAntialiasing = true;
 				}
 
-				if(json.healthbar_colors != null && json.healthbar_colors.length > 2)
+				if (json.healthbar_colors != null && json.healthbar_colors.length > 2)
 					healthColorArray = json.healthbar_colors;
 
 				antialiasing = !noAntialiasing;
-				if(!ClientPrefs.globalAntialiasing) antialiasing = false;
+				if (!ClientPrefs.globalAntialiasing) antialiasing = false;
 
 				animationsArray = json.animations;
-				if(animationsArray != null && animationsArray.length > 0) {
+				if (animationsArray != null && animationsArray.length > 0) {
 					for (anim in animationsArray) {
 						var animAnim:String = '' + anim.anim;
 						var animName:String = '' + anim.name;
 						var animFps:Int = anim.fps;
 						var animLoop:Bool = !!anim.loop; //Bruh
 						var animIndices:Array<Int> = anim.indices;
-						if(animIndices != null && animIndices.length > 0) {
+						if (animIndices != null && animIndices.length > 0) {
 							animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
 						} else {
 							animation.addByPrefix(animAnim, animName, animFps, animLoop);
 						}
 
-						if(anim.offsets != null && anim.offsets.length > 1) {
+						if (anim.offsets != null && anim.offsets.length > 1) {
 							addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
 						}
 					}
@@ -194,7 +194,7 @@ class Character extends FlxSprite
 		}
 		originalFlipX = flipX;
 
-		if(animOffsets.exists('singLEFTmiss') || animOffsets.exists('singDOWNmiss') || animOffsets.exists('singUPmiss') || animOffsets.exists('singRIGHTmiss')) hasMissAnimations = true;
+		if (animOffsets.exists('singLEFTmiss') || animOffsets.exists('singDOWNmiss') || animOffsets.exists('singUPmiss') || animOffsets.exists('singRIGHTmiss')) hasMissAnimations = true;
 		recalculateDanceIdle();
 		dance();
 
@@ -206,7 +206,7 @@ class Character extends FlxSprite
 			if (!curCharacter.startsWith('bf'))
 			{
 				// var animArray
-				if(animation.getByName('singLEFT') != null && animation.getByName('singRIGHT') != null)
+				if (animation.getByName('singLEFT') != null && animation.getByName('singRIGHT') != null)
 				{
 					var oldRight = animation.getByName('singRIGHT').frames;
 					animation.getByName('singRIGHT').frames = animation.getByName('singLEFT').frames;
@@ -226,21 +226,21 @@ class Character extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if(!debugMode && animation.curAnim != null)
+		if (!debugMode && animation.curAnim != null)
 		{
-			if(heyTimer > 0)
+			if (heyTimer > 0)
 			{
 				heyTimer -= elapsed;
-				if(heyTimer <= 0)
+				if (heyTimer <= 0)
 				{
-					if(specialAnim && animation.curAnim.name == 'hey' || animation.curAnim.name == 'cheer')
+					if (specialAnim && animation.curAnim.name == 'hey' || animation.curAnim.name == 'cheer')
 					{
 						specialAnim = false;
 						dance();
 					}
 					heyTimer = 0;
 				}
-			} else if(specialAnim && animation.curAnim.finished)
+			} else if (specialAnim && animation.curAnim.finished)
 			{
 				specialAnim = false;
 				dance();
@@ -269,7 +269,7 @@ class Character extends FlxSprite
 				}
 			}
 
-			if(animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-loop') != null)
+			if (animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-loop') != null)
 			{
 				playAnim(animation.curAnim.name + '-loop');
 			}
@@ -286,7 +286,7 @@ class Character extends FlxSprite
 	{
 		if (!debugMode && !specialAnim)
 		{
-			if(danceIdle)
+			if (danceIdle)
 			{
 				danced = !danced;
 
@@ -295,7 +295,7 @@ class Character extends FlxSprite
 				else
 					playAnim('danceLeft' + idleSuffix);
 			}
-			else if(animation.getByName('idle' + idleSuffix) != null) {
+			else if (animation.getByName('idle' + idleSuffix) != null) {
 					playAnim('idle' + idleSuffix);
 			}
 		}

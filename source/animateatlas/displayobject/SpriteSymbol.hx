@@ -272,8 +272,8 @@ class SpriteSymbol extends Sprite {
 	private function setFilterData(data:FilterData):Void{
 		var blur:BlurFilter;
 		var glow:GlowFilter;
-		if (data != null){
-			if (data.BlurFilter != null){
+		if (data != null) {
+			if (data.BlurFilter != null) {
 				blur = new BlurFilter();
 				blur.blurX = data.BlurFilter.blurX;
 				blur.blurY = data.BlurFilter.blurY;
@@ -281,7 +281,7 @@ class SpriteSymbol extends Sprite {
 				//_bitmap.bitmapData.applyFilter(_bitmap.bitmapData,new Rectangle(0,0,_bitmap.bitmapData.width,_bitmap.bitmapData.height),new Point(0,0),blur);
 				//filters.push(blur);
 			}
-			if (data.GlowFilter != null){
+			if (data.GlowFilter != null) {
 				//trace('GLOW' + data.GlowFilter);
 				//glow = new GlowFilter();
 				//glow.blurX = data.GlowFilter.blurX;
@@ -323,7 +323,7 @@ class SpriteSymbol extends Sprite {
 			newTransform.blueMultiplier = (data.blueMultiplier == null ? 1 : data.blueMultiplier);
 			newTransform.alphaMultiplier = (data.alphaMultiplier == null ? 1 : data.alphaMultiplier);
 
-			if (data.mode == "Tint"){//Tint color effect
+			if (data.mode == "Tint") {//Tint color effect
 				var color:FlxColor = Std.parseInt(StringTools.replace(data.tintColor, "#", "0xFF"));
 				newTransform.redMultiplier = 0;
 				newTransform.greenMultiplier = 0;//(data.greenMultiplier == null ? 1 : data.greenMultiplier);

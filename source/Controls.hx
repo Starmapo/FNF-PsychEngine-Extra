@@ -480,7 +480,7 @@ class Controls extends FlxActionSet
 	{
 		var copyKeys:Array<FlxKey> = keys.copy();
 		for (i in 0...copyKeys.length) {
-			if(i == NONE) copyKeys.remove(i);
+			if (i == NONE) copyKeys.remove(i);
 		}
 
 		inline forEachBound(control, (action, state) -> addKeys(action, copyKeys, state));
@@ -494,7 +494,7 @@ class Controls extends FlxActionSet
 	{
 		var copyKeys:Array<FlxKey> = keys.copy();
 		for (i in 0...copyKeys.length) {
-			if(i == NONE) copyKeys.remove(i);
+			if (i == NONE) copyKeys.remove(i);
 		}
 
 		inline forEachBound(control, (action, _) -> removeKeys(action, copyKeys));
@@ -503,7 +503,7 @@ class Controls extends FlxActionSet
 	inline static function addKeys(action:FlxActionDigital, keys:Array<FlxKey>, state:FlxInputState)
 	{
 		for (key in keys)
-			if(key != NONE)
+			if (key != NONE)
 				action.addKey(key, state);
 	}
 

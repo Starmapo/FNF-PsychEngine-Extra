@@ -29,8 +29,8 @@ class MenuCharacter extends FlxSprite
 	}
 
 	public function changeCharacter(?character:String = 'bf') {
-		if(character == null) character = '';
-		if(character == this.character) return;
+		if (character == null) character = '';
+		if (character == this.character) return;
 
 		this.character = character;
 		antialiasing = ClientPrefs.globalAntialiasing;
@@ -55,14 +55,14 @@ class MenuCharacter extends FlxSprite
 					path = Paths.getPreloadPath(characterPath);
 				}
 
-				if(!FileSystem.exists(path)) {
+				if (!FileSystem.exists(path)) {
 					path = Paths.getPreloadPath('images/menucharacters/' + DEFAULT_CHARACTER + '.json');
 				}
 				rawJson = File.getContent(path);
 
 				#else
 				var path:String = Paths.getPreloadPath(characterPath);
-				if(!Assets.exists(path)) {
+				if (!Assets.exists(path)) {
 					path = Paths.getPreloadPath('images/menucharacters/' + DEFAULT_CHARACTER + '.json');
 				}
 				rawJson = Assets.getText(path);
@@ -74,7 +74,7 @@ class MenuCharacter extends FlxSprite
 				animation.addByPrefix('idle', charFile.idle_anim, 24);
 				animation.addByPrefix('confirm', charFile.confirm_anim, 24, false);
 
-				if(charFile.scale != 1) {
+				if (charFile.scale != 1) {
 					scale.set(charFile.scale, charFile.scale);
 					updateHitbox();
 				}

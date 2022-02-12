@@ -1,6 +1,6 @@
 package editors;
 
-#if desktop
+#if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
 import flixel.FlxG;
@@ -222,7 +222,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 
 		animationDropDown = new FlxUIDropDownMenuCustom(10, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(animation:String) {
 			var anim:String = animationArray[Std.parseInt(animation)];
-			if(character.dialogueAnimations.exists(anim)) {
+			if (character.dialogueAnimations.exists(anim)) {
 				ghostLoop.playAnim(anim);
 				ghostIdle.playAnim(anim, true);
 
@@ -246,11 +246,11 @@ class DialogueCharacterEditorState extends MusicBeatState
 		
 		var addUpdateButton:FlxButton = new FlxButton(10, idleInputText.y + 30, "Add/Update", function() {
 			var theAnim:String = animationInputText.text.trim();
-			if(character.dialogueAnimations.exists(theAnim)) //Update
+			if (character.dialogueAnimations.exists(theAnim)) //Update
 			{
 				for (i in 0...character.jsonFile.animations.length) {
 					var animArray:DialogueAnimArray = character.jsonFile.animations[i];
-					if(animArray.anim.trim() == theAnim) {
+					if (animArray.anim.trim() == theAnim) {
 						animArray.loop_name = loopInputText.text;
 						animArray.idle_name = idleInputText.text;
 						break;
@@ -260,7 +260,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 				character.reloadAnimations();
 				ghostLoop.reloadAnimations();
 				ghostIdle.reloadAnimations();
-				if(curSelectedAnim == theAnim) {
+				if (curSelectedAnim == theAnim) {
 					ghostLoop.playAnim(theAnim);
 					ghostIdle.playAnim(theAnim, true);
 				}
@@ -288,14 +288,14 @@ class DialogueCharacterEditorState extends MusicBeatState
 		var removeUpdateButton:FlxButton = new FlxButton(100, addUpdateButton.y, "Remove", function() {
 			for (i in 0...character.jsonFile.animations.length) {
 				var animArray:DialogueAnimArray = character.jsonFile.animations[i];
-				if(animArray != null && animArray.anim.trim() == animationInputText.text.trim()) {
+				if (animArray != null && animArray.anim.trim() == animationInputText.text.trim()) {
 					var lastSelected:String = animationDropDown.selectedLabel;
 					character.jsonFile.animations.remove(animArray);
 					character.reloadAnimations();
 					ghostLoop.reloadAnimations();
 					ghostIdle.reloadAnimations();
 					reloadAnimationsDropDown();
-					if(character.jsonFile.animations.length > 0 && lastSelected == animArray.anim.trim()) {
+					if (character.jsonFile.animations.length > 0 && lastSelected == animArray.anim.trim()) {
 						var animToPlay:String = character.jsonFile.animations[0].anim;
 						ghostLoop.playAnim(animToPlay);
 						ghostIdle.playAnim(animToPlay, true);
@@ -329,7 +329,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 			animationArray.push(anim.anim);
 		}
 
-		if(animationArray.length < 1) animationArray = [''];
+		if (animationArray.length < 1) animationArray = [''];
 		animationDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(animationArray, true));
 	}
 
@@ -391,7 +391,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 
 	private static var DEFAULT_TEXT:String = 'Lorem ipsum dolor sit amet';
 	function reloadText() {
-		if(daText != null) {
+		if (daText != null) {
 			daText.killTheTimer();
 			daText.kill();
 			hudGroup.remove(daText);
@@ -426,7 +426,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 		character.x += character.jsonFile.position[0] + mainGroup.x;
 		character.y += character.jsonFile.position[1] + mainGroup.y;
 		character.playAnim(); //Plays random animation
-		if(character.jsonFile.animations.length > 0) {
+		if (character.jsonFile.animations.length > 0) {
 			curSelectedAnim = character.jsonFile.animations[0].anim;
 			var animShit:DialogueAnimArray = character.dialogueAnimations.get(curSelectedAnim);
 			ghostLoop.playAnim(animShit.anim);
@@ -435,7 +435,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 			offsetIdleText.text = 'Idle: ' + animShit.idle_offsets;
 		}
 
-		#if desktop
+		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("Dialogue Character Editor", "Editing: " + character.jsonFile.image);
 		#end
@@ -455,16 +455,16 @@ class DialogueCharacterEditorState extends MusicBeatState
 	}
 
 	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>) {
-		if(id == FlxUIInputText.CHANGE_EVENT && sender == imageInputText) {
+		if (id == FlxUIInputText.CHANGE_EVENT && sender == imageInputText) {
 			character.jsonFile.image = imageInputText.text;
-		} else if(id == FlxUINumericStepper.CHANGE_EVENT && (sender is FlxUINumericStepper)) {
-			if(sender == scaleStepper) {
+		} else if (id == FlxUINumericStepper.CHANGE_EVENT && (sender is FlxUINumericStepper)) {
+			if (sender == scaleStepper) {
 				character.jsonFile.scale = scaleStepper.value;
 				reloadCharacter();
-			} else if(sender == xStepper) {
+			} else if (sender == xStepper) {
 				character.jsonFile.position[0] = xStepper.value;
 				reloadCharacter();
-			} else if(sender == yStepper) {
+			} else if (sender == yStepper) {
 				character.jsonFile.position[1] = yStepper.value;
 				reloadCharacter();
 			}
@@ -475,45 +475,45 @@ class DialogueCharacterEditorState extends MusicBeatState
 	var lastTab:String = 'Character';
 	var transitioning:Bool = false;
 	override function update(elapsed:Float) {
-		if(transitioning) {
+		if (transitioning) {
 			super.update(elapsed);
 			return;
 		}
 		FlxG.mouse.visible = true;//cause reasons. trust me 
 
-		if(character.animation.curAnim != null) {
-			if(daText.finishedText) {
-				if(character.animationIsLoop()) {
+		if (character.animation.curAnim != null) {
+			if (daText.finishedText) {
+				if (character.animationIsLoop()) {
 					character.playAnim(character.animation.curAnim.name, true);
 				}
-			} else if(character.animation.curAnim.finished) {
+			} else if (character.animation.curAnim.finished) {
 				character.animation.curAnim.restart();
 			}
 		}
 
 		var blockInput:Bool = false;
 		for (inputText in blockPressWhileTypingOn) {
-			if(inputText.hasFocus) {
+			if (inputText.hasFocus) {
 				FlxG.sound.muteKeys = [];
 				FlxG.sound.volumeDownKeys = [];
 				FlxG.sound.volumeUpKeys = [];
 				blockInput = true;
 
-				if(FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null) { //Copy paste
+				if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null) { //Copy paste
 					inputText.text = ClipboardAdd(inputText.text);
 					inputText.caretIndex = inputText.text.length;
 					getEvent(FlxUIInputText.CHANGE_EVENT, inputText, null, []);
 				}
-				if(FlxG.keys.justPressed.ENTER) inputText.hasFocus = false;
+				if (FlxG.keys.justPressed.ENTER) inputText.hasFocus = false;
 				break;
 			}
 		}
 
-		if(!blockInput && !animationDropDown.dropPanel.visible) {
+		if (!blockInput && !animationDropDown.dropPanel.visible) {
 			FlxG.sound.muteKeys = TitleState.muteKeys;
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
-			if(FlxG.keys.justPressed.SPACE && UI_mainbox.selected_tab_id == 'Character') {
+			if (FlxG.keys.justPressed.SPACE && UI_mainbox.selected_tab_id == 'Character') {
 				character.playAnim();
 				updateTextBox();
 				reloadText();
@@ -522,7 +522,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 			//lots of Ifs lol get trolled
 			var offsetAdd:Int = 1;
 			var speed:Float = 300;
-			if(FlxG.keys.pressed.SHIFT) {
+			if (FlxG.keys.pressed.SHIFT) {
 				speed = 1200;
 				offsetAdd = 10;
 			}
@@ -530,8 +530,8 @@ class DialogueCharacterEditorState extends MusicBeatState
 			var negaMult:Array<Int> = [1, 1, -1, -1];
 			var controlArray:Array<Bool> = [FlxG.keys.pressed.J, FlxG.keys.pressed.I, FlxG.keys.pressed.L, FlxG.keys.pressed.K];
 			for (i in 0...controlArray.length) {
-				if(controlArray[i]) {
-					if(i % 2 == 1) {
+				if (controlArray[i]) {
+					if (i % 2 == 1) {
 						mainGroup.y += speed * elapsed * negaMult[i];
 					} else {
 						mainGroup.x += speed * elapsed * negaMult[i];
@@ -539,14 +539,14 @@ class DialogueCharacterEditorState extends MusicBeatState
 				}
 			}
 
-			if(UI_mainbox.selected_tab_id == 'Animations' && curSelectedAnim != null && character.dialogueAnimations.exists(curSelectedAnim)) {
+			if (UI_mainbox.selected_tab_id == 'Animations' && curSelectedAnim != null && character.dialogueAnimations.exists(curSelectedAnim)) {
 				var moved:Bool = false;
 				var animShit:DialogueAnimArray = character.dialogueAnimations.get(curSelectedAnim);
 				var controlArrayLoop:Array<Bool> = [FlxG.keys.justPressed.A, FlxG.keys.justPressed.W, FlxG.keys.justPressed.D, FlxG.keys.justPressed.S];
 				var controlArrayIdle:Array<Bool> = [FlxG.keys.justPressed.LEFT, FlxG.keys.justPressed.UP, FlxG.keys.justPressed.RIGHT, FlxG.keys.justPressed.DOWN];
 				for (i in 0...controlArrayLoop.length) {
-					if(controlArrayLoop[i]) {
-						if(i % 2 == 1) {
+					if (controlArrayLoop[i]) {
+						if (i % 2 == 1) {
 							animShit.loop_offsets[1] += offsetAdd * negaMult[i];
 						} else {
 							animShit.loop_offsets[0] += offsetAdd * negaMult[i];
@@ -555,8 +555,8 @@ class DialogueCharacterEditorState extends MusicBeatState
 					}
 				}
 				for (i in 0...controlArrayIdle.length) {
-					if(controlArrayIdle[i]) {
-						if(i % 2 == 1) {
+					if (controlArrayIdle[i]) {
+						if (i % 2 == 1) {
 							animShit.idle_offsets[1] += offsetAdd * negaMult[i];
 						} else {
 							animShit.idle_offsets[0] += offsetAdd * negaMult[i];
@@ -565,7 +565,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 					}
 				}
 
-				if(moved) {
+				if (moved) {
 					offsetLoopText.text = 'Loop: ' + animShit.loop_offsets;
 					offsetIdleText.text = 'Idle: ' + animShit.idle_offsets;
 					ghostLoop.offset.set(animShit.loop_offsets[0], animShit.loop_offsets[1]);
@@ -575,16 +575,16 @@ class DialogueCharacterEditorState extends MusicBeatState
 
 			if (FlxG.keys.pressed.Q && camGame.zoom > 0.1) {
 				camGame.zoom -= elapsed * camGame.zoom;
-				if(camGame.zoom < 0.1) camGame.zoom = 0.1;
+				if (camGame.zoom < 0.1) camGame.zoom = 0.1;
 			}
 			if (FlxG.keys.pressed.E && camGame.zoom < 1) {
 				camGame.zoom += elapsed * camGame.zoom;
-				if(camGame.zoom > 1) camGame.zoom = 1;
+				if (camGame.zoom > 1) camGame.zoom = 1;
 			}
-			if(FlxG.keys.justPressed.H) {
-				if(UI_mainbox.selected_tab_id == 'Animations') {
+			if (FlxG.keys.justPressed.H) {
+				if (UI_mainbox.selected_tab_id == 'Animations') {
 					currentGhosts++;
-					if(currentGhosts > 2) currentGhosts = 0;
+					if (currentGhosts > 2) currentGhosts = 0;
 
 					ghostLoop.visible = (currentGhosts != 1);
 					ghostIdle.visible = (currentGhosts != 2);
@@ -594,14 +594,14 @@ class DialogueCharacterEditorState extends MusicBeatState
 					hudGroup.visible = !hudGroup.visible;
 				}
 			}
-			if(FlxG.keys.justPressed.R) {
+			if (FlxG.keys.justPressed.R) {
 				camGame.zoom = 1;
 				mainGroup.setPosition(0, 0);
 				hudGroup.visible = true;
 			}
 
-			if(UI_mainbox.selected_tab_id != lastTab) {
-				if(UI_mainbox.selected_tab_id == 'Animations') {
+			if (UI_mainbox.selected_tab_id != lastTab) {
+				if (UI_mainbox.selected_tab_id == 'Animations') {
 					hudGroup.alpha = 0;
 					mainGroup.alpha = 0;
 					ghostLoop.alpha = 0.6;
@@ -627,7 +627,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 				currentGhosts = 0;
 			}
 
-			if(FlxG.keys.justPressed.ESCAPE) {
+			if (FlxG.keys.justPressed.ESCAPE) {
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'), 1);
 				transitioning = true;
@@ -660,13 +660,13 @@ class DialogueCharacterEditorState extends MusicBeatState
 		#if MODS_ALLOWED
 		var fullPath:String = null;
 		@:privateAccess
-		if(_file.__path != null) fullPath = _file.__path;
+		if (_file.__path != null) fullPath = _file.__path;
 
-		if(fullPath != null) {
+		if (fullPath != null) {
 			var rawJson:String = File.getContent(fullPath);
-			if(rawJson != null) {
+			if (rawJson != null) {
 				var loadedChar:DialogueCharacterFile = cast Json.parse(rawJson);
-				if(loadedChar.dialogue_pos != null) //Make sure it's really a dialogue character
+				if (loadedChar.dialogue_pos != null) //Make sure it's really a dialogue character
 				{
 					var cutName:String = _file.name.substr(0, _file.name.length - 5);
 					trace("Successfully loaded file: " + cutName);
@@ -763,7 +763,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 	}
 
 	function ClipboardAdd(prefix:String = ''):String {
-		if(prefix.toLowerCase().endsWith('v')) //probably copy paste attempt
+		if (prefix.toLowerCase().endsWith('v')) //probably copy paste attempt
 		{
 			prefix = prefix.substring(0, prefix.length-1);
 		}

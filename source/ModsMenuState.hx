@@ -1,7 +1,7 @@
 package;
 
 #if MODS_ALLOWED
-#if desktop
+#if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
 import flixel.FlxG;
@@ -61,7 +61,7 @@ class ModsMenuState extends MusicBeatState
 		Paths.clearUnusedMemory();
 		WeekData.setDirectoryFromWeek();
 
-		#if desktop
+		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
 		#end
@@ -72,7 +72,7 @@ class ModsMenuState extends MusicBeatState
 		bg.screenCenter();
 		
 		noModsTxt = new FlxText(0, 0, FlxG.width, "NO MODS INSTALLED\nPRESS BACK TO EXIT AND INSTALL A MOD", 48);
-		if(FlxG.random.bool(0.1)) noModsTxt.text += '\nBITCH.'; //meanie
+		if (FlxG.random.bool(0.1)) noModsTxt.text += '\nBITCH.'; //meanie
 		noModsTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		noModsTxt.scrollFactor.set();
 		noModsTxt.borderSize = 2;
@@ -81,14 +81,14 @@ class ModsMenuState extends MusicBeatState
 		visibleWhenNoMods.push(noModsTxt);
 
 		var path:String = 'modsList.txt';
-		if(FileSystem.exists(path))
+		if (FileSystem.exists(path))
 		{
 			var leMods:Array<String> = CoolUtil.coolTextFile(path);
 			for (i in 0...leMods.length)
 			{
-				if(leMods.length > 1 && leMods[0].length > 0) {
+				if (leMods.length > 1 && leMods[0].length > 0) {
 					var modSplit:Array<String> = leMods[i].split('|');
-					if(!Paths.ignoreModFolders.contains(modSplit[0].toLowerCase()))
+					if (!Paths.ignoreModFolders.contains(modSplit[0].toLowerCase()))
 					{
 						addToModsList([modSplit[0], (modSplit[1] == '1')]);
 						//trace(modSplit[1]);
@@ -99,10 +99,10 @@ class ModsMenuState extends MusicBeatState
 
 		// FIND MOD FOLDERS
 		var boolshit = true;
-		if (FileSystem.exists("modsList.txt")){
+		if (FileSystem.exists("modsList.txt")) {
 			for (folder in Paths.getModDirectories())
 			{
-				if(!Paths.ignoreModFolders.contains(folder))
+				if (!Paths.ignoreModFolders.contains(folder))
 				{
 					addToModsList([folder, false]);//i like it false by default. 
 				}
@@ -165,7 +165,7 @@ class ModsMenuState extends MusicBeatState
 
 		startX -= 100;
 		buttonTop = new FlxButton(startX, 0, "TOP", function() {
-			for (i in 0...curSelected){//so if shifts to the top instead of replacing the top one
+			for (i in 0...curSelected) {//so if shifts to the top instead of replacing the top one
 			moveMod(-1);
 			}
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
@@ -181,7 +181,7 @@ class ModsMenuState extends MusicBeatState
 		
 		startX -= 190;
 		buttonDisableAll = new FlxButton(startX, 0, "DISABLE ALL", function() {
-			for (i in modsList){
+			for (i in modsList) {
 				i[1] = false;
 			}
 			updateButtonToggle();
@@ -198,7 +198,7 @@ class ModsMenuState extends MusicBeatState
 
 		startX -= 190;
 		buttonEnableAll = new FlxButton(startX, 0, "ENABLE ALL", function() {
-			for (i in modsList){
+			for (i in modsList) {
 				i[1] = true;
 			}
 			updateButtonToggle();
@@ -236,7 +236,7 @@ class ModsMenuState extends MusicBeatState
 		removeButton = new FlxButton(startX, 620, "Delete Selected Mod", function()
 		{
 			var path = haxe.io.Path.join([Paths.mods(), modsList[curSelected][0]]);
-			if(FileSystem.exists(path) && FileSystem.isDirectory(path))
+			if (FileSystem.exists(path) && FileSystem.isDirectory(path))
 			{
 				trace('Trying to delete directory ' + path);
 				try
@@ -252,7 +252,7 @@ class ModsMenuState extends MusicBeatState
 					modsList.remove(modsList[curSelected]);
 					mods.remove(mods[curSelected]);
 					
-					if(curSelected >= mods.length) --curSelected;
+					if (curSelected >= mods.length) --curSelected;
 					changeSelection();
 				}
 				catch(e)
@@ -282,7 +282,7 @@ class ModsMenuState extends MusicBeatState
 		while (i < modsList.length)
 		{
 			var values:Array<Dynamic> = modsList[i];
-			if(!FileSystem.exists(Paths.mods(values[0])))
+			if (!FileSystem.exists(Paths.mods(values[0])))
 			{
 				modsList.remove(modsList[i]);
 				continue;
@@ -299,13 +299,13 @@ class ModsMenuState extends MusicBeatState
 			//Don't ever cache the icons, it's a waste of loaded memory
 			var loadedIcon:BitmapData = null;
 			var iconToUse:String = Paths.mods(values[0] + '/pack.png');
-			if(FileSystem.exists(iconToUse))
+			if (FileSystem.exists(iconToUse))
 			{
 				loadedIcon = BitmapData.fromFile(iconToUse);
 			}
 
 			newMod.icon = new AttachedSprite();
-			if(loadedIcon != null)
+			if (loadedIcon != null)
 			{
 				newMod.icon.loadGraphic(loadedIcon, true, 150, 150);//animated icon support
 				var totalFrames = Math.floor(loadedIcon.width / 150) * Math.floor(loadedIcon.height / 150);
@@ -323,9 +323,9 @@ class ModsMenuState extends MusicBeatState
 			i++;
 		}
 		
-		if(curSelected >= mods.length) curSelected = 0;
+		if (curSelected >= mods.length) curSelected = 0;
 		
-		if(mods.length < 1)
+		if (mods.length < 1)
 			bg.color = defaultColor;
 		else
 			bg.color = mods[curSelected].color;
@@ -341,7 +341,7 @@ class ModsMenuState extends MusicBeatState
 
 	function getIntArray(max:Int):Array<Int>{
 		var arr:Array<Int> = [];
-		for (i in 0...max){
+		for (i in 0...max) {
 			arr.push(i);
 		}
 		return arr;
@@ -350,7 +350,7 @@ class ModsMenuState extends MusicBeatState
 	{
 		for (i in 0...modsList.length)
 		{
-			if(modsList[i][0] == values[0])
+			if (modsList[i][0] == values[0])
 			{
 				//trace(modsList[i][0], values[0]);
 				return;
@@ -375,15 +375,15 @@ class ModsMenuState extends MusicBeatState
 
 	function moveMod(change:Int)
 	{
-		if(mods.length > 1)
+		if (mods.length > 1)
 		{
 			var newPos:Int = curSelected + change;
-			if(newPos < 0)
+			if (newPos < 0)
 			{
 				modsList.push(modsList.shift());
 				mods.push(mods.shift());
 			}
-			else if(newPos >= mods.length)
+			else if (newPos >= mods.length)
 			{
 				modsList.insert(0, modsList.pop());
 				mods.insert(0, mods.pop());
@@ -407,7 +407,7 @@ class ModsMenuState extends MusicBeatState
 		var fileStr:String = '';
 		for (values in modsList)
 		{
-			if(fileStr.length > 0) fileStr += '\n';
+			if (fileStr.length > 0) fileStr += '\n';
 			fileStr += values[0] + '|' + (values[1] ? '1' : '0');
 		}
 
@@ -420,40 +420,38 @@ class ModsMenuState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		FlxG.mouse.visible = true;//cause reasons. trust me 
-		if(noModsTxt.visible)
+		if (noModsTxt.visible)
 		{
 			noModsSine += 180 * elapsed;
 			noModsTxt.alpha = 1 - Math.sin((Math.PI * noModsSine) / 180);
 		}
 
-		if(canExit && controls.BACK)
+		if (canExit && controls.BACK)
 		{
-			if(colorTween != null) {
+			if (colorTween != null) {
 				colorTween.cancel();
 			}
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			FlxG.mouse.visible = false;
 			saveTxt();
-			if(needaReset){
-			//MusicBeatState.switchState(new TitleState());
-			TitleState.initialized = false;
-			TitleState.closedState = false;
-			FlxG.sound.music.fadeOut(0.3);
-			FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
-			}else{
-			MusicBeatState.switchState(new MainMenuState());
-				
+			if (needaReset) {
+				TitleState.initialized = false;
+				TitleState.closedState = false;
+				FlxG.sound.music.fadeOut(0.3);
+				FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
+			} else {
+				MusicBeatState.switchState(new MainMenuState());
 			}
 		}
 
 		if (FlxG.mouse.wheel != 0) {
 			changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
 		}
-		if(controls.UI_UP_P)
+		if (controls.UI_UP_P)
 		{
 			changeSelection(-1);
 		}
-		if(controls.UI_DOWN_P)
+		if (controls.UI_DOWN_P)
 		{
 			changeSelection(1);
 		}
@@ -471,7 +469,7 @@ class ModsMenuState extends MusicBeatState
 
 	function changeSelection(change:Int = 0)
 	{
-		if(mods.length < 1)
+		if (mods.length < 1)
 		{
 			for (obj in visibleWhenHasMods)
 			{
@@ -494,14 +492,14 @@ class ModsMenuState extends MusicBeatState
 		}
 
 		curSelected += change;
-		if(curSelected < 0)
+		if (curSelected < 0)
 			curSelected = mods.length - 1;
-		else if(curSelected >= mods.length)
+		else if (curSelected >= mods.length)
 			curSelected = 0;
 
 		var newColor:Int = mods[curSelected].color;
-		if(newColor != intendedColor) {
-			if(colorTween != null) {
+		if (newColor != intendedColor) {
+			if (colorTween != null) {
 				colorTween.cancel();
 			}
 			intendedColor = newColor;
@@ -517,12 +515,12 @@ class ModsMenuState extends MusicBeatState
 		for (mod in mods)
 		{
 			mod.alphabet.alpha = 0.6;
-			if(i == curSelected)
+			if (i == curSelected)
 			{
 				mod.alphabet.alpha = 1;
 				selector.sprTracker = mod.alphabet;
 				descriptionTxt.text = mod.description;
-				if (mod.restart){//finna make it to where if nothing changed then it won't reset
+				if (mod.restart) {//finna make it to where if nothing changed then it won't reset
 					descriptionTxt.text += " (This will restart the game)";
 					needaReset = true;
 				}
@@ -551,8 +549,8 @@ class ModsMenuState extends MusicBeatState
 		for (mod in mods)
 		{
 			var intendedPos:Float = (i - curSelected) * 225 + 200;
-			if(i > curSelected) intendedPos += 225;
-			if(elapsed == -1)
+			if (i > curSelected) intendedPos += 225;
+			if (elapsed == -1)
 			{
 				mod.alphabet.y = intendedPos;
 			}
@@ -561,7 +559,7 @@ class ModsMenuState extends MusicBeatState
 				mod.alphabet.y = FlxMath.lerp(mod.alphabet.y, intendedPos, CoolUtil.boundTo(elapsed * 12, 0, 1));
 			}
 
-			if(i == curSelected)
+			if (i == curSelected)
 			{
 				descriptionTxt.y = mod.alphabet.y + 160;
 				for (button in buttonsArray)
@@ -595,11 +593,11 @@ class ModsMenuState extends MusicBeatState
 	{
 		var antiX:Float = (selector.width - cornerSize);
 		var antiY:Float = flipY ? (selector.height - 1) : 0;
-		if(flipY) antiY -= 2;
+		if (flipY) antiY -= 2;
 		selector.pixels.fillRect(new Rectangle((flipX ? antiX : 1), Std.int(Math.abs(antiY - 8)), 10, 3), FlxColor.BLACK);
-		if(flipY) antiY += 1;
+		if (flipY) antiY += 1;
 		selector.pixels.fillRect(new Rectangle((flipX ? antiX : 2), Std.int(Math.abs(antiY - 6)),  9, 2), FlxColor.BLACK);
-		if(flipY) antiY += 1;
+		if (flipY) antiY += 1;
 		selector.pixels.fillRect(new Rectangle((flipX ? antiX : 3), Std.int(Math.abs(antiY - 5)),  8, 1), FlxColor.BLACK);
 		selector.pixels.fillRect(new Rectangle((flipX ? antiX : 4), Std.int(Math.abs(antiY - 4)),  7, 1), FlxColor.BLACK);
 		selector.pixels.fillRect(new Rectangle((flipX ? antiX : 5), Std.int(Math.abs(antiY - 3)),  6, 1), FlxColor.BLACK);
@@ -626,12 +624,12 @@ class ModsMenuState extends MusicBeatState
 
 		var fullPath:String = null;
 		@:privateAccess
-		if(_file.__path != null) fullPath = _file.__path;
+		if (_file.__path != null) fullPath = _file.__path;
 
-		if(fullPath != null)
+		if (fullPath != null)
 		{
 			var rawZip:String = File.getContent(fullPath);
-			if(rawZip != null)
+			if (rawZip != null)
 			{
 				MusicBeatState.resetState();
 				var uncompressingFile:Bytes = new Uncompress().run(File.getBytes(rawZip));
@@ -701,29 +699,29 @@ class ModMetadata
 		if (FileSystem.exists(path)) rawJson = File.getContent(path);
 		if (rawJson != null) stuff = cast Json.parse(rawJson);
 		if (stuff != null) {	
-			if(stuff.name != null && stuff.name.length > 0)
+			if (stuff.name != null && stuff.name.length > 0)
 			{
 				this.name = stuff.name;
 			}
-			if(stuff.description != null && stuff.description.length > 0)
+			if (stuff.description != null && stuff.description.length > 0)
 			{
 				this.description = stuff.description;
 			}
-			if(stuff.colors != null && stuff.colors.length > 2)
+			if (stuff.colors != null && stuff.colors.length > 2)
 			{
 				this.color = FlxColor.fromRGB(stuff.colors[0], stuff.colors[1], stuff.colors[2]);
 			}
 			this.restart = stuff.restart;
 			/*
-			if(stuff.name != null && stuff.name.length > 0)
+			if (stuff.name != null && stuff.name.length > 0)
 			{
 				this.name = stuff.name;
 			}
-			if(stuff.description != null && stuff.description.length > 0)
+			if (stuff.description != null && stuff.description.length > 0)
 			{
 				this.description = stuff.description;
 			}
-			if(stuff.color != null && stuff.color.length > 2)
+			if (stuff.color != null && stuff.color.length > 2)
 			{
 				this.color = FlxColor.fromRGB(stuff.color[0], stuff.color[1], stuff.color[2]);
 			}*/

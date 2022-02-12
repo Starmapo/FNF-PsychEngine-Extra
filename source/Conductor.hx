@@ -71,7 +71,7 @@ class Conductor
 		var totalPos:Float = 0;
 		for (i in 0...song.notes.length)
 		{
-			if(song.notes[i].changeBPM && song.notes[i].bpm * mult != curBPM && song.notes[i].bpm > 0)
+			if (song.notes[i].changeBPM && song.notes[i].bpm * mult != curBPM && song.notes[i].bpm > 0)
 			{
 				curBPM = song.notes[i].bpm * mult;
 				var event:BPMChangeEvent = {
@@ -81,7 +81,7 @@ class Conductor
 				};
 				bpmChangeMap.push(event);
 			}
-			if(song.notes[i].changeSignature && (song.notes[i].numerator != curNumerator || song.notes[i].denominator != curDenominator))
+			if (song.notes[i].changeSignature && (song.notes[i].numerator != curNumerator || song.notes[i].denominator != curDenominator))
 			{
 				curNumerator = song.notes[i].numerator;
 				curDenominator = song.notes[i].denominator;

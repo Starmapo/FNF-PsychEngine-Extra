@@ -38,7 +38,7 @@ class NoteSplash extends FlxSprite
 		updateHitbox();
 		alphaMult = 0.6;
 
-		if(texture == null || texture.length < 1) {
+		if (texture == null || texture.length < 1) {
 			texture = 'noteSplashes';
 		}
 
@@ -81,7 +81,7 @@ class NoteSplash extends FlxSprite
 	}
 
 	override function update(elapsed:Float) {
-		if(animation.curAnim != null)if(animation.curAnim.finished) kill();
+		if (animation.curAnim != null)if (animation.curAnim.finished) kill();
 
 		if (daNote != null) {
 			setPosition(daNote.x - (daNote.width), daNote.y - (daNote.height));

@@ -37,11 +37,11 @@ class FlxVideo extends FlxBasic {
 			}
 		};
 		netConnect.addEventListener(NetStatusEvent.NET_STATUS, function(event:NetStatusEvent) {
-			if(event.info.code == "NetStream.Play.Complete") {
+			if (event.info.code == "NetStream.Play.Complete") {
 				netStream.dispose();
-				if(FlxG.game.contains(player)) FlxG.game.removeChild(player);
+				if (FlxG.game.contains(player)) FlxG.game.removeChild(player);
 
-				if(finishCallback != null) finishCallback();
+				if (finishCallback != null) finishCallback();
 			}
 		});
 		netStream.play(name);
@@ -82,13 +82,13 @@ class FlxVideo extends FlxBasic {
 	}
 	
 	public static function onFocus() {
-		if(vlcBitmap != null) {
+		if (vlcBitmap != null) {
 			vlcBitmap.resume();
 		}
 	}
 	
 	public static function onFocusLost() {
-		if(vlcBitmap != null) {
+		if (vlcBitmap != null) {
 			vlcBitmap.pause();
 		}
 	}
@@ -97,7 +97,7 @@ class FlxVideo extends FlxBasic {
 	{
 		// shitty volume fix
 		vlcBitmap.volume = 0;
-		if(!FlxG.sound.muted && FlxG.sound.volume > 0.01) { //Kind of fixes the volume being too low when you decrease it
+		if (!FlxG.sound.muted && FlxG.sound.volume > 0.01) { //Kind of fixes the volume being too low when you decrease it
 			vlcBitmap.volume = FlxG.sound.volume * 0.5 + 0.5;
 		}
 	}

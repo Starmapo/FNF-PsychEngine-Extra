@@ -27,7 +27,7 @@ class StrumNote extends FlxSprite
 	
 	public var texture(default, set):String = null;
 	private function set_texture(value:String):String {
-		if(texture != value) {
+		if (texture != value) {
 			texture = value;
 			reloadNote();
 		}
@@ -92,7 +92,7 @@ class StrumNote extends FlxSprite
 	public function reloadNote()
 	{
 		var lastAnim:String = null;
-		if(animation.curAnim != null) lastAnim = animation.curAnim.name;
+		if (animation.curAnim != null) lastAnim = animation.curAnim.name;
 		var uiFile:String = uiSkin.name;
 		if (uiFile == null || uiFile.length < 1) {
 			uiFile = 'default';
@@ -110,7 +110,7 @@ class StrumNote extends FlxSprite
 		setGraphicSize(Std.int((width * noteSize) * uiSkin.scale * uiSkin.noteScale));
 		updateHitbox();
 
-		if(lastAnim != null)
+		if (lastAnim != null)
 		{
 			playAnim(lastAnim, true);
 		}
@@ -125,15 +125,15 @@ class StrumNote extends FlxSprite
 	}
 
 	override function update(elapsed:Float) {
-		if(resetAnim > 0) {
+		if (resetAnim > 0) {
 			resetAnim -= elapsed;
-			if(resetAnim <= 0) {
+			if (resetAnim <= 0) {
 				playAnim('static');
 				resetAnim = 0;
 			}
 		}
-		if(animation.curAnim != null){ //my bad i was upset
-			if(animation.curAnim.name == 'confirm') {
+		if (animation.curAnim != null) { //my bad i was upset
+			if (animation.curAnim.name == 'confirm') {
 				centerOrigin();
 			}
 		}
@@ -145,7 +145,7 @@ class StrumNote extends FlxSprite
 		animation.play(anim, force);
 		centerOffsets();
 		centerOrigin();
-		if(animation.curAnim == null || animation.curAnim.name == 'static') {
+		if (animation.curAnim == null || animation.curAnim.name == 'static') {
 			colorSwap.hue = 0;
 			colorSwap.saturation = 0;
 			colorSwap.brightness = 0;

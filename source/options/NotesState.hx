@@ -114,25 +114,25 @@ class NotesState extends MusicBeatState
 		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
 		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
 		
-		if(changingNote) {
-			if(holdTime < 0.5) {
+		if (changingNote) {
+			if (holdTime < 0.5) {
 				if (FlxG.mouse.wheel != 0) {
 					updateValue(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				}
-				if(controls.UI_LEFT_P) {
+				if (controls.UI_LEFT_P) {
 					updateValue(-1);
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				} else if(controls.UI_RIGHT_P) {
+				} else if (controls.UI_RIGHT_P) {
 					updateValue(1);
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				} else if(controls.RESET) {
+				} else if (controls.RESET) {
 					resetValue(curSelected, typeSelected);
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				}
-				if(controls.UI_LEFT_R || controls.UI_RIGHT_R) {
+				if (controls.UI_LEFT_R || controls.UI_RIGHT_R) {
 					holdTime = 0;
-				} else if(controls.UI_LEFT || controls.UI_RIGHT) {
+				} else if (controls.UI_LEFT || controls.UI_RIGHT) {
 					holdTime += elapsed;
 				}
 			} else {
@@ -140,12 +140,12 @@ class NotesState extends MusicBeatState
 				switch(typeSelected) {
 					case 1 | 2: add = 50;
 				}
-				if(controls.UI_LEFT) {
+				if (controls.UI_LEFT) {
 					updateValue(elapsed * -add);
-				} else if(controls.UI_RIGHT) {
+				} else if (controls.UI_RIGHT) {
 					updateValue(elapsed * add);
 				}
-				if(controls.UI_LEFT_R || controls.UI_RIGHT_R) {
+				if (controls.UI_LEFT_R || controls.UI_RIGHT_R) {
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 					holdTime = 0;
 				}
@@ -177,7 +177,7 @@ class NotesState extends MusicBeatState
 				changeType(1);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			}
-			if(controls.RESET) {
+			if (controls.RESET) {
 				for (i in 0...3) {
 					resetValue(curSelected, i);
 				}
@@ -207,7 +207,7 @@ class NotesState extends MusicBeatState
 		}
 
 		if (controls.BACK || (changingNote && (controls.ACCEPT || FlxG.mouse.justPressed))) {
-			if(!changingNote) {
+			if (!changingNote) {
 				//FlxG.camera.zoom = 1;
 				//FlxG.camera.follow(null);
 				FlxTransitionableState.skipNextTransIn = true;
@@ -220,7 +220,7 @@ class NotesState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 		}
 
-		if(nextAccept > 0) {
+		if (nextAccept > 0) {
 			nextAccept -= 1;
 		}
 		super.update(elapsed);
@@ -298,9 +298,9 @@ class NotesState extends MusicBeatState
 			case 1 | 2: max = 100;
 		}
 
-		if(roundedValue < -max) {
+		if (roundedValue < -max) {
 			curValue = -max;
-		} else if(roundedValue > max) {
+		} else if (roundedValue > max) {
 			curValue = max;
 		}
 		roundedValue = Math.round(curValue);
@@ -315,6 +315,6 @@ class NotesState extends MusicBeatState
 		var item = grpNumbers.members[(curSelected * 3) + typeSelected];
 		item.changeText(Std.string(roundedValue));
 		item.offset.x = (40 * (item.lettersArray.length - 1)) / 2;
-		if(roundedValue < 0) item.offset.x += 10;
+		if (roundedValue < 0) item.offset.x += 10;
 	}
 }

@@ -90,7 +90,7 @@ class InputFormatter {
 				return '---';
 			default:
 				var label:String = '' + key;
-				if(label.toLowerCase() == 'null') return '---';
+				if (label.toLowerCase() == 'null') return '---';
 				return '' + label.charAt(0).toUpperCase() + label.substr(1).toLowerCase();
 		}
 	}

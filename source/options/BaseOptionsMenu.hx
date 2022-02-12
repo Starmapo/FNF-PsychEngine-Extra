@@ -1,6 +1,6 @@
 package options;
 
-#if desktop
+#if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
 import flash.text.TextField;
@@ -38,10 +38,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	{
 		super();
 
-		if(title == null) title = 'Options';
-		if(rpcTitle == null) rpcTitle = 'Options Menu';
+		if (title == null) title = 'Options';
+		if (rpcTitle == null) rpcTitle = 'Options Menu';
 		
-		#if desktop
+		#if DISCORD_ALLOWED
 		DiscordClient.changePresence(rpcTitle, null);
 		#end
 		
@@ -88,7 +88,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
-			if(optionsArray[i].type == 'bool') {
+			if (optionsArray[i].type == 'bool') {
 				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, optionsArray[i].getValue() == true);
 				checkbox.sprTracker = optionText;
 				checkbox.ID = i;
@@ -104,7 +104,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				optionsArray[i].setChild(valueText);
 			}
 
-			if(optionsArray[i].showBoyfriend && boyfriend == null)
+			if (optionsArray[i].showBoyfriend && boyfriend == null)
 			{
 				reloadBoyfriend();
 			}
@@ -116,7 +116,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	}
 
 	public function addOption(option:Option) {
-		if(optionsArray == null || optionsArray.length < 1) optionsArray = [];
+		if (optionsArray == null || optionsArray.length < 1) optionsArray = [];
 		optionsArray.push(option);
 	}
 
@@ -142,17 +142,17 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 		}
 
-		if(nextAccept <= 0)
+		if (nextAccept <= 0)
 		{
 			var usesCheckbox = true;
-			if(curOption.type != 'bool')
+			if (curOption.type != 'bool')
 			{
 				usesCheckbox = false;
 			}
 
-			if(usesCheckbox)
+			if (usesCheckbox)
 			{
-				if(controls.ACCEPT || FlxG.mouse.justPressed)
+				if (controls.ACCEPT || FlxG.mouse.justPressed)
 				{
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 					curOption.setValue((curOption.getValue() == true) ? false : true);
@@ -160,13 +160,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
 					reloadCheckboxes();
 				}
 			} else {
-				if(controls.UI_LEFT || controls.UI_RIGHT || (FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT)) {
+				if (controls.UI_LEFT || controls.UI_RIGHT || (FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT)) {
 					var pressed = (controls.UI_LEFT_P || controls.UI_RIGHT_P);
 					var useWheel = FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT;
-					if(holdTime > 0.5 || pressed || useWheel) {
-						if(pressed || useWheel) {
+					if (holdTime > 0.5 || pressed || useWheel) {
+						if (pressed || useWheel) {
 							var add:Dynamic = null;
-							if(curOption.type != 'string') {
+							if (curOption.type != 'string') {
 								if (useWheel) {
 									add = curOption.changeValue * Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1));
 								} else {
@@ -178,7 +178,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 							{
 								case 'int' | 'float' | 'percent':
 									holdValue = curOption.getValue() + add;
-									if(holdValue < curOption.minValue) holdValue = curOption.minValue;
+									if (holdValue < curOption.minValue) holdValue = curOption.minValue;
 									else if (holdValue > curOption.maxValue) holdValue = curOption.maxValue;
 
 									switch(curOption.type)
@@ -198,9 +198,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 									else if (controls.UI_LEFT_P) --num;
 									else num++;
 
-									if(num < 0) {
+									if (num < 0) {
 										num = curOption.options.length - 1;
-									} else if(num >= curOption.options.length) {
+									} else if (num >= curOption.options.length) {
 										num = 0;
 									}
 
@@ -211,9 +211,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 							updateTextFrom(curOption);
 							curOption.change();
 							FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-						} else if(curOption.type != 'string') {
+						} else if (curOption.type != 'string') {
 							holdValue += curOption.scrollSpeed * elapsed * (controls.UI_LEFT ? -1 : 1);
-							if(holdValue < curOption.minValue) holdValue = curOption.minValue;
+							if (holdValue < curOption.minValue) holdValue = curOption.minValue;
 							else if (holdValue > curOption.maxValue) holdValue = curOption.maxValue;
 
 							switch(curOption.type)
@@ -229,23 +229,23 @@ class BaseOptionsMenu extends MusicBeatSubstate
 						}
 					}
 
-					if(curOption.type != 'string' && !useWheel) {
+					if (curOption.type != 'string' && !useWheel) {
 						holdTime += elapsed;
 					}
-				} else if(controls.UI_LEFT_R || controls.UI_RIGHT_R) {
+				} else if (controls.UI_LEFT_R || controls.UI_RIGHT_R) {
 					clearHold();
 				}
 			}
 
-			if(controls.RESET)
+			if (controls.RESET)
 			{
 				for (i in 0...optionsArray.length)
 				{
 					var leOption:Option = optionsArray[i];
 					leOption.setValue(leOption.defaultValue);
-					if(leOption.type != 'bool')
+					if (leOption.type != 'bool')
 					{
-						if(leOption.type == 'string')
+						if (leOption.type == 'string')
 						{
 							leOption.curOption = leOption.options.indexOf(leOption.getValue());
 						}
@@ -258,11 +258,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			}
 		}
 
-		if(boyfriend != null && boyfriend.animation.curAnim.finished) {
+		if (boyfriend != null && boyfriend.animation.curAnim.finished) {
 			boyfriend.dance();
 		}
 
-		if(nextAccept > 0) {
+		if (nextAccept > 0) {
 			nextAccept -= 1;
 		}
 		super.update(elapsed);
@@ -271,14 +271,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	function updateTextFrom(option:Option) {
 		var text:String = option.displayFormat;
 		var val:Dynamic = option.getValue();
-		if(option.type == 'percent') val *= 100;
+		if (option.type == 'percent') val *= 100;
 		var def:Dynamic = option.defaultValue;
 		option.text = text.replace('%v', val).replace('%d', def);
 	}
 
 	function clearHold()
 	{
-		if(holdTime > 0.5) {
+		if (holdTime > 0.5) {
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		}
 		holdTime = 0;
@@ -309,7 +309,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 		for (text in grpTexts) {
 			text.alpha = 0.6;
-			if(text.ID == curSelected) {
+			if (text.ID == curSelected) {
 				text.alpha = 1;
 			}
 		}
@@ -318,7 +318,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 25));
 		descBox.updateHitbox();
 
-		if(boyfriend != null)
+		if (boyfriend != null)
 		{
 			boyfriend.visible = optionsArray[curSelected].showBoyfriend;
 		}
@@ -329,7 +329,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public function reloadBoyfriend()
 	{
 		var wasVisible:Bool = false;
-		if(boyfriend != null) {
+		if (boyfriend != null) {
 			wasVisible = boyfriend.visible;
 			boyfriend.kill();
 			remove(boyfriend);

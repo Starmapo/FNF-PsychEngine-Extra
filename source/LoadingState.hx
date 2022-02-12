@@ -72,7 +72,7 @@ class LoadingState extends MusicBeatState
 					}
 				}
 				checkLibrary("shared");
-				if(directory != null && directory.length > 0 && directory != 'shared') {
+				if (directory != null && directory.length > 0 && directory != 'shared') {
 					checkLibrary(directory);
 				}
 
@@ -110,13 +110,13 @@ class LoadingState extends MusicBeatState
 		super.update(elapsed);
 		funkay.setGraphicSize(Std.int(0.88 * FlxG.width + 0.9 * (funkay.width - 0.88 * FlxG.width)));
 		funkay.updateHitbox();
-		if(controls.ACCEPT)
+		if (controls.ACCEPT)
 		{
 			funkay.setGraphicSize(Std.int(funkay.width + 60));
 			funkay.updateHitbox();
 		}
 
-		if(callbacks != null) {
+		if (callbacks != null) {
 			targetShit = FlxMath.remapToRange(callbacks.numRemaining / callbacks.length, 1, 0, 0, 1);
 			loadBar.scale.x += 0.5 * (targetShit - loadBar.scale.x);
 		}
@@ -156,7 +156,7 @@ class LoadingState extends MusicBeatState
 		var weekDir:String = StageData.forceNextDirectory;
 		StageData.forceNextDirectory = null;
 
-		if(weekDir != null && weekDir.length > 0 && weekDir != '') directory = weekDir;
+		if (weekDir != null && weekDir.length > 0 && weekDir != '') directory = weekDir;
 
 		Paths.setCurrentLevel(directory);
 		trace('Setting asset folder to ' + directory);

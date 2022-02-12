@@ -82,7 +82,7 @@ class Note extends FlxSprite
 	public var uiSkin(default, set):SkinFile = null;
 
 	private function set_texture(value:String):String {
-		if(texture != value) {
+		if (texture != value) {
 			reloadNote('', value);
 		}
 		texture = value;
@@ -90,12 +90,12 @@ class Note extends FlxSprite
 	}
 
 	private function set_noteType(value:String):String {
-		if(noteData > -1) {
+		if (noteData > -1) {
 			noteSplashTexture = 'noteSplashes';
 			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount - 1][noteData][0] / 360;
 			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount - 1][noteData][1] / 100;
 			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount - 1][noteData][2] / 100;
-			if(noteType != value) {
+			if (noteType != value) {
 				switch(value) {
 					case 'Hurt Note':
 						ignoreNote = mustPress;
@@ -104,14 +104,14 @@ class Note extends FlxSprite
 						colorSwap.hue = 0;
 						colorSwap.saturation = 0;
 						colorSwap.brightness = 0;
-						if(isSustainNote) {
+						if (isSustainNote) {
 							missHealth = 0.1;
 						} else {
 							missHealth = 0.3;
 						}
 						hitCausesMiss = true;
 						hitMult = 0.5;
-						if(isSustainNote) {
+						if (isSustainNote) {
 							earlyHitMult = 0.3;
 						} else {
 							earlyHitMult = 0.5;
@@ -156,7 +156,7 @@ class Note extends FlxSprite
 		xOff = maniaData.xOffset;
 		noteSize = maniaData.noteSize;
 
-		if(texture != null) {
+		if (texture != null) {
 			reloadNote('', texture);
 		}
 
@@ -185,12 +185,12 @@ class Note extends FlxSprite
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
 		this.strumTime = strumTime;
-		if(!inEditor) this.strumTime += ClientPrefs.noteOffset;
+		if (!inEditor) this.strumTime += ClientPrefs.noteOffset;
 
 		this.noteData = noteData;
 		var data = noteData % keyAmount;
 
-		if(noteData > -1) {
+		if (noteData > -1) {
 			texture = '';
 			colorSwap = new ColorSwap();
 			shader = colorSwap.shader;
@@ -205,24 +205,24 @@ class Note extends FlxSprite
 
 		if (isSustainNote && prevNote != null) {
 			setSustainData();
-		} else if(!isSustainNote) {
+		} else if (!isSustainNote) {
 			earlyHitMult = 1;
 		}
 		x += offsetX;
 	}
 
 	function reloadNote(?prefix:String = '', ?texture:String = '', ?suffix:String = '') {
-		if(prefix == null) prefix = '';
-		if(texture == null) texture = '';
-		if(suffix == null) suffix = '';
+		if (prefix == null) prefix = '';
+		if (texture == null) texture = '';
+		if (suffix == null) suffix = '';
 		
 		var skin:String = texture;
-		if(skin == null || skin.length < 1) {
+		if (skin == null || skin.length < 1) {
 			skin = 'NOTE_assets';
 		}
 
 		var animName:String = null;
-		if(animation.curAnim != null) {
+		if (animation.curAnim != null) {
 			animName = animation.curAnim.name;
 		}
 
@@ -236,17 +236,17 @@ class Note extends FlxSprite
 		if (uiSkin.noAntialiasing) {
 			antialiasing = false;
 		}
-		if(isSustainNote) {
+		if (isSustainNote) {
 			scale.y = lastScaleY;
 		}
 		updateHitbox();
 
-		if(animName != null) {
+		if (animName != null) {
 			animation.play(animName, true);
 			if (isSustainNote) setSustainData();
 		}
 
-		if(inEditor) {
+		if (inEditor) {
 			setGraphicSize(ChartingState.GRID_SIZE, ChartingState.GRID_SIZE);
 			updateHitbox();
 		}
@@ -275,7 +275,7 @@ class Note extends FlxSprite
 		offsetX = 0;
 		alpha = 0.6;
 		multAlpha = 0.6;
-		if(ClientPrefs.downScroll) flipY = true;
+		if (ClientPrefs.downScroll) flipY = true;
 
 		offsetX += width / 2;
 		copyAngle = false;
@@ -292,7 +292,7 @@ class Note extends FlxSprite
 			prevNote.animation.play(colors[prevNote.noteData % keyAmount] + 'hold');
 
 			prevNote.scale.y *= stepCrochet / 100 * 1.05;
-			if(PlayState.instance != null)
+			if (PlayState.instance != null)
 			{
 				prevNote.scale.y *= PlayState.instance.songSpeed;
 			}
@@ -328,7 +328,7 @@ class Note extends FlxSprite
 
 			if (strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * earlyHitMult))
 			{
-				if((isSustainNote && prevNote.wasGoodHit) || strumTime <= Conductor.songPosition)
+				if ((isSustainNote && prevNote.wasGoodHit) || strumTime <= Conductor.songPosition)
 					wasGoodHit = true;
 			}
 		}

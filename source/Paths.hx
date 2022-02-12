@@ -112,7 +112,7 @@ class Paths
 		if (currentLevel != null)
 		{
 			var levelPath:String = '';
-			if(currentLevel != 'shared') {
+			if (currentLevel != 'shared') {
 				levelPath = getLibraryPathForce(file, currentLevel);
 				if (OpenFlAssets.exists(levelPath, type))
 					return levelPath;
@@ -171,7 +171,7 @@ class Paths
 	{
 		#if MODS_ALLOWED
 		var file:String = modsVideo(key);
-		if(FileSystem.exists(file)) {
+		if (FileSystem.exists(file)) {
 			return file;
 		}
 		#end
@@ -233,7 +233,7 @@ class Paths
 	{
 		#if MODS_ALLOWED
 		var file:String = modsFont(key);
-		if(FileSystem.exists(file)) {
+		if (FileSystem.exists(file)) {
 			return file;
 		}
 		#end
@@ -243,12 +243,12 @@ class Paths
 	inline static public function fileExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
 	{
 		#if MODS_ALLOWED
-		if(FileSystem.exists(mods(currentModDirectory + '/' + key)) || FileSystem.exists(mods(key))) {
+		if (FileSystem.exists(mods(currentModDirectory + '/' + key)) || FileSystem.exists(mods(key))) {
 			return true;
 		}
 		#end
 		
-		if(OpenFlAssets.exists(getPath(key, type))) {
+		if (OpenFlAssets.exists(getPath(key, type))) {
 			return true;
 		}
 		return false;
@@ -259,7 +259,7 @@ class Paths
 		#if MODS_ALLOWED
 		var imageLoaded:FlxGraphic = returnGraphic(key);
 		var xmlExists:Bool = false;
-		if(FileSystem.exists(modsXml(key))) {
+		if (FileSystem.exists(modsXml(key))) {
 			xmlExists = true;
 		}
 		return FlxAtlasFrames.fromSparrow((imageLoaded != null ? imageLoaded : image(key, library)), (xmlExists ? File.getContent(modsXml(key)) : file('images/$key.xml', library)));
@@ -274,7 +274,7 @@ class Paths
 		#if MODS_ALLOWED
 		var imageLoaded:FlxGraphic = returnGraphic(key);
 		var txtExists:Bool = false;
-		if(FileSystem.exists(modsTxt(key))) {
+		if (FileSystem.exists(modsTxt(key))) {
 			txtExists = true;
 		}
 
@@ -292,8 +292,8 @@ class Paths
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
 	public static function returnGraphic(key:String, ?library:String) {
 		#if MODS_ALLOWED
-		if(FileSystem.exists(modsImages(key))) {
-			if(!currentTrackedAssets.exists(key)) {
+		if (FileSystem.exists(modsImages(key))) {
+			if (!currentTrackedAssets.exists(key)) {
 				var newBitmap:BitmapData = BitmapData.fromFile(modsImages(key));
 				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
 				currentTrackedAssets.set(key, newGraphic);
@@ -305,7 +305,7 @@ class Paths
 		#end
 		var path = getPath('images/$key.png', IMAGE, library);
 		if (OpenFlAssets.exists(path, IMAGE)) {
-			if(!currentTrackedAssets.exists(key)) {
+			if (!currentTrackedAssets.exists(key)) {
 				var newGraphic:FlxGraphic = FlxG.bitmap.add(path, false, key);
 				currentTrackedAssets.set(key, newGraphic);
 			}
@@ -320,8 +320,8 @@ class Paths
 	public static function returnSound(path:String, key:String, ?library:String) {
 		#if MODS_ALLOWED
 		var file:String = modsSounds((library != null ? '$library/' : '') + path, key);
-		if(FileSystem.exists(file)) {
-			if(!currentTrackedSounds.exists(file)) {
+		if (FileSystem.exists(file)) {
+			if (!currentTrackedSounds.exists(file)) {
 				currentTrackedSounds.set(file, Sound.fromFile(file));
 			}
 			localTrackedAssets.push(key);
@@ -330,16 +330,12 @@ class Paths
 		#end
 		// I hate this so god damn much
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
-		#if MODS_ALLOWED
-		if (!OpenFlAssets.exists(gottenPath) || !FileSystem.exists(gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length)))
-		#else
 		if (!OpenFlAssets.exists(gottenPath))
-		#end
 		{
 			trace('didnt find sound $key');
 			return null;
 		}
-		if(!currentTrackedSounds.exists(gottenPath)) 
+		if (!currentTrackedSounds.exists(gottenPath)) 
 		#if MODS_ALLOWED
 			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length)));
 		#else
@@ -383,9 +379,9 @@ class Paths
 	}
 
 	static public function modFolders(key:String) {
-		if(currentModDirectory != null && currentModDirectory.length > 0) {
+		if (currentModDirectory != null && currentModDirectory.length > 0) {
 			var fileToCheck:String = mods(currentModDirectory + '/' + key);
-			if(FileSystem.exists(fileToCheck)) {
+			if (FileSystem.exists(fileToCheck)) {
 				return fileToCheck;
 			}
 		}
@@ -395,7 +391,7 @@ class Paths
 	static public function getModDirectories():Array<String> {
 		var list:Array<String> = [];
 		var modsFolder:String = mods();
-		if(FileSystem.exists(modsFolder)) {
+		if (FileSystem.exists(modsFolder)) {
 			for (folder in FileSystem.readDirectory(modsFolder)) {
 				var path = haxe.io.Path.join([modsFolder, folder]);
 				if (sys.FileSystem.isDirectory(path) && !ignoreModFolders.contains(folder) && !list.contains(folder)) {

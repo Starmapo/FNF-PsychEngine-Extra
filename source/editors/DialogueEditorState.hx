@@ -1,6 +1,6 @@
 package editors;
 
-#if desktop
+#if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
 import flixel.FlxG;
@@ -172,7 +172,7 @@ class DialogueEditorState extends MusicBeatState
 			case 'left':
 				box.flipX = true;
 			case 'center':
-				if(isAngry) {
+				if (isAngry) {
 					anim = 'center-angry';
 				} else {
 					anim = 'center';
@@ -204,7 +204,7 @@ class DialogueEditorState extends MusicBeatState
 		character.playAnim(); //Plays random animation
 		characterAnimSpeed();
 
-		if(character.animation.curAnim != null) {
+		if (character.animation.curAnim != null) {
 			animText.text = 'Animation: ' + character.jsonFile.animations[curAnim].anim + ' (' + (curAnim + 1) +' / ' + character.jsonFile.animations.length + ') - Press W or S to scroll';
 		} else {
 			animText.text = 'ERROR! NO ANIMATIONS FOUND';
@@ -215,46 +215,46 @@ class DialogueEditorState extends MusicBeatState
 	private static var DEFAULT_SPEED:Float = 0.05;
 	private static var DEFAULT_BUBBLETYPE:String = "normal";
 	function reloadText(speed:Float = 0.05) {
-		if(daText != null) {
+		if (daText != null) {
 			daText.killTheTimer();
 			daText.kill();
 			remove(daText);
 			daText.destroy();
 		}
 
-		if(Math.isNaN(speed) || speed < 0.001) speed = 0.0;
+		if (Math.isNaN(speed) || speed < 0.001) speed = 0.0;
 
 		var textToType:String = lineInputText.text;
-		if(textToType == null || textToType.length < 1) textToType = ' ';
+		if (textToType == null || textToType.length < 1) textToType = ' ';
 		daText = new Alphabet(DialogueBoxPsych.DEFAULT_TEXT_X, DialogueBoxPsych.DEFAULT_TEXT_Y, textToType, false, true, speed, 0.7);
 		add(daText);
 
-		if(speed > 0) {
-			if(character.jsonFile.animations.length > curAnim && character.jsonFile.animations[curAnim] != null) {
+		if (speed > 0) {
+			if (character.jsonFile.animations.length > curAnim && character.jsonFile.animations[curAnim] != null) {
 				character.playAnim(character.jsonFile.animations[curAnim].anim);
 			}
 			characterAnimSpeed();
 		}
 
-		#if desktop
+		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
 		var rpcText:String = lineInputText.text;
-		if(rpcText == null || rpcText.length < 1) rpcText = '(Empty)';
-		if(rpcText.length < 3) rpcText += '  '; //Fixes a bug on RPC that triggers an error when the text is too short
+		if (rpcText == null || rpcText.length < 1) rpcText = '(Empty)';
+		if (rpcText.length < 3) rpcText += '  '; //Fixes a bug on RPC that triggers an error when the text is too short
 		DiscordClient.changePresence("Dialogue Editor", rpcText);
 		#end
 	}
 
 	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>) {
-		if(id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
-			if(sender == characterInputText) {
+		if (id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
+			if (sender == characterInputText) {
 				character.reloadCharacterJson(characterInputText.text);
 				reloadCharacter();
 				updateTextBox();
 
-				if(character.jsonFile.animations.length > 0) {
+				if (character.jsonFile.animations.length > 0) {
 					curAnim = 0;
-					if(character.jsonFile.animations.length > curAnim && character.jsonFile.animations[curAnim] != null) {
+					if (character.jsonFile.animations.length > curAnim && character.jsonFile.animations[curAnim] != null) {
 						character.playAnim(character.jsonFile.animations[curAnim].anim, daText.finishedText);
 						animText.text = 'Animation: ' + character.jsonFile.animations[curAnim].anim + ' (' + (curAnim + 1) +' / ' + character.jsonFile.animations.length + ') - Press W or S to scroll';
 					} else {
@@ -263,14 +263,14 @@ class DialogueEditorState extends MusicBeatState
 					characterAnimSpeed();
 				}
 				dialogueFile.dialogue[curSelected].portrait = characterInputText.text;
-			} else if(sender == lineInputText) {
+			} else if (sender == lineInputText) {
 				reloadText(0);
 				dialogueFile.dialogue[curSelected].text = lineInputText.text;
 			}
-		} else if(id == FlxUINumericStepper.CHANGE_EVENT && (sender == speedStepper)) {
+		} else if (id == FlxUINumericStepper.CHANGE_EVENT && (sender == speedStepper)) {
 			reloadText(speedStepper.value);
 			dialogueFile.dialogue[curSelected].speed = speedStepper.value;
-			if(Math.isNaN(dialogueFile.dialogue[curSelected].speed) || dialogueFile.dialogue[curSelected].speed == null || dialogueFile.dialogue[curSelected].speed < 0.001) {
+			if (Math.isNaN(dialogueFile.dialogue[curSelected].speed) || dialogueFile.dialogue[curSelected].speed == null || dialogueFile.dialogue[curSelected].speed < 0.001) {
 				dialogueFile.dialogue[curSelected].speed = 0.0;
 			}
 		}
@@ -281,37 +281,37 @@ class DialogueEditorState extends MusicBeatState
 	var blockPressWhileTypingOn:Array<FlxUIInputText> = [];
 	var transitioning:Bool = false;
 	override function update(elapsed:Float) {
-		if(transitioning) {
+		if (transitioning) {
 			super.update(elapsed);
 			return;
 		}
 		FlxG.mouse.visible = true;//cause reasons. trust me 
 
-		if(character.animation.curAnim != null) {
-			if(daText.finishedText) {
-				if(character.animationIsLoop() && character.animation.curAnim.finished) {
+		if (character.animation.curAnim != null) {
+			if (daText.finishedText) {
+				if (character.animationIsLoop() && character.animation.curAnim.finished) {
 					character.playAnim(character.animation.curAnim.name, true);
 				}
-			} else if(character.animation.curAnim.finished) {
+			} else if (character.animation.curAnim.finished) {
 				character.animation.curAnim.restart();
 			}
 		}
 
 		var blockInput:Bool = false;
 		for (inputText in blockPressWhileTypingOn) {
-			if(inputText.hasFocus) {
+			if (inputText.hasFocus) {
 				FlxG.sound.muteKeys = [];
 				FlxG.sound.volumeDownKeys = [];
 				FlxG.sound.volumeUpKeys = [];
 				blockInput = true;
 
-				if(FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null) { //Copy paste
+				if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null) { //Copy paste
 					inputText.text = ClipboardAdd(inputText.text);
 					inputText.caretIndex = inputText.text.length;
 					getEvent(FlxUIInputText.CHANGE_EVENT, inputText, null, []);
 				}
-				if(FlxG.keys.justPressed.ENTER) {
-					if(inputText == lineInputText) {
+				if (FlxG.keys.justPressed.ENTER) {
+					if (inputText == lineInputText) {
 						inputText.text += '\\n';
 						inputText.caretIndex += 2;
 					} else {
@@ -322,14 +322,14 @@ class DialogueEditorState extends MusicBeatState
 			}
 		}
 
-		if(!blockInput) {
+		if (!blockInput) {
 			FlxG.sound.muteKeys = TitleState.muteKeys;
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
-			if(FlxG.keys.justPressed.SPACE) {
+			if (FlxG.keys.justPressed.SPACE) {
 				reloadText(speedStepper.value);
 			}
-			if(FlxG.keys.justPressed.ESCAPE) {
+			if (FlxG.keys.justPressed.ESCAPE) {
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'), 1);
 				transitioning = true;
@@ -338,33 +338,33 @@ class DialogueEditorState extends MusicBeatState
 			var controlAnim:Array<Bool> = [FlxG.keys.justPressed.W, FlxG.keys.justPressed.S];
 			var controlText:Array<Bool> = [FlxG.keys.justPressed.D, FlxG.keys.justPressed.A];
 			for (i in 0...controlAnim.length) {
-				if(controlAnim[i] && character.jsonFile.animations.length > 0) {
+				if (controlAnim[i] && character.jsonFile.animations.length > 0) {
 					curAnim += negaMult[i];
-					if(curAnim < 0) curAnim = character.jsonFile.animations.length - 1;
-					else if(curAnim >= character.jsonFile.animations.length) curAnim = 0;
+					if (curAnim < 0) curAnim = character.jsonFile.animations.length - 1;
+					else if (curAnim >= character.jsonFile.animations.length) curAnim = 0;
 
 					var animToPlay:String = character.jsonFile.animations[curAnim].anim;
-					if(character.dialogueAnimations.exists(animToPlay)) {
+					if (character.dialogueAnimations.exists(animToPlay)) {
 						character.playAnim(animToPlay, daText.finishedText);
 						dialogueFile.dialogue[curSelected].expression = animToPlay;
 					}
 					animText.text = 'Animation: ' + animToPlay + ' (' + (curAnim + 1) +' / ' + character.jsonFile.animations.length + ') - Press W or S to scroll';
 				}
-				if(controlText[i]) {
+				if (controlText[i]) {
 					changeText(negaMult[i]);
 				}
 			}
 
-			if(FlxG.keys.justPressed.O) {
+			if (FlxG.keys.justPressed.O) {
 				dialogueFile.dialogue.remove(dialogueFile.dialogue[curSelected]);
-				if(dialogueFile.dialogue.length < 1) //You deleted everything, dumbo!
+				if (dialogueFile.dialogue.length < 1) //You deleted everything, dumbo!
 				{
 					dialogueFile.dialogue = [
 						copyDefaultLine()
 					];
 				}
 				changeText();
-			} else if(FlxG.keys.justPressed.P) {
+			} else if (FlxG.keys.justPressed.P) {
 				dialogueFile.dialogue.insert(curSelected + 1, copyDefaultLine());
 				changeText(1);
 			}
@@ -374,8 +374,8 @@ class DialogueEditorState extends MusicBeatState
 
 	function changeText(add:Int = 0) {
 		curSelected += add;
-		if(curSelected < 0) curSelected = dialogueFile.dialogue.length - 1;
-		else if(curSelected >= dialogueFile.dialogue.length) curSelected = 0;
+		if (curSelected < 0) curSelected = dialogueFile.dialogue.length - 1;
+		else if (curSelected >= dialogueFile.dialogue.length) curSelected = 0;
 
 		var curDialogue:DialogueLine = dialogueFile.dialogue[curSelected];
 		characterInputText.text = curDialogue.portrait;
@@ -390,10 +390,10 @@ class DialogueEditorState extends MusicBeatState
 		reloadText(curDialogue.speed);
 
 		var leLength:Int = character.jsonFile.animations.length;
-		if(leLength > 0) {
+		if (leLength > 0) {
 			for (i in 0...leLength) {
 				var leAnim:DialogueAnimArray = character.jsonFile.animations[i];
-				if(leAnim != null && leAnim.anim == curDialogue.expression) {
+				if (leAnim != null && leAnim.anim == curDialogue.expression) {
 					curAnim = i;
 					break;
 				}
@@ -409,17 +409,17 @@ class DialogueEditorState extends MusicBeatState
 	}
 
 	function characterAnimSpeed() {
-		if(character.animation.curAnim != null) {
+		if (character.animation.curAnim != null) {
 			var speed:Float = speedStepper.value;
 			var rate:Float = 24 - (((speed - 0.05) / 5) * 480);
-			if(rate < 12) rate = 12;
-			else if(rate > 48) rate = 48;
+			if (rate < 12) rate = 12;
+			else if (rate > 48) rate = 48;
 			character.animation.curAnim.frameRate = rate;
 		}
 	}
 
 	function ClipboardAdd(prefix:String = ''):String {
-		if(prefix.toLowerCase().endsWith('v')) //probably copy paste attempt
+		if (prefix.toLowerCase().endsWith('v')) //probably copy paste attempt
 		{
 			prefix = prefix.substring(0, prefix.length-1);
 		}
@@ -447,13 +447,13 @@ class DialogueEditorState extends MusicBeatState
 		#if MODS_ALLOWED
 		var fullPath:String = null;
 		@:privateAccess
-		if(_file.__path != null) fullPath = _file.__path;
+		if (_file.__path != null) fullPath = _file.__path;
 
-		if(fullPath != null) {
+		if (fullPath != null) {
 			var rawJson:String = File.getContent(fullPath);
-			if(rawJson != null) {
+			if (rawJson != null) {
 				var loadedDialog:DialogueFile = cast Json.parse(rawJson);
-				if(loadedDialog.dialogue != null && loadedDialog.dialogue.length > 0) //Make sure it's really a dialogue file
+				if (loadedDialog.dialogue != null && loadedDialog.dialogue.length > 0) //Make sure it's really a dialogue file
 				{
 					var cutName:String = _file.name.substr(0, _file.name.length - 5);
 					trace("Successfully loaded file: " + cutName);

@@ -124,11 +124,11 @@ class ColorSwapShader extends FlxShader {
 			swagColor[1] = swagColor[1] + uTime[1];
 			swagColor[2] = swagColor[2] * (1.0 + uTime[2]);
 			
-			if(swagColor[1] < 0.0)
+			if (swagColor[1] < 0.0)
 			{
 				swagColor[1] = 0.0;
 			}
-			else if(swagColor[1] > 1.0)
+			else if (swagColor[1] > 1.0)
 			{
 				swagColor[1] = 1.0;
 			}

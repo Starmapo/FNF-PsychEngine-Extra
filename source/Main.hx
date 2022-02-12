@@ -81,7 +81,7 @@ class Main extends Sprite
 		addChild(fpsVar);
 		Lib.current.stage.align = "topLeft";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
-		if(fpsVar != null) {
+		if (fpsVar != null) {
 			fpsVar.visible = ClientPrefs.showFPS;
 		}
 		#end

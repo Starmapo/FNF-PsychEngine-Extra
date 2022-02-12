@@ -1,6 +1,6 @@
 package;
 
-#if desktop
+#if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
 import flixel.FlxG;
@@ -34,7 +34,7 @@ class CreditsState extends MusicBeatState
 
 	override function create()
 	{
-		#if desktop
+		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
 		#end
@@ -57,7 +57,7 @@ class CreditsState extends MusicBeatState
 				for(i in firstarray)
 				{
 					var arr:Array<String> = i.replace('\\n', '\n').split("::");
-					if(arr.length >= 5) arr.push(folder);
+					if (arr.length >= 5) arr.push(folder);
 					creditsStuff.push(arr);
 				}
 				creditsStuff.push(['']);
@@ -71,7 +71,7 @@ class CreditsState extends MusicBeatState
 				for(i in firstarray)
 				{
 					var arr:Array<String> = i.replace('\\n', '\n').split("::");
-					if(arr.length >= 5) arr.push(folder);
+					if (arr.length >= 5) arr.push(folder);
 					creditsStuff.push(arr);
 				}
 				creditsStuff.push(['']);
@@ -106,7 +106,7 @@ class CreditsState extends MusicBeatState
 			['kawaisprite',			'kawaisprite',		"Composer of Friday Night Funkin'",						'https://twitter.com/kawaisprite',		'6475F3']
 		];
 		
-		for(i in pisspoop){
+		for(i in pisspoop) {
 			creditsStuff.push(i);
 		}
 	
@@ -117,7 +117,7 @@ class CreditsState extends MusicBeatState
 			optionText.isMenuItem = true;
 			optionText.screenCenter(X);
 			optionText.yAdd -= 70;
-			if(isSelectable) {
+			if (isSelectable) {
 				optionText.x -= 70;
 			}
 			optionText.forceX = optionText.x;
@@ -125,8 +125,8 @@ class CreditsState extends MusicBeatState
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
-			if(isSelectable) {
-				if(creditsStuff[i][5] != null)
+			if (isSelectable) {
+				if (creditsStuff[i][5] != null)
 				{
 					Paths.currentModDirectory = creditsStuff[i][5];
 				}
@@ -140,7 +140,7 @@ class CreditsState extends MusicBeatState
 				add(icon);
 				Paths.currentModDirectory = '';
 
-				if(curSelected == -1) curSelected = i;
+				if (curSelected == -1) curSelected = i;
 			}
 		}
 
@@ -200,13 +200,13 @@ class CreditsState extends MusicBeatState
 
 		if (controls.BACK && !warningText.visible)
 		{
-			if(colorTween != null) {
+			if (colorTween != null) {
 				colorTween.cancel();
 			}
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			MusicBeatState.switchState(new MainMenuState());
 		}
-		if((controls.ACCEPT || FlxG.mouse.justPressed) && !warningText.visible 
+		if ((controls.ACCEPT || FlxG.mouse.justPressed) && !warningText.visible 
 			&& creditsStuff[curSelected][3] != null && creditsStuff[curSelected][3].length > 0) {
 			warningText.text = "WARNING!!!\nYOU ARE ABOUT TO GO TO: \n" + creditsStuff[curSelected][3] + "\nARE YOU ABSOLUTELY SURE YOU WANT TO GO TO THIS URL? \n(Y - Yes, N - No)";
 			warningText.screenCenter();
@@ -237,8 +237,8 @@ class CreditsState extends MusicBeatState
 		} while(unselectableCheck(curSelected));
 
 		var newColor:Int =  getCurrentBGColor();
-		if(newColor != intendedColor) {
-			if(colorTween != null) {
+		if (newColor != intendedColor) {
+			if (colorTween != null) {
 				colorTween.cancel();
 			}
 			intendedColor = newColor;
@@ -256,7 +256,7 @@ class CreditsState extends MusicBeatState
 			item.targetY = bullShit - curSelected;
 			bullShit++;
 
-			if(!unselectableCheck(bullShit-1)) {
+			if (!unselectableCheck(bullShit-1)) {
 				item.alpha = 0.6;
 				if (item.targetY == 0) {
 					item.alpha = 1;
@@ -268,7 +268,7 @@ class CreditsState extends MusicBeatState
 
 	function getCurrentBGColor() {
 		var bgColor:String = creditsStuff[curSelected][4];
-		if(!bgColor.startsWith('0x')) {
+		if (!bgColor.startsWith('0x')) {
 			bgColor = '0xFF' + bgColor;
 		}
 		return Std.parseInt(bgColor);

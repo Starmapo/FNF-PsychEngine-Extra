@@ -53,7 +53,7 @@ class Song
 	{
 		var songName:String = Paths.formatToSongPath(songJson.song);
 
-		if(songJson.events == null)
+		if (songJson.events == null)
 		{
 			songJson.events = [];
 			for (secNum in 0...songJson.notes.length)
@@ -66,7 +66,7 @@ class Song
 				while(i < len)
 				{
 					var note:Array<Dynamic> = notes[i];
-					if(note[1] < 0)
+					if (note[1] < 0)
 					{
 						songJson.events.push([note[0], [[note[2], note[3], note[4]]]]);
 						notes.remove(note);
@@ -77,17 +77,17 @@ class Song
 			}
 		}
 
-		if(songJson.playerKeyAmount == null)
+		if (songJson.playerKeyAmount == null)
 		{
 			songJson.playerKeyAmount = 4;
 			songJson.opponentKeyAmount = 4;
 		}
-		if(songJson.numerator == null)
+		if (songJson.numerator == null)
 		{
 			songJson.numerator = 4;
 			songJson.denominator = 4;
 		}
-		if(songJson.uiSkin == null)
+		if (songJson.uiSkin == null)
 		{
 			songJson.uiSkin = '';
 			songJson.uiSkinOpponent = '';
@@ -108,9 +108,9 @@ class Song
 			while(i < len)
 			{
 				var note:Array<Dynamic> = notes[i];
-				if(note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
+				if (note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
 				else if (note[3] == null) note[3] = '';
-				if(note[4] == null || note[4].length < 1) note[4] = [0];
+				if (note[4] == null || note[4].length < 1) note[4] = [0];
 				notes[i] = [note[0], note[1], note[2], note[3], note[4]];
 				i++;
 			}
@@ -126,12 +126,12 @@ class Song
 		var formattedSong:String = Paths.formatToSongPath(jsonInput);
 		#if MODS_ALLOWED
 		var moddyFile:String = Paths.modsJson(formattedFolder + '/' + formattedSong);
-		if(FileSystem.exists(moddyFile)) {
+		if (FileSystem.exists(moddyFile)) {
 			rawJson = File.getContent(moddyFile).trim();
 		}
 		#end
 
-		if(rawJson == null) {
+		if (rawJson == null) {
 			#if MODS_ALLOWED
 			rawJson = File.getContent(Paths.json(formattedFolder + '/' + formattedSong)).trim();
 			#else
@@ -162,7 +162,7 @@ class Song
 				daBpm = songData.bpm; */
 
 		var songJson:SwagSong = parseJSONshit(rawJson);
-		if(formattedSong != 'events') StageData.loadDirectory(songJson);
+		if (formattedSong != 'events') StageData.loadDirectory(songJson);
 		onLoadJson(songJson);
 		return songJson;
 	}
@@ -172,10 +172,10 @@ class Song
 		var tempSong:DifferentJSON = cast Json.parse(rawJson).song;
 		var swagShit:SwagSong = cast Json.parse(rawJson).song;
 
-		if(tempSong.player3 != null) {
+		if (tempSong.player3 != null) {
 			swagShit.gfVersion = tempSong.player3;
 		}
-		if(tempSong.arrowSkin != null) {
+		if (tempSong.arrowSkin != null) {
 			swagShit.uiSkin = tempSong.arrowSkin;
 			swagShit.uiSkinOpponent = tempSong.arrowSkin;
 		}
@@ -192,7 +192,7 @@ class Song
 			}
 			swagShit.opponentKeyAmount = swagShit.playerKeyAmount;
 		}
-		if(tempSong.gf != null) {
+		if (tempSong.gf != null) {
 			swagShit.gfVersion = tempSong.gf;
 		}
 		if (tempSong.keyCount != null) {
@@ -206,7 +206,7 @@ class Song
 			swagShit.numerator = tempSong.timescale[0];
 			swagShit.denominator = tempSong.timescale[1];
 		}
-		if(tempSong.ui_Skin != null) {
+		if (tempSong.ui_Skin != null) {
 			swagShit.uiSkin = tempSong.ui_Skin;
 			swagShit.uiSkinOpponent = tempSong.ui_Skin;
 		}

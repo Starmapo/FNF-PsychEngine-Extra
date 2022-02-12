@@ -28,7 +28,7 @@ class PauseSubState extends MusicBeatSubstate
 	public function new(x:Float, y:Float)
 	{
 		super();
-		if(CoolUtil.difficulties.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
+		if (CoolUtil.difficulties.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
 
 		if (PlayState.chartingMode) {
 			menuItemsOG.insert(2, 'Toggle Practice Mode');
@@ -151,7 +151,7 @@ class PauseSubState extends MusicBeatSubstate
 		if (accepted)
 		{
 			var daSelected:String = menuItems[curSelected];
-			if(daSelected != 'BACK' && difficultyChoices.contains(daSelected)) {
+			if (daSelected != 'BACK' && difficultyChoices.contains(daSelected)) {
 				var name:String = PlayState.SONG.song;
 				var poop = Highscore.formatSong(name, curSelected);
 				PlayState.SONG = Song.loadFromJson(poop, name);
@@ -192,7 +192,7 @@ class PauseSubState extends MusicBeatSubstate
 				case "Exit to menu":
 					PlayState.deathCounter = 0;
 					PlayState.seenCutscene = false;
-					if(PlayState.isStoryMode) {
+					if (PlayState.isStoryMode) {
 						MusicBeatState.switchState(new StoryMenuState());
 					} else {
 						PlayState.SONG = PlayState.originalSong;
@@ -216,7 +216,7 @@ class PauseSubState extends MusicBeatSubstate
 		PlayState.instance.vocalsDad.volume = 0;
 		PlayState.SONG = PlayState.originalSong;
 
-		if(noTrans)
+		if (noTrans)
 		{
 			FlxTransitionableState.skipNextTransOut = true;
 			FlxG.resetState();

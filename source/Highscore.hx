@@ -26,7 +26,7 @@ class Highscore
 
 	public static function floorDecimal(value:Float, decimals:Int):Float
 	{
-		if(decimals < 1)
+		if (decimals < 1)
 		{
 			return Math.floor(value);
 		}
@@ -47,12 +47,12 @@ class Highscore
 		if (songScores.exists(daSong)) {
 			if (songScores.get(daSong) < score) {
 				setScore(daSong, score);
-				if(rating >= 0) setRating(daSong, rating);
+				if (rating >= 0) setRating(daSong, rating);
 			}
 		}
 		else {
 			setScore(daSong, score);
-			if(rating >= 0) setRating(daSong, rating);
+			if (rating >= 0) setRating(daSong, rating);
 		}
 	}
 

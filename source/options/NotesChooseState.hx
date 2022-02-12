@@ -61,7 +61,7 @@ class NotesChooseState extends MusicBeatState {
             FlxG.sound.play(Paths.sound('cancelMenu'));
         }
 
-        if(controls.ACCEPT || FlxG.mouse.justPressed) {
+        if (controls.ACCEPT || FlxG.mouse.justPressed) {
             FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
             FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
