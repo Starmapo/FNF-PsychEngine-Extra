@@ -151,8 +151,6 @@ class FlxUIDropDownMenuCustom extends FlxUIGroup implements IFlxUIWidget impleme
 
 	public var callback:String->Void;
 
-	// private var _ui_control_callback:Bool->FlxUIDropDownMenuCustom->Void;
-
 	/**
 	 * This creates a new dropdown menu.
 	 *
@@ -383,9 +381,6 @@ class FlxUIDropDownMenuCustom extends FlxUIGroup implements IFlxUIWidget impleme
 		return t;
 	}
 
-	/*public function setUIControlCallback(UIControlCallback:Bool->FlxUIDropDownMenuCustom->Void):Void {
-		_ui_control_callback = UIControlCallback;
-	}*/
 	public function changeLabelByIndex(i:Int, NewLabel:String):Void
 	{
 		var btn:FlxUIButton = getBtnByIndex(i);
@@ -462,7 +457,6 @@ class FlxUIDropDownMenuCustom extends FlxUIGroup implements IFlxUIWidget impleme
 		dropPanel = FlxDestroyUtil.destroy(dropPanel);
 
 		list = FlxDestroyUtil.destroyArray(list);
-		// _ui_control_callback = null;
 		callback = null;
 	}
 

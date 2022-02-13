@@ -63,7 +63,6 @@ class ChromaticAberrationShader extends FlxShader
 			toUse.r = col1.r;
 			toUse.g = col2.g;
 			toUse.b = col3.b;
-			//float someshit = col4.r + col4.g + col4.b;
 
 			gl_FragColor = toUse;
 		}')
@@ -436,9 +435,7 @@ class VCRDistortionEffect extends Effect
     shader.vignetteMoving.value = [vignetteMoving];
     shader.glitchModifier.value = [glitchFactor];
     shader.iResolution.value = [Lib.current.stage.stageWidth,Lib.current.stage.stageHeight];
-   // var noise = Assets.getBitmapData(Paths.image("noise2"));
-   // shader.noiseTex.input = noise;
-   PlayState.instance.shaderUpdates.push(update);
+   	PlayState.instance.shaderUpdates.push(update);
   }
 
   public function update(elapsed:Float) {
@@ -483,7 +480,6 @@ class VCRDistortionShader extends FlxShader // https://www.shadertoy.com/view/ld
     uniform bool distortionOn;
     uniform bool scanlinesOn;
     uniform bool vignetteMoving;
-   // uniform sampler2D noiseTex;
     uniform float glitchModifier;
     uniform vec3 iResolution;
 
@@ -553,8 +549,6 @@ class VCRDistortionShader extends FlxShader // https://www.shadertoy.com/view/ld
     	float scan1 = clamp(cos(uv.y * 2.0 + iTime), 0.0, 1.0);
     	float scan2 = clamp(cos(uv.y * 2.0 + iTime + 4.0) * 10.0, 0.0, 1.0) ;
     	float amount = scan1 * scan2 * uv.x;
-
-    	//uv.x -= 0.05 * mix(flixel_texture2D(noiseTex, vec2(uv.x, amount)).r * amount, amount, 0.9);
 
     	return uv;
 
@@ -901,11 +895,7 @@ void main()
    sum += flixel_texture2D(bitmap, vec2(texcoord.x, texcoord.y + 4.0*blurSize)) * 0.05;
 
    //increase blur with intensity!
-  gl_FragColor = sum*intensity + flixel_texture2D(bitmap, texcoord); 
-  // if (sin(iTime) > 0.0)
-   //    fragColor = sum * sin(iTime)+ texture(iChannel0, texcoord);
-  // else
-	//   fragColor = sum * -sin(iTime)+ texture(iChannel0, texcoord);
+   gl_FragColor = sum*intensity + flixel_texture2D(bitmap, texcoord); 
 }
 	
 	
@@ -1094,7 +1084,6 @@ class InvertColorsEffect extends Effect
 {
     public var shader:InvertShader = new InvertShader();
 	public function new(lockAlpha) {
-	//	shader.lockAlpha.value = [lockAlpha];
 	}
 
 }
@@ -1103,7 +1092,6 @@ class GlitchShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
-    //uniform float tx, ty; // x,y waves phase
 
     //modified version of the wave shader to create weird garbled corruption like messes
     uniform float uTime;
@@ -1130,7 +1118,7 @@ class GlitchShader extends FlxShader
         
         float offsetX = sin(pt.y * uFrequency + uTime * uSpeed) * (uWaveAmplitude / pt.x * pt.y);
         float offsetY = sin(pt.x * uFrequency - uTime * uSpeed) * (uWaveAmplitude / pt.y * pt.x);
-        pt.x += offsetX; // * (pt.y - 1.0); // <- Uncomment to stop bottom part of the screen from moving
+        pt.x += offsetX;
         pt.y += offsetY;
 
         return vec2(pt.x + x, pt.y + y);
@@ -1178,7 +1166,6 @@ class DistortBGShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
-    //uniform float tx, ty; // x,y waves phase
 
     //gives the character a glitchy, distorted outline
     uniform float uTime;
@@ -1205,7 +1192,7 @@ class DistortBGShader extends FlxShader
         
         float offsetX = sin(pt.x * uFrequency + uTime * uSpeed) * (uWaveAmplitude / pt.x * pt.y);
         float offsetY = sin(pt.y * uFrequency - uTime * uSpeed) * (uWaveAmplitude);
-        pt.x += offsetX; // * (pt.y - 1.0); // <- Uncomment to stop bottom part of the screen from moving
+        pt.x += offsetX;
         pt.y += offsetY;
 
         return vec2(pt.x + x, pt.y + y);

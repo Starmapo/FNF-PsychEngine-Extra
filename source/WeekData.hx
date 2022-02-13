@@ -98,11 +98,9 @@ class WeekData {
 				else // Sort mod loading order based on modsList.txt file
 				{
 					var path = haxe.io.Path.join([Paths.mods(), splitName[0]]);
-					//trace('trying to push: ' + splitName[0]);
 					if (sys.FileSystem.isDirectory(path) && !Paths.ignoreModFolders.contains(splitName[0]) && !disabledMods.contains(splitName[0]) && !directories.contains(path + '/'))
 					{
 						directories.push(path + '/');
-						//trace('pushed Directory: ' + splitName[0]);
 					}
 				}
 			}
@@ -115,7 +113,6 @@ class WeekData {
 			if (!disabledMods.contains(folder) && !directories.contains(pathThing))
 			{
 				directories.push(pathThing);
-				//trace('pushed Directory: ' + folder);
 			}
 		}
 		#else

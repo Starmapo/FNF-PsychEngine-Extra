@@ -70,7 +70,6 @@ typedef ElementData = {
 typedef SymbolInstanceData = {
 	SYMBOL_name:String,
 	Instance_Name:String,
-	//bitmap:BitmapPosData,  //NOOO
 	symbolType:String,
 	transformationPoint:PointData,
 	Matrix3D:Matrix3DData,

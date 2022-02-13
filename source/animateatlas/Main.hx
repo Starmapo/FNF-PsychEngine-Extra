@@ -21,7 +21,6 @@ class Main extends Sprite {
 	var aa:TileAnimationLibrary;
 	var ss:SpriteAnimationLibrary;
 
-	//
 	var tileSymbols:Array<TileContainerMovieClip>;
 
 	var spriteSymbols:Array<SpriteMovieClip>;
@@ -53,7 +52,6 @@ class Main extends Sprite {
 		spriteSymbols = [];
 
 		addEventListener(Event.ENTER_FRAME, update);
-		// addEventListener(MouseEvent.CLICK, addSpriteGirl);
 		addEventListener(MouseEvent.CLICK, addTileGirl);
 	}
 

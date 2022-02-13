@@ -82,8 +82,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			var optionText:Alphabet = new Alphabet(0, 70 * i, optionsArray[i].name, false, false);
 			optionText.isMenuItem = true;
 			optionText.x += 300;
-			/*optionText.forceX = 300;
-			optionText.yMult = 90;*/
 			optionText.xAdd = 200;
 			optionText.targetY = i;
 			grpOptions.add(optionText);
@@ -206,7 +204,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 									curOption.curOption = num;
 									curOption.setValue(curOption.options[num]); //lol
-									//trace(curOption.options[num]);
 							}
 							updateTextFrom(curOption);
 							curOption.change();

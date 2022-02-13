@@ -23,7 +23,6 @@ class NoteSplash extends FlxSprite
 		colorSwap = new ColorSwap();
 		shader = colorSwap.shader;
 
-		//setupNoteSplash(x, y, note);
 		antialiasing = ClientPrefs.globalAntialiasing;
 	}
 

@@ -15,12 +15,12 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 		title = 'Graphics';
 		rpcTitle = 'Graphics Settings Menu'; //for Discord Rich Presence
 
-		var option:Option = new Option('Stage Quality:',
-			'How much detail should the background have?',
+		var option:Option = new Option('Game Quality:',
+			'How much detail should the game have?',
 			'stageQuality',
 			'string',
 			'Normal',
-			['Normal', 'Low', 'No Background']);
+			['Normal', 'Low', 'Crappy']);
 		addOption(option);
 
 		var option:Option = new Option('Anti-Aliasing',
@@ -44,16 +44,6 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 		option.displayFormat = '%v FPS';
 		option.onChange = onChangeFramerate;
 		#end
-
-		/*
-		var option:Option = new Option('Persistent Cached Data',
-			'If checked, images loaded will stay in memory\nuntil the game is closed, this increases memory usage,\nbut basically makes reloading times instant.',
-			'imagesPersist',
-			'bool',
-			false);
-		option.onChange = onChangePersistentData; //Persistent Cached Data changes FlxGraphic.defaultPersist
-		addOption(option);
-		*/
 
 		super();
 	}

@@ -117,10 +117,6 @@ class Alphabet extends FlxSpriteGroup
 		var xPos:Float = 0;
 		for (character in splitWords)
 		{
-			// if (character.fastCodeAt() == " ")
-			// {
-			// }
-
 			var spaceChar:Bool = (character == " " || (isBold && character == "_"));
 			if (spaceChar)
 			{
@@ -143,7 +139,6 @@ class Alphabet extends FlxSpriteGroup
 				}
 				consecutiveSpaces = 0;
 
-				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0, textSize);
 				var letter:AlphaCharacter = new AlphaCharacter(xPos, 0, textSize);
 
 				if (isBold)
@@ -182,8 +177,6 @@ class Alphabet extends FlxSpriteGroup
 
 				lastSprite = letter;
 			}
-
-			// loopNum += 1;
 		}
 	}
 
@@ -203,8 +196,6 @@ class Alphabet extends FlxSpriteGroup
 	{
 		_finalText = text;
 		doSplitWords();
-
-		// trace(arrayShit);
 
 		if (speed <= 0) {
 			while(!finishedText) { 
@@ -258,8 +249,6 @@ class Alphabet extends FlxSpriteGroup
 				{
 					lastSprite.updateHitbox();
 					xPos += lastSprite.width + 3;
-					// if (isBold)
-					// xPos -= 80;
 				}
 				else
 				{
@@ -272,7 +261,6 @@ class Alphabet extends FlxSpriteGroup
 				}
 				consecutiveSpaces = 0;
 
-				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0, textSize);
 				var letter:AlphaCharacter = new AlphaCharacter(xPos, 55 * yMulti, textSize);
 				letter.row = curRow;
 				if (isBold)
@@ -420,7 +408,6 @@ class AlphaCharacter extends FlxSprite
 			case "'":
 				y -= 20 * textSize;
 			case '-':
-				//x -= 35 - (90 * (1.0 - textSize));
 				y += 20 * textSize;
 			case '(':
 				x -= 65 * textSize;
@@ -495,7 +482,6 @@ class AlphaCharacter extends FlxSprite
 			case "'":
 				y -= 20;
 			case '-':
-				//x -= 35 - (90 * (1.0 - textSize));
 				y -= 16;
 		}
 	}

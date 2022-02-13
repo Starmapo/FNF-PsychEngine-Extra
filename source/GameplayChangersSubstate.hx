@@ -115,8 +115,6 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 			var optionText:Alphabet = new Alphabet(0, 70 * i, optionsArray[i].name, true, false, 0.05, 0.8);
 			optionText.isMenuItem = true;
 			optionText.x += 300;
-			/*optionText.forceX = 300;
-			optionText.yMult = 90;*/
 			optionText.xAdd = 120;
 			optionText.targetY = i;
 			grpOptions.add(optionText);
@@ -250,7 +248,6 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 											updateTextFrom(oOption);
 										}
 									}
-									//trace(curOption.options[num]);
 							}
 							updateTextFrom(curOption);
 							curOption.change();

@@ -201,8 +201,6 @@ class Note extends FlxSprite
 			}
 		}
 
-		// trace(prevNote);
-
 		if (isSustainNote && prevNote != null) {
 			setSustainData();
 		} else if (!isSustainNote) {
@@ -299,7 +297,6 @@ class Note extends FlxSprite
 
 			prevNote.scale.y *= uiSkin.sustainYScale;
 			prevNote.updateHitbox();
-			// prevNote.setGraphicSize();
 		}
 
 		scale.y *= uiSkin.scale;

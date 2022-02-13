@@ -271,36 +271,14 @@ class SpriteSymbol extends Sprite {
 	@:access(animateatlas)
 	private function setFilterData(data:FilterData):Void{
 		var blur:BlurFilter;
-		var glow:GlowFilter;
 		if (data != null) {
 			if (data.BlurFilter != null) {
 				blur = new BlurFilter();
 				blur.blurX = data.BlurFilter.blurX;
 				blur.blurY = data.BlurFilter.blurY;
 				blur.quality = data.BlurFilter.quality;
-				//_bitmap.bitmapData.applyFilter(_bitmap.bitmapData,new Rectangle(0,0,_bitmap.bitmapData.width,_bitmap.bitmapData.height),new Point(0,0),blur);
-				//filters.push(blur);
 			}
-			if (data.GlowFilter != null) {
-				//trace('GLOW' + data.GlowFilter);
-				//glow = new GlowFilter();
-				//glow.blurX = data.GlowFilter.blurX;
-				//glow.blurY = data.GlowFilter.blurY;
-				//glow.color = data.GlowFilter.color;
-				//glow.alpha = data.GlowFilter.alpha;
-				//glow.quality = data.GlowFilter.quality;
-				//glow.strength = data.GlowFilter.strength;
-				//glow.knockout = data.GlowFilter.knockout;
-				//glow.inner = data.GlowFilter.inner;
-				//filters.push(glow);
-
-
-
-
-			}
-
 		}
-		
 	}
 
 	private function setTransformationMatrix(data:Matrix3DData):Void {
@@ -384,7 +362,6 @@ class SpriteSymbol extends Sprite {
 				var frameData:LayerFrameData = frameDates[j];
 				if (frameData.name != null) {
 					labels.push(new FrameLabel(frameData.name, frameData.index));
-					//trace('got frame label ' + frameData.name);
 				}
 			}
 		}

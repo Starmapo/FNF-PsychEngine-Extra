@@ -150,16 +150,6 @@ class SpriteAnimationLibrary {
 
 		// the main animation
 		var defaultSymbolData:SymbolData = preprocessSymbolData(data.ANIMATION);
-		/*for (layer in defaultSymbolData.TIMELINE.LAYERS) {
-			for (frameLayer in layer.Frames) {
-				for (element in frameLayer.elements) {
-					element.SYMBOL_Instance.Matrix3D.m30 = 0;
-					element.SYMBOL_Instance.Matrix3D.m31 = 0;
-					element.SYMBOL_Instance.DecomposedMatrix.Position.x = 0;
-					element.SYMBOL_Instance.DecomposedMatrix.Position.y = 0;
-				}
-			}
-		}*/
 		_defaultSymbolName = defaultSymbolData.SYMBOL_name;
 		_symbolData.set(_defaultSymbolName, defaultSymbolData);
 

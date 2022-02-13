@@ -47,7 +47,6 @@ class CreditsState extends MusicBeatState
 		add(grpOptions);
 
 		#if MODS_ALLOWED
-		//trace("finding mod shit");
 		for (folder in Paths.getModDirectories())
 		{
 			var creditsFile:String = Paths.mods(folder + '/data/credits.txt');
@@ -121,7 +120,6 @@ class CreditsState extends MusicBeatState
 				optionText.x -= 70;
 			}
 			optionText.forceX = optionText.x;
-			//optionText.yMult = 90;
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 

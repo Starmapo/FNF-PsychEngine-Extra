@@ -112,12 +112,10 @@ class CoolUtil
 	//uhhhh does this even work at all? i'm starting to doubt
 	public static function precacheSound(sound:String, ?library:String = null):Void {
 		Paths.returnSound('sounds', sound, library);
-		//precacheSoundFile(Paths.getPath('sounds/$sound.${Paths.SOUND_EXT}', SOUND, library));
 	}
 
 	public static function precacheMusic(sound:String, ?library:String = null):Void {
 		Paths.returnSound('music', sound, library);
-		//precacheSoundFile(Paths.getPath('music/$sound.${Paths.SOUND_EXT}', SOUND, library));
 	}
 
 	private static function precacheSoundFile(file:Dynamic):Void {
@@ -156,7 +154,6 @@ class CoolUtil
 		}
 		if (diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
 		diffStr = diffStr.trim(); //Fuck you HTML5
-		//trace('real: $diffStr');
 
 		if (diffStr != null && diffStr.length > 0)
 		{
@@ -175,7 +172,6 @@ class CoolUtil
 				}
 				--i;
 			}
-			//trace(diffs);
 			
 			if (remove && song.length > 0) {
 				for (i in 0...diffs.length) {

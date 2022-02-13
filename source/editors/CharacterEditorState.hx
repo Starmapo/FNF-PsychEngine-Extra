@@ -46,7 +46,6 @@ class CharacterEditorState extends MusicBeatState
 	var bgLayer:FlxTypedGroup<FlxSprite>;
 	var charLayer:FlxTypedGroup<Character>;
 	var dumbTexts:FlxTypedGroup<FlxText>;
-	//var animList:Array<String> = [];
 	var curAnim:Int = 0;
 	var daAnim:String = 'spooky';
 	var goToPlayState:Bool = true;
@@ -75,8 +74,6 @@ class CharacterEditorState extends MusicBeatState
 
 	override function create()
 	{
-		//FlxG.sound.playMusic(Paths.music('breakfast'), 0.5);
-
 		camEditor = new FlxCamera();
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
@@ -158,8 +155,7 @@ class CharacterEditorState extends MusicBeatState
 		FlxG.camera.follow(camFollow);
 
 		var tabs = [
-			//{name: 'Offsets', label: 'Offsets'},
-			{name: 'Settings', label: 'Settings'},
+			{name: 'Settings', label: 'Settings'}
 		];
 
 		UI_box = new FlxUITabMenu(null, tabs, true);
@@ -184,8 +180,7 @@ class CharacterEditorState extends MusicBeatState
 		add(UI_characterbox);
 		add(UI_box);
 		add(changeBGbutton);
-		
-		//addOffsetsUI();
+
 		addSettingsUI();
 
 		addCharacterUI();
@@ -862,15 +857,6 @@ class CharacterEditorState extends MusicBeatState
 		charLayer.add(char);
 
 		char.setPosition(char.positionArray[0] + OFFSET_X + 100, char.positionArray[1]);
-
-		/* THIS FUNCTION WAS USED TO PUT THE .TXT OFFSETS INTO THE .JSON
-
-		for (anim => offset in char.animOffsets) {
-			var leAnim:AnimArray = findAnimationByName(anim);
-			if (leAnim != null) {
-				leAnim.offsets = [offset[0], offset[1]];
-			}
-		}*/
 
 		if (blahBlahBlah) {
 			genBoyOffsets();

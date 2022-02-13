@@ -28,12 +28,9 @@ class Conductor
 	public static var crochet:Float = ((60 / bpm) * 1000); // beats in milliseconds
 	public static var stepCrochet:Float = crochet / 4; // steps in milliseconds
 	public static var songPosition:Float = 0;
-	public static var lastSongPos:Float;
-	public static var offset:Float = 0;
 	public static var numerator:Int = 4;
 	public static var denominator:Int = 4;
 
-	//public static var safeFrames:Int = 10;
 	public static var safeZoneOffset:Float = (ClientPrefs.safeFrames / 60) * 1000; // is calculated in create(), is safeFrames in milliseconds
 
 	public static var bpmChangeMap:Array<BPMChangeEvent> = [];
@@ -49,7 +46,6 @@ class Conductor
 		var timingWindows:Array<Int> = [ClientPrefs.sickWindow, ClientPrefs.goodWindow, ClientPrefs.badWindow];
 		var windowNames:Array<String> = ['sick', 'good', 'bad'];
 
-		// var diff = Math.abs(note.strumTime - Conductor.songPosition) / (PlayState.songMultiplier >= 1 ? PlayState.songMultiplier : 1);
 		for(i in 0...timingWindows.length) // based on 4 timing windows, will break with anything else
 		{
 			if (diff <= timingWindows[Math.round(Math.min(i, timingWindows.length - 1))])
@@ -98,8 +94,6 @@ class Conductor
 			totalSteps += deltaSteps;
 			totalPos += ((((60 / curBPM) * 4000) / curDenominator) / 4) * deltaSteps;
 		}
-		//trace("new BPM map BUDDY " + bpmChangeMap);
-		//trace("new signature map BUDDY " + signatureChangeMap);
 	}
 
 	public static function changeBPM(newBpm:Float, ?mult:Float = 1)

@@ -15,8 +15,6 @@ class ClientPrefs {
 	public static var noteSplashesOpponent:Bool = false;
 	public static var stageQuality:String = 'Normal';
 	public static var framerate:Int = 60;
-	public static var cursing:Bool = true;
-	public static var violence:Bool = true;
 	public static var camZooms:Bool = true;
 	public static var hideHud:Bool = false;
 	public static var noteOffset:Int = 0;
@@ -27,7 +25,6 @@ class ClientPrefs {
 	public static var scoreZoom:Bool = true;
 	public static var noReset:Bool = false;
 	public static var healthBarAlpha:Float = 1;
-	public static var controllerMode:Bool = false;
 	public static var freeplayAlphabetic:Bool = false;
 	public static var instVolume:Float = 1;
 	public static var voicesVolume:Float = 1;
@@ -146,7 +143,6 @@ class ClientPrefs {
 
 	public static function loadDefaultKeys() {
 		defaultKeys = keyBinds.copy();
-		//trace(defaultKeys);
 
 		for (i in 0...Note.MAX_KEYS) {
 			arrowHSV.push([]);
@@ -154,7 +150,6 @@ class ClientPrefs {
 				arrowHSV[i].push([0, 0, 0]);
 			}
 		}
-		//trace(arrowHSV.length);
 	}
 
 	public static function saveSettings() {
@@ -167,8 +162,6 @@ class ClientPrefs {
 		FlxG.save.data.noteSplashesOpponent = noteSplashesOpponent;
 		FlxG.save.data.stageQuality = stageQuality;
 		FlxG.save.data.framerate = framerate;
-		//FlxG.save.data.cursing = cursing;
-		//FlxG.save.data.violence = violence;
 		FlxG.save.data.camZooms = camZooms;
 		FlxG.save.data.noteOffset = noteOffset;
 		FlxG.save.data.hideHud = hideHud;
@@ -195,7 +188,6 @@ class ClientPrefs {
 		FlxG.save.data.badWindow = badWindow;
 		FlxG.save.data.safeFrames = safeFrames;
 		FlxG.save.data.gameplaySettings = gameplaySettings;
-		FlxG.save.data.controllerMode = controllerMode;
 	
 		FlxG.save.flush();
 
@@ -246,12 +238,6 @@ class ClientPrefs {
 				FlxG.updateFramerate = framerate;
 			}
 		}
-		/*if (FlxG.save.data.cursing != null) {
-			cursing = FlxG.save.data.cursing;
-		}
-		if (FlxG.save.data.violence != null) {
-			violence = FlxG.save.data.violence;
-		}*/
 		if (FlxG.save.data.camZooms != null) {
 			camZooms = FlxG.save.data.camZooms;
 		}
@@ -297,9 +283,6 @@ class ClientPrefs {
 		}
 		if (FlxG.save.data.safeFrames != null) {
 			safeFrames = FlxG.save.data.safeFrames;
-		}
-		if (FlxG.save.data.controllerMode != null) {
-			//controllerMode = FlxG.save.data.controllerMode;
 		}
 		if (FlxG.save.data.gameplaySettings != null)
 		{
@@ -352,7 +335,7 @@ class ClientPrefs {
 	}
 
 	inline public static function getGameplaySetting(name:String, defaultValue:Dynamic):Dynamic {
-		return /*PlayState.isStoryMode ? defaultValue : */ (gameplaySettings.exists(name) ? gameplaySettings.get(name) : defaultValue);
+		return (gameplaySettings.exists(name) ? gameplaySettings.get(name) : defaultValue);
 	}
 
 	public static function reloadControls() {

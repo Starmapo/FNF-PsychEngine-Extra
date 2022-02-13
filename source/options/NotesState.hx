@@ -208,8 +208,6 @@ class NotesState extends MusicBeatState
 
 		if (controls.BACK || (changingNote && (controls.ACCEPT || FlxG.mouse.justPressed))) {
 			if (!changingNote) {
-				//FlxG.camera.zoom = 1;
-				//FlxG.camera.follow(null);
 				FlxTransitionableState.skipNextTransIn = true;
 				FlxTransitionableState.skipNextTransOut = true;
 				MusicBeatState.switchState(new options.NotesChooseState());

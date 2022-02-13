@@ -152,8 +152,6 @@ class VlcBitmap extends Bitmap
 		#if (cpp && !mobile)
 		isPlaying = false;
 		libvlc.stop();
-		// if (disposeOnStop)
-		// dispose();
 
 		if (onStop != null)
 			onStop();
@@ -313,10 +311,6 @@ class VlcBitmap extends Bitmap
 		bitmapData = new BitmapData(Std.int(videoWidth), Std.int(videoHeight), true, 0);
 		frameRect = new Rectangle(0, 0, Std.int(videoWidth), Std.int(videoHeight));
 
-		// (Stage3D)
-		// texture = Lib.current.stage.stage3Ds[0].context3D.createRectangleTexture(videoWidth, videoHeight, Context3DTextureFormat.BGRA, true);
-		// this.bitmapData = BitmapData.fromTexture(texture);
-
 		smoothing = true;
 
 		if (_width != null)
@@ -362,7 +356,6 @@ class VlcBitmap extends Bitmap
 			oldTime = cTime;
 
 			#if (cpp && !mobile)
-			// if (isPlaying && texture != null) // (Stage3D)
 			if (isPlaying)
 			{
 				try
@@ -374,11 +367,6 @@ class VlcBitmap extends Bitmap
 						// libvlc.getPixelData() sometimes is null and the exe hangs ...
 						if (libvlc.getPixelData() != null)
 							bitmapData.setPixels(frameRect, Bytes.ofData(bufferMem));
-
-						// (Stage3D)
-						// texture.uploadFromByteArray( Bytes.ofData(cast(bufferMem)), 0 );
-						// this.width++; //This is a horrible hack to force the texture to update... Surely there is a better way...
-						// this.width--;
 					}
 				}
 				catch (e:Error)
@@ -462,7 +450,6 @@ class VlcBitmap extends Bitmap
 		if (isPlaying)
 			isPlaying = false;
 
-		// trace("end reached!");
 		if (onComplete != null)
 			onComplete();
 	}
@@ -490,11 +477,6 @@ class VlcBitmap extends Bitmap
 
 	function statusOnBackward()
 	{
-	}
-
-	function onDisplay()
-	{
-		// render();
 	}
 
 	function statusOnError()
