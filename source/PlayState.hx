@@ -3556,6 +3556,7 @@ class PlayState extends MusicBeatState
 							boyfriendGroup.remove(boyfriendGroup.members[index], true);
 							boyfriendGroup.insert(index, boyfriendMap.get(value2));
 							boyfriendGroup.members[index].alpha = lastAlpha;
+							makeDoubleTrail(boyfriendGroup.members[index], 'bf$index', true, index, boyfriendGroup);
 							var iconName = [];
 							for (char in boyfriendGroup) {
 								iconName.push(char.curCharacter);
@@ -3585,6 +3586,7 @@ class PlayState extends MusicBeatState
 								gf.visible = false;
 							}
 							dadGroup.members[index].alpha = lastAlpha;
+							makeDoubleTrail(dadGroup.members[index], 'dad$index', false, index, dadGroup);
 							var iconName = [];
 							for (char in dadGroup) {
 								iconName.push(char.curCharacter);
@@ -3606,6 +3608,7 @@ class PlayState extends MusicBeatState
 							gfGroup.remove(gfGroup.members[index], true);
 							gfGroup.insert(index, gfMap.get(value2));
 							gfGroup.members[index].alpha = lastAlpha;
+							makeDoubleTrail(gfGroup.members[index], 'gf$index', false, index, gfGroup);
 						}
 						setOnLuas('gfName', gf.curCharacter);
 				}
@@ -5079,6 +5082,11 @@ class PlayState extends MusicBeatState
 	}
 
 	function makeDoubleTrail(char:Character, name:String, flipped:Bool = false, id:Int = 0, charGroup:FlxTypedSpriteGroup<Character>) {
+		if (doubleTrailMap.exists(name)) {
+			remove(doubleTrailMap.get(name));
+			doubleTrailMap.get(name).destroy();
+			doubleTrailMap.remove(name);
+		}
 		var doubleTrail:Character = new Character(char.x, char.y, char.curCharacter, flipped);
 		doubleTrail.ID = id;
 		insert(members.indexOf(charGroup) - 1, doubleTrail);
