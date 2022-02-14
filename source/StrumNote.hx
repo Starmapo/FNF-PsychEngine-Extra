@@ -99,9 +99,9 @@ class StrumNote extends FlxSprite
 		}
 
 		frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/$texture', uiSkin));
-		animation.addByPrefix('static', 'arrow' + directions[noteData] + '0');
-		animation.addByPrefix('pressed', colors[noteData] + ' press', 24, false);
-		animation.addByPrefix('confirm', colors[noteData] + ' confirm', 24, false);
+		animation.addByPrefix('static', 'arrow${directions[noteData]}0');
+		animation.addByPrefix('pressed', '${colors[noteData]} press', 24, false);
+		animation.addByPrefix('confirm', '${colors[noteData]} confirm', 24, false);
 
 		antialiasing = ClientPrefs.globalAntialiasing;
 		if (uiSkin.noAntialiasing) {

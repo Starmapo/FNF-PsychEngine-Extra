@@ -48,9 +48,9 @@ class NoteSplash extends FlxSprite
 
 		var animNum:Int = FlxG.random.int(1, 2);
 		if (note != null) {
-			animation.play('note' + note.noteData + '-' + animNum, true);
+			animation.play('note${note.noteData}-$animNum', true);
 		} else {
-			animation.play('note1' + '-' + animNum, true);
+			animation.play('note1-$animNum', true);
 		}
 		if (animation.curAnim != null) animation.curAnim.frameRate = 24 + FlxG.random.int(-2, 2);
 		updateHitbox();
@@ -74,7 +74,7 @@ class NoteSplash extends FlxSprite
 			}
 			frames = Paths.getSparrowAtlas(UIData.checkImageFile('splashes/$skin', uiSkin));
 			for (i in 1...3) {
-				animation.addByPrefix("note" + daNote.noteData + '-$i', "note splash " + colors[daNote.noteData] + ' $i', 24, false);
+				animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${colors[daNote.noteData]} $i', 24, false);
 			}
 		}
 	}

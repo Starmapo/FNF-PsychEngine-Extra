@@ -2234,7 +2234,7 @@
 		"player2": "senpai",
 		"player3": null,
 		"song": "Senpai",
-		"arrowSkin": "pixel",
+		"uiSkin": "pixel",
 		"denominator": 4,
 		"needsVoices": true,
 		"validScore": true,

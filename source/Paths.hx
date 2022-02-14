@@ -243,7 +243,7 @@ class Paths
 	inline static public function fileExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
 	{
 		#if MODS_ALLOWED
-		if (FileSystem.exists(mods(currentModDirectory + '/' + key)) || FileSystem.exists(mods(key))) {
+		if (FileSystem.exists(mods('$currentModDirectory/$key')) || FileSystem.exists(mods(key))) {
 			return true;
 		}
 		#end
@@ -312,7 +312,7 @@ class Paths
 			localTrackedAssets.push(key);
 			return currentTrackedAssets.get(key);
 		}
-		trace('oh no its returning null NOOOO ' + key);
+		trace('oh no its returning null NOOOO $key');
 		return null;
 	}
 
@@ -332,12 +332,12 @@ class Paths
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
 		if (!OpenFlAssets.exists(gottenPath))
 		{
-			trace('didnt find sound $key');
+			//trace('didnt find sound $key');
 			return null;
 		}
 		if (!currentTrackedSounds.exists(gottenPath)) 
 		#if MODS_ALLOWED
-			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length)));
+			currentTrackedSounds.set(gottenPath, Sound.fromFile('./${gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length)}'));
 		#else
 			currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(gottenPath));
 		#end
@@ -347,45 +347,45 @@ class Paths
 	
 	#if MODS_ALLOWED
 	inline static public function mods(key:String = '') {
-		return 'mods/' + key;
+		return 'mods/$key';
 	}
 	
 	inline static public function modsFont(key:String) {
-		return modFolders('fonts/' + key);
+		return modFolders('fonts/$key');
 	}
 
 	inline static public function modsJson(key:String) {
-		return modFolders('data/' + key + '.json');
+		return modFolders('data/$key.json');
 	}
 
 	inline static public function modsVideo(key:String) {
-		return modFolders('videos/' + key + '.' + VIDEO_EXT);
+		return modFolders('videos/$key.$VIDEO_EXT');
 	}
 
 	inline static public function modsSounds(path:String, key:String) {
-		return modFolders(path + '/' + key + '.' + SOUND_EXT);
+		return modFolders('$path/$key.$SOUND_EXT');
 	}
 
 	inline static public function modsImages(key:String) {
-		return modFolders('images/' + key + '.png');
+		return modFolders('images/$key.png');
 	}
 
 	inline static public function modsXml(key:String) {
-		return modFolders('images/' + key + '.xml');
+		return modFolders('images/$key.xml');
 	}
 
 	inline static public function modsTxt(key:String) {
-		return modFolders('images/' + key + '.txt');
+		return modFolders('images/$key.txt');
 	}
 
 	static public function modFolders(key:String) {
 		if (currentModDirectory != null && currentModDirectory.length > 0) {
-			var fileToCheck:String = mods(currentModDirectory + '/' + key);
+			var fileToCheck:String = mods('$currentModDirectory/$key');
 			if (FileSystem.exists(fileToCheck)) {
 				return fileToCheck;
 			}
 		}
-		return 'mods/' + key;
+		return 'mods/$key';
 	}
 
 	static public function getModDirectories():Array<String> {

@@ -42,10 +42,11 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 		#if cpp
 		var option:GameplayOption = new GameplayOption('Playback Rate', 'songspeed', 'float', 1);
-		option.scrollSpeed = 1;
+		option.scrollSpeed = 0.2;
 		option.minValue = 0.5;
 		option.maxValue = 2.5;
-		option.changeValue = 0.1;
+		option.decimals = 2;
+		option.changeValue = 0.01;
 		option.displayFormat = '%vX';
 		optionsArray.push(option);
 		#end
@@ -127,7 +128,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 				checkboxGroup.add(checkbox);
 				optionText.xAdd += 80;
 			} else {
-				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), optionText.width + 80, true, 0.8);
+				var valueText:AttachedText = new AttachedText('${optionsArray[i].getValue()}', optionText.width + 80, true, 0.8);
 				valueText.sprTracker = optionText;
 				valueText.copyAlpha = true;
 				valueText.ID = i;

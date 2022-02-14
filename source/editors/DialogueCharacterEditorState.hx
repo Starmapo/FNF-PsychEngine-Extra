@@ -228,8 +228,8 @@ class DialogueCharacterEditorState extends MusicBeatState
 
 				curSelectedAnim = anim;
 				var animShit:DialogueAnimArray = character.dialogueAnimations.get(curSelectedAnim);
-				offsetLoopText.text = 'Loop: ' + animShit.loop_offsets;
-				offsetIdleText.text = 'Idle: ' + animShit.idle_offsets;
+				offsetLoopText.text = 'Loop: ${animShit.loop_offsets}';
+				offsetIdleText.text = 'Idle: ${animShit.idle_offsets}';
 
 				animationInputText.text = animShit.anim;
 				loopInputText.text = animShit.loop_name;
@@ -406,7 +406,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 	function reloadCharacter() {
 		var charsArray:Array<DialogueCharacter> = [character, ghostLoop, ghostIdle];
 		for (char in charsArray) {
-			char.frames = Paths.getSparrowAtlas('dialogue/' + character.jsonFile.image);
+			char.frames = Paths.getSparrowAtlas('dialogue/${character.jsonFile.image}');
 			char.jsonFile = character.jsonFile;
 			char.reloadAnimations();
 			char.setGraphicSize(Std.int(char.width * DialogueCharacter.DEFAULT_SCALE * character.jsonFile.scale));
@@ -431,13 +431,13 @@ class DialogueCharacterEditorState extends MusicBeatState
 			var animShit:DialogueAnimArray = character.dialogueAnimations.get(curSelectedAnim);
 			ghostLoop.playAnim(animShit.anim);
 			ghostIdle.playAnim(animShit.anim, true);
-			offsetLoopText.text = 'Loop: ' + animShit.loop_offsets;
-			offsetIdleText.text = 'Idle: ' + animShit.idle_offsets;
+			offsetLoopText.text = 'Loop: ${animShit.loop_offsets}';
+			offsetIdleText.text = 'Idle: ${animShit.idle_offsets}';
 		}
 
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Dialogue Character Editor", "Editing: " + character.jsonFile.image);
+		DiscordClient.changePresence("Dialogue Character Editor", 'Editing: ${character.jsonFile.image}');
 		#end
 	}
 
@@ -566,8 +566,8 @@ class DialogueCharacterEditorState extends MusicBeatState
 				}
 
 				if (moved) {
-					offsetLoopText.text = 'Loop: ' + animShit.loop_offsets;
-					offsetIdleText.text = 'Idle: ' + animShit.idle_offsets;
+					offsetLoopText.text = 'Loop: ${animShit.loop_offsets}';
+					offsetIdleText.text = 'Idle: ${animShit.idle_offsets}';
 					ghostLoop.offset.set(animShit.loop_offsets[0], animShit.loop_offsets[1]);
 					ghostIdle.offset.set(animShit.idle_offsets[0], animShit.idle_offsets[1]);
 				}
@@ -669,7 +669,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 				if (loadedChar.dialogue_pos != null) //Make sure it's really a dialogue character
 				{
 					var cutName:String = _file.name.substr(0, _file.name.length - 5);
-					trace("Successfully loaded file: " + cutName);
+					trace('Successfully loaded file: $cutName');
 					character.jsonFile = loadedChar;
 					reloadCharacter();
 					reloadAnimationsDropDown();
@@ -726,7 +726,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
 			_file.addEventListener(Event.CANCEL, onSaveCancel);
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data, characterName + ".json");
+			_file.save(data, '$characterName.json');
 		}
 	}
 

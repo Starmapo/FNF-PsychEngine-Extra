@@ -37,7 +37,7 @@ class Achievements {
 
 	public static var henchmenDeath:Int = 0;
 	public static function unlockAchievement(name:String):Void {
-		FlxG.log.add('Completed achievement "' + name +'"');
+		FlxG.log.add('Completed achievement "$name"');
 		achievementsMap.set(name, true);
 		FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 	}

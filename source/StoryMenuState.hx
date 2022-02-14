@@ -188,9 +188,11 @@ class StoryMenuState extends MusicBeatState
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, CoolUtil.boundTo(elapsed * 30, 0, 1)));
 		if (Math.abs(intendedScore - lerpScore) < 10) lerpScore = intendedScore;
 
-		scoreText.text = "WEEK SCORE:" + lerpScore;
+		scoreText.text = 'WEEK SCORE:$lerpScore';
 
 		difficultySelectors.visible = !weekIsLocked(curWeek);
+
+		super.update(elapsed);
 
 		if (!movedBack && !selectedWeek)
 		{
@@ -256,8 +258,6 @@ class StoryMenuState extends MusicBeatState
 			MusicBeatState.switchState(new MainMenuState());
 		}
 
-		super.update(elapsed);
-
 		grpLocks.forEach(function(lock:FlxSprite)
 		{
 			lock.y = grpWeekText.members[lock.ID].y;
@@ -322,7 +322,7 @@ class StoryMenuState extends MusicBeatState
 		if (curDifficulty >= CoolUtil.difficulties.length)
 			curDifficulty = 0;
 
-		var image:Dynamic = Paths.image('menudifficulties/' + Paths.formatToSongPath(CoolUtil.difficulties[curDifficulty]));
+		var image:Dynamic = Paths.image('menudifficulties/${Paths.formatToSongPath(CoolUtil.difficulties[curDifficulty])}');
 		var newImagePath:String = '';
 		if (Std.isOfType(image, FlxGraphic))
 		{
@@ -390,7 +390,7 @@ class StoryMenuState extends MusicBeatState
 		if (assetName == null || assetName.length < 1) {
 			bgSprite.visible = false;
 		} else {
-			bgSprite.loadGraphic(Paths.image('menubackgrounds/menu_' + assetName));
+			bgSprite.loadGraphic(Paths.image('menubackgrounds/menu_$assetName'));
 		}
 		
 		PlayState.storyWeek = curWeek;
@@ -427,7 +427,7 @@ class StoryMenuState extends MusicBeatState
 		txtTracklist.text = '';
 		for (i in 0...stringThing.length)
 		{
-			txtTracklist.text += stringThing[i] + '\n';
+			txtTracklist.text += '${stringThing[i]}\n';
 		}
 
 		txtTracklist.text = txtTracklist.text.toUpperCase();

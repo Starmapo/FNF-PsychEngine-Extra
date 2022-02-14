@@ -52,10 +52,6 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			'instVolume',
 			'percent',
 			1);
-		option.scrollSpeed = 5;
-		option.minValue = 0;
-		option.maxValue = 1;
-		option.changeValue = 0.1;
 		addOption(option);
 
 		var option:Option = new Option('Vocals Volume',
@@ -63,10 +59,6 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			'voicesVolume',
 			'percent',
 			1);
-		option.scrollSpeed = 5;
-		option.minValue = 0;
-		option.maxValue = 1;
-		option.changeValue = 0.1;
 		addOption(option);
 
 		var option:Option = new Option('Rating Offset',

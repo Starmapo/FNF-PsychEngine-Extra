@@ -236,7 +236,7 @@ class ModsMenuState extends MusicBeatState
 			add(newMod.alphabet);
 			//Don't ever cache the icons, it's a waste of loaded memory
 			var loadedIcon:BitmapData = null;
-			var iconToUse:String = Paths.mods(values[0] + '/pack.png');
+			var iconToUse:String = Paths.mods('${values[0]}/pack.png');
 			if (FileSystem.exists(iconToUse))
 			{
 				loadedIcon = BitmapData.fromFile(iconToUse);
@@ -345,7 +345,7 @@ class ModsMenuState extends MusicBeatState
 		for (values in modsList)
 		{
 			if (fileStr.length > 0) fileStr += '\n';
-			fileStr += values[0] + '|' + (values[1] ? '1' : '0');
+			fileStr += '${values[0]}|${(values[1] ? '1' : '0')}';
 		}
 
 		var path:String = 'modsList.txt';
@@ -571,7 +571,7 @@ class ModMetadata
 		//Try loading json
 		var stuff:PackFile = null;
 		var rawJson:String = null;
-		var path = Paths.mods(folder + '/pack.json');
+		var path = Paths.mods('$folder/pack.json');
 		if (FileSystem.exists(path)) rawJson = File.getContent(path);
 		if (rawJson != null) stuff = cast Json.parse(rawJson);
 		if (stuff != null) {	

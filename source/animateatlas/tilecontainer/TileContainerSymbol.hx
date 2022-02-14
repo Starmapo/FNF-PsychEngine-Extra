@@ -223,7 +223,7 @@ class TileContainerSymbol extends TileContainer {
 	@:access(animateatlas)
 	public function setBitmap(data:BitmapPosData):Void {
 		if (data != null) {
-			var spriteData = _library.getSpriteData(data.name + "");
+			var spriteData = _library.getSpriteData('${data.name}');
 
 			if (_bitmap == null) {
 				_bitmap = new Tile(-1);
@@ -426,7 +426,7 @@ class TileContainerSymbol extends TileContainer {
 		if (SymbolType.isValid(value)) {
 			_type = value;
 		} else {
-			throw new ArgumentError("Invalid symbol type: " + value);
+			throw new ArgumentError('Invalid symbol type: $value');
 		}
 		return value;
 	}
@@ -439,7 +439,7 @@ class TileContainerSymbol extends TileContainer {
 		if (LoopMode.isValid(value)) {
 			_loopMode = value;
 		} else {
-			throw new ArgumentError("Invalid loop mode: " + value);
+			throw new ArgumentError('Invalid loop mode: $value');
 		}
 		return value;
 	}

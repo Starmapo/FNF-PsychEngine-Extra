@@ -69,12 +69,12 @@ class DialogueCharacter extends FlxSprite
 		this.curCharacter = character;
 
 		reloadCharacterJson(character);
-		frames = Paths.getSparrowAtlas('dialogue/' + jsonFile.image);
+		frames = Paths.getSparrowAtlas('dialogue/${jsonFile.image}');
 		reloadAnimations();
 	}
 
 	public function reloadCharacterJson(character:String) {
-		var characterPath:String = 'images/dialogue/' + character + '.json';
+		var characterPath:String = 'images/dialogue/$character.json';
 		var rawJson = null;
 
 		#if MODS_ALLOWED
@@ -84,7 +84,7 @@ class DialogueCharacter extends FlxSprite
 		}
 
 		if (!FileSystem.exists(path)) {
-			path = Paths.getPreloadPath('images/dialogue/' + DEFAULT_CHARACTER + '.json');
+			path = Paths.getPreloadPath('images/dialogue/$DEFAULT_CHARACTER.json');
 		}
 		rawJson = File.getContent(path);
 
@@ -136,7 +136,7 @@ class DialogueCharacter extends FlxSprite
 			}
 		} else {
 			offset.set(0, 0);
-			trace('Offsets not found! Dialogue character is badly formatted, anim: ' + leAnim + ', ' + (playIdle ? 'idle anim' : 'loop anim'));
+			trace('Offsets not found! Dialogue character is badly formatted, anim: $leAnim, ${playIdle ? 'idle anim' : 'loop anim'}');
 		}
 	}
 
@@ -295,8 +295,8 @@ class DialogueBoxPsych extends FlxSpriteGroup
 						var checkArray:Array<String> = ['', 'center-'];
 						var animName:String = box.animation.curAnim.name;
 						for (j in 0...checkArray.length) {
-							if (animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
-								box.animation.play(checkArray[j] + textBoxTypes[i] + 'Open', true);
+							if (animName == checkArray[j] + textBoxTypes[i] || animName == '${checkArray[j]}${textBoxTypes[i]}Open') {
+								box.animation.play('${checkArray[j]}${textBoxTypes[i]}Open', true);
 							}
 						}
 					}
@@ -330,7 +330,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 					var checkArray:Array<String> = ['', 'center-'];
 					var animName:String = box.animation.curAnim.name;
 					for (j in 0...checkArray.length) {
-						if (animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
+						if (animName == checkArray[j] + textBoxTypes[i] || animName == '${checkArray[j]}${textBoxTypes[i]}Open') {
 							box.animation.play(checkArray[j] + textBoxTypes[i], true);
 						}
 					}
@@ -458,7 +458,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		if (lePosition == 'center') centerPrefix = 'center-';
 
 		if (character != lastCharacter) {
-			box.animation.play(centerPrefix + boxType + 'Open', true);
+			box.animation.play('${centerPrefix + boxType}Open', true);
 			updateBoxOffsets(box);
 			box.flipX = (lePosition == 'left');
 		} else if (boxType != lastBoxType) {

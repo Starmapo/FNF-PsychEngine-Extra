@@ -47,7 +47,7 @@ class AtlasFrameMaker extends FlxFramesCollection
 		{
 			_excludeArray = t.getFrameLabels();
 		}
-		trace('Creating: ' + _excludeArray);
+		trace('Creating: $_excludeArray');
 
 		frameCollection = new FlxFramesCollection(graphic, FlxFrameCollectionType.IMAGE);
 		for(x in _excludeArray)

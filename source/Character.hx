@@ -109,22 +109,22 @@ class Character extends FlxSprite
 				//texture
 				#if MODS_ALLOWED
 				var modTxtToFind:String = Paths.modsTxt(json.image);
-				var txtToFind:String = Paths.getPath('images/' + json.image + '.txt', TEXT);
+				var txtToFind:String = Paths.getPath('images/${json.image}.txt', TEXT);
 				
 				if (FileSystem.exists(modTxtToFind) || Assets.exists(txtToFind))
 				#else
-				if (Assets.exists(Paths.getPath('images/' + json.image + '.txt', TEXT)))
+				if (Assets.exists(Paths.getPath('images/${json.image}.txt', TEXT)))
 				#end
 				{
 					spriteType = "packer";
 				}
 				#if MODS_ALLOWED
-				var modAnimToFind:String = Paths.modFolders('images/' + json.image + '/Animation.json');
-				var animToFind:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT);
+				var modAnimToFind:String = Paths.modFolders('images/${json.image}/Animation.json');
+				var animToFind:String = Paths.getPath('images/${json.image}/Animation.json', TEXT);
 				
 				if (FileSystem.exists(modAnimToFind) || Assets.exists(animToFind))
 				#else
-				if (Assets.exists(Paths.getPath('images/' + json.image + '/Animation.json', TEXT)))
+				if (Assets.exists(Paths.getPath('images/${json.image}/Animation.json', TEXT)))
 				#end
 				{
 					spriteType = "texture";
@@ -166,8 +166,8 @@ class Character extends FlxSprite
 				animationsArray = json.animations;
 				if (animationsArray != null && animationsArray.length > 0) {
 					for (anim in animationsArray) {
-						var animAnim:String = '' + anim.anim;
-						var animName:String = '' + anim.name;
+						var animAnim:String = '${anim.anim}';
+						var animName:String = '${anim.name}';
 						var animFps:Int = anim.fps;
 						var animLoop:Bool = !!anim.loop; //Bruh
 						var animIndices:Array<Int> = anim.indices;
@@ -242,9 +242,9 @@ class Character extends FlxSprite
 				}
 			}
 
-			if (animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-loop') != null)
+			if (animation.curAnim.finished && animation.getByName('${animation.curAnim.name}-loop') != null)
 			{
-				playAnim(animation.curAnim.name + '-loop');
+				playAnim('${animation.curAnim.name}-loop');
 			}
 		}
 		super.update(elapsed);
@@ -264,12 +264,12 @@ class Character extends FlxSprite
 				danced = !danced;
 
 				if (danced)
-					playAnim('danceRight' + idleSuffix);
+					playAnim('danceRight$idleSuffix');
 				else
-					playAnim('danceLeft' + idleSuffix);
+					playAnim('danceLeft$idleSuffix');
 			}
-			else if (animation.getByName('idle' + idleSuffix) != null) {
-					playAnim('idle' + idleSuffix);
+			else if (animation.getByName('idle$idleSuffix') != null) {
+					playAnim('idle$idleSuffix');
 			}
 		}
 	}
@@ -306,7 +306,7 @@ class Character extends FlxSprite
 	}
 
 	public function recalculateDanceIdle() {
-		danceIdle = (animation.getByName('danceLeft' + idleSuffix) != null && animation.getByName('danceRight' + idleSuffix) != null);
+		danceIdle = (animation.getByName('danceLeft$idleSuffix') != null && animation.getByName('danceRight$idleSuffix') != null);
 		if (danceIdle) {
 			danceSpeed = 1;
 		} else {
@@ -325,7 +325,7 @@ class Character extends FlxSprite
 	}
 
 	public static function getFile(name:String):Dynamic {
-		var characterPath:String = 'characters/' + name + '.json';
+		var characterPath:String = 'characters/$name.json';
 		#if MODS_ALLOWED
 		var path:String = Paths.modFolders(characterPath);
 		if (!FileSystem.exists(path)) {

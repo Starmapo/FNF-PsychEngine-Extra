@@ -2838,7 +2838,7 @@
 		"validScore": true,
 		"needsVoices": true,
 		"denominator": 4,
-		"arrowSkin": "pixel",
+		"uiSkin": "pixel",
 		"speed": 1.3,
 		"bpm": 144,
 		"keyAmount": 4

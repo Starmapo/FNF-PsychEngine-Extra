@@ -71,7 +71,7 @@ class FlxVideo extends FlxBasic {
 	function checkFile(fileName:String):String
 	{
 		var pDir = "";
-		var appDir = "file:///" + Sys.getCwd() + "/";
+		var appDir = 'file:///${Sys.getCwd()}/';
 
 		if (fileName.indexOf(":") == -1) // Not a path
 			pDir = appDir;

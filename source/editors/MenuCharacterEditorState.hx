@@ -43,7 +43,7 @@ class MenuCharacterEditorState extends MusicBeatState
 		};
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Menu Character Editor", "Editing: " + characterFile.image);
+		DiscordClient.changePresence("Menu Character Editor", 'Editing: ${characterFile.image}');
 		#end
 
 		grpWeekCharacters = new FlxTypedGroup<MenuCharacter>();
@@ -219,7 +219,7 @@ class MenuCharacterEditorState extends MusicBeatState
 		var char:MenuCharacter = grpWeekCharacters.members[curTypeSelected];
 
 		char.alpha = 1;
-		char.frames = Paths.getSparrowAtlas('menucharacters/' + characterFile.image);
+		char.frames = Paths.getSparrowAtlas('menucharacters/${characterFile.image}');
 		char.animation.addByPrefix('idle', characterFile.idle_anim, 24);
 		if (curTypeSelected == 1) char.animation.addByPrefix('confirm', characterFile.confirm_anim, 24, false);
 
@@ -233,7 +233,7 @@ class MenuCharacterEditorState extends MusicBeatState
 		
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Menu Character Editor", "Editing: " + characterFile.image);
+		DiscordClient.changePresence("Menu Character Editor", 'Editing: ${characterFile.image}');
 		#end
 	}
 
@@ -314,7 +314,7 @@ class MenuCharacterEditorState extends MusicBeatState
 	function updateOffset() {
 		var char:MenuCharacter = grpWeekCharacters.members[curTypeSelected];
 		char.offset.set(characterFile.position[0], characterFile.position[1]);
-		txtOffsets.text = '' + characterFile.position;
+		txtOffsets.text = '${characterFile.position}';
 	}
 
 	var _file:FileReference = null;
@@ -345,7 +345,7 @@ class MenuCharacterEditorState extends MusicBeatState
 				if (loadedChar.idle_anim != null && loadedChar.confirm_anim != null) //Make sure it's really a character
 				{
 					var cutName:String = _file.name.substr(0, _file.name.length - 5);
-					trace("Successfully loaded file: " + cutName);
+					trace('Successfully loaded file: $cutName');
 					characterFile = loadedChar;
 					reloadSelectedCharacter();
 					imageInputText.text = characterFile.image;
@@ -399,7 +399,7 @@ class MenuCharacterEditorState extends MusicBeatState
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
 			_file.addEventListener(Event.CANCEL, onSaveCancel);
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data, characterName + ".json");
+			_file.save(data, '$characterName.json');
 		}
 	}
 

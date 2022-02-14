@@ -370,14 +370,14 @@ class AlphaCharacter extends FlxSprite
 
 	public function createBoldLetter(letter:String)
 	{
-		animation.addByPrefix(letter, letter.toUpperCase() + " bold", 24);
+		animation.addByPrefix(letter, '${letter.toUpperCase()} bold', 24);
 		animation.play(letter);
 		updateHitbox();
 	}
 
 	public function createBoldNumber(letter:String):Void
 	{
-		animation.addByPrefix(letter, "bold" + letter, 24);
+		animation.addByPrefix(letter, 'bold$letter', 24);
 		animation.play(letter);
 		updateHitbox();
 	}
@@ -399,7 +399,7 @@ class AlphaCharacter extends FlxSprite
 			case ")":
 				animation.addByPrefix(letter, 'bold )', 24);
 			default:
-				animation.addByPrefix(letter, 'bold ' + letter, 24);
+				animation.addByPrefix(letter, 'bold $letter', 24);
 		}
 		animation.play(letter);
 		updateHitbox();
@@ -432,7 +432,7 @@ class AlphaCharacter extends FlxSprite
 			letterCase = 'capital';
 		}
 
-		animation.addByPrefix(letter, letter + " " + letterCase, 24);
+		animation.addByPrefix(letter, '$letter $letterCase', 24);
 		animation.play(letter);
 		updateHitbox();
 

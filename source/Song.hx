@@ -38,7 +38,6 @@ typedef SwagSong =
 typedef DifferentJSON =
 {
 	var player3:String; //Psych Engine
-	var arrowSkin:String; //Psych Engine
 	var mania:Null<Int>; //Shaggy
 	var gf:String; //Leather Engine
 	var keyCount:Null<Int>; //Leather Engine
@@ -90,7 +89,10 @@ class Song
 		if (songJson.uiSkin == null)
 		{
 			songJson.uiSkin = '';
-			songJson.uiSkinOpponent = '';
+		}
+		if (songJson.uiSkinOpponent == null)
+		{
+			songJson.uiSkinOpponent = songJson.uiSkin;
 		}
 		
 		for (secNum in 0...songJson.notes.length) {
@@ -125,7 +127,7 @@ class Song
 		var formattedFolder:String = Paths.formatToSongPath(folder);
 		var formattedSong:String = Paths.formatToSongPath(jsonInput);
 		#if MODS_ALLOWED
-		var moddyFile:String = Paths.modsJson(formattedFolder + '/' + formattedSong);
+		var moddyFile:String = Paths.modsJson('$formattedFolder/$formattedSong');
 		if (FileSystem.exists(moddyFile)) {
 			rawJson = File.getContent(moddyFile).trim();
 		}
@@ -133,9 +135,9 @@ class Song
 
 		if (rawJson == null) {
 			#if MODS_ALLOWED
-			rawJson = File.getContent(Paths.json(formattedFolder + '/' + formattedSong)).trim();
+			rawJson = File.getContent(Paths.json('$formattedFolder/$formattedSong')).trim();
 			#else
-			rawJson = Assets.getText(Paths.json(formattedFolder + '/' + formattedSong)).trim();
+			rawJson = Assets.getText(Paths.json('$formattedFolder/$formattedSong')).trim();
 			#end
 		}
 
@@ -156,43 +158,45 @@ class Song
 		var tempSong:DifferentJSON = cast Json.parse(rawJson).song;
 		var swagShit:SwagSong = cast Json.parse(rawJson).song;
 
-		if (tempSong.player3 != null) {
-			swagShit.gfVersion = tempSong.player3;
-		}
-		if (tempSong.arrowSkin != null) {
-			swagShit.uiSkin = tempSong.arrowSkin;
-			swagShit.uiSkinOpponent = tempSong.arrowSkin;
-		}
-		if (tempSong.mania != null) {
-			switch (tempSong.mania) {
-				case 1:
-					swagShit.playerKeyAmount = 6;
-				case 2:
-					swagShit.playerKeyAmount = 7;
-				case 3:
-					swagShit.playerKeyAmount = 9;
-				default:
-					swagShit.playerKeyAmount = 4;
+		if (swagShit.gfVersion == null) {
+			if (tempSong.player3 != null) {
+				swagShit.gfVersion = tempSong.player3;
 			}
-			swagShit.opponentKeyAmount = swagShit.playerKeyAmount;
+			if (tempSong.gf != null) {
+				swagShit.gfVersion = tempSong.gf;
+			}
 		}
-		if (tempSong.gf != null) {
-			swagShit.gfVersion = tempSong.gf;
+		if (swagShit.uiSkin == null) {
+			if (tempSong.ui_Skin != null) {
+				swagShit.uiSkin = tempSong.ui_Skin;
+				swagShit.uiSkinOpponent = tempSong.ui_Skin;
+			}
 		}
-		if (tempSong.keyCount != null) {
-			swagShit.playerKeyAmount = tempSong.keyCount;
-			swagShit.opponentKeyAmount = tempSong.keyCount;
+		if (swagShit.playerKeyAmount == null) {
+			if (tempSong.mania != null) {
+				switch (tempSong.mania) {
+					case 1:
+						swagShit.playerKeyAmount = 6;
+					case 2:
+						swagShit.playerKeyAmount = 7;
+					case 3:
+						swagShit.playerKeyAmount = 9;
+					default:
+						swagShit.playerKeyAmount = 4;
+				}
+				swagShit.opponentKeyAmount = swagShit.playerKeyAmount;
+			}
+			if (tempSong.keyCount != null) {
+				swagShit.playerKeyAmount = tempSong.keyCount;
+				swagShit.opponentKeyAmount = tempSong.keyCount;
+			}
+			if (tempSong.playerKeyCount != null) {
+				swagShit.playerKeyAmount = tempSong.playerKeyCount;
+			}
 		}
-		if (tempSong.playerKeyCount != null) {
-			swagShit.playerKeyAmount = tempSong.playerKeyCount;
-		}
-		if (tempSong.timescale != null && tempSong.timescale.length == 2) {
+		if (swagShit.numerator == null && tempSong.timescale != null && tempSong.timescale.length == 2) {
 			swagShit.numerator = tempSong.timescale[0];
 			swagShit.denominator = tempSong.timescale[1];
-		}
-		if (tempSong.ui_Skin != null) {
-			swagShit.uiSkin = tempSong.ui_Skin;
-			swagShit.uiSkinOpponent = tempSong.ui_Skin;
 		}
 
 		swagShit.validScore = true;

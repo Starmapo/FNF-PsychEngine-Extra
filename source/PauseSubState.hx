@@ -40,7 +40,7 @@ class PauseSubState extends MusicBeatSubstate
 
 		for (i in 0...CoolUtil.difficulties.length) {
 			if (i != PlayState.storyDifficulty) {
-				var diff:String = '' + CoolUtil.difficulties[i];
+				var diff:String = '${CoolUtil.difficulties[i]}';
 				difficultyChoices.push(diff);
 			}
 		}
@@ -72,7 +72,7 @@ class PauseSubState extends MusicBeatSubstate
 		add(levelDifficulty);
 
 		var blueballedTxt:FlxText = new FlxText(20, 15 + 64, 0, "", 32);
-		blueballedTxt.text = "Blueballed: " + PlayState.deathCounter;
+		blueballedTxt.text = 'Blueballed: ${PlayState.deathCounter}';
 		blueballedTxt.scrollFactor.set();
 		blueballedTxt.setFormat(Paths.font('vcr.ttf'), 32);
 		blueballedTxt.updateHitbox();

@@ -128,7 +128,7 @@ class LoadingState extends MusicBeatState
 	{
 		if (Assets.exists(path) && !Assets.cache.hasSound(path))
 		{
-			var callback = callbacks.add("song:" + path);
+			var callback = callbacks.add('song:$path');
 			Assets.loadSound(path).onComplete(function (_) { callback(); });
 		}
 	}
@@ -139,9 +139,9 @@ class LoadingState extends MusicBeatState
 		{
 			@:privateAccess
 			if (!LimeAssets.libraryPaths.exists(library))
-				throw "Missing library: " + library;
+				throw 'Missing library: $library';
 
-			var callback = callbacks.add("library:" + library);
+			var callback = callbacks.add('library:$library');
 			Assets.loadLibrary(library).onComplete(function (_) { callback(); });
 		}
 	}
@@ -200,7 +200,7 @@ class LoadingState extends MusicBeatState
 		if (weekDir != null && weekDir.length > 0 && weekDir != '') directory = weekDir;
 
 		Paths.setCurrentLevel(directory);
-		trace('Setting asset folder to ' + directory);
+		trace('Setting asset folder to $directory');
 
 		#if NO_PRELOAD_ALL
 		var loaded:Bool = false;
@@ -277,7 +277,7 @@ class LoadingState extends MusicBeatState
 		{
 			if (manifest == null)
 			{
-				promise.error("Cannot parse asset manifest for library \"" + id + "\"");
+				promise.error('Cannot parse asset manifest for library "$id"');
 				return;
 			}
 
@@ -285,7 +285,7 @@ class LoadingState extends MusicBeatState
 
 			if (library == null)
 			{
-				promise.error("Cannot open library \"" + id + "\"");
+				promise.error('Cannot open library "$id"');
 			}
 			else
 			{
@@ -296,7 +296,7 @@ class LoadingState extends MusicBeatState
 			}
 		}).onError(function(_)
 		{
-			promise.error("There is no asset library with an ID of \"" + id + "\"");
+			promise.error('There is no asset library with an ID of "$id"');
 		});
 
 		return promise.future;

@@ -42,10 +42,10 @@ class UIData {
         if (skin == null || skin.length < 1) skin = 'default';
         var daFile:SkinFile = null;
         var rawJson:String = null;
-        var path:String = Paths.getPreloadPath('images/uiskins/' + skin + '.json');
+        var path:String = Paths.getPreloadPath('images/uiskins/$skin.json');
     
         #if MODS_ALLOWED
-        var modPath:String = Paths.modFolders('images/uiskins/' + skin + '.json');
+        var modPath:String = Paths.modFolders('images/uiskins/$skin.json');
         if (FileSystem.exists(modPath)) {
             rawJson = File.getContent(modPath);
         } else if (FileSystem.exists(path)) {

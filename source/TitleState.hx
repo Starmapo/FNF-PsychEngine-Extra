@@ -85,7 +85,7 @@ class TitleState extends MusicBeatState
 		#end
 		
 		#if MODS_ALLOWED
-		var path = "mods/" + Paths.currentModDirectory + "/images/gfDanceTitle.json";
+		var path = 'mods/${Paths.currentModDirectory}/images/gfDanceTitle.json';
 		if (!FileSystem.exists(path)) {
 			path = "mods/images/gfDanceTitle.json";
 		}
@@ -122,7 +122,7 @@ class TitleState extends MusicBeatState
 			{
 				updateVersion = data.split('\n')[0].trim();
 				var curVersion:String = MainMenuState.psychEngineVersion.trim();
-				trace('version online: ' + updateVersion + ', your version: ' + curVersion);
+				trace('version online: $updateVersion, your version: $curVersion');
 				if (updateVersion != curVersion) {
 					trace('versions arent matching!');
 					mustUpdate = true;
@@ -231,7 +231,7 @@ class TitleState extends MusicBeatState
 		logoBl = new FlxSprite(titleJSON.titlex, titleJSON.titley);
 		
 		#if MODS_ALLOWED
-		var path = "mods/" + Paths.currentModDirectory + "/images/logoBumpin.png";
+		var path = 'mods/${Paths.currentModDirectory}/images/logoBumpin.png';
 		if (!FileSystem.exists(path)) {
 			path = "mods/images/logoBumpin.png";
 		}
@@ -253,7 +253,7 @@ class TitleState extends MusicBeatState
 			gfDance = new FlxSprite(titleJSON.gfx, titleJSON.gfy);
 		
 		#if MODS_ALLOWED
-		var path = "mods/" + Paths.currentModDirectory + "/images/gfDanceTitle.png";
+		var path = 'mods/${Paths.currentModDirectory}/images/gfDanceTitle.png';
 		if (!FileSystem.exists(path)) {
 			path = "mods/images/gfDanceTitle.png";
 		}
@@ -275,7 +275,7 @@ class TitleState extends MusicBeatState
 
 		titleText = new FlxSprite(titleJSON.startx, titleJSON.starty);
 		#if MODS_ALLOWED
-		var path = "mods/" + Paths.currentModDirectory + "/images/titleEnter.png";
+		var path = 'mods/${Paths.currentModDirectory}/images/titleEnter.png';
 		if (!FileSystem.exists(path)) {
 			path = "mods/images/titleEnter.png";
 		}

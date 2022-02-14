@@ -27,7 +27,7 @@ class CoolUtil
 		var fileSuffix:String = difficulties[num];
 		if (fileSuffix != defaultDifficulty)
 		{
-			fileSuffix = '-' + fileSuffix;
+			fileSuffix = '-$fileSuffix';
 		}
 		else
 		{
@@ -176,7 +176,7 @@ class CoolUtil
 			if (remove && song.length > 0) {
 				for (i in 0...diffs.length) {
 					if (diffs[i] != null) { //HTML5 why does this need to happen nulls should already be removed????
-						var suffix = '-' + Paths.formatToSongPath(diffs[i]);
+						var suffix = '-${Paths.formatToSongPath(diffs[i])}';
 						if (Paths.formatToSongPath(diffs[i]) == defaultDifficulty.toLowerCase()) {
 							suffix = '';
 						}

@@ -188,16 +188,14 @@ class Note extends FlxSprite
 		if (!inEditor) this.strumTime += ClientPrefs.noteOffset;
 
 		this.noteData = noteData;
-		var data = noteData % keyAmount;
-
 		if (noteData > -1) {
 			texture = '';
 			colorSwap = new ColorSwap();
 			shader = colorSwap.shader;
 
-			x += swagWidth * data;
+			x += swagWidth * noteData;
 			if (!isSustainNote) { //Doing this 'if' check to fix the warnings on Senpai songs
-				animation.play(colors[data]);
+				animation.play(colors[noteData]);
 			}
 		}
 
@@ -252,10 +250,10 @@ class Note extends FlxSprite
 
 	function loadNoteAnims() {
 		for (i in colors) {
-			animation.addByPrefix(i, i + '0');
+			animation.addByPrefix(i, '${i}0');
 			if (isSustainNote) {
-				animation.addByPrefix(i + 'hold', i + ' hold0');
-				animation.addByPrefix(i + 'holdend', i + ' tail0');
+				animation.addByPrefix('${i}hold', '${i} hold0');
+				animation.addByPrefix('${i}holdend', '${i} tail0');
 			}
 		}
 
@@ -278,7 +276,7 @@ class Note extends FlxSprite
 		offsetX += width / 2;
 		copyAngle = false;
 
-		animation.play(colors[noteData] + 'holdend');
+		animation.play('${colors[noteData]}holdend');
 
 		updateHitbox();
 
@@ -287,7 +285,7 @@ class Note extends FlxSprite
 
 		if (prevNote.isSustainNote)
 		{
-			prevNote.animation.play(colors[prevNote.noteData % keyAmount] + 'hold');
+			prevNote.animation.play('${colors[prevNote.noteData]}hold');
 
 			prevNote.scale.y *= stepCrochet / 100 * 1.05;
 			if (PlayState.instance != null)

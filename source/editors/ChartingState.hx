@@ -427,9 +427,9 @@ class ChartingState extends MusicBeatState
 		var loadEventJson:FlxButton = new FlxButton(loadAutosaveBtn.x, loadAutosaveBtn.y + 30, 'Load Events', function()
 		{
 			var songName:String = Paths.formatToSongPath(_song.song);
-			var file:String = Paths.json(songName + '/events');
+			var file:String = Paths.json('${songName}/events');
 			#if MODS_ALLOWED
-			if (#if MODS_ALLOWED FileSystem.exists(Paths.modsJson(songName + '/events')) || #end OpenFlAssets.exists(file))
+			if (#if MODS_ALLOWED FileSystem.exists(Paths.modsJson('${songName}/events')) || #end OpenFlAssets.exists(file))
 			#else
 			if (OpenFlAssets.exists(file))
 			#end
@@ -467,7 +467,7 @@ class ChartingState extends MusicBeatState
 		blockPressWhileTypingOnStepper.push(stepperOpponentKeys);
 
 		#if MODS_ALLOWED
-		var directories:Array<String> = [Paths.mods('characters/'), Paths.mods(Paths.currentModDirectory + '/characters/'), Paths.getPreloadPath('characters/')];
+		var directories:Array<String> = [Paths.mods('characters/'), Paths.mods('${Paths.currentModDirectory}/characters/'), Paths.getPreloadPath('characters/')];
 		#else
 		var directories:Array<String> = [Paths.getPreloadPath('characters/')];
 		#end
@@ -522,7 +522,7 @@ class ChartingState extends MusicBeatState
 		blockPressWhileScrolling.push(player2DropDown);
 
 		#if MODS_ALLOWED
-		var directories:Array<String> = [Paths.mods('stages/'), Paths.mods(Paths.currentModDirectory + '/stages/'), Paths.getPreloadPath('stages/')];
+		var directories:Array<String> = [Paths.mods('stages/'), Paths.mods('${Paths.currentModDirectory}/stages/'), Paths.getPreloadPath('stages/')];
 		#else
 		var directories:Array<String> = [Paths.getPreloadPath('stages/')];
 		#end
@@ -579,7 +579,7 @@ class ChartingState extends MusicBeatState
 					PlayState.SONG = Song.loadFromJson(_song.song + CoolUtil.getDifficultyFilePath(), _song.song);
 					MusicBeatState.resetState();
 				} catch (e:Any) {
-					trace("File " + Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath() + " is not found.");
+					trace('File ${Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath()} was not found.');
 				}
 			}
 		});
@@ -594,7 +594,7 @@ class ChartingState extends MusicBeatState
 			Conductor.getLastBPM(_song, curSection);
 			reloadGridLayer();
 		});
-		numeratorDropDown.selectedLabel = '' + _song.numerator;
+		numeratorDropDown.selectedLabel = '${_song.numerator}';
 		blockPressWhileScrolling.push(numeratorDropDown);
 
 		var denominatorDropDown = new FlxUIDropDownMenuCustom(numeratorDropDown.x, numeratorDropDown.y + 20, FlxUIDropDownMenuCustom.makeStrIdLabelArray(DENOMINATORS, true), function(denominator:String)
@@ -605,7 +605,7 @@ class ChartingState extends MusicBeatState
 			Conductor.getLastBPM(_song, curSection);
 			reloadGridLayer();
 		});
-		denominatorDropDown.selectedLabel = '' + _song.denominator;
+		denominatorDropDown.selectedLabel = '${ _song.denominator}';
 		blockPressWhileScrolling.push(denominatorDropDown);
 
 		var skin = _song.uiSkin;
@@ -747,9 +747,9 @@ class ChartingState extends MusicBeatState
 			}
 		});
 		if (check_changeSignature.checked) {
-			sectionNumeratorDropDown.selectedLabel = '' + _song.notes[curSection].numerator;
+			sectionNumeratorDropDown.selectedLabel = '${_song.notes[curSection].numerator}';
 		} else {
-			sectionNumeratorDropDown.selectedLabel = '' + Conductor.numerator;
+			sectionNumeratorDropDown.selectedLabel = '${Conductor.numerator}';
 		}
 		blockPressWhileScrolling.push(sectionNumeratorDropDown);
 
@@ -764,9 +764,9 @@ class ChartingState extends MusicBeatState
 			}
 		});
 		if (check_changeSignature.checked) {
-			sectionDenominatorDropDown.selectedLabel = '' + _song.notes[curSection].denominator;
+			sectionDenominatorDropDown.selectedLabel = '${_song.notes[curSection].denominator}';
 		} else {
-			sectionDenominatorDropDown.selectedLabel = '' + Conductor.denominator;
+			sectionDenominatorDropDown.selectedLabel = '${Conductor.denominator}';
 		}
 		blockPressWhileScrolling.push(sectionDenominatorDropDown);
 
@@ -1022,7 +1022,7 @@ class ChartingState extends MusicBeatState
 		}
 
 		#if LUA_ALLOWED
-		var directories:Array<String> = [Paths.mods('custom_notetypes/'), Paths.mods(Paths.currentModDirectory + '/custom_notetypes/')];
+		var directories:Array<String> = [Paths.mods('custom_notetypes/'), Paths.mods('${Paths.currentModDirectory}/custom_notetypes/')];
 		for (i in 0...directories.length) {
 			var directory:String =  directories[i];
 			if (FileSystem.exists(directory)) {
@@ -1043,7 +1043,7 @@ class ChartingState extends MusicBeatState
 		#end
 
 		for (i in 1...displayNameList.length) {
-			displayNameList[i] = i + '. ' + displayNameList[i];
+			displayNameList[i] = '$i. ${displayNameList[i]}';
 		}
 
 		noteTypeDropDown = new FlxUIDropDownMenuCustom(10, 105, FlxUIDropDownMenuCustom.makeStrIdLabelArray(displayNameList, true), function(character:String)
@@ -1082,7 +1082,7 @@ class ChartingState extends MusicBeatState
 
 		#if LUA_ALLOWED
 		var eventPushedMap:Map<String, Bool> = new Map<String, Bool>();
-		var directories:Array<String> = [Paths.mods('custom_events/'), Paths.mods(Paths.currentModDirectory + '/custom_events/')];
+		var directories:Array<String> = [Paths.mods('custom_events/'), Paths.mods('${Paths.currentModDirectory}/custom_events/')];
 		for (i in 0...directories.length) {
 			var directory:String =  directories[i];
 			if (FileSystem.exists(directory)) {
@@ -1224,7 +1224,7 @@ class ChartingState extends MusicBeatState
 			curEventSelected += change;
 			if (curEventSelected < 0) curEventSelected = Std.int(curSelectedNote[1].length) - 1;
 			else if (curEventSelected >= curSelectedNote[1].length) curEventSelected = 0;
-			selectedEventText.text = 'Selected Event: ' + (curEventSelected + 1) + ' / ' + curSelectedNote[1].length;
+			selectedEventText.text = 'Selected Event: ${curEventSelected + 1} / ${curSelectedNote[1].length}';
 		}
 		else
 		{
@@ -2039,10 +2039,10 @@ class ChartingState extends MusicBeatState
 		}
 
 		bpmTxt.text = 
-		Std.string(FlxMath.roundDecimal(Conductor.songPosition / 1000, 2)) + " / " + Std.string(FlxMath.roundDecimal(FlxG.sound.music.length / 1000, 2)) +
-		"\nSection: " + curSection +
-		"\n\nBeat: " + curBeat +
-		"\n\nStep: " + curStep;
+		'${Std.string(FlxMath.roundDecimal(Conductor.songPosition / 1000, 2))} / ${Std.string(FlxMath.roundDecimal(FlxG.sound.music.length / 1000, 2))}
+		\nSection: $curSection
+		\n\nBeat: $curBeat
+		\n\nStep: $curStep';
 
 		var playedSound:Array<Bool> = []; //Prevents ouchy GF sex sounds
 		for (i in 0...Std.int(Math.max(leftKeys, rightKeys))) {
@@ -2092,7 +2092,7 @@ class ChartingState extends MusicBeatState
 	}
 
 	function updateZoom() {
-		zoomTxt.text = 'Zoom: ' + zoomList[curZoom] + 'x';
+		zoomTxt.text = 'Zoom: ${zoomList[curZoom]}x';
 		reloadGridLayer();
 	}
 
@@ -2102,13 +2102,13 @@ class ChartingState extends MusicBeatState
 		}
 		audioBuffers[0] = null;
 		#if MODS_ALLOWED
-		if (FileSystem.exists(Paths.modFolders('songs/' + currentSongName + '/Inst.ogg'))) {
-			audioBuffers[0] = AudioBuffer.fromFile(Paths.modFolders('songs/' + currentSongName + '/Inst.ogg'));
+		if (FileSystem.exists(Paths.modFolders('songs/$currentSongName/Inst.ogg'))) {
+			audioBuffers[0] = AudioBuffer.fromFile(Paths.modFolders('songs/$currentSongName/Inst.ogg'));
 		}
 		else { #end
-			var leVocals:String = Paths.getPath(currentSongName + '/Inst.' + Paths.SOUND_EXT, SOUND, 'songs');
+			var leVocals:String = Paths.getPath('$currentSongName/Inst.${Paths.SOUND_EXT}', SOUND, 'songs');
 			if (OpenFlAssets.exists(leVocals)) { //Vanilla inst
-				audioBuffers[0] = AudioBuffer.fromFile('./' + leVocals.substr(6));
+				audioBuffers[0] = AudioBuffer.fromFile('./${leVocals.substr(6)}');
 			}
 		#if MODS_ALLOWED
 		}
@@ -2119,12 +2119,12 @@ class ChartingState extends MusicBeatState
 		}
 		audioBuffers[1] = null;
 		#if MODS_ALLOWED
-		if (FileSystem.exists(Paths.modFolders('songs/' + currentSongName + '/Voices.ogg'))) {
-			audioBuffers[1] = AudioBuffer.fromFile(Paths.modFolders('songs/' + currentSongName + '/Voices.ogg'));
+		if (FileSystem.exists(Paths.modFolders('songs/$currentSongName/Voices.ogg'))) {
+			audioBuffers[1] = AudioBuffer.fromFile(Paths.modFolders('songs/$currentSongName/Voices.ogg'));
 		} else { #end
-			var leVocals:String = Paths.getPath(currentSongName + '/Voices.' + Paths.SOUND_EXT, SOUND, 'songs');
+			var leVocals:String = Paths.getPath('$currentSongName/Voices.${Paths.SOUND_EXT}', SOUND, 'songs');
 			if (OpenFlAssets.exists(leVocals)) { //Vanilla voices
-				audioBuffers[1] = AudioBuffer.fromFile('./' + leVocals.substr(6));
+				audioBuffers[1] = AudioBuffer.fromFile('./${leVocals.substr(6)}');
 			}
 		#if MODS_ALLOWED
 		}
@@ -2135,12 +2135,12 @@ class ChartingState extends MusicBeatState
 		}
 		audioBuffers[2] = null;
 		#if MODS_ALLOWED
-		if (FileSystem.exists(Paths.modFolders('songs/' + currentSongName + '/VoicesDad.ogg'))) {
-			audioBuffers[2] = AudioBuffer.fromFile(Paths.modFolders('songs/' + currentSongName + '/VoicesDad.ogg'));
+		if (FileSystem.exists(Paths.modFolders('songs/$currentSongName/VoicesDad.ogg'))) {
+			audioBuffers[2] = AudioBuffer.fromFile(Paths.modFolders('songs/$currentSongName/VoicesDad.ogg'));
 		} else { #end
-			var leVocals:String = Paths.getPath(currentSongName + '/VoicesDad.' + Paths.SOUND_EXT, SOUND, 'songs');
+			var leVocals:String = Paths.getPath('$currentSongName/VoicesDad.${Paths.SOUND_EXT}', SOUND, 'songs');
 			if (OpenFlAssets.exists(leVocals)) { //Vanilla voices
-				audioBuffers[2] = AudioBuffer.fromFile('./' + leVocals.substr(6));
+				audioBuffers[2] = AudioBuffer.fromFile('./${leVocals.substr(6)}');
 			}
 		#if MODS_ALLOWED
 		}
@@ -2351,8 +2351,8 @@ class ChartingState extends MusicBeatState
 		check_changeBPM.checked = sec.changeBPM;
 		stepperSectionBPM.value = sec.bpm;
 		check_changeSignature.checked = sec.changeSignature;
-		sectionNumeratorDropDown.selectedLabel = '' + sec.numerator;
-		sectionDenominatorDropDown.selectedLabel = '' + sec.denominator;
+		sectionNumeratorDropDown.selectedLabel = '${sec.numerator}';
+		sectionDenominatorDropDown.selectedLabel = '${sec.denominator}';
 
 		updateHeads();
 	}
@@ -2391,7 +2391,7 @@ class ChartingState extends MusicBeatState
 					if (currentType <= 0) {
 						noteTypeDropDown.selectedLabel = '';
 					} else {
-						noteTypeDropDown.selectedLabel = currentType + '. ' + curSelectedNote[3];
+						noteTypeDropDown.selectedLabel = '$currentType. ${curSelectedNote[3]}';
 					}
 				}
 				if (curSelectedNote[4] != null) {
@@ -2408,7 +2408,7 @@ class ChartingState extends MusicBeatState
 				value1InputText.text = curSelectedNote[1][curEventSelected][1];
 				value2InputText.text = curSelectedNote[1][curEventSelected][2];
 			}
-			strumTimeInputText.text = '' + curSelectedNote[0];
+			strumTimeInputText.text = '${curSelectedNote[0]}';
 		}
 	}
 
@@ -2436,7 +2436,7 @@ class ChartingState extends MusicBeatState
 
 			if (i[3] != null && note.noteType != null && note.noteType.length > 0) {
 				var typeInt:Null<Int> = noteTypeMap.get(i[3]);
-				var theType:String = '' + typeInt;
+				var theType:String = '$typeInt';
 				if (typeInt == null) theType = '?';
 
 				var daText:AttachedFlxText = new AttachedFlxText(0, 0, 100, theType, 24);
@@ -2463,8 +2463,8 @@ class ChartingState extends MusicBeatState
 				
 				if (note.y < -150) note.y = -150;
 
-				var text:String = 'Event: ' + note.eventName + ' (' + Math.floor(note.strumTime) + ' ms)' + '\nValue 1: ' + note.eventVal1 + '\nValue 2: ' + note.eventVal2;
-				if (note.eventLength > 1) text = note.eventLength + ' Events:\n' + note.eventName;
+				var text:String = 'Event: ${note.eventName} (${Math.floor(note.strumTime)} ms)\nValue 1: ${note.eventVal1}\nValue 2: ${note.eventVal2}';
+				if (note.eventLength > 1) text = '${note.eventLength} Events:\n${note.eventName}';
 
 				var daText:AttachedFlxText = new AttachedFlxText(0, 0, 400, text, 12);
 				daText.setFormat(Paths.font("vcr.ttf"), 12, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE_FAST, FlxColor.BLACK);
@@ -2860,14 +2860,15 @@ class ChartingState extends MusicBeatState
 		try {
 			CoolUtil.getDifficulties(currentSongName);
 			PlayState.SONG = Song.loadFromJson(song + CoolUtil.getDifficultyFilePath(), song);
-			#if PRELOAD_ALL
-			MusicBeatState.resetState();
-			#else
-			LoadingState.loadAndSwitchState(new ChartingState());
-			#end
 		} catch (e:Any) {
-			trace("File " + Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath() + " is not found.");
+			FlxG.log.warn('File ${Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath()} was not found.');
+			PlayState.SONG = Song.loadFromJson(song, song);
 		}
+		#if PRELOAD_ALL
+		MusicBeatState.resetState();
+		#else
+		LoadingState.loadAndSwitchState(new ChartingState());
+		#end
 	}
 
 	function autosaveSong():Void
@@ -2899,7 +2900,7 @@ class ChartingState extends MusicBeatState
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
 			_file.addEventListener(Event.CANCEL, onSaveCancel);
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data.trim(), Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath() + ".json");
+			_file.save(data.trim(), '${Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath()}.json');
 		}
 	}
 	

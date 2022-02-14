@@ -635,7 +635,7 @@ class CharacterEditorState extends MusicBeatState
 
 			reloadAnimationDropDown();
 			genBoyOffsets();
-			trace('Added/Updated animation: ' + animationInputText.text);
+			trace('Added/Updated animation: ${animationInputText.text}');
 		});
 
 		var removeButton:FlxButton = new FlxButton(180, animationIndicesInputText.y + 30, "Remove", function() {
@@ -657,7 +657,7 @@ class CharacterEditorState extends MusicBeatState
 					}
 					reloadAnimationDropDown();
 					genBoyOffsets();
-					trace('Removed animation: ' + animationInputText.text);
+					trace('Removed animation: ${animationInputText.text}');
 					break;
 				}
 			}
@@ -757,9 +757,9 @@ class CharacterEditorState extends MusicBeatState
 		}
 
 		var anims:Array<AnimArray> = char.animationsArray.copy();
-		if (Paths.fileExists('images/' + char.imageFile + '/Animation.json', TEXT)) {
+		if (Paths.fileExists('images/${char.imageFile}/Animation.json', TEXT)) {
 			char.frames = AtlasFrameMaker.construct(char.imageFile);
-		} else if (Paths.fileExists('images/' + char.imageFile + '.txt', TEXT)) {
+		} else if (Paths.fileExists('images/${char.imageFile}.txt', TEXT)) {
 			char.frames = Paths.getPackerAtlas(char.imageFile);
 		} else {
 			char.frames = Paths.getSparrowAtlas(char.imageFile);
@@ -767,8 +767,8 @@ class CharacterEditorState extends MusicBeatState
 
 		if (char.animationsArray != null && char.animationsArray.length > 0) {
 			for (anim in char.animationsArray) {
-				var animAnim:String = '' + anim.anim;
-				var animName:String = '' + anim.name;
+				var animAnim:String = '${anim.anim}';
+				var animName:String = '${anim.name}';
 				var animFps:Int = anim.fps;
 				var animLoop:Bool = !!anim.loop; //Bruh
 				var animIndices:Array<Int> = anim.indices;
@@ -809,7 +809,7 @@ class CharacterEditorState extends MusicBeatState
 
 		for (anim => offsets in char.animOffsets)
 		{
-			var text:FlxText = new FlxText(10, 20 + (18 * daLoop), 0, anim + ": " + offsets, 15);
+			var text:FlxText = new FlxText(10, 20 + (18 * daLoop), 0, '$anim: $offsets', 15);
 			text.setFormat(null, 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			text.scrollFactor.set();
 			text.borderSize = 1;
@@ -926,8 +926,8 @@ class CharacterEditorState extends MusicBeatState
 	function reloadGhost() {
 		ghostChar.frames = char.frames;
 		for (anim in char.animationsArray) {
-			var animAnim:String = '' + anim.anim;
-			var animName:String = '' + anim.name;
+			var animAnim:String = '${anim.anim}';
+			var animName:String = '${anim.name}';
 			var animFps:Int = anim.fps;
 			var animLoop:Bool = !!anim.loop; //Bruh
 			var animIndices:Array<Int> = anim.indices;
@@ -959,7 +959,7 @@ class CharacterEditorState extends MusicBeatState
 
 		#if MODS_ALLOWED
 		characterList = [];
-		var directories:Array<String> = [Paths.mods('characters/'), Paths.mods(Paths.currentModDirectory + '/characters/'), Paths.getPreloadPath('characters/')];
+		var directories:Array<String> = [Paths.mods('characters/'), Paths.mods('${Paths.currentModDirectory}/characters/'), Paths.getPreloadPath('characters/')];
 		for (i in 0...directories.length) {
 			var directory:String = directories[i];
 			if (FileSystem.exists(directory)) {
@@ -996,7 +996,7 @@ class CharacterEditorState extends MusicBeatState
 	function updatePresence() {
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Character Editor", "Character: " + daAnim, leHealthIcon.getCharacter());
+		DiscordClient.changePresence("Character Editor", 'Character: $daAnim', leHealthIcon.getCharacter());
 		#end
 	}
 
@@ -1201,7 +1201,7 @@ class CharacterEditorState extends MusicBeatState
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
 			_file.addEventListener(Event.CANCEL, onSaveCancel);
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data, daAnim + ".json");
+			_file.save(data, '${daAnim}.json');
 		}
 	}
 

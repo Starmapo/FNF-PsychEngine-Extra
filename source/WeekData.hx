@@ -98,9 +98,9 @@ class WeekData {
 				else // Sort mod loading order based on modsList.txt file
 				{
 					var path = haxe.io.Path.join([Paths.mods(), splitName[0]]);
-					if (sys.FileSystem.isDirectory(path) && !Paths.ignoreModFolders.contains(splitName[0]) && !disabledMods.contains(splitName[0]) && !directories.contains(path + '/'))
+					if (sys.FileSystem.isDirectory(path) && !Paths.ignoreModFolders.contains(splitName[0]) && !disabledMods.contains(splitName[0]) && !directories.contains('$path/'))
 					{
-						directories.push(path + '/');
+						directories.push('$path/');
 					}
 				}
 			}
@@ -109,7 +109,7 @@ class WeekData {
 		var modsDirectories:Array<String> = Paths.getModDirectories();
 		for (folder in modsDirectories)
 		{
-			var pathThing:String = haxe.io.Path.join([Paths.mods(), folder]) + '/';
+			var pathThing:String = '${haxe.io.Path.join([Paths.mods(), folder])}/';
 			if (!disabledMods.contains(folder) && !directories.contains(pathThing))
 			{
 				directories.push(pathThing);
@@ -123,7 +123,7 @@ class WeekData {
 		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getPreloadPath('weeks/weekList.txt'));
 		for (i in 0...sexList.length) {
 			for (j in 0...directories.length) {
-				var fileToCheck:String = directories[j] + 'weeks/' + sexList[i] + '.json';
+				var fileToCheck:String = '${directories[j]}weeks/${sexList[i]}.json';
 				if (!weeksLoaded.exists(sexList[i])) {
 					var week:WeekFile = getWeekFile(fileToCheck);
 					if (week != null) {
@@ -146,12 +146,12 @@ class WeekData {
 
 		#if MODS_ALLOWED
 		for (i in 0...directories.length) {
-			var directory:String = directories[i] + 'weeks/';
+			var directory:String = '${directories[i]}weeks/';
 			if (FileSystem.exists(directory)) {
-				var listOfWeeks:Array<String> = CoolUtil.coolTextFile(directory + 'weekList.txt');
+				var listOfWeeks:Array<String> = CoolUtil.coolTextFile('${directory}weekList.txt');
 				for (daWeek in listOfWeeks)
 				{
-					var path:String = directory + daWeek + '.json';
+					var path:String = '${directory}${daWeek}.json';
 					if (sys.FileSystem.exists(path))
 					{
 						addWeek(daWeek, path, directories[i], i, originalLength);

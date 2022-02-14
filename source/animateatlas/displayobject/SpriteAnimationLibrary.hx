@@ -62,7 +62,7 @@ class SpriteAnimationLibrary {
 	public function createAnimation(symbol:String = null):SpriteMovieClip {
 		symbol = (symbol != null) ? symbol : _defaultSymbolName;
 		if (!hasSymbol(symbol)) {
-			throw new ArgumentError("Symbol not found: " + symbol);
+			throw new ArgumentError('Symbol not found: $symbol');
 		}
 		return new SpriteMovieClip(getSymbol(symbol));
 	}

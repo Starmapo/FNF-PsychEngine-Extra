@@ -255,7 +255,7 @@ class WeekEditorState extends MusicBeatState
 	function reloadAllShit() {
 		var weekString:String = weekFile.songs[0][0];
 		for (i in 1...weekFile.songs.length) {
-			weekString += ', ' + weekFile.songs[i][0];
+			weekString += ', ${weekFile.songs[i][0]}';
 		}
 		songsInputText.text = weekString;
 		backgroundInputText.text = weekFile.weekBackground;
@@ -296,7 +296,7 @@ class WeekEditorState extends MusicBeatState
 		txtTracklist.text = '';
 		for (i in 0...stringThing.length)
 		{
-			txtTracklist.text += stringThing[i] + '\n';
+			txtTracklist.text += '${stringThing[i]}\n';
 		}
 
 		txtTracklist.text = txtTracklist.text.toUpperCase();
@@ -314,9 +314,9 @@ class WeekEditorState extends MusicBeatState
 
 		var isMissing:Bool = true;
 		if (assetName != null && assetName.length > 0) {
-			if ( #if MODS_ALLOWED FileSystem.exists(Paths.modsImages('menubackgrounds/menu_' + assetName)) || #end
-			Assets.exists(Paths.getPath('images/menubackgrounds/menu_' + assetName + '.png', IMAGE), IMAGE)) {
-				bgSprite.loadGraphic(Paths.image('menubackgrounds/menu_' + assetName));
+			if ( #if MODS_ALLOWED FileSystem.exists(Paths.modsImages('menubackgrounds/menu_$assetName')) || #end
+			Assets.exists(Paths.getPath('images/menubackgrounds/menu_$assetName.png', IMAGE), IMAGE)) {
+				bgSprite.loadGraphic(Paths.image('menubackgrounds/menu_$assetName'));
 				isMissing = false;
 			}
 		}
@@ -333,9 +333,9 @@ class WeekEditorState extends MusicBeatState
 		
 		var isMissing:Bool = true;
 		if (assetName != null && assetName.length > 0) {
-			if ( #if MODS_ALLOWED FileSystem.exists(Paths.modsImages('storymenu/' + assetName)) || #end
-			Assets.exists(Paths.getPath('images/storymenu/' + assetName + '.png', IMAGE), IMAGE)) {
-				weekThing.loadGraphic(Paths.image('storymenu/' + assetName));
+			if ( #if MODS_ALLOWED FileSystem.exists(Paths.modsImages('storymenu/$assetName')) || #end
+			Assets.exists(Paths.getPath('images/storymenu/$assetName.png', IMAGE), IMAGE)) {
+				weekThing.loadGraphic(Paths.image('storymenu/$assetName'));
 				isMissing = false;
 			}
 		}
@@ -343,13 +343,13 @@ class WeekEditorState extends MusicBeatState
 		if (isMissing) {
 			weekThing.visible = false;
 			missingFileText.visible = true;
-			missingFileText.text = 'MISSING FILE: images/storymenu/' + assetName + '.png';
+			missingFileText.text = 'MISSING FILE: images/storymenu/$assetName.png';
 		}
 		recalculateStuffPosition();
 
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Week Editor", "Editing: " + weekFileName);
+		DiscordClient.changePresence("Week Editor", 'Editing: $weekFileName');
 		#end
 	}
 	
@@ -475,7 +475,7 @@ class WeekEditorState extends MusicBeatState
 				if (loadedWeek.weekCharacters != null && loadedWeek.weekName != null) //Make sure it's really a week
 				{
 					var cutName:String = _file.name.substr(0, _file.name.length - 5);
-					trace("Successfully loaded file: " + cutName);
+					trace('Successfully loaded file: $cutName');
 					loadError = false;
 
 					weekFileName = cutName;
@@ -524,7 +524,7 @@ class WeekEditorState extends MusicBeatState
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
 			_file.addEventListener(Event.CANCEL, onSaveCancel);
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data, weekFileName + ".json");
+			_file.save(data, '$weekFileName.json');
 		}
 	}
 	
@@ -673,7 +673,7 @@ class WeekEditorFreeplayState extends MusicBeatState
 		bgColorStepperB = new FlxUINumericStepper(150, 40, 20, 255, 0, 255, 0);
 
 		var copyColor:FlxButton = new FlxButton(10, bgColorStepperR.y + 25, "Copy Color", function() {
-			Clipboard.text = bg.color.red + ',' + bg.color.green + ',' + bg.color.blue;
+			Clipboard.text = '${bg.color.red},${bg.color.green},${bg.color.blue}';
 		});
 		var pasteColor:FlxButton = new FlxButton(140, copyColor.y, "Paste Color", function() {
 			if (Clipboard.text != null) {

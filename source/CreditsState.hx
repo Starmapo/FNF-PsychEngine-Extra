@@ -49,7 +49,7 @@ class CreditsState extends MusicBeatState
 		#if MODS_ALLOWED
 		for (folder in Paths.getModDirectories())
 		{
-			var creditsFile:String = Paths.mods(folder + '/data/credits.txt');
+			var creditsFile:String = Paths.mods('$folder/data/credits.txt');
 			if (FileSystem.exists(creditsFile))
 			{
 				var firstarray:Array<String> = File.getContent(creditsFile).split('\n');
@@ -129,7 +129,7 @@ class CreditsState extends MusicBeatState
 					Paths.currentModDirectory = creditsStuff[i][5];
 				}
 
-				var icon:AttachedSprite = new AttachedSprite('credits/' + creditsStuff[i][1]);
+				var icon:AttachedSprite = new AttachedSprite('credits/${creditsStuff[i][1]}');
 				icon.xAdd = optionText.width + 10;
 				icon.sprTracker = optionText;
 	
@@ -206,7 +206,7 @@ class CreditsState extends MusicBeatState
 		}
 		if ((controls.ACCEPT || FlxG.mouse.justPressed) && !warningText.visible 
 			&& creditsStuff[curSelected][3] != null && creditsStuff[curSelected][3].length > 0) {
-			warningText.text = "WARNING!!!\nYOU ARE ABOUT TO GO TO: \n" + creditsStuff[curSelected][3] + "\nARE YOU ABSOLUTELY SURE YOU WANT TO GO TO THIS URL? \n(Y - Yes, N - No)";
+			warningText.text = 'WARNING!!!\nYOU ARE ABOUT TO GO TO: \n${creditsStuff[curSelected][3]}\nARE YOU ABSOLUTELY SURE YOU WANT TO GO TO THIS URL? \n(Y - Yes, N - No)';
 			warningText.screenCenter();
 			warningText.visible = true;
 		}
@@ -267,7 +267,7 @@ class CreditsState extends MusicBeatState
 	function getCurrentBGColor() {
 		var bgColor:String = creditsStuff[curSelected][4];
 		if (!bgColor.startsWith('0x')) {
-			bgColor = '0xFF' + bgColor;
+			bgColor = '0xFF$bgColor';
 		}
 		return Std.parseInt(bgColor);
 	}

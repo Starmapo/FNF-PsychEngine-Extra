@@ -205,7 +205,7 @@ class FreeplayState extends MusicBeatState
 			ratingSplit[1] += '0';
 		}
 
-		scoreText.text = 'PERSONAL BEST: ' + lerpScore + ' (' + ratingSplit.join('.') + '%)';
+		scoreText.text = 'PERSONAL BEST: $lerpScore (${ratingSplit.join('.')}%)';
 		positionHighscore();
 
 		FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
@@ -267,6 +267,8 @@ class FreeplayState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			MusicBeatState.switchState(new MainMenuState());
 		}
+
+		super.update(elapsed);
 
 		if (ctrl)
 		{
@@ -339,7 +341,7 @@ class FreeplayState extends MusicBeatState
 			PlayState.isStoryMode = false;
 			PlayState.storyDifficulty = curDifficulty;
 
-			trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+			trace('CURRENT WEEK: ${WeekData.getWeekFileName()}');
 			if (colorTween != null) {
 				colorTween.cancel();
 			}
@@ -358,6 +360,7 @@ class FreeplayState extends MusicBeatState
 		}
 		else if (controls.RESET)
 		{
+			persistentUpdate = false;
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		}
@@ -373,7 +376,6 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 		#end
-		super.update(elapsed);
 	}
 
 	override function beatHit() {
@@ -418,7 +420,7 @@ class FreeplayState extends MusicBeatState
 		#end
 
 		PlayState.storyDifficulty = curDifficulty;
-		diffText.text = '< ' + CoolUtil.difficultyString() + ' >';
+		diffText.text = '< ${CoolUtil.difficultyString()} >';
 		positionHighscore();
 	}
 

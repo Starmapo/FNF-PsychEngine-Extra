@@ -371,7 +371,7 @@ class VlcBitmap extends Bitmap
 				}
 				catch (e:Error)
 				{
-					trace("error: " + e);
+					trace('error: $e');
 					throw new Error("render broke xd");
 				}
 			}
