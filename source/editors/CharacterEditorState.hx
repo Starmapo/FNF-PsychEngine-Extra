@@ -1138,7 +1138,6 @@ class CharacterEditorState extends MusicBeatState
 				}
 			}
 		}
-		camMenu.zoom = FlxG.camera.zoom;
 		ghostChar.setPosition(char.x, char.y);
 		super.update(elapsed);
 	}
