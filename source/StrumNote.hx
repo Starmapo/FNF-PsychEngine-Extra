@@ -17,6 +17,7 @@ class StrumNote extends FlxSprite
 
 	private var player:Int;
 	var originalX:Float = 0;
+	var postAdded:Bool = false;
 
 	var keyAmount:Int = 4;
 	var directions:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
@@ -63,8 +64,10 @@ class StrumNote extends FlxSprite
 		noteSize = maniaData.noteSize;
 		if (texture != null) {
 			reloadNote();
-			x = originalX;
-			postAddedToGroup();
+			if (postAdded) {
+				x = originalX;
+				postAddedToGroup();
+			}
 		}
 		return value;
 	}
@@ -93,20 +96,13 @@ class StrumNote extends FlxSprite
 	{
 		var lastAnim:String = null;
 		if (animation.curAnim != null) lastAnim = animation.curAnim.name;
-		var uiFile:String = uiSkin.name;
-		if (uiFile == null || uiFile.length < 1) {
-			uiFile = 'default';
-		}
 
 		frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/$texture', uiSkin));
 		animation.addByPrefix('static', 'arrow${directions[noteData]}0');
 		animation.addByPrefix('pressed', '${colors[noteData]} press', 24, false);
 		animation.addByPrefix('confirm', '${colors[noteData]} confirm', 24, false);
 
-		antialiasing = ClientPrefs.globalAntialiasing;
-		if (uiSkin.noAntialiasing) {
-			antialiasing = false;
-		}
+		antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;
 		setGraphicSize(Std.int((width * noteSize) * uiSkin.scale * uiSkin.noteScale));
 		updateHitbox();
 
@@ -122,6 +118,7 @@ class StrumNote extends FlxSprite
 		x += xOff;
 		x += ((FlxG.width / 2) * player);
 		ID = noteData;
+		postAdded = true;
 	}
 
 	override function update(elapsed:Float) {

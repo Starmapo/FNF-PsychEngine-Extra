@@ -94,11 +94,6 @@ typedef ColorData = {
 	?AlphaOffset:Float
 }
 
-typedef BitmapPosData = {
-	name:String,
-	Position:PointData,
-}
-
 typedef PointData = {
 	x:Int,
 	y:Int

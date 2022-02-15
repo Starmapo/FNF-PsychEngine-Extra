@@ -382,7 +382,7 @@ class FreeplayState extends MusicBeatState
 		super.beatHit();
 
 		if (instPlaying > -1) {
-			Conductor.getLastBPM(PlayState.SONG, Conductor.getCurSection(PlayState.SONG, curStep), ClientPrefs.getGameplaySetting('songspeed', 1));
+			Conductor.getLastBPM(PlayState.SONG, curStep, ClientPrefs.getGameplaySetting('songspeed', 1));
 
 			if (Conductor.getCurNumeratorBeat(PlayState.SONG, curBeat) % 2 == 0 && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms) {
 				FlxG.camera.zoom += 0.005;

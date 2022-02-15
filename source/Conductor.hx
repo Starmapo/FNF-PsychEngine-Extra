@@ -115,23 +115,23 @@ class Conductor
 		stepCrochet = crochet / 4;
 	}
 
-	public static function getLastBPM(song:SwagSong, section:Int, ?mult:Float = 1) {
+	public static function getLastBPM(song:SwagSong, step:Int, ?mult:Float = 1) {
 		var daBPM:Float = song.bpm * mult;
-		for (i in 0...section + 1) {
-			if (song.notes[i].changeBPM)
-				daBPM = song.notes[i].bpm * mult;
+		var daNumerator:Int = song.numerator;
+		var daDenominator:Int = song.denominator;
+		for (i in 0...bpmChangeMap.length) {
+			if (step >= bpmChangeMap[i].stepTime) {
+				daBPM = bpmChangeMap[i].bpm;
+			}
+		}
+		for (i in 0...signatureChangeMap.length) {
+			if (step >= signatureChangeMap[i].stepTime) {
+				daNumerator = signatureChangeMap[i].numerator;
+				daDenominator = signatureChangeMap[i].denominator;
+			}
 		}
 		if (bpm != daBPM)
 			changeBPM(daBPM);
-		
-		var daNumerator:Int = song.numerator;
-		var daDenominator:Int = song.denominator;
-		for (i in 0...section + 1) {
-			if (song.notes[i].changeSignature) {
-				daNumerator = song.notes[i].numerator;
-				daDenominator = song.notes[i].denominator;
-			}
-		}
 		if (numerator != daNumerator || denominator != daDenominator)
 			changeSignature(daNumerator, daDenominator);
 	}

@@ -228,10 +228,7 @@ class Note extends FlxSprite
 		var lastScaleY:Float = scale.y;
 		frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/${arraySkin.join('/')}', uiSkin));
 		loadNoteAnims();
-		antialiasing = ClientPrefs.globalAntialiasing;
-		if (uiSkin.noAntialiasing) {
-			antialiasing = false;
-		}
+		antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;
 		if (isSustainNote) {
 			scale.y = lastScaleY;
 		}

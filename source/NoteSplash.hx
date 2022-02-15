@@ -68,10 +68,7 @@ class NoteSplash extends FlxSprite
 			animation.addByPrefix("note0-1", "note splash left 1", 24, false);
 		} else {
 			var uiSkin = UIData.checkSkinFile('splashes/$skin', daNote.uiSkin);
-			antialiasing = ClientPrefs.globalAntialiasing;
-			if (uiSkin.noAntialiasing) {
-				antialiasing = false;
-			}
+			antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;
 			frames = Paths.getSparrowAtlas(UIData.checkImageFile('splashes/$skin', uiSkin));
 			for (i in 1...3) {
 				animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${colors[daNote.noteData]} $i', 24, false);

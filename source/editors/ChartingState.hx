@@ -282,7 +282,7 @@ class ChartingState extends MusicBeatState
 		loadAudioBuffer();
 		reloadGridLayer();
 		loadSong();
-		Conductor.getLastBPM(_song, curSection);
+		Conductor.getLastBPM(_song, curStep);
 		Conductor.mapBPMChanges(_song);
 
 		strumLine = new FlxSprite(0, 50).makeGraphic(GRID_SIZE * (totalKeys + 1), 4);
@@ -600,7 +600,7 @@ class ChartingState extends MusicBeatState
 			_song.numerator = Std.parseInt(NUMERATORS[Std.parseInt(numerator)]);
 			updateSectionLengths();
 			Conductor.mapBPMChanges(_song);
-			Conductor.getLastBPM(_song, curSection);
+			Conductor.getLastBPM(_song, curStep);
 			changeSection();
 			reloadGridLayer();
 		});
@@ -612,7 +612,7 @@ class ChartingState extends MusicBeatState
 			_song.denominator = Std.parseInt(DENOMINATORS[Std.parseInt(denominator)]);
 			updateSectionLengths();
 			Conductor.mapBPMChanges(_song);
-			Conductor.getLastBPM(_song, curSection);
+			Conductor.getLastBPM(_song, curStep);
 			changeSection();
 			reloadGridLayer();
 		});
@@ -757,7 +757,7 @@ class ChartingState extends MusicBeatState
 			if (_song.notes[curSection].changeSignature) {
 				updateSectionLengths();
 				Conductor.mapBPMChanges(_song);
-				Conductor.getLastBPM(_song, curSection);
+				Conductor.getLastBPM(_song, curStep);
 				changeSection();
 				reloadGridLayer();
 			}
@@ -775,7 +775,7 @@ class ChartingState extends MusicBeatState
 			if (_song.notes[curSection].changeSignature) {
 				updateSectionLengths();
 				Conductor.mapBPMChanges(_song);
-				Conductor.getLastBPM(_song, curSection);
+				Conductor.getLastBPM(_song, curStep);
 				changeSection();
 				reloadGridLayer();
 			}
@@ -1550,7 +1550,7 @@ class ChartingState extends MusicBeatState
 			{
 				_song.bpm = nums.value;
 				Conductor.mapBPMChanges(_song);
-				Conductor.getLastBPM(_song, curSection);
+				Conductor.getLastBPM(_song, curStep);
 			}
 			else if (wname == 'note_susLength')
 			{
@@ -2446,7 +2446,7 @@ class ChartingState extends MusicBeatState
 		nextRenderedNotes.clear();
 		nextRenderedSustains.clear();
 
-		Conductor.getLastBPM(_song, curSection);
+		Conductor.getLastBPM(_song, curStep);
 
 		// CURRENT SECTION
 		for (i in _song.notes[curSection].sectionNotes)

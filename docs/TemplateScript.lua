@@ -14,12 +14,14 @@ end
 
 
 -- Gameplay/Song interactions
-function onBeatHit()
-	-- triggered 4 times per section
+function onStepHit()
+	-- triggered 16 times per section (depends on time signature)
+	-- use "curStep" to get the current step
 end
 
-function onStepHit()
-	-- triggered 16 times per section
+function onBeatHit()
+	-- triggered 4 times per section (depends on time signature)
+	-- use "curBeat" to get the current beat
 end
 
 function onUpdate(elapsed)
@@ -52,6 +54,16 @@ function onEndSong()
 	-- song ended/starting transition (Will be delayed if you're unlocking an achievement)
 	-- return Function_Stop to stop the song from ending for playing a cutscene or something.
 	return Function_Continue;
+end
+
+function onBPMChange()
+	-- triggered when the song's BPM is changed
+	-- use "curBpm" to get the current BPM
+end
+
+function onSignatureChange()
+	-- triggered when the song's time signature is changed
+	-- use "numerator" and "denominator" to get the current time signature
 end
 
 
@@ -163,12 +175,4 @@ function onTimerCompleted(tag, loops, loopsLeft)
 	-- A loop from a timer you called has been completed, value "tag" is it's tag
 	-- loops = how many loops it will have done when it ends completely
 	-- loopsLeft = how many are remaining
-end
-
-function onBPMChange()
-	--triggered when the song bpm is changed
-end
-
-function onSignatureChange()
-	--triggered when the song time signature is changed
 end

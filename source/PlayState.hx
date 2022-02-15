@@ -2011,11 +2011,7 @@ class PlayState extends MusicBeatState
 							countdownReady.setGraphicSize(Std.int(countdownReady.width * uiSkinMap.get('ready').scale * uiSkinMap.get('ready').countdownScale));
 
 							countdownReady.screenCenter();
-							var antialias:Bool = ClientPrefs.globalAntialiasing;
-							if (uiSkinMap.get('ready').noAntialiasing) {
-								antialias = false;
-							}
-							countdownReady.antialiasing = antialias;
+							countdownReady.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('ready').noAntialiasing;
 							add(countdownReady);
 							FlxTween.tween(countdownReady, {alpha: 0}, modifiedCrochet / 1000, {
 								ease: FlxEase.cubeInOut,
@@ -2033,11 +2029,7 @@ class PlayState extends MusicBeatState
 							countdownSet.setGraphicSize(Std.int(countdownSet.width * uiSkinMap.get('set').scale * uiSkinMap.get('set').countdownScale));
 
 							countdownSet.screenCenter();
-							var antialias:Bool = ClientPrefs.globalAntialiasing;
-							if (uiSkinMap.get('set').noAntialiasing) {
-								antialias = false;
-							}
-							countdownSet.antialiasing = antialias;
+							countdownSet.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('set').noAntialiasing;
 							add(countdownSet);
 							FlxTween.tween(countdownSet, {alpha: 0}, modifiedCrochet / 1000, {
 								ease: FlxEase.cubeInOut,
@@ -2058,11 +2050,7 @@ class PlayState extends MusicBeatState
 								countdownGo.updateHitbox();
 
 								countdownGo.screenCenter();
-								var antialias:Bool = ClientPrefs.globalAntialiasing;
-								if (uiSkinMap.get('go').noAntialiasing) {
-									antialias = false;
-								}
-								countdownGo.antialiasing = antialias;
+								countdownGo.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('go').noAntialiasing;
 								add(countdownGo);
 								FlxTween.tween(countdownGo, {alpha: 0}, modifiedCrochet / 1000, {
 									ease: FlxEase.cubeInOut,
@@ -4058,14 +4046,8 @@ class PlayState extends MusicBeatState
 
 		rating.setGraphicSize(Std.int(rating.width * uiSkinMap.get(daRating).scale * uiSkinMap.get(daRating).ratingScale));
 		comboSpr.setGraphicSize(Std.int(comboSpr.width * uiSkinMap.get('combo').scale * uiSkinMap.get('combo').ratingScale));
-		rating.antialiasing = ClientPrefs.globalAntialiasing;
-		comboSpr.antialiasing = ClientPrefs.globalAntialiasing;
-		if (uiSkinMap.get(daRating).noAntialiasing) {
-			rating.antialiasing = false;
-		}
-		if (uiSkinMap.get('combo').noAntialiasing) {
-			comboSpr.antialiasing = false;
-		}
+		rating.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get(daRating).noAntialiasing;
+		comboSpr.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('combo').noAntialiasing;
 
 		comboSpr.updateHitbox();
 		rating.updateHitbox();
@@ -4093,10 +4075,7 @@ class PlayState extends MusicBeatState
 
 			numScore.setGraphicSize(Std.int(numScore.width * uiSkinMap.get('num${Std.int(i)}').scale * uiSkinMap.get('num${Std.int(i)}').comboNumScale));
 			numScore.updateHitbox();
-			numScore.antialiasing = ClientPrefs.globalAntialiasing;
-			if (uiSkinMap.get('num${Std.int(i)}').noAntialiasing) {
-				numScore.antialiasing = false;
-			}
+			numScore.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('num${Std.int(i)}').noAntialiasing;
 
 			numScore.acceleration.y = FlxG.random.int(200, 300);
 			numScore.velocity.y -= FlxG.random.int(140, 160);
@@ -4893,10 +4872,10 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
-		var curSection:Int = Conductor.getCurSection(SONG, curStep);
+		var curSection = Conductor.getCurSection(SONG, curStep);
 		if (SONG.notes[curSection] != null)
 		{
-			if (SONG.notes[curSection].changeBPM)
+			if (SONG.notes[curSection].changeBPM && SONG.notes[curSection].bpm != Conductor.bpm)
 			{
 				Conductor.changeBPM(SONG.notes[curSection].bpm, playbackRate);
 				setOnLuas('curBpm', Conductor.bpm);
@@ -4904,7 +4883,7 @@ class PlayState extends MusicBeatState
 				setOnLuas('stepCrochet', Conductor.stepCrochet);
 				callOnLuas('onBPMChange', []);
 			}
-			if (SONG.notes[curSection].changeSignature)
+			if (SONG.notes[curSection].changeSignature && (SONG.notes[curSection].numerator != Conductor.numerator || SONG.notes[curSection].denominator != Conductor.denominator))
 			{
 				Conductor.changeSignature(SONG.notes[Math.floor(curSection)].numerator, SONG.notes[Math.floor(curSection)].denominator);
 				setOnLuas('numerator', Conductor.numerator);
