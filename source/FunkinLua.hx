@@ -21,6 +21,8 @@ import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
 import flixel.util.FlxColor;
 import openfl.display.BlendMode;
+import openfl.filters.BitmapFilter;
+import openfl.filters.ShaderFilter;
 #if MODS_ALLOWED
 import sys.FileSystem;
 #end
@@ -43,6 +45,7 @@ class FunkinLua {
 	public var lua:State = null;
 	#end
 
+	public var camTarget:FlxCamera;
 	public var scriptName:String = '';
 	var gonnaClose:Bool = false;
 
@@ -890,6 +893,15 @@ class FunkinLua {
 			PlayState.instance.modchartSprites.set(tag, leSprite);
 			leSprite.active = true;
 		});
+		Lua_helper.add_callback(lua, "makeLuaShaderSprite", function(tag:String, shader:String, x:Float, y:Float,optimize:Bool=false) {
+			tag = tag.replace('.', '');
+			resetSpriteTag(tag);
+			var leSprite:ModchartSprite = new ModchartSprite(x, y,true,shader,optimize);
+			leSprite.antialiasing = ClientPrefs.globalAntialiasing;
+
+			PlayState.instance.modchartSprites.set(tag, leSprite);
+			leSprite.active = true;
+		});
 		Lua_helper.add_callback(lua, "makeAnimatedLuaSprite", function(tag:String, image:String, x:Float, y:Float, ?spriteType:String = "sparrow") {
 			tag = tag.replace('.', '');
 			resetSpriteTag(tag);
@@ -1604,75 +1616,68 @@ class FunkinLua {
 			luaTrace('musicFadeOut is deprecated! Use soundFadeOut instead.', false, true);
 		});
 		
-		
-		
 		//SHADER SHIT
+		Lua_helper.add_callback(lua, "createShaders", function(shaderName:String, ?optimize:Bool = false)
+		{
+			var shader = new DynamicShaderHandler(shaderName, optimize);
 		
-		Lua_helper.add_callback(lua, "addChromaticAbberationEffect", function(camera:String,chromeOffset:Float = 0.005) {
-			
-			PlayState.instance.addShaderToCamera(camera, new ChromaticAberrationEffect(chromeOffset));
-			
+			return shaderName;
 		});
+		Lua_helper.add_callback(lua, "setShadersToCamera", function(shaderName:Array<String>, cameraName:String)
+		{
 		
+			var shaderArray = new Array<BitmapFilter>();
+		
+			for (i in shaderName)
+			{
+				shaderArray.push(new ShaderFilter(PlayState.instance.luaShaders[i].shader));
+			}
+		
+			cameraFromString(cameraName).setFilters(shaderArray);
+		});
+
+		// shader clear
+		Lua_helper.add_callback(lua, "clearShadersFromCamera", function(cameraName) {
+			cameraFromString(cameraName).setFilters([]);
+		});	
+		Lua_helper.add_callback(lua, "addChromaticAbberationEffect", function(camera:String,chromeOffset:Float = 0.005) {
+			PlayState.instance.addShaderToCamera(camera, new ChromaticAberrationEffect(chromeOffset));
+		});
 		Lua_helper.add_callback(lua, "addScanlineEffect", function(camera:String,lockAlpha:Bool=false) {
-			
 			PlayState.instance.addShaderToCamera(camera, new ScanlineEffect(lockAlpha));
-			
 		});
 		Lua_helper.add_callback(lua, "addGrainEffect", function(camera:String,grainSize:Float,lumAmount:Float,lockAlpha:Bool=false) {
-			
 			PlayState.instance.addShaderToCamera(camera, new GrainEffect(grainSize,lumAmount,lockAlpha));
-			
 		});
 		Lua_helper.add_callback(lua, "addTiltshiftEffect", function(camera:String,blurAmount:Float,center:Float) {
-			
 			PlayState.instance.addShaderToCamera(camera, new TiltshiftEffect(blurAmount,center));
-			
 		});
 		Lua_helper.add_callback(lua, "addVCREffect", function(camera:String,glitchFactor:Float = 0.0,distortion:Bool=true,perspectiveOn:Bool=true,vignetteMoving:Bool=true) {
-			
 			PlayState.instance.addShaderToCamera(camera, new VCRDistortionEffect(glitchFactor,distortion,perspectiveOn,vignetteMoving));
-			
 		});
 		Lua_helper.add_callback(lua, "addGlitchEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {
-			
 			PlayState.instance.addShaderToCamera(camera, new GlitchEffect(waveSpeed,waveFrq,waveAmp));
-			
 		});
 		Lua_helper.add_callback(lua, "addPulseEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {
-			
 			PlayState.instance.addShaderToCamera(camera, new PulseEffect(waveSpeed,waveFrq,waveAmp));
-			
 		});
 		Lua_helper.add_callback(lua, "addDistortionEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {
-			
 			PlayState.instance.addShaderToCamera(camera, new DistortBGEffect(waveSpeed,waveFrq,waveAmp));
-			
 		});
 		Lua_helper.add_callback(lua, "addInvertEffect", function(camera:String,lockAlpha:Bool=false) {
-			
 			PlayState.instance.addShaderToCamera(camera, new InvertColorsEffect(lockAlpha));
-			
 		});
 		Lua_helper.add_callback(lua, "addGreyscaleEffect", function(camera:String) { //for dem funkies
-			
 			PlayState.instance.addShaderToCamera(camera, new GreyscaleEffect());
-			
 		});
 		Lua_helper.add_callback(lua, "addGrayscaleEffect", function(camera:String) { //for dem funkies
-			
 			PlayState.instance.addShaderToCamera(camera, new GreyscaleEffect());
-			
 		});
 		Lua_helper.add_callback(lua, "add3DEffect", function(camera:String,xrotation:Float=0,yrotation:Float=0,zrotation:Float=0,depth:Float=0) { //for dem funkies
-			
 			PlayState.instance.addShaderToCamera(camera, new ThreeDEffect(xrotation,yrotation,zrotation,depth));
-			
 		});
 		Lua_helper.add_callback(lua, "addBloomEffect", function(camera:String,intensity:Float = 0.35,blurSize:Float=1.0) {
-
 			PlayState.instance.addShaderToCamera(camera, new BloomEffect(blurSize/512.0,intensity));
-			
 		});
 		Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
 			PlayState.instance.clearShaderFromCamera(camera);
@@ -1988,7 +1993,27 @@ class FunkinLua {
 class ModchartSprite extends FlxSprite
 {
 	public var wasAdded:Bool = false;
-	//public var isInFront:Bool = false;
+	var hShader:DynamicShaderHandler;
+
+	public function new(?x:Float = 0, ?y:Float = 0,shaderSprite:Bool=false,type:String='', optimize:Bool = false)
+	{
+			super(x, y);
+			if(shaderSprite){
+				// codism
+				flipY = true;
+
+				makeGraphic(FlxG.width, FlxG.height, FlxColor.TRANSPARENT);
+
+				hShader = new DynamicShaderHandler(type, optimize);
+
+				if (hShader.shader != null)
+				{
+					shader = hShader.shader;
+				}
+
+				antialiasing = FlxG.save.data.antialiasing;
+			}
+	}
 }
 
 class ModchartText extends FlxText

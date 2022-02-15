@@ -45,6 +45,7 @@ import DialogueBoxPsych;
 import FunkinLua;
 import Shaders;
 import StageData;
+import DynamicShaderHandler;
 import flash.media.Sound;
 #if MODS_ALLOWED
 import sys.FileSystem;
@@ -73,6 +74,8 @@ class PlayState extends MusicBeatState
 		['Perfect!!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	];
 	
+	public static var animatedShaders:Map<String, DynamicShaderHandler> = new Map<String, DynamicShaderHandler>();
+	public var luaShaders:Map<String, DynamicShaderHandler> = new Map<String, DynamicShaderHandler>();
 	public var modchartTweens:Map<String, FlxTween> = new Map<String, FlxTween>();
 	public var modchartSprites:Map<String, ModchartSprite> = new Map<String, ModchartSprite>();
 	public var modchartTimers:Map<String, FlxTimer> = new Map<String, FlxTimer>();
@@ -1657,7 +1660,7 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	public function addShaderToCamera(cam:String,effect:ShaderEffect) {//STOLE FROM ANDROMEDA
+	public function addShaderToCamera(cam:String,effect:Dynamic) {//STOLE FROM ANDROMEDA
 		switch(cam.toLowerCase()) {
 			case 'camhud' | 'hud':
 					camHUDShaders.push(effect);
@@ -1709,12 +1712,14 @@ class PlayState extends MusicBeatState
 				}
 				camOther.setFilters(newCamEffects);
 			default: 
-				camGameShaders.remove(effect);
-				var newCamEffects:Array<BitmapFilter>=[];
-				for(i in camGameShaders) {
-				newCamEffects.push(new ShaderFilter(i.shader));
+				if(modchartSprites.exists(cam)) {
+					Reflect.setProperty(modchartSprites.get(cam),"shader",null);
+				} else if(modchartTexts.exists(cam)) {
+					Reflect.setProperty(modchartTexts.get(cam),"shader",null);
+				} else {
+					var OBJ = Reflect.getProperty(PlayState.instance,cam);
+					Reflect.setProperty(OBJ,"shader", null);
 				}
-				camGame.setFilters(newCamEffects);
 		}
 	}
 	
@@ -1728,6 +1733,10 @@ class PlayState extends MusicBeatState
 				camOtherShaders = [];
 				var newCamEffects:Array<BitmapFilter>=[];
 				camOther.setFilters(newCamEffects);
+			case 'camgame' | 'game': 
+				camGameShaders = [];
+				var newCamEffects:Array<BitmapFilter>=[];
+				camGame.setFilters(newCamEffects);
 			default: 
 				camGameShaders = [];
 				var newCamEffects:Array<BitmapFilter>=[];
@@ -2595,25 +2604,15 @@ class PlayState extends MusicBeatState
 	{
 		if (FlxG.sound.music == null || startingSong || endingSong || endingTimer != null) return;
 
-		var vocalsWasPlaying = false;
-		if (vocals.playing || vocals.volume == 0 || paused) {
-			vocals.pause();
-			vocalsWasPlaying = true;
-		}
-		if (vocalsDad.playing || vocalsDad.volume == 0 || paused) {
-			vocalsDad.pause();
-			vocalsWasPlaying = true;
-		}
+		vocals.pause();
+		vocalsDad.pause();
 		FlxG.sound.music.pause();
 
 		FlxG.sound.music.play();
 		FlxG.sound.music.time = Conductor.songPosition * playbackRate;
-		if (vocalsWasPlaying) {
-			vocals.time = FlxG.sound.music.time;
-			vocals.play();
-			vocalsDad.time = FlxG.sound.music.time;
-			vocalsDad.play();
-		}
+		vocals.play();
+		vocalsDad.play();
+		vocals.time = vocalsDad.time = FlxG.sound.music.time;
 
 		#if cpp
 		@:privateAccess
@@ -3178,6 +3177,17 @@ class PlayState extends MusicBeatState
 			setOnLuas('cameraY', camFollowPos.y);
 			setOnLuas('botPlay', cpuControlled);
 		}
+
+		for (shader in animatedShaders)
+		{
+			shader.update(elapsed);
+		}
+		#if LUA_ALLOWED
+		for (key => value in luaShaders)
+		{
+			value.update(elapsed);
+		}
+		#end
 
 		for (i in shaderUpdates) {
 			i(elapsed);

@@ -20,18 +20,22 @@ class Prompt extends MusicBeatSubstate
 	var buttonAccept:FlxButton;
 	var buttonNo:FlxButton;
 	var cornerSize:Int = 10;
-	public function new(promptText:String = '', okCallback:Void->Void, cancelCallback:Void->Void, acceptOnDefault:Bool = false) 
+	public function new(promptText:String = '', okCallback:Void->Void, cancelCallback:Void->Void, acceptOnDefault:Bool = false, option1:String = null, option2:String = null) 
 	{
 		okc = okCallback;
 		cancelc = cancelCallback;
 		theText = promptText;
 		goAnyway = acceptOnDefault;
-		buttonAccept = new FlxButton(473.3, 450, 'OK', function() {
+		var op1 = 'OK';
+		var op2 = 'CANCEL';
+		if (option1 != null) op1 = option1;
+		if (option2 != null) op2 = option2;
+		buttonAccept = new FlxButton(473.3, 450, op1, function() {
             if(okc != null)
                 okc();
 	    	close();
         });
-		buttonNo = new FlxButton(633.3, 450, 'CANCEL', function() {
+		buttonNo = new FlxButton(633.3, 450, op2, function() {
             if(cancelc != null)
                 cancelc();
 		    close();

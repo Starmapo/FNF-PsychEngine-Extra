@@ -103,11 +103,11 @@ class OptionsState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			if (goToPlayState) {
 				StageData.loadDirectory(PlayState.SONG);
+				goToPlayState = false;
 				LoadingState.loadAndSwitchState(new PlayState(), true);
 			} else {
 				MusicBeatState.switchState(new MainMenuState());
 			}
-			goToPlayState = false;
 		}
 
 		if (controls.ACCEPT || FlxG.mouse.justPressed) {

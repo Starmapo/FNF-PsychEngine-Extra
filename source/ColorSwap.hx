@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import flixel.system.FlxAssets.FlxShader;
 
 class ColorSwap {
@@ -10,77 +11,33 @@ class ColorSwap {
 
 	private function set_hue(value:Float) {
 		hue = value;
-		shader.uTime.value[0] = hue;
+		shader.data.uTime.value[0] = hue;
 		return hue;
 	}
 
 	private function set_saturation(value:Float) {
 		saturation = value;
-		shader.uTime.value[1] = saturation;
+		shader.data.uTime.value[1] = saturation;
 		return saturation;
 	}
 
 	private function set_brightness(value:Float) {
 		brightness = value;
-		shader.uTime.value[2] = brightness;
+		shader.data.uTime.value[2] = brightness;
 		return brightness;
 	}
 
 	public function new()
 	{
-		shader.uTime.value = [0, 0, 0];
-		shader.awesomeOutline.value = [false];
+		shader.data.uTime.value = [0, 0, 0];
+		shader.data.awesomeOutline.value = [false];
 	}
 }
 
 class ColorSwapShader extends FlxShader {
-	@:glFragmentSource('
-		varying float openfl_Alphav;
-		varying vec4 openfl_ColorMultiplierv;
-		varying vec4 openfl_ColorOffsetv;
-		varying vec2 openfl_TextureCoordv;
-
-		uniform bool openfl_HasColorTransform;
-		uniform vec2 openfl_TextureSize;
-		uniform sampler2D bitmap;
-
-		uniform bool hasTransform;
-		uniform bool hasColorTransform;
-
-		vec4 flixel_texture2D(sampler2D bitmap, vec2 coord)
-		{
-			vec4 color = texture2D(bitmap, coord);
-			if (!hasTransform)
-			{
-				return color;
-			}
-
-			if (color.a == 0.0)
-			{
-				return vec4(0.0, 0.0, 0.0, 0.0);
-			}
-
-			if (!hasColorTransform)
-			{
-				return color * openfl_Alphav;
-			}
-
-			color = vec4(color.rgb / color.a, color.a);
-
-			mat4 colorMultiplier = mat4(0);
-			colorMultiplier[0][0] = openfl_ColorMultiplierv.x;
-			colorMultiplier[1][1] = openfl_ColorMultiplierv.y;
-			colorMultiplier[2][2] = openfl_ColorMultiplierv.z;
-			colorMultiplier[3][3] = openfl_ColorMultiplierv.w;
-
-			color = clamp(openfl_ColorOffsetv + (color * colorMultiplier), 0.0, 1.0);
-
-			if (color.a > 0.0)
-			{
-				return vec4(color.rgb * color.a * openfl_Alphav, color.a * openfl_Alphav);
-			}
-			return vec4(0.0, 0.0, 0.0, 0.0);
-		}
+	public function new()
+	{
+		super('
 
 		uniform vec3 uTime;
 		uniform bool awesomeOutline;
@@ -124,11 +81,11 @@ class ColorSwapShader extends FlxShader {
 			swagColor[1] = swagColor[1] + uTime[1];
 			swagColor[2] = swagColor[2] * (1.0 + uTime[2]);
 			
-			if (swagColor[1] < 0.0)
+			if(swagColor[1] < 0.0)
 			{
 				swagColor[1] = 0.0;
 			}
-			else if (swagColor[1] > 1.0)
+			else if(swagColor[1] > 1.0)
 			{
 				swagColor[1] = 1.0;
 			}
@@ -152,22 +109,8 @@ class ColorSwapShader extends FlxShader {
 				}
 			}
 			gl_FragColor = color;
-		}')
-	@:glVertexSource('
-		attribute float openfl_Alpha;
-		attribute vec4 openfl_ColorMultiplier;
-		attribute vec4 openfl_ColorOffset;
-		attribute vec4 openfl_Position;
-		attribute vec2 openfl_TextureCoord;
 
-		varying float openfl_Alphav;
-		varying vec4 openfl_ColorMultiplierv;
-		varying vec4 openfl_ColorOffsetv;
-		varying vec2 openfl_TextureCoordv;
-
-		uniform mat4 openfl_Matrix;
-		uniform bool openfl_HasColorTransform;
-		uniform vec2 openfl_TextureSize;
+		}',false,'
 
 		attribute float alpha;
 		attribute vec4 colorMultiplier;
@@ -192,10 +135,6 @@ class ColorSwapShader extends FlxShader {
 				openfl_ColorOffsetv = colorOffset / 255.0;
 				openfl_ColorMultiplierv = colorMultiplier;
 			}
-		}')
-
-	public function new()
-	{
-		super();
+		}');
 	}
 }

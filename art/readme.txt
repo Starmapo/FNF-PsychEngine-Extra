@@ -16,11 +16,11 @@
                  /          _/           /             
 
 HEY
-Thanks for downloadin Friday Night FUNKIN'
-If you downloaded this from any other place than ninja-muffin24.itch.io/FUNKIN
+Thanks for downloadin Friday Night FUNKIN': Psych Engine Extra
+If you downloaded this from any other place than https://github.com/Starmapo/FNF-PsychEngine-Extra
 You might be in DANGER!!! 
 
-The Itch.io release is the only official source for the desktop (PC, Mac, Linux) versions of the game!
+The Github release is the only official source for the desktop (PC, Mac, Linux) versions of the game!
 As of right now, the game is FREE! If you paid for it, you got SCAMMED!
 
 Now that that's out of the way....
@@ -35,8 +35,8 @@ Use the music in videos you do, use art, ANYTHING. GO CRAZY BRO.
 
 If you do make any sort of video, it would be a bro move if you linked the game and spread the word
 
-Play On Newgrounds - https://www.newgrounds.com/portal/view/770371
-Support on Itch.io - https://ninja-muffin24.itch.io/funkin
+Play FNF On Newgrounds - https://www.newgrounds.com/portal/view/770371
+Support FNF on Itch.io - https://ninja-muffin24.itch.io/funkin
 
 If not no biggie we don't fully hate you only kinda no biggie.
 
@@ -46,7 +46,7 @@ If not no biggie we don't fully hate you only kinda no biggie.
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
 If you wanna dig around, the game is fully open source on Github
-https://github.com/ninjamuffin99/Funkin
+https://github.com/Starmapo/FNF-PsychEngine-Extra
 
 It's made in Haxe / HaxeFlixel
 
