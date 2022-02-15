@@ -2,7 +2,10 @@ package;
 
 import flixel.FlxG;
 import flixel.graphics.tile.FlxGraphicsShader;
+import openfl.utils.Assets;
+#if MODS_ALLOWED
 import sys.FileSystem;
+#end
 
 /*
 	Class to handle animated shaders, calling the new consturctor is enough, 
@@ -24,29 +27,47 @@ class DynamicShaderHandler
 
 	public function new(fileName:String, optimize:Bool = false)
 	{
+		#if MODS_ALLOWED
 		var path = Paths.modsShaderFragment(fileName);
-		trace(path);
 		if (!FileSystem.exists(path)) path = Paths.shaderFragment(fileName);
+		#else
+		var path = Paths.shaderFragment(fileName);
+		#end
 
-		trace(path);
 		var fragSource:String = "";
 
-		if (FileSystem.exists(path))
+		#if MODS_ALLOWED
+		if (Assets.exists(path) || FileSystem.exists(path))
 		{
 			fragSource = sys.io.File.getContent(path);
 		}
+		#else
+		if (Assets.exists(path))
+		{
+			fragSource = Assets.getText(path);
+		}
+		#end
 
+		#if MODS_ALLOWED
 		var path2 = Paths.modsShaderVertex(fileName);
-		trace(path2);
 		if (!FileSystem.exists(path2)) path2 = Paths.shaderVertex(fileName);
+		#else
+		var path2 = Paths.shaderVertex(fileName);
+		#end
 
-		trace(path2);
 		var vertSource:String = "";
 
-		if (FileSystem.exists(path2))
+		#if MODS_ALLOWED
+		if (Assets.exists(path2) || FileSystem.exists(path2))
 		{
 			vertSource = sys.io.File.getContent(path2);
 		}
+		#else
+		if (Assets.exists(path2))
+		{
+			vertSource = Assets.getText(path2);
+		}
+		#end
 
 		if (fragSource != "" || vertSource != "")
 		{

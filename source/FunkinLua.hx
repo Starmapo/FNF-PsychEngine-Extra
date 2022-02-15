@@ -897,7 +897,6 @@ class FunkinLua {
 			tag = tag.replace('.', '');
 			resetSpriteTag(tag);
 			var leSprite:ModchartSprite = new ModchartSprite(x, y,true,shader,optimize);
-			leSprite.antialiasing = ClientPrefs.globalAntialiasing;
 
 			PlayState.instance.modchartSprites.set(tag, leSprite);
 			leSprite.active = true;
@@ -1995,10 +1994,10 @@ class ModchartSprite extends FlxSprite
 	public var wasAdded:Bool = false;
 	var hShader:DynamicShaderHandler;
 
-	public function new(?x:Float = 0, ?y:Float = 0,shaderSprite:Bool=false,type:String='', optimize:Bool = false)
+	public function new(?x:Float = 0, ?y:Float = 0, shaderSprite:Bool = false, type:String = '', optimize:Bool = false)
 	{
 			super(x, y);
-			if(shaderSprite){
+			if (shaderSprite) {
 				// codism
 				flipY = true;
 
@@ -2011,7 +2010,7 @@ class ModchartSprite extends FlxSprite
 					shader = hShader.shader;
 				}
 
-				antialiasing = FlxG.save.data.antialiasing;
+				antialiasing = ClientPrefs.globalAntialiasing;
 			}
 	}
 }
