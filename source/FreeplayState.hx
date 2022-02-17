@@ -143,7 +143,7 @@ class FreeplayState extends MusicBeatState
 		{
 			lastDifficultyName = CoolUtil.defaultDifficulty;
 		}
-		curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(lastDifficultyName)));
+		curDifficulty = FlxMath.maxInt(0, CoolUtil.defaultDifficulties.indexOf(lastDifficultyName));
 		
 		changeSelection();
 
@@ -483,7 +483,7 @@ class FreeplayState extends MusicBeatState
 
 		CoolUtil.getDifficulties(songs[curSelected].songName, true);
 		
-		curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty)));
+		curDifficulty = FlxMath.maxInt(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty));
 		var newPos:Int = CoolUtil.difficulties.indexOf(lastDifficultyName);
 		if (newPos > -1)
 		{

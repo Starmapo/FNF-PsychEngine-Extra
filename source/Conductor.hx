@@ -1,6 +1,7 @@
 package;
 
 import Song.SwagSong;
+import flixel.math.FlxMath;
 
 /**
  * ...
@@ -40,7 +41,7 @@ class Conductor
 	{
 	}
 
-	public static function judgeNote(note:Note, diff:Float=0) //STOLEN FROM KADE ENGINE (bbpanzu) - I had to rewrite it later anyway after i added the custom hit windows lmao (Shadow Mario)
+	public static function judgeNote(diff:Float = 0) //STOLEN FROM KADE ENGINE (bbpanzu) - I had to rewrite it later anyway after i added the custom hit windows lmao (Shadow Mario)
 	{
 		//tryna do MS based judgment due to popular demand
 		var timingWindows:Array<Int> = [ClientPrefs.sickWindow, ClientPrefs.goodWindow, ClientPrefs.badWindow];
@@ -48,7 +49,7 @@ class Conductor
 
 		for(i in 0...timingWindows.length) // based on 4 timing windows, will break with anything else
 		{
-			if (diff <= timingWindows[Math.round(Math.min(i, timingWindows.length - 1))])
+			if (diff <= timingWindows[FlxMath.minInt(i, timingWindows.length - 1)])
 			{
 				return windowNames[i];
 			}
@@ -152,7 +153,7 @@ class Conductor
 			daStep += daNumerator * 4;
 			daPos++;
 		}
-		return Std.int(Math.max(daPos, 0));
+		return flixel.math.FlxMath.maxInt(daPos, 0);
 	}
 
 	public static function getCurNumeratorBeat(song:SwagSong, beat:Int):Int {

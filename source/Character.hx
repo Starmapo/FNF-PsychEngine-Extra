@@ -220,11 +220,8 @@ class Character extends FlxSprite
 
 				if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished)
 				{
-					if (danceIdle) {
-						playAnim('danceLeft', true, false, 10);
-					} else {
-						playAnim('idle', true, false, 10);
-					}
+					dance();
+					playAnim(animation.curAnim.name, true, false, 10);
 				}
 			} else {
 				if (animation.curAnim.name.startsWith('sing')) {

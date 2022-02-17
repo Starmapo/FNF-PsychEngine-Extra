@@ -25,6 +25,7 @@ import animateatlas.JSONData.ColorData;
 import openfl.geom.Matrix;
 import openfl.geom.ColorTransform;
 import animateatlas.JSONData.FilterData;
+import flixel.math.FlxMath;
 
 class SpriteSymbol extends Sprite {
 	public var currentLabel(get, never):String;
@@ -448,9 +449,9 @@ class SpriteSymbol extends Sprite {
 		}
 
 		if (_loopMode == LoopMode.PLAY_ONCE) {
-			_currentFrame = Std.int(Math.min(Math.max(value, 0), _numFrames - 1));
+			_currentFrame = FlxMath.minInt(FlxMath.maxInt(value, 0), _numFrames - 1);
 		} else {
-			_currentFrame = Std.int(Math.abs(value % _numFrames));
+			_currentFrame = FlxMath.absInt(value % _numFrames);
 		}
 
 		if (_composedFrame != _currentFrame) {

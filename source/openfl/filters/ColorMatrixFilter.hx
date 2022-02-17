@@ -10,6 +10,7 @@ import openfl.geom.Rectangle;
 import lime._internal.graphics.ImageCanvasUtil; // TODO
 import lime.math.RGBA;
 #end
+import flixel.math.FlxMath;
 
 /**
 	The ColorMatrixFilter class lets you apply a 4 x 5 matrix transformation

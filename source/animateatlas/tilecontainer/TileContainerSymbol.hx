@@ -18,6 +18,7 @@ import animateatlas.JSONData.ColorData;
 import openfl.geom.ColorTransform;
 import openfl.display.TileContainer;
 import openfl.display.Tile;
+import flixel.math.FlxMath;
 
 class TileContainerSymbol extends TileContainer {
 	public var currentLabel(get, never):String;
@@ -407,9 +408,9 @@ class TileContainerSymbol extends TileContainer {
 		}
 
 		if (_loopMode == LoopMode.PLAY_ONCE) {
-			_currentFrame = Std.int(Math.min(Math.max(value, 0), _numFrames - 1));
+			_currentFrame = FlxMath.minInt(FlxMath.maxInt(value, 0), _numFrames - 1);
 		} else {
-			_currentFrame = Std.int(Math.abs(value % _numFrames));
+			_currentFrame = FlxMath.absInt(value % _numFrames);
 		}
 
 		if (_composedFrame != _currentFrame) {

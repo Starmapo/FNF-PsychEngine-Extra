@@ -631,6 +631,9 @@ class FunkinLua {
 			PlayState.instance.songHits = value;
 			PlayState.instance.RecalculateRating();
 		});
+		Lua_helper.add_callback(lua, "judgeNote", function(strumTime:Float = 0) {
+			return Conductor.judgeNote(Math.abs(strumTime - Conductor.songPosition + ClientPrefs.ratingOffset));
+		});
 
 		Lua_helper.add_callback(lua, "setHealth", function(value:Float = 0) {
 			PlayState.instance.health = value;
@@ -642,6 +645,16 @@ class FunkinLua {
 			return PlayState.instance.health;
 		});
 		
+		Lua_helper.add_callback(lua, "round", Math.round);
+		Lua_helper.add_callback(lua, "isNaN", Math.isNaN);
+		Lua_helper.add_callback(lua, "isFinite", Math.isFinite);
+		Lua_helper.add_callback(lua, "lerp", FlxMath.lerp);
+		Lua_helper.add_callback(lua, "remapToRange", FlxMath.remapToRange);
+		Lua_helper.add_callback(lua, "roundDecimal", FlxMath.roundDecimal);
+		Lua_helper.add_callback(lua, "boundTo", CoolUtil.boundTo);
+		Lua_helper.add_callback(lua, "dominantColor", function(obj:String) {
+			return CoolUtil.dominantColor(getObjectDirectly(obj));
+		});
 		Lua_helper.add_callback(lua, "getColorFromHex", function(color:String) {
 			if (!color.startsWith('0x')) color = '0xff$color';
 			return Std.parseInt(color);
@@ -709,7 +722,7 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "startCountdown", function(variable:String) {
 			PlayState.instance.startCountdown();
 		});
-		Lua_helper.add_callback(lua, "loadSong", function(name:String, ?suffix:String, ?skipTransition:Bool = false) {
+		Lua_helper.add_callback(lua, "loadSong", function(name:String, ?suffix:String = null, ?skipTransition:Bool = false) {
 			if (suffix == null) suffix = CoolUtil.getDifficultyFilePath();
 
 			if (PlayState.isStoryMode) {
@@ -725,6 +738,7 @@ class FunkinLua {
 				FlxTransitionableState.skipNextTransOut = true;
 			}
 
+			CoolUtil.getDifficulties(name, true);
 			PlayState.SONG = Song.loadFromJson(name + suffix, name);
 			FlxG.sound.music.stop();
 			PlayState.cancelMusicFadeTween();
@@ -732,7 +746,7 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "endSong", function() {
 			PlayState.instance.KillNotes();
-			PlayState.instance.endSong();
+			PlayState.instance.finishSong(true);
 		});
 		Lua_helper.add_callback(lua, "restartSong", function(skipTransition:Bool) {
 			PlayState.instance.persistentUpdate = false;
@@ -879,6 +893,15 @@ class FunkinLua {
 				case 'gf' | 'girlfriend' | '2': PlayState.instance.gfGroup.members[index % PlayState.instance.gfGroup.members.length].dance();
 				default: PlayState.instance.boyfriendGroup.members[index % PlayState.instance.boyfriendGroup.members.length].dance();
 			}
+		});
+		Lua_helper.add_callback(lua, "bopIcon", function(icon:String = '') {
+			var daIcon = PlayState.instance.iconP1;
+			switch (icon) {
+				case 'p2' | '2' | 'dad' | 'opponent' | 'player2':
+					daIcon = PlayState.instance.iconP2;
+			}
+			daIcon.scale.set(1.2, 1.2);
+			daIcon.updateHitbox();
 		});
 
 		Lua_helper.add_callback(lua, "makeLuaSprite", function(tag:String, image:String, x:Float, y:Float) {
@@ -1241,8 +1264,15 @@ class FunkinLua {
 			}
 			#end
 		});
-		Lua_helper.add_callback(lua, "getSkinFile", function(name:String = '') {
-			return UIData.getUIFile(name);
+		Lua_helper.add_callback(lua, "changeNoteSkin", function(index:Int = 0, name:String = '') {
+			if (PlayState.instance.unspawnNotes[index] != null) {
+				PlayState.instance.unspawnNotes[index].uiSkin = UIData.getUIFile(name);
+			}
+		});
+		Lua_helper.add_callback(lua, "changeStrumNoteSkin", function(index:Int = 0, name:String = '') {
+			if (PlayState.instance.strumLineNotes != null && PlayState.instance.strumLineNotes.members[index] != null) {
+				PlayState.instance.strumLineNotes.members[index].uiSkin = UIData.getUIFile(name);
+			}
 		});
 		
 		Lua_helper.add_callback(lua, "playMusic", function(sound:String, volume:Float = 1, loop:Bool = false) {

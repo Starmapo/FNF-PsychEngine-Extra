@@ -2066,7 +2066,7 @@ class ChartingState extends MusicBeatState
 		\n\nStep: $curStep';
 
 		var playedSound:Array<Bool> = []; //Prevents ouchy GF sex sounds
-		for (i in 0...Std.int(Math.max(leftKeys, rightKeys))) {
+		for (i in 0...FlxMath.maxInt(leftKeys, rightKeys)) {
 			playedSound.push(false);
 		}
 		curRenderedNotes.forEachAlive(function(note:Note) {

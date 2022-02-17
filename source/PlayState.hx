@@ -2095,7 +2095,6 @@ class PlayState extends MusicBeatState
 
 		FlxG.sound.playMusic(Paths.inst(curSong), ClientPrefs.instVolume, false);
 		FlxG.sound.music.time = startPos;
-		//FlxG.sound.music.onComplete = finishSong;
 		vocals.time = startPos;
 		vocals.play();
 		vocals.volume = ClientPrefs.voicesVolume;
@@ -3755,7 +3754,7 @@ class PlayState extends MusicBeatState
 		camFollowPos.setPosition(x, y);
 	}
 
-	function finishSong():Void
+	public function finishSong(?forceInstant:Bool = false):Void
 	{
 		var finishCallback:Void->Void = endSong; //In case you want to change it in a specific song.
 
@@ -3765,7 +3764,7 @@ class PlayState extends MusicBeatState
 		vocals.pause();
 		vocalsDad.volume = 0;
 		vocalsDad.pause();
-		if (ClientPrefs.noteOffset <= 0) {
+		if (ClientPrefs.noteOffset <= 0 || forceInstant) {
 			finishCallback();
 		} else {
 			endingTimer = new FlxTimer().start(ClientPrefs.noteOffset / 1000, function(tmr:FlxTimer) {
@@ -3993,13 +3992,12 @@ class PlayState extends MusicBeatState
 		coolText.screenCenter();
 		coolText.x = FlxG.width * 0.35;
 		if (opponentChart) coolText.x = FlxG.width * 0.55;
-		//
 
 		var rating:FlxSprite = new FlxSprite();
 		var score:Int = 350;
 
 		//tryna do MS based judgment due to popular demand
-		var daRating:String = Conductor.judgeNote(note, noteDiff);
+		var daRating:String = Conductor.judgeNote(noteDiff);
 
 		switch (daRating)
 		{

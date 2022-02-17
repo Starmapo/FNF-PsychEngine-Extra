@@ -303,12 +303,12 @@ class NoteOffsetState extends MusicBeatState
 		{
 			if (controls.UI_LEFT_P)
 			{
-				barPercent = Math.max(delayMin, Math.min(ClientPrefs.noteOffset - 1, delayMax));
+				barPercent = CoolUtil.boundTo(ClientPrefs.noteOffset - 1, delayMin, delayMax);
 				updateNoteDelay();
 			}
 			else if (controls.UI_RIGHT_P)
 			{
-				barPercent = Math.max(delayMin, Math.min(ClientPrefs.noteOffset + 1, delayMax));
+				barPercent = CoolUtil.boundTo(ClientPrefs.noteOffset + 1, delayMin, delayMax);
 				updateNoteDelay();
 			}
 
@@ -324,7 +324,7 @@ class NoteOffsetState extends MusicBeatState
 			if (holdTime > 0.5)
 			{
 				barPercent += 100 * elapsed * mult;
-				barPercent = Math.max(delayMin, Math.min(barPercent, delayMax));
+				barPercent = CoolUtil.boundTo(barPercent, delayMin, delayMax);
 				updateNoteDelay();
 			}
 

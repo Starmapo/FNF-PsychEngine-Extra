@@ -73,10 +73,10 @@ class CoolUtil
 
 		return daList;
 	}
-	public static function dominantColor(sprite:flixel.FlxSprite):Int{
+	public static function dominantColor(sprite:flixel.FlxSprite):Int {
 		var countByColor:Map<Int, Int> = [];
-		for(col in 0...sprite.frameWidth) {
-			for(row in 0...sprite.frameHeight) {
+		for (col in 0...sprite.frameWidth) {
+			for (row in 0...sprite.frameHeight) {
 			  var colorOfThisPixel:Int = sprite.pixels.getPixel32(col, row);
 			  if (colorOfThisPixel != 0) {
 				  if (countByColor.exists(colorOfThisPixel)) {
@@ -90,7 +90,7 @@ class CoolUtil
 		var maxCount = 0;
 		var maxKey:Int = 0;//after the loop this will store the max color
 		countByColor[flixel.util.FlxColor.BLACK] = 0;
-		for(key in countByColor.keys()) {
+		for (key in countByColor.keys()) {
 			if (countByColor[key] >= maxCount) {
 				maxCount = countByColor[key];
 				maxKey = key;
@@ -116,11 +116,6 @@ class CoolUtil
 
 	public static function precacheMusic(sound:String, ?library:String = null):Void {
 		Paths.returnSound('music', sound, library);
-	}
-
-	private static function precacheSoundFile(file:Dynamic):Void {
-		if (Assets.exists(file, SOUND) || Assets.exists(file, MUSIC))
-			Assets.getSound(file, true);
 	}
 
 	public static function browserLoad(site:String) {
