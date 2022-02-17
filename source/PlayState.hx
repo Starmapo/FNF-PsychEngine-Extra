@@ -2648,7 +2648,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if (!inEditor) {
-			#if desktop
+			#if (VIDEOS_ALLOWED && desktop)
 			//STOLEN FROM VS PSYCHIC
 			var video = FlxVideo.vlcBitmap;
 			if(video != null)

@@ -29,7 +29,7 @@ class MusicBeatState extends FlxUIState
 		FlxTransitionableState.skipNextTransOut = false;
 	}
 	
-	#if (VIDEOS_ALLOWED && windows)
+	#if (VIDEOS_ALLOWED && desktop)
 	override public function onFocus():Void
 	{
 		FlxVideo.onFocus();
