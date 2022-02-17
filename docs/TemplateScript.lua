@@ -56,6 +56,10 @@ function onEndSong()
 	return Function_Continue;
 end
 
+function onSkipCutscene()
+	-- triggered when you skip a video cutscene
+end
+
 function onBPMChange()
 	-- triggered when the song's BPM is changed
 	-- use "curBpm" to get the current BPM

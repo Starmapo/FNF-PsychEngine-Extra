@@ -27,6 +27,7 @@ class Note extends FlxSprite
 	public var prevNote:Note;
 	public var stepCrochet:Float = 150;
 	public var characters:Array<Int> = [0];
+	public var speed(default, set):Float = 1;
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
@@ -163,6 +164,16 @@ class Note extends FlxSprite
 		return value;
 	}
 
+	private function set_speed(value:Float):Float {
+		if (isSustainNote && animation.curAnim != null && animation.curAnim.name.endsWith('hold'))
+		{
+			scale.y *= value / speed;
+			updateHitbox();
+		}
+		speed = value;
+		return value;
+	}
+
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?keyAmount:Int = 4, ?uiSkin:SkinFile = null, ?stepCrochet:Float = 150)
 	{
 		super();
@@ -180,6 +191,9 @@ class Note extends FlxSprite
 		this.keyAmount = keyAmount;
 		this.uiSkin = uiSkin;
 		this.stepCrochet = stepCrochet;
+		if (PlayState.instance != null) {
+			speed = PlayState.instance.songSpeed;
+		}
 
 		x += (ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + xOff;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
@@ -200,6 +214,7 @@ class Note extends FlxSprite
 		}
 
 		if (isSustainNote && prevNote != null) {
+			speed = prevNote.speed;
 			setSustainData();
 		} else if (!isSustainNote) {
 			earlyHitMult = 1;
@@ -285,11 +300,7 @@ class Note extends FlxSprite
 			prevNote.animation.play('${colors[prevNote.noteData]}hold');
 
 			prevNote.scale.y *= stepCrochet / 100 * 1.05;
-			if (PlayState.instance != null)
-			{
-				prevNote.scale.y *= PlayState.instance.songSpeed;
-			}
-
+			prevNote.scale.y *= speed;
 			prevNote.scale.y *= uiSkin.sustainYScale;
 			prevNote.updateHitbox();
 		}

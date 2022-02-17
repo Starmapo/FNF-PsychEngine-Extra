@@ -2888,11 +2888,7 @@ class ChartingState extends MusicBeatState
 			FlxG.log.warn('File ${Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath()} was not found.');
 			PlayState.SONG = Song.loadFromJson(song, song);
 		}
-		#if PRELOAD_ALL
-		MusicBeatState.resetState();
-		#else
 		LoadingState.loadAndSwitchState(new ChartingState());
-		#end
 	}
 
 	function autosaveSong():Void

@@ -4,6 +4,7 @@ package;
 import flixel.system.FlxAssets.FlxShader;
 import flixel.FlxG;
 import openfl.Lib;
+import ColorSwap;
 using StringTools;
 
 typedef ShaderEffect = {
@@ -89,7 +90,7 @@ class ChromaticAberrationEffect extends Effect
 class ScanlineEffect extends Effect
 {
 	public var shader:Scanline;
-	public function new (lockAlpha){
+	public function new (lockAlpha:Bool){
 		shader = new Scanline();
 		shader.data.lockAlpha.value = [lockAlpha];
 	}
@@ -232,7 +233,7 @@ class GreyscaleShader extends FlxShader{
 
 class GrainEffect extends Effect {
 	public var shader:Grain;
-	public function new (grainsize, lumamount,lockAlpha){
+	public function new(grainsize:Float, lumamount:Float, lockAlpha:Bool){
 		shader = new Grain();
 		shader.data.lumamount.value = [lumamount];
 		shader.data.grainsize.value = [grainsize];
@@ -785,7 +786,7 @@ class DistortBGEffect extends Effect
 	public var waveFrequency(default, set):Float = 0;
 	public var waveAmplitude(default, set):Float = 0;
 
-	public function new(waveSpeed:Float,waveFrequency:Float,waveAmplitude:Float):Void
+	public function new(waveSpeed:Float, waveFrequency:Float, waveAmplitude:Float):Void
 	{
 		this.waveSpeed = waveSpeed;
 		this.waveFrequency = waveFrequency;
@@ -798,7 +799,6 @@ class DistortBGEffect extends Effect
     {
         shader.data.uTime.value[0] += elapsed;
     }
-
 
     function set_waveSpeed(v:Float):Float
     {
@@ -829,7 +829,7 @@ class PulseEffect extends Effect
     public var waveSpeed(default, set):Float = 0;
 	public var waveFrequency(default, set):Float = 0;
 	public var waveAmplitude(default, set):Float = 0;
-    public var Enabled(default, set):Bool = false;
+    public var Enabled(default, set):Bool = true;
 
 	public function new(waveSpeed:Float,waveFrequency:Float,waveAmplitude:Float):Void
 	{
@@ -838,7 +838,7 @@ class PulseEffect extends Effect
 		this.waveAmplitude = waveAmplitude;
 		shader.data.uTime.value = [0];
         shader.data.uampmul.value = [0];
-        shader.data.uEnabled.value = [false];
+        shader.data.uEnabled.value = [true];
 		PlayState.instance.shaderUpdates.push(update);
 	}
 
@@ -880,7 +880,9 @@ class PulseEffect extends Effect
 class InvertColorsEffect extends Effect
 {
     public var shader:InvertShader = new InvertShader();
-	public function new(lockAlpha){}
+	public function new(lockAlpha:Bool){
+		shader.data.lockAlpha.value = [lockAlpha];
+	}
 }
 
 class GlitchShader extends FlxShader
@@ -931,6 +933,8 @@ class InvertShader extends FlxShader
 {
     public function new(){super('
     ////pragma header
+
+	uniform bool lockAlpha = true;
     
     vec4 sineWave(vec4 pt)
     {
@@ -942,7 +946,7 @@ class InvertShader extends FlxShader
     {
         vec2 uv = openfl_TextureCoordv;
         gl_FragColor = sineWave(texture2D(bitmap, uv));
-		gl_FragColor.a = 1.0 - gl_FragColor.a;
+		if (!lockAlpha) gl_FragColor.a = 1.0 - gl_FragColor.a;
     }');
 	}
 }
@@ -1048,9 +1052,16 @@ class PulseShader extends FlxShader
     }
 }
 
+class ColorSwapEffect extends Effect {
+	public var shader:ColorSwapShader = new ColorSwapShader();
+	public function new(hue:Float, saturation:Float, brightness:Float, outline:Bool){
+		shader.data.uTime.value = [hue, saturation, brightness];
+		shader.data.awesomeOutline.value = [outline];
+	}
+}
+
 class Effect {
 	public function setValue(shader:FlxShader, variable:String, value:Float){
 		Reflect.setProperty(Reflect.getProperty(shader, 'variable'), 'value', [value]);
 	}
-	
 }

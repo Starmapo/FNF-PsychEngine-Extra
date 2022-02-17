@@ -28,9 +28,9 @@ import lime.app.Application;
 import openfl.Assets;
 
 using StringTools;
+
 typedef TitleData =
 {
-	
 	titlex:Float,
 	titley:Float,
 	startx:Float,
@@ -38,8 +38,9 @@ typedef TitleData =
 	gfx:Float,
 	gfy:Float,
 	backgroundSprite:String,
-	bpm:Int
+	bpm:Float
 }
+
 class TitleState extends MusicBeatState
 {
 	public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
@@ -168,8 +169,12 @@ class TitleState extends MusicBeatState
 			StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
 		}
 
-		Paths.excludeAsset(Paths.getPreloadPath('images/alphabet.png'));
-		Paths.excludeAsset(Paths.getPreloadPath('music/freakyMenu.${Paths.SOUND_EXT}'));
+		//common assets
+		Paths.excludeAsset('alphabet');
+		Paths.excludeAsset('freakyMenu');
+		Paths.excludeAsset('scrollMenu');
+		Paths.excludeAsset('confirmMenu');
+		Paths.excludeAsset('cancelMenu');
 
 		FlxG.mouse.visible = false;
 		#if FREEPLAY

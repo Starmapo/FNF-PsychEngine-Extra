@@ -20,6 +20,9 @@ import sys.FileSystem;
 #end
 import openfl.utils.Assets;
 import WeekData;
+#if cpp
+import lime.media.openal.AL;
+#end
 
 using StringTools;
 
@@ -174,14 +177,14 @@ class FreeplayState extends MusicBeatState
 	}
 
 	var instPlaying:Int = -1;
-	var speedPlaying:Float = -1;
+	var speedPlaying:Float = 1;
 	private static var vocals:FlxSound = null;
 	private static var vocalsDad:FlxSound = null;
 	var holdTime:Float = 0;
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music != null)
-			Conductor.songPosition = FlxG.sound.music.time / ClientPrefs.getGameplaySetting('songspeed', 1);
+			Conductor.songPosition = FlxG.sound.music.time / speedPlaying;
 
 		if (FlxG.sound.music.volume < 0.7)
 		{
@@ -318,11 +321,11 @@ class FreeplayState extends MusicBeatState
 				@:privateAccess
 				{
 					if (ClientPrefs.getGameplaySetting('songspeed', 1) != 1) {
-						lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+						AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
 						if (vocals.playing)
-							lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+							AL.sourcef(vocals._channel.__source.__backend.handle, AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
 						if (vocalsDad.playing)
-							lime.media.openal.AL.sourcef(vocalsDad._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+							AL.sourcef(vocalsDad._channel.__source.__backend.handle, AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
 					}
 				}
 				#end
@@ -367,12 +370,12 @@ class FreeplayState extends MusicBeatState
 		#if cpp
 		@:privateAccess
 		{
-			if (FlxG.sound.music.playing && instPlaying > -1 && speedPlaying != 1) {
-				lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+			if (FlxG.sound.music.playing && instPlaying > -1 && speedPlaying != 1 && AL.getSourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH) != speedPlaying) {
+				AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, speedPlaying);
 				if (vocals != null && vocals.playing)
-					lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+					AL.sourcef(vocals._channel.__source.__backend.handle, AL.PITCH, speedPlaying);
 				if (vocalsDad != null && vocalsDad.playing)
-					lime.media.openal.AL.sourcef(vocalsDad._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+					AL.sourcef(vocalsDad._channel.__source.__backend.handle, AL.PITCH, speedPlaying);
 			}
 		}
 		#end
@@ -382,7 +385,7 @@ class FreeplayState extends MusicBeatState
 		super.beatHit();
 
 		if (instPlaying > -1) {
-			Conductor.getLastBPM(PlayState.SONG, curStep, ClientPrefs.getGameplaySetting('songspeed', 1));
+			Conductor.getLastBPM(PlayState.SONG, curStep, speedPlaying);
 
 			if (Conductor.getCurNumeratorBeat(PlayState.SONG, curBeat) % 2 == 0 && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms) {
 				FlxG.camera.zoom += 0.005;

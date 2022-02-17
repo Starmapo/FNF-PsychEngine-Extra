@@ -1,10 +1,8 @@
 package options;
 
-import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
-import openfl.Lib;
 
 using StringTools;
 

@@ -23,7 +23,6 @@ using StringTools;
 class ModsMenuState extends MusicBeatState
 {
 	var mods:Array<ModMetadata> = [];
-	static var changedAThing = false;
 	var bg:FlxSprite;
 	var intendedColor:Int;
 	var colorTween:FlxTween;
@@ -42,9 +41,6 @@ class ModsMenuState extends MusicBeatState
 	var buttonUp:FlxButton;
 	var buttonToggle:FlxButton;
 	var buttonsArray:Array<FlxButton> = [];
-
-	var installButton:FlxButton;
-	var removeButton:FlxButton;
 
 	var modsList:Array<Dynamic> = [];
 
@@ -93,7 +89,6 @@ class ModsMenuState extends MusicBeatState
 		}
 
 		// FIND MOD FOLDERS
-		var boolshit = true;
 		if (FileSystem.exists("modsList.txt")) {
 			for (folder in Paths.getModDirectories())
 			{
@@ -121,6 +116,9 @@ class ModsMenuState extends MusicBeatState
 			modsList[curSelected][1] = !modsList[curSelected][1];
 			updateButtonToggle();
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+			if (mods[curSelected].restart) {
+				needaReset = true;
+			}
 		});
 		buttonToggle.setGraphicSize(50, 50);
 		buttonToggle.updateHitbox();
@@ -161,7 +159,7 @@ class ModsMenuState extends MusicBeatState
 		startX -= 100;
 		buttonTop = new FlxButton(startX, 0, "TOP", function() {
 			for (i in 0...curSelected) {//so if shifts to the top instead of replacing the top one
-			moveMod(-1);
+				moveMod(-1);
 			}
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		});
@@ -176,8 +174,11 @@ class ModsMenuState extends MusicBeatState
 		
 		startX -= 190;
 		buttonDisableAll = new FlxButton(startX, 0, "DISABLE ALL", function() {
-			for (i in modsList) {
-				i[1] = false;
+			for (i in 0...modsList.length) {
+				modsList[i][1] = false;
+				if (mods[i].restart) {
+					needaReset = true;
+				}
 			}
 			updateButtonToggle();
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
@@ -193,8 +194,11 @@ class ModsMenuState extends MusicBeatState
 
 		startX -= 190;
 		buttonEnableAll = new FlxButton(startX, 0, "ENABLE ALL", function() {
-			for (i in modsList) {
-				i[1] = true;
+			for (i in 0...modsList.length) {
+				modsList[i][1] = true;
+				if (mods[i].restart) {
+					needaReset = true;
+				}
 			}
 			updateButtonToggle();
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
@@ -459,7 +463,6 @@ class ModsMenuState extends MusicBeatState
 				descriptionTxt.text = mod.description;
 				if (mod.restart) {//finna make it to where if nothing changed then it won't reset
 					descriptionTxt.text += " (This will restart the game)";
-					needaReset = true;
 				}
 
 				// correct layering

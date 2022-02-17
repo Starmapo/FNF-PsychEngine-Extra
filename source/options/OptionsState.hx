@@ -84,6 +84,14 @@ class OptionsState extends MusicBeatState
 	override function closeSubState() {
 		super.closeSubState();
 		ClientPrefs.saveSettings();
+		for (sprite in members)
+		{
+			var sprite:Dynamic = sprite; //Make it check for FlxSprite instead of FlxBasic
+			var sprite:FlxSprite = sprite; //Don't judge me ok
+			if (sprite != null && (sprite is FlxSprite) && !(sprite is flixel.text.FlxText)) {
+				sprite.antialiasing = ClientPrefs.globalAntialiasing;
+			}
+		}
 	}
 
 	override function update(elapsed:Float) {

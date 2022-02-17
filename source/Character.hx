@@ -62,7 +62,6 @@ class Character extends FlxSprite
 	public var holdTimer:Float = 0;
 	public var heyTimer:Float = 0;
 	public var specialAnim:Bool = false;
-	public var animationNotes:Array<Dynamic> = [];
 	public var stunned:Bool = false;
 	public var singDuration:Float = 4; //Multiplier of how long a character holds the sing pose
 	public var idleSuffix:String = '';
@@ -104,9 +103,6 @@ class Character extends FlxSprite
 				var json:CharacterFile = getFile(curCharacter);
 
 				var spriteType = "sparrow";
-				//sparrow
-				//packer
-				//texture
 				#if MODS_ALLOWED
 				var modTxtToFind:String = Paths.modsTxt(json.image);
 				var txtToFind:String = Paths.getPath('images/${json.image}.txt', TEXT);
@@ -152,16 +148,12 @@ class Character extends FlxSprite
 				healthIcon = json.healthicon;
 				singDuration = json.sing_duration;
 				flipX = !!json.flip_x;
-				if (json.no_antialiasing) {
-					antialiasing = false;
-					noAntialiasing = true;
-				}
+				noAntialiasing = !!json.no_antialiasing;
 
 				if (json.healthbar_colors != null && json.healthbar_colors.length > 2)
 					healthColorArray = json.healthbar_colors;
 
-				antialiasing = !noAntialiasing;
-				if (!ClientPrefs.globalAntialiasing) antialiasing = false;
+				antialiasing = ClientPrefs.globalAntialiasing && !noAntialiasing;
 
 				animationsArray = json.animations;
 				if (animationsArray != null && animationsArray.length > 0) {
@@ -187,7 +179,7 @@ class Character extends FlxSprite
 		}
 		originalFlipX = flipX;
 
-		if (animOffsets.exists('singLEFTmiss') || animOffsets.exists('singDOWNmiss') || animOffsets.exists('singUPmiss') || animOffsets.exists('singRIGHTmiss')) hasMissAnimations = true;
+		hasMissAnimations = (animOffsets.exists('singLEFTmiss') || animOffsets.exists('singDOWNmiss') || animOffsets.exists('singUPmiss') || animOffsets.exists('singRIGHTmiss'));
 		recalculateDanceIdle();
 		dance();
 
@@ -219,24 +211,27 @@ class Character extends FlxSprite
 				dance();
 			}
 
-			if (isPlayer)
-			{
-				if (animation.curAnim.name.startsWith('sing'))
-				{
+			if (isPlayer) {
+				if (animation.curAnim.name.startsWith('sing')) {
 					holdTimer += elapsed;
-				}
-				else
+				} else {
 					holdTimer = 0;
-			}
-			else
-			{
-				if (animation.curAnim.name.startsWith('sing'))
+				}
+
+				if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished)
 				{
+					if (danceIdle) {
+						playAnim('danceLeft', true, false, 10);
+					} else {
+						playAnim('idle', true, false, 10);
+					}
+				}
+			} else {
+				if (animation.curAnim.name.startsWith('sing')) {
 					holdTimer += elapsed;
 				}
 
-				if (holdTimer >= Conductor.stepCrochet * 0.001 * singDuration * (Conductor.denominator / 4))
-				{
+				if (holdTimer >= Conductor.stepCrochet * 0.001 * singDuration * (Conductor.denominator / 4)) {
 					dance();
 					holdTimer = 0;
 				}

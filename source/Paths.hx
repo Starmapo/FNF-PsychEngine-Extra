@@ -343,7 +343,6 @@ class Paths
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
 		if (!OpenFlAssets.exists(gottenPath))
 		{
-			//trace('didnt find sound $key');
 			return null;
 		}
 		if (!currentTrackedSounds.exists(gottenPath)) 
