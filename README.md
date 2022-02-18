@@ -24,18 +24,16 @@ Modified version of Psych Engine adding more stuff. (see below)
 * PolybiusProxy - .MP4 Loader Extension
 * Keoiki - Note Splash Animations
 * Smokey - Spritemap Texture Atlas support
-* Cary - OG Resolution code
-* Nebula_Zorua - VCR Shader code
 _____________________________________
 
 # New Features
-* Custom key amounts (1K - 13K)
-* Custom time signatures (3/4, 6/8, etc.)
-* Custom UI skins (notes, splashes, ratings, countdown, etc.)
-* Character groups (more than one player, opponent, and GF)
+* Custom key amounts (1K to 13K)
+* Custom time signatures (3/4, 12/8, etc.)
+* Custom UI skins (customize notes, splashes, ratings, countdown, etc.)
+* Character groups (more than one player, opponent, or GF)
 * Separate voices for the player and opponent (by adding a 'VoicesDad' file)
 * Gameplay Changers: Play opponent's chart, Song playback speed
-* Go to options from in-game (no progress lost!)
+* Go to options menu from in-game (go right back to game after you're done!)
 * More Lua functions
 
 # New Options
@@ -80,11 +78,11 @@ For Windows, you need to install [Visual Studio Community](https://visualstudio.
 * MSVC v142 - VS 2019 C++ x64/x86 build tools (Latest)
 * Windows 10 SDK (10.0.17763.0)
 
-This will take a while and requires about 4GB of space. Once that is done you can open up a command line in the project's directory and run `lime test windows -debug` (remove "-debug" for official releases). Once that command finishes (it takes forever even on a higher end PC), you can run FNF from the .exe file under export\release\windows\bin
+This will take a while and requires about 4GB of space. Once that is done you can open up a command line in the project's directory and run `lime test windows -debug` (remove "-debug" for official releases). Once that command finishes (it takes forever even on a higher end PC), it will automatically run the game. The .exe file will be under export\release\windows\bin.
 
-For Mac, you need to install [Xcode](https://apps.apple.com/us/app/xcode/id497799835). After that, run `lime test mac -debug` (remove "-debug" for official releases) in the project's directory and then run the executable file in export/release/mac/bin.
+For Mac, you need to install [Xcode](https://apps.apple.com/us/app/xcode/id497799835). After that, run `lime test mac -debug` (remove "-debug" for official releases) in the project's directory. The .exe file will be in export/release/mac/bin.
 
-For Linux, you only need to open a terminal in the project directory and run `lime test linux -debug` (remove "-debug" for official releases) and then run the executable file in export/release/linux/bin.
+For Linux, you only need to open a terminal in the project directory and run `lime test linux -debug` (remove "-debug" for official releases). The executable file will be in export/release/linux/bin.
 
 To build for 32-bit, just add `-32` to the `lime test` command.
 
