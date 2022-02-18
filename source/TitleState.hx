@@ -85,34 +85,7 @@ class TitleState extends MusicBeatState
 		}
 		#end
 		
-		#if MODS_ALLOWED
-		var path = 'mods/${Paths.currentModDirectory}/images/gfDanceTitle.json';
-		if (!FileSystem.exists(path)) {
-			path = "mods/images/gfDanceTitle.json";
-		}
-		if (!FileSystem.exists(path)) {
-			path = "assets/images/gfDanceTitle.json";
-		}
-		titleJSON = Json.parse(File.getContent(path));
-		#else
-		var path = Paths.getPreloadPath("images/gfDanceTitle.json");
-		titleJSON = Json.parse(Assets.getText(path)); 
-		#end
-		
-		#if (polymod && !html5)
-		if (sys.FileSystem.exists('mods/')) {
-			var folders:Array<String> = [];
-			for (file in sys.FileSystem.readDirectory('mods/')) {
-				var path = haxe.io.Path.join(['mods/', file]);
-				if (sys.FileSystem.isDirectory(path)) {
-					folders.push(file);
-				}
-			}
-			if (folders.length > 0) {
-				polymod.Polymod.init({modRoot: "mods", dirs: folders});
-			}
-		}
-		#end
+		titleJSON = Json.parse(Paths.getTextFromFile('images/gfDanceTitle.json'));
 		
 		#if CHECK_FOR_UPDATES
 		if (!closedState) {
@@ -234,20 +207,7 @@ class TitleState extends MusicBeatState
 		add(bg);
 
 		logoBl = new FlxSprite(titleJSON.titlex, titleJSON.titley);
-		
-		#if MODS_ALLOWED
-		var path = 'mods/${Paths.currentModDirectory}/images/logoBumpin.png';
-		if (!FileSystem.exists(path)) {
-			path = "mods/images/logoBumpin.png";
-		}
-		if (!FileSystem.exists(path)) {
-			path = "assets/images/logoBumpin.png";
-		}
-		logoBl.frames = FlxAtlasFrames.fromSparrow(BitmapData.fromFile(path),File.getContent(StringTools.replace(path,".png",".xml")));
-		#else
-		
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
-		#end
 		
 		logoBl.antialiasing = ClientPrefs.globalAntialiasing;
 		logoBl.animation.addByPrefix('bump', 'logo bumpin', 24, false);
@@ -255,25 +215,12 @@ class TitleState extends MusicBeatState
 		logoBl.updateHitbox();
 
 		swagShader = new ColorSwap();
-			gfDance = new FlxSprite(titleJSON.gfx, titleJSON.gfy);
-		
-		#if MODS_ALLOWED
-		var path = 'mods/${Paths.currentModDirectory}/images/gfDanceTitle.png';
-		if (!FileSystem.exists(path)) {
-			path = "mods/images/gfDanceTitle.png";
-		}
-		if (!FileSystem.exists(path)) {
-			path = "assets/images/gfDanceTitle.png";
-		}
-		gfDance.frames = FlxAtlasFrames.fromSparrow(BitmapData.fromFile(path),File.getContent(StringTools.replace(path,".png",".xml")));
-		#else
-		
+		gfDance = new FlxSprite(titleJSON.gfx, titleJSON.gfy);
 		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
-		#end
-			gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-			gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-	
+		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
+		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 		gfDance.antialiasing = ClientPrefs.globalAntialiasing;
+
 		add(gfDance);
 		gfDance.shader = swagShader.shader;
 		add(logoBl);
@@ -484,7 +431,7 @@ class TitleState extends MusicBeatState
 					#if PSYCH_WATERMARKS
 					addMoreText('Shadow Mario', 15);
 					addMoreText('RiverOaken', 15);
-					addMoreText('bb-panzu', 15);
+					addMoreText('shubs', 15);
 					#else
 					addMoreText('present');
 					#end

@@ -31,9 +31,6 @@ import flixel.util.FlxSort;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxTimer;
 import lime.utils.Assets;
-import openfl.display.Shader;
-import openfl.filters.BitmapFilter;
-import openfl.filters.ShaderFilter;
 import openfl.utils.Assets as OpenFlAssets;
 import editors.ChartingState;
 import editors.CharacterEditorState;
@@ -44,9 +41,7 @@ import openfl.events.KeyboardEvent;
 import Achievements;
 import DialogueBoxPsych;
 import FunkinLua;
-import Shaders;
 import StageData;
-import DynamicShaderHandler;
 import flash.media.Sound;
 #if MODS_ALLOWED
 import sys.FileSystem;
@@ -74,18 +69,12 @@ class PlayState extends MusicBeatState
 		['Sick!', 1], //From 90% to 99%
 		['Perfect!!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	];
-	
-	public static var animatedShaders:Map<String, DynamicShaderHandler> = new Map<String, DynamicShaderHandler>();
-	public var luaShaders:Map<String, DynamicShaderHandler> = new Map<String, DynamicShaderHandler>();
+
 	public var modchartTweens:Map<String, FlxTween> = new Map<String, FlxTween>();
 	public var modchartSprites:Map<String, ModchartSprite> = new Map<String, ModchartSprite>();
 	public var modchartTimers:Map<String, FlxTimer> = new Map<String, FlxTimer>();
 	public var modchartSounds:Map<String, FlxSound> = new Map<String, FlxSound>();
 	public var modchartTexts:Map<String, ModchartText> = new Map<String, ModchartText>();
-	public var shader_chromatic_abberation:ChromaticAberrationEffect;
-	public var camGameShaders:Array<ShaderEffect> = [];
-	public var camHUDShaders:Array<ShaderEffect> = [];
-	public var camOtherShaders:Array<ShaderEffect> = [];
 	//event variables
 	private var isCameraOnForcedPos:Bool = false;
 	public var boyfriendMap:Map<String, Character> = new Map();
@@ -107,7 +96,6 @@ class PlayState extends MusicBeatState
 	public var boyfriendGroup:FlxTypedSpriteGroup<Character>;
 	public var dadGroup:FlxTypedSpriteGroup<Character>;
 	public var gfGroup:FlxTypedSpriteGroup<Character>;
-	public var shaderUpdates:Array<Float->Void> = [];
 	public static var curStage:String = '';
 	public static var isPixelStage:Bool = false;
 	public static var SONG:SwagSong = null;
@@ -339,8 +327,6 @@ class PlayState extends MusicBeatState
 			cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
 			opponentChart = ClientPrefs.getGameplaySetting('opponentplay', false);
 			playbackRate = ClientPrefs.getGameplaySetting('songspeed', 1);
-
-			shader_chromatic_abberation = new ChromaticAberrationEffect();
 
 			camGame = new FlxCamera();
 			camHUD = new FlxCamera();
@@ -1655,90 +1641,6 @@ class PlayState extends MusicBeatState
 		return char;
 	}
 
-	public function addShaderToCamera(cam:String,effect:Dynamic) {//STOLE FROM ANDROMEDA
-		switch(cam.toLowerCase()) {
-			case 'camhud' | 'hud':
-					camHUDShaders.push(effect);
-					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-					for(i in camHUDShaders) {
-						newCamEffects.push(new ShaderFilter(i.shader));
-					}
-					camHUD.setFilters(newCamEffects);
-			case 'camother' | 'other':
-					camOtherShaders.push(effect);
-					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-					for(i in camOtherShaders) {
-						newCamEffects.push(new ShaderFilter(i.shader));
-					}
-					camOther.setFilters(newCamEffects);
-			case 'camgame' | 'game':
-					camGameShaders.push(effect);
-					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-					for(i in camGameShaders) {
-						newCamEffects.push(new ShaderFilter(i.shader));
-					}
-					camGame.setFilters(newCamEffects);
-			default:
-				if (modchartSprites.exists(cam)) {
-					Reflect.setProperty(modchartSprites.get(cam),"shader",effect.shader);
-				} else if (modchartTexts.exists(cam)) {
-					Reflect.setProperty(modchartTexts.get(cam),"shader",effect.shader);
-				} else {
-					var OBJ = Reflect.getProperty(instance,cam);
-					Reflect.setProperty(OBJ,"shader", effect.shader);
-				}	
-		}
-	}
-
-	public function removeShaderFromCamera(cam:String,effect:ShaderEffect) {
-		switch(cam.toLowerCase()) {
-			case 'camhud' | 'hud': 
-				camHUDShaders.remove(effect);
-				var newCamEffects:Array<BitmapFilter>=[];
-				for(i in camHUDShaders) {
-					newCamEffects.push(new ShaderFilter(i.shader));
-				}
-				camHUD.setFilters(newCamEffects);
-			case 'camother' | 'other': 
-				camOtherShaders.remove(effect);
-				var newCamEffects:Array<BitmapFilter>=[];
-				for(i in camOtherShaders) {
-				newCamEffects.push(new ShaderFilter(i.shader));
-				}
-				camOther.setFilters(newCamEffects);
-			default: 
-				if(modchartSprites.exists(cam)) {
-					Reflect.setProperty(modchartSprites.get(cam),"shader",null);
-				} else if(modchartTexts.exists(cam)) {
-					Reflect.setProperty(modchartTexts.get(cam),"shader",null);
-				} else {
-					var OBJ = Reflect.getProperty(PlayState.instance,cam);
-					Reflect.setProperty(OBJ,"shader", null);
-				}
-		}
-	}
-	
-	public function clearShaderFromCamera(cam:String) {
-		switch(cam.toLowerCase()) {
-			case 'camhud' | 'hud': 
-				camHUDShaders = [];
-				var newCamEffects:Array<BitmapFilter>=[];
-				camHUD.setFilters(newCamEffects);
-			case 'camother' | 'other': 
-				camOtherShaders = [];
-				var newCamEffects:Array<BitmapFilter>=[];
-				camOther.setFilters(newCamEffects);
-			case 'camgame' | 'game': 
-				camGameShaders = [];
-				var newCamEffects:Array<BitmapFilter>=[];
-				camGame.setFilters(newCamEffects);
-			default: 
-				camGameShaders = [];
-				var newCamEffects:Array<BitmapFilter>=[];
-				camGame.setFilters(newCamEffects);
-		}
-	}
-
 	public function startVideo(name:String):Void {
 		#if VIDEOS_ALLOWED
 		var foundFile:Bool = false;
@@ -3023,7 +2925,11 @@ class PlayState extends MusicBeatState
 						if (daNote.animation.curAnim.name.endsWith('end')) {
 							daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * daNote.speed + (46 * (daNote.speed - 1));
 							daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * daNote.speed;
-							daNote.y += !daNote.isOpponent ? uiSkinMap.get('player').downscrollTailYOffset : uiSkinMap.get('opponent').downscrollTailYOffset;
+							if (daNote.uiSkin.isPixel) {
+								daNote.y += daNote.uiSkin.downscrollTailYOffset + (6 - daNote.originalHeightForCalcs) * (daNote.uiSkin.scale * daNote.uiSkin.noteScale);
+							} else {
+								daNote.y += daNote.uiSkin.downscrollTailYOffset;
+							}
 						}
 						
 						daNote.y += (strumHeight / 2) - (60.5 * (daNote.speed - 1));
@@ -3188,24 +3094,8 @@ class PlayState extends MusicBeatState
 			setOnLuas('cameraY', camFollowPos.y);
 			setOnLuas('botPlay', cpuControlled);
 		}
-
-		for (shader in animatedShaders)
-		{
-			shader.update(elapsed);
-		}
-		#if LUA_ALLOWED
-		for (key => value in luaShaders)
-		{
-			value.update(elapsed);
-		}
-		#end
-
-		for (i in shaderUpdates) {
-			i(elapsed);
-		}
 		
 		callOnLuas('onUpdatePost', [elapsed]);
-
 	}
 
 	function openChartEditor()

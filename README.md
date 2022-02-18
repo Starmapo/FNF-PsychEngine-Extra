@@ -11,14 +11,14 @@ Modified version of Psych Engine adding more stuff. (see below)
 
 * Shadow Mario - Coding
 * RiverOaken - Arts and Animations
-* bbpanzu - Assistant Coding
+* shubs - Assistant Coder
+* bbpanzu - Former Coder
 
 ### Special Thanks
 * KadeDev & GitHub Contributors - Made Kade Engine (some code is from there)
 * Leather128 & GitHub Contributors - Made Leather Engine (some code is from there)
 * srPerez - Made VS Shaggy & original 9K notes
 
-* shubs - New Input System
 * SqirraRNG - Chart Editor's Sound Waveform base code
 * iFlicky - Delay/Combo Menu Song Composer + Dialogue Sounds
 * PolybiusProxy - .MP4 Loader Extension
@@ -61,7 +61,7 @@ You'll also need to install a couple things that involve Gits. To do this, you n
 1. Download [git-scm](https://git-scm.com/downloads). Works for Windows, Mac, and Linux, just select your build.
 2. Follow instructions to install the application properly.
 3. Run `haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc` to install Discord RPC.
-4. Run `haxelib git linc_luajit https://github.com/AndreiRudenko/linc_luajit` to install LuaJIT. (...Or if you don't want your mod to be able to run .lua scripts, delete the "LUA_ALLOWED" line on Project.xml)
+4. Run `haxelib git linc_luajit https://github.com/AndreiRudenko/linc_luajit` to install LuaJIT. (Or if you don't want your mod to be able to run .lua scripts, delete the "LUA_ALLOWED" line on Project.xml)
 
 You should have everything ready for compiling the game! Follow the guide below to continue!
 

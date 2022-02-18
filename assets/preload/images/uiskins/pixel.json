@@ -438,5 +438,6 @@
 	"comboNumScale": 1,
 	"sustainXOffset": 0,
 	"downscrollTailYOffset": 8,
-	"noAntialiasing": true
+	"noAntialiasing": true,
+	"isPixel": true
 }

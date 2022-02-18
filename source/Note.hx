@@ -215,7 +215,6 @@ class Note extends FlxSprite
 		}
 
 		if (isSustainNote && prevNote != null) {
-			speed = prevNote.speed;
 			setSustainData();
 		} else if (!isSustainNote) {
 			earlyHitMult = 1;
@@ -223,6 +222,7 @@ class Note extends FlxSprite
 		x += offsetX;
 	}
 
+	public var originalHeightForCalcs:Float = 6;
 	function reloadNote(?prefix:String = '', ?texture:String = '', ?suffix:String = '') {
 		if (prefix == null) prefix = '';
 		if (texture == null) texture = '';
@@ -239,7 +239,7 @@ class Note extends FlxSprite
 		}
 
 		var arraySkin:Array<String> = skin.split('/');
-		arraySkin[arraySkin.length-1] = prefix + arraySkin[arraySkin.length-1] + suffix;
+		arraySkin[arraySkin.length - 1] = prefix + arraySkin[arraySkin.length - 1] + suffix;
 
 		var lastScaleY:Float = scale.y;
 		frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/${arraySkin.join('/')}', uiSkin));
@@ -303,6 +303,9 @@ class Note extends FlxSprite
 			prevNote.scale.y *= stepCrochet / 100 * 1.05;
 			prevNote.scale.y *= speed;
 			prevNote.scale.y *= uiSkin.sustainYScale;
+			if (uiSkin.isPixel) {
+				prevNote.scale.y *= (6 / height); //Auto adjust note size
+			}
 			prevNote.updateHitbox();
 		}
 

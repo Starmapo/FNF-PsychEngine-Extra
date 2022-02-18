@@ -12,15 +12,16 @@ using StringTools;
 typedef SkinFile = {
     var name:String; //just an internal name to make things easier
 	var mania:Array<ManiaArray>; //data for key amounts
-    var scale:Float; //overall scale (all other scales are added ontop of this one)
-    var noteScale:Float; //note scale (added ontop the mania one)
-    var sustainYScale:Float; //sustain note y scale
+    var scale:Float; //overall scale (added ontop of all other scales)
+    var noteScale:Float; //additional note scale
+    var sustainYScale:Float; //additional sustain note height scale
     var countdownScale:Float; //countdown sprites scale
     var ratingScale:Float; //rating and 'combo' sprites scale
     var comboNumScale:Float; //combo numbers scale
     var sustainXOffset:Float; //sustain note x offset
-    var downscrollTailYOffset:Null<Float>; //sustain tail note y offset for downscroll
+    var downscrollTailYOffset:Null<Float>; //sustain end y offset for downscroll only
     var noAntialiasing:Bool; //whether to always have antialiasing disabled
+    var isPixel:Null<Bool>; //if this skin is based off the week 6 one
 }
 
 typedef OldSkin = {
@@ -64,8 +65,11 @@ class UIData {
         daFile.name = skin;
         
         var testyFile:OldSkin = cast Json.parse(rawJson);
-        if (daFile.downscrollTailYOffset == null) {
+        if (daFile.downscrollTailYOffset == null && testyFile.tailYOffset != null) {
             daFile.downscrollTailYOffset = testyFile.tailYOffset;
+        }
+        if (daFile.isPixel == null) {
+            daFile.isPixel = false;
         }
         
         return daFile;
