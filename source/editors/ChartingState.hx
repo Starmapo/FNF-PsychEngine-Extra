@@ -2461,8 +2461,8 @@ class ChartingState extends MusicBeatState
 			if (note.y < -150) note.y = -150;
 
 			if (i[3] != null && note.noteType != null && note.noteType.length > 0) {
-				var typeInt:Null<Int> = noteTypeMap.get(i[3]);
-				var theType:String = '$typeInt';
+				var typeInt = noteTypeMap.get(i[3]);
+				var theType = '$typeInt';
 				if (typeInt == null) theType = '?';
 
 				var daText:AttachedFlxText = new AttachedFlxText(0, 0, 100, theType, 24);
@@ -2473,8 +2473,6 @@ class ChartingState extends MusicBeatState
 				curRenderedNoteType.add(daText);
 				daText.sprTracker = note;
 			}
-			note.mustPress = _song.notes[curSection].mustHitSection;
-			if (i[1] >= leftKeys) note.mustPress = !note.mustPress;
 		}
 
 		// CURRENT EVENTS
@@ -2562,6 +2560,7 @@ class ChartingState extends MusicBeatState
 			note.sustainLength = daSus;
 			note.mustPress = _song.notes[sectionUsed].mustHitSection;
 			if (daNoteInfo >= usedLeftKeys) note.mustPress = !note.mustPress;
+			note.isOpponent = note.mustPress;
 			note.noteType = i[3];
 		} else { //Event note
 			note.loadGraphic(Paths.image('eventArrow'));
