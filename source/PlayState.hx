@@ -143,7 +143,6 @@ class PlayState extends MusicBeatState
 	public var opponentStrums:FlxTypedGroup<StrumNote>;
 	public var playerStrums:FlxTypedGroup<StrumNote>;
 	public var grpNoteSplashes:FlxTypedGroup<NoteSplash>;
-	public var grpNoteSplashesOpponent:FlxTypedGroup<NoteSplash>;
 
 	public var camZooming:Bool = false;
 	private var curSong:String = "";
@@ -363,7 +362,6 @@ class PlayState extends MusicBeatState
 		}
 
 		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
-		grpNoteSplashesOpponent = new FlxTypedGroup<NoteSplash>();
 
 		if (!inEditor) {
 			CustomFadeTransition.nextCamera = camOther;
@@ -1148,7 +1146,6 @@ class PlayState extends MusicBeatState
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		add(strumLineNotes);
 		add(grpNoteSplashes);
-		add(grpNoteSplashesOpponent);
 
 		if (!inEditor) {
 			if (ClientPrefs.timeBarType == 'Song Name')
@@ -1160,7 +1157,6 @@ class PlayState extends MusicBeatState
 
 		var splash:NoteSplash = new NoteSplash(100, 100, null);
 		grpNoteSplashes.add(splash);
-		grpNoteSplashesOpponent.add(splash);
 		splash.alpha = 0.0;
 
 		opponentStrums = new FlxTypedGroup<StrumNote>();
@@ -1339,7 +1335,6 @@ class PlayState extends MusicBeatState
 		if (!inEditor) {
 			strumLineNotes.cameras = [camHUD];
 			grpNoteSplashes.cameras = [camHUD];
-			grpNoteSplashesOpponent.cameras = [camHUD];
 			notes.cameras = [camHUD];
 			scoreTxt.cameras = [camHUD];
 			healthBar.cameras = [camHUD];
@@ -2243,8 +2238,9 @@ class PlayState extends MusicBeatState
 
 				if (songNotes[1] >= leftKeys)
 				{
-					gottaHitNote = !section.mustHitSection;
+					gottaHitNote = !gottaHitNote;
 				}
+				var isOpponent:Bool = !gottaHitNote;
 
 				if (opponentChart) {
 					gottaHitNote = !gottaHitNote;
@@ -2261,6 +2257,7 @@ class PlayState extends MusicBeatState
 
 				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys, gottaHitNote != opponentChart ? uiSkinMap.get('player') : uiSkinMap.get('opponent'));
 				swagNote.mustPress = gottaHitNote;
+				swagNote.isOpponent = isOpponent;
 				swagNote.sustainLength = songNotes[2] / playbackRate;
 				swagNote.gfNote = (section.gfSection && (songNotes[1] < rightKeys));
 				swagNote.noteType = songNotes[3];
@@ -2278,6 +2275,7 @@ class PlayState extends MusicBeatState
 
 						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / swagNote.speed), daNoteData, oldNote, true, false, keys, gottaHitNote != opponentChart ? uiSkinMap.get('player') : uiSkinMap.get('opponent'), curStepCrochet);
 						sustainNote.mustPress = gottaHitNote;
+						sustainNote.isOpponent = isOpponent;
 						sustainNote.gfNote = swagNote.gfNote;
 						sustainNote.noteType = swagNote.noteType;
 						sustainNote.characters = songNotes[4];
@@ -2285,14 +2283,14 @@ class PlayState extends MusicBeatState
 						sustainNote.scrollFactor.set();
 						unspawnNotes.push(sustainNote);
 
-						if (sustainNote.mustPress)
+						if (!sustainNote.isOpponent)
 						{
 							sustainNote.x += FlxG.width / 2; // general offset
 						}
 					}
 				}
 
-				if (swagNote.mustPress)
+				if (!swagNote.isOpponent)
 				{
 					swagNote.x += FlxG.width / 2; // general offset
 				}
@@ -2976,7 +2974,7 @@ class PlayState extends MusicBeatState
 			notes.forEachAlive(function(daNote:Note)
 			{
 				var strumGroup = playerStrums;
-				if (daNote.mustPress == opponentChart) strumGroup = opponentStrums;
+				if (daNote.isOpponent) strumGroup = opponentStrums;
 
 				var strumX:Float = strumGroup.members[daNote.noteData].x;
 				var strumY:Float = strumGroup.members[daNote.noteData].y;
@@ -3025,7 +3023,7 @@ class PlayState extends MusicBeatState
 						if (daNote.animation.curAnim.name.endsWith('end')) {
 							daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * daNote.speed + (46 * (daNote.speed - 1));
 							daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * daNote.speed;
-							daNote.y += daNote.mustPress != opponentChart ? uiSkinMap.get('player').downscrollTailYOffset : uiSkinMap.get('opponent').downscrollTailYOffset;
+							daNote.y += !daNote.isOpponent ? uiSkinMap.get('player').downscrollTailYOffset : uiSkinMap.get('opponent').downscrollTailYOffset;
 						}
 						
 						daNote.y += (strumHeight / 2) - (60.5 * (daNote.speed - 1));
@@ -4633,9 +4631,9 @@ class PlayState extends MusicBeatState
 	}
 
 	function spawnNoteSplashOnNote(note:Note) {
-		if (note != null && ((ClientPrefs.noteSplashes && note.mustPress) || (ClientPrefs.noteSplashesOpponent && !note.mustPress))) {
+		if (note != null && ((ClientPrefs.noteSplashes && !note.isOpponent) || (ClientPrefs.noteSplashesOpponent && note.isOpponent))) {
 			var strum:StrumNote = playerStrums.members[note.noteData];
-			if (opponentChart == note.mustPress) strum = opponentStrums.members[note.noteData];
+			if (note.isOpponent) strum = opponentStrums.members[note.noteData];
 			if (strum != null) {
 				spawnNoteSplash(strum.x, strum.y, note.noteData, note);
 			}
@@ -4647,8 +4645,7 @@ class PlayState extends MusicBeatState
 		var splashGroup = grpNoteSplashes;
 		var colors = playerColors;
 		var keys = playerKeys;
-		if (opponentChart == note.mustPress) {
-			splashGroup = grpNoteSplashesOpponent;
+		if (note != null && note.isOpponent) {
 			colors = opponentColors;
 			keys = opponentKeys;
 		}

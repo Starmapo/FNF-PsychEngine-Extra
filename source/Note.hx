@@ -18,6 +18,7 @@ class Note extends FlxSprite
 	public var strumTime:Float = 0;
 
 	public var mustPress:Bool = false;
+	public var isOpponent:Bool = false;
 	public var noteData:Int = 0;
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
@@ -99,7 +100,7 @@ class Note extends FlxSprite
 			if (noteType != value) {
 				switch(value) {
 					case 'Hurt Note':
-						ignoreNote = mustPress;
+						ignoreNote = !isOpponent;
 						reloadNote('HURT');
 						noteSplashTexture = 'HURTnoteSplashes';
 						colorSwap.hue = 0;
