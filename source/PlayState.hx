@@ -2398,7 +2398,7 @@ class PlayState extends MusicBeatState
 	{
 		if (paused)
 		{
-			if (FlxG.sound.music != null && !startingSong)
+			if (FlxG.sound.music != null && !startingSong && FlxG.sound.music.time > 0.2)
 			{
 				resyncVocals();
 			}
@@ -2454,7 +2454,7 @@ class PlayState extends MusicBeatState
 	{
 		if (health > 0 && !paused)
 		{
-			if (FlxG.sound.music != null && !startingSong && !endingSong)
+			if (FlxG.sound.music != null && !startingSong && !endingSong && FlxG.sound.music.time > 0.2)
 			{
 				resyncVocals();
 			}
@@ -2496,7 +2496,7 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.pause();
 
 		FlxG.sound.music.play();
-		FlxG.sound.music.time = Conductor.songPosition * playbackRate;
+		Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 		vocals.play();
 		vocalsDad.play();
 		vocals.time = vocalsDad.time = FlxG.sound.music.time;
@@ -3008,6 +3008,10 @@ class PlayState extends MusicBeatState
 					}
 				}
 			}
+		}
+
+		if (health < 0 && practiceMode) {
+			health = 0;
 		}
 
 		for (name in doubleTrailMap.keys()) {
@@ -4038,7 +4042,7 @@ class PlayState extends MusicBeatState
 			if ((inEditor || !playerChar.members[0].stunned) && generatedMusic && !endingSong)
 			{
 				var lastTime:Float = Conductor.songPosition;
-				if (FlxG.sound.music.time > 0) {
+				if (FlxG.sound.music.time > 0.2) {
 					//more accurate hit time for the ratings?
 					Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 				}
@@ -4095,7 +4099,7 @@ class PlayState extends MusicBeatState
 				//									- Shadow Mario
 				keysPressed[key] = true;
 
-				if (FlxG.sound.music.time > 0) {
+				if (FlxG.sound.music.time > 0.2) {
 					//more accurate hit time for the ratings? part 2 (Now that the calculations are done, go back to the time it was before for not causing a note stutter)
 					Conductor.songPosition = lastTime;
 				}
@@ -4753,8 +4757,9 @@ class PlayState extends MusicBeatState
 	override function stepHit()
 	{
 		super.stepHit();
-		if (Math.abs(FlxG.sound.music.time / playbackRate - Conductor.songPosition) > 20
-			|| (SONG.needsVoices && ((vocals.time > 0 && Math.abs(vocals.time / playbackRate - Conductor.songPosition) > 20) || (foundDadVocals && vocalsDad.time > 0 && Math.abs(vocalsDad.time / playbackRate - Conductor.songPosition) > 20))))
+		if (FlxG.sound.music.time > 0.2 && Math.abs(FlxG.sound.music.time / playbackRate - Conductor.songPosition) > 20
+			|| (SONG.needsVoices && ((vocals.time > 0.2 && Math.abs(vocals.time / playbackRate - Conductor.songPosition) > 20) 
+			|| (foundDadVocals && vocalsDad.time > 0.2 && Math.abs(vocalsDad.time / playbackRate - Conductor.songPosition) > 20))))
 		{
 			resyncVocals();
 		}
@@ -4991,16 +4996,16 @@ class PlayState extends MusicBeatState
 		var returnVal:Dynamic = FunkinLua.Function_Continue;
 		#if LUA_ALLOWED
 		if (!inEditor) {
+			for (i in 0...closeLuas.length) {
+				luaArray.remove(closeLuas[i]);
+				closeLuas[i].stop();
+			}
+			
 			for (i in 0...luaArray.length) {
 				var ret:Dynamic = luaArray[i].call(event, args);
 				if (ret != FunkinLua.Function_Continue) {
 					returnVal = ret;
 				}
-			}
-
-			for (i in 0...closeLuas.length) {
-				luaArray.remove(closeLuas[i]);
-				closeLuas[i].stop();
 			}
 		}
 		#end

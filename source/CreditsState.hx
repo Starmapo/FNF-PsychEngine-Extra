@@ -85,11 +85,11 @@ class CreditsState extends MusicBeatState
 
 		var pisspoop:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
 			['Psych Engine Extra'],
-			['Starmapo',			'star',				'Main Programmer/Artist',								'https://github.com/Starmapo',										'EADD8C'], // NO TWITTER !!
-			['srPerez',				'srperez',			'Original multi-key designs',							'https://twitter.com/NewSrPerez',									'FBCA20'],
-			['KadeDev',				'kade',				'Kade Engine Creator\n(some code is from there)',		'https://twitter.com/kade0912',										'4F6441'],
-			['Leather128',			'leather',			'Leather Engine Creator\n(some code is from there)',	'https://www.youtube.com/channel/UCbCtO-ghipZessWaOBx8u1g',			'01A1FF'],
-			['GitHub Contributors',	'github',			'Pull Requests to Psych Engine',						'https://github.com/ShadowMario/FNF-PsychEngine/pulls',				'546782'],
+			['Starmapo',			'star',				'Main Programmer/Artist',												'https://github.com/Starmapo',										'EADD8C'],
+			['srPerez',				'srperez',			'Original multi-key designs\n[NON-AFFILIATED]',							'https://twitter.com/NewSrPerez',									'FBCA20'],
+			['KadeDev',				'kade',				'Kade Engine Creator\n(some code is from there)\n[NON-AFFILIATED]',		'https://twitter.com/kade0912',										'4F6441'],
+			['Leather128',			'leather',			'Leather Engine Creator\n(some code is from there)\n[NON-AFFILIATED]',	'https://www.youtube.com/channel/UCbCtO-ghipZessWaOBx8u1g',			'01A1FF'],
+			['GitHub Contributors',	'github',			'Pull Requests to Psych Engine\n[NON-AFFILIATED]',						'https://github.com/ShadowMario/FNF-PsychEngine/pulls',				'546782'],
 			[''],
 			['Psych Engine Team'],
 			['Shadow Mario',		'shadowmario',		'Main Programmer of Psych Engine',						'https://twitter.com/Shadow_Mario_',	'444444'],
@@ -149,8 +149,7 @@ class CreditsState extends MusicBeatState
 			}
 		}
 
-		descBox = new AttachedSprite();
-		descBox.makeGraphic(1, 1, FlxColor.BLACK);
+		descBox = new AttachedSprite().makeGraphic(1, 1, FlxColor.BLACK);
 		descBox.xAdd = -10;
 		descBox.yAdd = -10;
 		descBox.alphaMult = 0.6;

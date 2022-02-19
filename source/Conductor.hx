@@ -138,22 +138,23 @@ class Conductor
 	}
 
 	public static function getCurSection(song:SwagSong, step:Int):Int {
+		//every time i try to optimize this it just fucking stops working
 		var daNumerator:Int = song.numerator;
 		var daPos:Int = 0;
-		var daStep:Int = 0;
+		var lastStep:Int = 0;
 		for (i in 0...song.notes.length) {
 			if (song.notes[i] != null) {
 				if (song.notes[i].changeSignature) {
 					daNumerator = song.notes[i].numerator;
 				}
 			}
-			if (daStep + (daNumerator * 4) >= step) {
-				return daPos + Math.floor((step - daStep) / (daNumerator * 4));
+			if (lastStep + (daNumerator * 4) >= step) {
+				return daPos + Math.floor((step - lastStep) / (daNumerator * 4));
 			}
-			daStep += daNumerator * 4;
+			lastStep += daNumerator * 4;
 			daPos++;
 		}
-		return flixel.math.FlxMath.maxInt(daPos, 0);
+		return FlxMath.maxInt(daPos, 0);
 	}
 
 	public static function getCurNumeratorBeat(song:SwagSong, beat:Int):Int {

@@ -35,18 +35,21 @@ import Discord;
 using StringTools;
 
 class FunkinLua {
+	#if windows
 	public static var Function_Stop = 1;
 	public static var Function_Continue = 0;
+	#else
+	public static var Function_Stop = 'Function_Stop';
+	public static var Function_Continue = 'Function_Continue';
+	#end
 
 	#if LUA_ALLOWED
 	public var lua:State = null;
 	#end
 
-	public var camTarget:FlxCamera;
 	public var scriptName:String = '';
 	var gonnaClose:Bool = false;
 
-	public var accessedProps:Map<String, Dynamic> = null;
 	public function new(script:String) {
 		#if LUA_ALLOWED
 		lua = LuaL.newstate();
@@ -64,11 +67,14 @@ class FunkinLua {
 		scriptName = script;
 		trace('Lua file loaded succesfully: $script');
 
-		accessedProps = new Map();
-
 		// Lua shit
+		#if windows
 		set('Function_Stop', Function_Stop);
 		set('Function_Continue', Function_Continue);
+		#else
+		set('Function_Stop', 'Function_Stop');
+		set('Function_Continue', 'Function_Continue');
+		#end
 		set('luaDebugMode', false);
 		set('luaDeprecatedWarnings', true);
 		set('inChartEditor', PlayState.instance.inEditor);
@@ -1922,10 +1928,6 @@ class FunkinLua {
 			return;
 		}
 
-		if (accessedProps != null) {
-			accessedProps.clear();
-		}
-
 		Lua.close(lua);
 		lua = null;
 		#end
@@ -1983,5 +1985,4 @@ class DebugLuaText extends FlxText
 		}
 		else if (disableTime < 1) alpha = disableTime;
 	}
-	
 }

@@ -44,7 +44,7 @@ class LoadingState extends MusicBeatState
 	var loadBar:FlxSprite;
 	override function create()
 	{
-		#if PSYCH_WATERMARKS
+		#if EXTRA_WATERMARKS
 		var curStage = 'funkay';
 		#else
 		var curStage = 'funkayCooler';
@@ -71,7 +71,7 @@ class LoadingState extends MusicBeatState
 					curStage = 'schoolEvil';
 			}
 		}
-		#if PSYCH_WATERMARKS
+		#if EXTRA_WATERMARKS
 		var imagePath = Paths.image('preloaders/funkay');
 		#else
 		var imagePath = Paths.image('preloaders/funkayCooler');

@@ -1,6 +1,12 @@
 package;
 
 import flixel.FlxSprite;
+import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.graphics.FlxGraphic;
+import flixel.FlxG;
+import flixel.graphics.frames.FlxTileFrames;
+import flixel.math.FlxPoint;
+import flixel.util.FlxColor;
 
 using StringTools;
 
@@ -47,5 +53,38 @@ class AttachedSprite extends FlxSprite
 			if (copyVisible) 
 				visible = sprTracker.visible;
 		}
+	}
+
+	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):AttachedSprite
+	{
+		var graph:FlxGraphic = FlxG.bitmap.add(Graphic, Unique, Key);
+		if (graph == null)
+			return this;
+
+		if (Width == 0)
+		{
+			Width = Animated ? graph.height : graph.width;
+			Width = (Width > graph.width) ? graph.width : Width;
+		}
+
+		if (Height == 0)
+		{
+			Height = Animated ? Width : graph.height;
+			Height = (Height > graph.height) ? graph.height : Height;
+		}
+
+		if (Animated)
+			frames = FlxTileFrames.fromGraphic(graph, FlxPoint.get(Width, Height));
+		else
+			frames = graph.imageFrame;
+
+		return this;
+	}
+
+	override public function makeGraphic(Width:Int, Height:Int, Color:FlxColor = FlxColor.WHITE, Unique:Bool = false, ?Key:String):AttachedSprite
+	{
+		var graph:FlxGraphic = FlxG.bitmap.create(Width, Height, Color, Unique, Key);
+		frames = graph.imageFrame;
+		return this;
 	}
 }

@@ -215,7 +215,7 @@ class Alphabet extends FlxSpriteGroup
 	var LONG_TEXT_ADD:Float = -24; //text is over 2 rows long, make it go up a bit
 	public function timerCheck(?tmr:FlxTimer = null) {
 		var autoBreak:Bool = false;
-		if ((loopNum <= splitWords.length - 2 && splitWords[loopNum] == "\\" && splitWords[loopNum+1] == "n") ||
+		if ((loopNum <= splitWords.length - 2 && splitWords[loopNum] == "\\" && splitWords[loopNum + 1] == "n") ||
 			((autoBreak = true) && xPos >= FlxG.width * 0.65 && splitWords[loopNum] == ' ' ))
 		{
 			if (autoBreak) {
@@ -347,13 +347,10 @@ class Alphabet extends FlxSpriteGroup
 class AlphaCharacter extends FlxSprite
 {
 	public static var alphabet:String = "abcdefghijklmnopqrstuvwxyz";
-
 	public static var numbers:String = "1234567890";
-
 	public static var symbols:String = "|~#$%()*+-:;<=>@[]^_.,'!?";
 
 	public var row:Int = 0;
-
 	private var textSize:Float = 1;
 
 	public function new(x:Float, y:Float, textSize:Float)
