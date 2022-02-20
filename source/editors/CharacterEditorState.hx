@@ -761,7 +761,6 @@ class CharacterEditorState extends MusicBeatState
 			lastAnim = char.animation.curAnim.name;
 		}
 
-		var anims:Array<AnimArray> = char.animationsArray.copy();
 		if (Paths.fileExists('images/${char.imageFile}/Animation.json', TEXT)) {
 			char.frames = AtlasFrameMaker.construct(char.imageFile);
 		} else if (Paths.fileExists('images/${char.imageFile}.txt', TEXT)) {

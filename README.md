@@ -84,6 +84,6 @@ For Mac, you need to install [Xcode](https://apps.apple.com/us/app/xcode/id49779
 
 For Linux, you only need to open a terminal in the project directory and run `lime test linux -debug` (remove "-debug" for official releases). The executable file will be in export/release/linux/bin.
 
-To build for 32-bit, just add `-32` to the `lime test` command.
+To build for 32-bit, add `-32 -D 32bits` to the `lime test` command.
 
-`lime test windows -32`
+`lime test windows -32 -D 32bits`

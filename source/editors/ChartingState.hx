@@ -456,7 +456,7 @@ class ChartingState extends MusicBeatState
 		});
 
 		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 1000, 1);
-		stepperBPM.value = Conductor.bpm;
+		stepperBPM.value = _song.bpm;
 		stepperBPM.name = 'song_bpm';
 		blockPressWhileTypingOnStepper.push(stepperBPM);
 

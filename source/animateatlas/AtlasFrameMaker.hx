@@ -32,24 +32,24 @@ class AtlasFrameMaker extends FlxFramesCollection
 
 		if (Paths.fileExists('images/$key/spritemap1.json', TEXT))
 		{
-			PlayState.instance.addTextToDebug("Only Spritemaps made with Adobe Animate 2018 are supported");
-			trace("Only Spritemaps made with Adobe Animate 2018 are supported");
+			PlayState.instance.addTextToDebug('$key: Only Spritemaps made with Adobe Animate 2018 are supported');
+			trace('$key: Only Spritemaps made with Adobe Animate 2018 are supported');
 			return null;
 		}
 
 		var animationData:AnimationData = Json.parse(Paths.getTextFromFile('images/$key/Animation.json'));
 		var atlasData:AtlasData = Json.parse(Paths.getTextFromFile('images/$key/spritemap.json').replace("\uFEFF", ""));
 
-		var graphic:FlxGraphic = Paths.image('$key/spritemap');
-		var ss:SpriteAnimationLibrary = new SpriteAnimationLibrary(animationData, atlasData, graphic.bitmap);
-		var t:SpriteMovieClip = ss.createAnimation();
+		var graphic = Paths.image('$key/spritemap');
+		var ss = new SpriteAnimationLibrary(animationData, atlasData, graphic.bitmap);
+		var t = ss.createAnimation();
 		if (_excludeArray == null)
 		{
 			_excludeArray = t.getFrameLabels();
 		}
 		trace('Creating: $_excludeArray');
 
-		frameCollection = new FlxFramesCollection(graphic, FlxFrameCollectionType.IMAGE);
+		frameCollection = new FlxFramesCollection(graphic, IMAGE);
 		for(x in _excludeArray)
 		{
 			frameArray.push(getFramesArray(t, x));
@@ -67,12 +67,12 @@ class AtlasFrameMaker extends FlxFramesCollection
 
 	@:noCompletion static function getFramesArray(t:SpriteMovieClip,animation:String):Array<FlxFrame>
 	{
-		var sizeInfo:Rectangle = new Rectangle(0, 0);
+		var sizeInfo = new Rectangle(0, 0);
 		t.currentLabel = animation;
 		var bitMapArray:Array<BitmapData> = [];
 		var daFramez:Array<FlxFrame> = [];
 		var firstPass = true;
-		var frameSize:FlxPoint = new FlxPoint(0, 0);
+		var frameSize = new FlxPoint(0, 0);
 
 		for (i in t.getFrame(animation)...t.numFrames)
 		{
@@ -80,7 +80,7 @@ class AtlasFrameMaker extends FlxFramesCollection
 			if (t.currentLabel == animation)
 			{
 				sizeInfo = t.getBounds(t);
-				var bitmapShit:BitmapData = new BitmapData(Std.int(sizeInfo.width + sizeInfo.x), Std.int(sizeInfo.height + sizeInfo.y), true, 0);
+				var bitmapShit = new BitmapData(Std.int(sizeInfo.width + sizeInfo.x), Std.int(sizeInfo.height + sizeInfo.y), true, 0);
 				bitmapShit.draw(t, null, null, null, null, true);
 				bitMapArray.push(bitmapShit);
 

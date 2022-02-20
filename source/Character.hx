@@ -2,7 +2,6 @@ package;
 
 import animateatlas.AtlasFrameMaker;
 import flixel.FlxSprite;
-import flixel.addons.effects.FlxTrail;
 import flixel.tweens.FlxTween;
 #if MODS_ALLOWED
 import sys.io.File;
