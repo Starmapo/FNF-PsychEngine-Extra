@@ -116,14 +116,10 @@ class NotesState extends MusicBeatState
 		
 		if (changingNote) {
 			if (holdTime < 0.5) {
-				if (FlxG.mouse.wheel != 0) {
-					updateValue(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				}
-				if (controls.UI_LEFT_P) {
+				if (controls.UI_LEFT_P || FlxG.mouse.wheel < 0) {
 					updateValue(-1);
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				} else if (controls.UI_RIGHT_P) {
+				} else if (controls.UI_RIGHT_P || FlxG.mouse.wheel > 0) {
 					updateValue(1);
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				} else if (controls.RESET) {
@@ -151,29 +147,21 @@ class NotesState extends MusicBeatState
 				}
 			}
 		} else {
-			if (FlxG.mouse.wheel != 0) {
-				if (FlxG.keys.pressed.SHIFT) {
-					changeType(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
-				} else if (currentData.length > 1) {
-					changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				}
-			}
 			if (currentData.length > 1) {
-				if (controls.UI_UP_P) {
+				if (controls.UI_UP_P || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0)) {
 					changeSelection(-1);
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				}
-				if (controls.UI_DOWN_P) {
+				if (controls.UI_DOWN_P || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0)) {
 					changeSelection(1);
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				}
 			}
-			if (controls.UI_LEFT_P) {
+			if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0)) {
 				changeType(-1);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			}
-			if (controls.UI_RIGHT_P) {
+			if (controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0)) {
 				changeType(1);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			}

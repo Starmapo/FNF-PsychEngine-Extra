@@ -155,22 +155,15 @@ class ControlsSubState extends MusicBeatSubstate {
 	var bindingTime:Float = 0;
 	override function update(elapsed:Float) {
 		if (!rebindingKey) {
-			if (FlxG.mouse.wheel != 0) {
-				if (FlxG.keys.pressed.SHIFT) {
-					changeAlt();
-				} else {
-					changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
-				}
-			}
 			var shiftMult:Int = 1;
 			if (FlxG.keys.pressed.SHIFT) shiftMult = 3;
-			if (controls.UI_UP_P) {
+			if (controls.UI_UP_P || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0)) {
 				changeSelection(-shiftMult);
 			}
-			if (controls.UI_DOWN_P) {
+			if (controls.UI_DOWN_P || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0)) {
 				changeSelection(shiftMult);
 			}
-			if (controls.UI_LEFT_P || controls.UI_RIGHT_P) {
+			if (controls.UI_LEFT_P || controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel != 0)) {
 				changeAlt();
 			}
 

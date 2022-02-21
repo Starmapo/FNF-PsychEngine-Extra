@@ -91,13 +91,11 @@ class PlayState extends MusicBeatState
 	public var songSpeedTween:FlxTween;
 	public var songSpeed(default, set):Float = 1;
 	public var songSpeedType:String = "multiplicative";
-	public var noteKillOffset:Float = 350;
 	
 	public var boyfriendGroup:FlxTypedSpriteGroup<Character>;
 	public var dadGroup:FlxTypedSpriteGroup<Character>;
 	public var gfGroup:FlxTypedSpriteGroup<Character>;
 	public static var curStage:String = '';
-	public static var isPixelStage:Bool = false;
 	public static var SONG:SwagSong = null;
 	public static var originalSong:SwagSong = null;
 	public static var isStoryMode:Bool = false;
@@ -255,7 +253,6 @@ class PlayState extends MusicBeatState
 	public static var instance:PlayState;
 	public var luaArray:Array<FunkinLua> = [];
 	private var luaDebugGroup:FlxTypedGroup<DebugLuaText>;
-	public var introSoundsSuffix:String = '';
 
 	// Debug buttons
 	private var debugKeysChart:Array<FlxKey>;
@@ -566,7 +563,6 @@ class PlayState extends MusicBeatState
 				stageData = {
 					directory: "",
 					defaultZoom: 0.9,
-					isPixelStage: false,
 				
 					boyfriend: [770, 100],
 					girlfriend: [400, 130],
@@ -575,7 +571,6 @@ class PlayState extends MusicBeatState
 			}
 
 			defaultCamZoom = stageData.defaultZoom;
-			isPixelStage = stageData.isPixelStage;
 			BF_X = stageData.boyfriend[0];
 			BF_Y = stageData.boyfriend[1];
 			GF_X = stageData.girlfriend[0];
@@ -857,10 +852,6 @@ class PlayState extends MusicBeatState
 							add(bg);
 						}
 				}
-			}
-
-			if (isPixelStage) {
-				introSoundsSuffix = '-pixel';
 			}
 
 			add(gfGroup);
@@ -1506,7 +1497,6 @@ class PlayState extends MusicBeatState
 			}
 		}
 		songSpeed = value;
-		noteKillOffset = 350 / songSpeed;
 		return value;
 	}
 
@@ -1899,8 +1889,10 @@ class PlayState extends MusicBeatState
 					switch (swagCounter)
 					{
 						case 0:
+							var introSoundsSuffix = !opponentChart ? uiSkinMap.get('player').introSoundsSuffix : uiSkinMap.get('opponent').introSoundsSuffix;
 							FlxG.sound.play(Paths.sound('intro3$introSoundsSuffix'), 0.6);
 						case 1:
+							var introSoundsSuffix = uiSkinMap.get('ready').introSoundsSuffix;
 							countdownReady = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('ready', uiSkinMap.get('ready'))));
 							countdownReady.scrollFactor.set();
 							countdownReady.updateHitbox();
@@ -1920,6 +1912,7 @@ class PlayState extends MusicBeatState
 							});
 							FlxG.sound.play(Paths.sound('intro2$introSoundsSuffix'), 0.6);
 						case 2:
+							var introSoundsSuffix = uiSkinMap.get('set').introSoundsSuffix;
 							countdownSet = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('set', uiSkinMap.get('set'))));
 							countdownSet.scrollFactor.set();
 
@@ -1939,6 +1932,7 @@ class PlayState extends MusicBeatState
 							FlxG.sound.play(Paths.sound('intro1$introSoundsSuffix'), 0.6);
 						case 3:
 							if (!skipCountdown) {
+								var introSoundsSuffix = uiSkinMap.get('go').introSoundsSuffix;
 								countdownGo = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('go', uiSkinMap.get('go'))));
 								countdownGo.scrollFactor.set();
 
@@ -2157,7 +2151,7 @@ class PlayState extends MusicBeatState
 				var keys = playerKeys;
 				if (!gottaHitNote) keys = opponentKeys;
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys, gottaHitNote != opponentChart ? uiSkinMap.get('player') : uiSkinMap.get('opponent'));
+				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys, !isOpponent ? uiSkinMap.get('player') : uiSkinMap.get('opponent'));
 				swagNote.mustPress = gottaHitNote;
 				swagNote.isOpponent = isOpponent;
 				swagNote.sustainLength = songNotes[2] / playbackRate;
@@ -2175,7 +2169,7 @@ class PlayState extends MusicBeatState
 					{
 						oldNote = unspawnNotes[unspawnNotes.length - 1];
 
-						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / swagNote.speed), daNoteData, oldNote, true, false, keys, gottaHitNote != opponentChart ? uiSkinMap.get('player') : uiSkinMap.get('opponent'), curStepCrochet);
+						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / swagNote.speed), daNoteData, oldNote, true, false, keys, !isOpponent ? uiSkinMap.get('player') : uiSkinMap.get('opponent'), curStepCrochet);
 						sustainNote.mustPress = gottaHitNote;
 						sustainNote.isOpponent = isOpponent;
 						sustainNote.gfNote = swagNote.gfNote;
@@ -2496,7 +2490,11 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.pause();
 
 		FlxG.sound.music.play();
-		Conductor.songPosition = FlxG.sound.music.time / playbackRate;
+		if (FlxG.sound.music.time > 0.2 && (!SONG.needsVoices || (vocals.time > 0.2 && (!foundDadVocals || vocalsDad.time > 0.2)))) {
+			Conductor.songPosition = FlxG.sound.music.time / playbackRate;
+		} else {
+			FlxG.sound.music.time = Conductor.songPosition * playbackRate;
+		}
 		vocals.play();
 		vocalsDad.play();
 		vocals.time = vocalsDad.time = FlxG.sound.music.time;
@@ -4757,9 +4755,9 @@ class PlayState extends MusicBeatState
 	override function stepHit()
 	{
 		super.stepHit();
-		if (FlxG.sound.music.time > 0.2 && Math.abs(FlxG.sound.music.time / playbackRate - Conductor.songPosition) > 20
-			|| (SONG.needsVoices && ((vocals.time > 0.2 && Math.abs(vocals.time / playbackRate - Conductor.songPosition) > 20) 
-			|| (foundDadVocals && vocalsDad.time > 0.2 && Math.abs(vocalsDad.time / playbackRate - Conductor.songPosition) > 20))))
+		if (Math.abs(FlxG.sound.music.time / playbackRate - Conductor.songPosition) > 20
+			|| (SONG.needsVoices && ((Math.abs(vocals.time / playbackRate - Conductor.songPosition) > 20) 
+			|| (foundDadVocals && Math.abs(vocalsDad.time / playbackRate - Conductor.songPosition) > 20))))
 		{
 			resyncVocals();
 		}

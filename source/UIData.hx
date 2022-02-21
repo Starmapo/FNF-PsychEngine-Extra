@@ -19,9 +19,10 @@ typedef SkinFile = {
     var ratingScale:Float; //rating and 'combo' sprites scale
     var comboNumScale:Float; //combo numbers scale
     var sustainXOffset:Float; //sustain note x offset
-    var downscrollTailYOffset:Null<Float>; //sustain end y offset for downscroll only
+    var downscrollTailYOffset:Null<Float>; //sustain end y offset (for downscroll only)
     var noAntialiasing:Bool; //whether to always have antialiasing disabled
     var isPixel:Null<Bool>; //if this skin is based off the week 6 one
+    var introSoundsSuffix:String; //suffix for the countdown sounds
 }
 
 typedef OldSkin = {

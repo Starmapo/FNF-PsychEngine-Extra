@@ -198,15 +198,12 @@ class CreditsState extends MusicBeatState
 				var upP = controls.UI_UP_P;
 				var downP = controls.UI_DOWN_P;
 
-				if (FlxG.mouse.wheel != 0) {
-					changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
-				}
-				if (upP)
+				if (upP || FlxG.mouse.wheel > 0)
 				{
 					changeSelection(-1 * shiftMult);
 					holdTime = 0;
 				}
-				if (downP)
+				if (downP || FlxG.mouse.wheel < 0)
 				{
 					changeSelection(1 * shiftMult);
 					holdTime = 0;

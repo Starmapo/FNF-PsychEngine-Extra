@@ -198,21 +198,13 @@ class StoryMenuState extends MusicBeatState
 		{
 			var upP = controls.UI_UP_P;
 			var downP = controls.UI_DOWN_P;
-			if (FlxG.mouse.wheel != 0) {
-				if (FlxG.keys.pressed.SHIFT) {
-					changeDifficulty(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
-				} else {
-					changeWeek(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				}
-			}
-			if (upP)
+			if (upP || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
 			{
 				changeWeek(-1);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			}
 
-			if (downP)
+			if (downP || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
 			{
 				changeWeek(1);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
@@ -228,9 +220,9 @@ class StoryMenuState extends MusicBeatState
 			else
 				leftArrow.animation.play('idle');
 
-			if (controls.UI_RIGHT_P)
+			if (controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
 				changeDifficulty(1);
-			else if (controls.UI_LEFT_P)
+			else if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
 				changeDifficulty(-1);
 			else if (upP || downP)
 				changeDifficulty();

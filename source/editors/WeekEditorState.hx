@@ -790,11 +790,8 @@ class WeekEditorFreeplayState extends MusicBeatState
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			}
 
-			if (FlxG.mouse.wheel != 0) {
-				changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
-			}
-			if (controls.UI_UP_P) changeSelection(-1);
-			if (controls.UI_DOWN_P) changeSelection(1);
+			if (controls.UI_UP_P || FlxG.mouse.wheel > 0) changeSelection(-1);
+			if (controls.UI_DOWN_P || FlxG.mouse.wheel < 0) changeSelection(1);
 		}
 		super.update(elapsed);
 	}

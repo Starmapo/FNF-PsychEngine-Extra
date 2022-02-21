@@ -42,15 +42,12 @@ class NotesChooseState extends MusicBeatState {
 	}
 
     override function update(elapsed:Float) {
-        if (FlxG.mouse.wheel != 0) {
-            changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
-        }
         var shiftMult:Int = 1;
         if (FlxG.keys.pressed.SHIFT) shiftMult = 3;
-        if (controls.UI_UP_P) {
+        if (controls.UI_UP_P || FlxG.mouse.wheel > 0) {
             changeSelection(-shiftMult);
         }
-        if (controls.UI_DOWN_P) {
+        if (controls.UI_DOWN_P || FlxG.mouse.wheel < 0) {
             changeSelection(shiftMult);
         }
 

@@ -439,5 +439,6 @@
 	"sustainXOffset": 0,
 	"downscrollTailYOffset": -19,
 	"noAntialiasing": false,
-	"isPixel": false
+	"isPixel": false,
+	"introSoundsSuffix": ""
 }

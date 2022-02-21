@@ -219,25 +219,17 @@ class FreeplayState extends MusicBeatState
 		var space = FlxG.keys.justPressed.SPACE;
 		var ctrl = FlxG.keys.justPressed.CONTROL;
 
-		if (FlxG.mouse.wheel != 0) {
-			if (FlxG.keys.pressed.SHIFT) {
-				changeDiff(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
-			} else if (songs.length > 1) {
-				changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
-			}
-		}
-
 		var shiftMult:Int = 1;
 		if (FlxG.keys.pressed.SHIFT) shiftMult = 3;
 
 		if (songs.length > 1)
 		{
-			if (upP)
+			if (upP || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
 			{
 				changeSelection(-shiftMult);
 				holdTime = 0;
 			}
-			if (downP)
+			if (downP || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
 			{
 				changeSelection(shiftMult);
 				holdTime = 0;
@@ -256,10 +248,12 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
-		if (controls.UI_LEFT_P)
-			changeDiff(-1);
-		else if (controls.UI_RIGHT_P)
-			changeDiff(1);
+		if (CoolUtil.difficulties.length > 1) {
+			if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
+				changeDiff(-1);
+			else if (controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
+				changeDiff(1);
+		}
 
 		if (controls.BACK)
 		{

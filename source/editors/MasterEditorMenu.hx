@@ -80,31 +80,20 @@ class MasterEditorMenu extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		if (FlxG.mouse.wheel != 0) {
-			#if MODS_ALLOWED
-			if (FlxG.keys.pressed.SHIFT) {
-				changeDirectory(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)));
-			} else {
-			#end
-				changeSelection(Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1)) * -1);
-			#if MODS_ALLOWED
-			}
-			#end
-		}
-		if (controls.UI_UP_P)
+		if (controls.UI_UP_P || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
 		{
 			changeSelection(-1);
 		}
-		if (controls.UI_DOWN_P)
+		if (controls.UI_DOWN_P || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
 		{
 			changeSelection(1);
 		}
 		#if MODS_ALLOWED
-		if (controls.UI_LEFT_P)
+		if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
 		{
 			changeDirectory(-1);
 		}
-		if (controls.UI_RIGHT_P)
+		if (controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
 		{
 			changeDirectory(1);
 		}
