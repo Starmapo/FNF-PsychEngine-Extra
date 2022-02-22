@@ -1020,7 +1020,7 @@ class ChartingState extends MusicBeatState
 		var tab_group_note = new FlxUI(null, UI_box);
 		tab_group_note.name = 'Note';
 
-		stepperSusLength = new FlxUINumericStepper(10, 25, Conductor.stepCrochet / 2, 0, 0, Conductor.stepCrochet * (Conductor.numerator * 8));
+		stepperSusLength = new FlxUINumericStepper(10, 25, Conductor.stepCrochet / 2, 0, 0, 999999);
 		stepperSusLength.value = 0;
 		stepperSusLength.name = 'note_susLength';
 		blockPressWhileTypingOnStepper.push(stepperSusLength);
@@ -1920,7 +1920,7 @@ class ChartingState extends MusicBeatState
 				style = 3;
 			}
 			
-			var conductorTime = Conductor.songPosition; //+ sectionStartTime();Conductor.songPosition / Conductor.stepCrochet;
+			var conductorTime = Conductor.songPosition;
 			
 			//AWW YOU MADE IT SEXY <3333 THX SHADMAR
 			if (vortex && !blockInput) {
@@ -2501,8 +2501,8 @@ class ChartingState extends MusicBeatState
 		}
 
 		// NEXT SECTION
-		if (curSection < _song.notes.length-1) {
-			for (i in _song.notes[curSection+1].sectionNotes)
+		if (curSection < _song.notes.length - 1) {
+			for (i in _song.notes[curSection + 1].sectionNotes)
 			{
 				var note:Note = setupNoteData(i, true);
 				note.alpha = 0.6;
@@ -2615,7 +2615,7 @@ class ChartingState extends MusicBeatState
 	}
 
 	function setupSusNote(note:Note):FlxSprite {
-		var height:Int = Math.floor(FlxMath.remapToRange(note.sustainLength, 0, Conductor.stepCrochet * _song.notes[curSection].lengthInSteps, 0, (GRID_SIZE * _song.notes[curSection].lengthInSteps * zoomList[curZoom])) + (GRID_SIZE * zoomList[curZoom]) - GRID_SIZE / 2);
+		var height:Int = FlxMath.maxInt(gridBG.height, Math.floor(FlxMath.remapToRange(note.sustainLength, 0, Conductor.stepCrochet * _song.notes[curSection].lengthInSteps, 0, (GRID_SIZE * _song.notes[curSection].lengthInSteps * zoomList[curZoom])) + (GRID_SIZE * zoomList[curZoom]) - GRID_SIZE / 2));
 		var minHeight:Int = Std.int((GRID_SIZE * zoomList[curZoom] / 2) + GRID_SIZE / 2);
 		if (height < minHeight) height = minHeight;
 		if (height < 1) height = 1; //Prevents error of invalid height
@@ -2674,7 +2674,6 @@ class ChartingState extends MusicBeatState
 		}
 		
 		stepperSusLength.stepSize = Conductor.stepCrochet / 2;
-		stepperSusLength.max = Conductor.stepCrochet * (Conductor.numerator * 8);
 
 		updateGrid();
 		updateNoteUI();
@@ -2728,8 +2727,8 @@ class ChartingState extends MusicBeatState
 			{
 				if (note.overlapsPoint(new FlxPoint(strumLineNotes.members[d].x + 1,strumLine.y + 1)) && note.noteData == checkData)
 				{
-						if (!delnote) deleteNote(note);
-						delnote = true;
+					if (!delnote) deleteNote(note);
+					delnote = true;
 				}
 			});
 		}
@@ -2783,7 +2782,6 @@ class ChartingState extends MusicBeatState
 		}
 
 		stepperSusLength.stepSize = Conductor.stepCrochet / 2;
-		stepperSusLength.max = Conductor.stepCrochet * (Conductor.numerator * 8);
 
 		updateGrid();
 		updateNoteUI();
@@ -2803,14 +2801,14 @@ class ChartingState extends MusicBeatState
 	{
 		var leZoom:Float = zoomList[curZoom];
 		if (!doZoomCalc) leZoom = 1;
-		return FlxMath.remapToRange(yPos, gridBG.y, gridBG.y + (GRID_SIZE * _song.notes[curSection].lengthInSteps) * leZoom, 0, _song.notes[curSection].lengthInSteps * Conductor.stepCrochet);
+		return FlxMath.remapToRange(yPos, gridBG.y, gridBG.y + (GRID_SIZE * _song.notes[curSection].lengthInSteps * leZoom), 0, _song.notes[curSection].lengthInSteps * Conductor.stepCrochet);
 	}
 
 	function getYfromStrum(strumTime:Float, doZoomCalc:Bool = true):Float
 	{
 		var leZoom:Float = zoomList[curZoom];
 		if (!doZoomCalc) leZoom = 1;
-		return FlxMath.remapToRange(strumTime, 0, _song.notes[curSection].lengthInSteps * Conductor.stepCrochet, gridBG.y, gridBG.y + (GRID_SIZE * _song.notes[curSection].lengthInSteps) * leZoom);
+		return FlxMath.remapToRange(strumTime, 0, _song.notes[curSection].lengthInSteps * Conductor.stepCrochet, gridBG.y, gridBG.y + (GRID_SIZE * _song.notes[curSection].lengthInSteps * leZoom));
 	}
 
 	function makeStrumNotes():Void {
