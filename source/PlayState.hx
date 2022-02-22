@@ -177,6 +177,7 @@ class PlayState extends MusicBeatState
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
+	public var iconBopSpeed:Int = 1;
 
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 	var dialogueJson:DialogueFile = null;
@@ -1859,21 +1860,13 @@ class PlayState extends MusicBeatState
 			startTimer = new FlxTimer().start(modifiedCrochet / 1000, function(tmr:FlxTimer)
 			{
 				if (!inEditor) {
-					for (gf in gfGroup) {
-						if (tmr.loopsLeft % gf.danceSpeed == 0 && !gf.stunned && gf.animation.curAnim.name != null && !gf.animation.curAnim.name.startsWith("sing") && !gf.specialAnim) {
-							gf.dance();
-						}
-					}
-			
-					for (boyfriend in boyfriendGroup) {
-						if (tmr.loopsLeft % boyfriend.danceSpeed == 0 && !boyfriend.stunned && boyfriend.animation.curAnim.name != null && !boyfriend.animation.curAnim.name.startsWith("sing") && !boyfriend.specialAnim) {
-							boyfriend.dance();
-						}
-					}
-			
-					for (dad in dadGroup) {
-						if (tmr.loopsLeft % dad.danceSpeed == 0 && !dad.stunned && dad.animation.curAnim.name != null && !dad.animation.curAnim.name.startsWith("sing") && !dad.specialAnim) {
-							dad.dance();
+					var chars = [boyfriendGroup, dadGroup, gfGroup];
+					for (group in chars) {
+						for (char in group) {
+							if (tmr.loopsLeft % char.danceSpeed == 0 && !char.stunned && char.animation.curAnim.name != null && !char.animation.curAnim.name.startsWith("sing") && !char.specialAnim)
+							{
+								char.dance();
+							}
 						}
 					}
 
@@ -3425,6 +3418,7 @@ class PlayState extends MusicBeatState
 					if (split[1] != null) intensity = Std.parseFloat(split[1].trim());
 					if (Math.isNaN(duration)) duration = 0;
 					if (Math.isNaN(intensity)) intensity = 0;
+					duration /= playbackRate;
 
 					if (duration > 0 && intensity != 0) {
 						targetsArray[i].shake(intensity, duration);
@@ -3459,15 +3453,13 @@ class PlayState extends MusicBeatState
 							boyfriendGroup.insert(index, boyfriendMap.get(value2));
 							boyfriendGroup.members[index].alpha = lastAlpha;
 							makeDoubleTrail(boyfriendGroup.members[index], 'bf$index', true, index, boyfriendGroup);
-							var iconName = [];
-							for (char in boyfriendGroup) {
-								iconName.push(char.curCharacter);
-							}
-							iconP1.changeIcon(iconName.join('-'));
 							boyfriend = boyfriendGroup.members[0];
+							if (boyfriendGroup.members.length == 1) {
+								iconP1.changeIcon(boyfriend.curCharacter);
+							}
 							setOnLuas('boyfriendName', boyfriend.curCharacter);
+							reloadHealthBarColors();
 						}
-						reloadHealthBarColors();
 
 					case 1:
 						index %= dadGroup.length;
@@ -3491,12 +3483,10 @@ class PlayState extends MusicBeatState
 							}
 							dadGroup.members[index].alpha = lastAlpha;
 							makeDoubleTrail(dadGroup.members[index], 'dad$index', false, index, dadGroup);
-							var iconName = [];
-							for (char in dadGroup) {
-								iconName.push(char.curCharacter);
-							}
-							iconP2.changeIcon(iconName.join('-'));
 							dad = dadGroup.members[0];
+							if (dadGroup.members.length == 1) {
+								iconP2.changeIcon(dad.curCharacter);
+							}
 							setOnLuas('dadName', dad.curCharacter);
 							reloadHealthBarColors();
 						}
@@ -3530,6 +3520,7 @@ class PlayState extends MusicBeatState
 				var val2:Float = Std.parseFloat(value2);
 				if (Math.isNaN(val1)) val1 = 1;
 				if (Math.isNaN(val2)) val2 = 0;
+				val2 /= playbackRate;
 
 				var newValue:Float = SONG.speed * ClientPrefs.getGameplaySetting('scrollspeed', 1) * val1;
 
@@ -4824,30 +4815,20 @@ class PlayState extends MusicBeatState
 				camHUD.zoom += 0.03;
 			}
 
-			iconP1.scale.set(1.2, 1.2);
-			iconP2.scale.set(1.2, 1.2);
-
-			iconP1.updateHitbox();
-			iconP2.updateHitbox();
-
-			for (gf in gfGroup) {
-				if (curBeat % gf.danceSpeed == 0 && !gf.stunned && gf.animation.curAnim.name != null && !gf.animation.curAnim.name.startsWith("sing") && !gf.specialAnim)
-				{
-					gf.dance();
-				}
+			if (iconBopSpeed > 0 && curBeat % iconBopSpeed == 0) {
+				iconP1.scale.set(1.2, 1.2);
+				iconP2.scale.set(1.2, 1.2);
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
 			}
 
-			for (boyfriend in boyfriendGroup) {
-				if (curBeat % boyfriend.danceSpeed == 0 && boyfriend.animation.curAnim.name != null && !boyfriend.animation.curAnim.name.startsWith("sing") && !boyfriend.stunned && !boyfriend.specialAnim)
-				{
-					boyfriend.dance();
-				}
-			}
-
-			for (dad in dadGroup) {
-				if (curBeat % dad.danceSpeed == 0 && dad.animation.curAnim.name != null && !dad.animation.curAnim.name.startsWith("sing") && !dad.stunned && !dad.specialAnim)
-				{
-					dad.dance();
+			var chars = [boyfriendGroup, dadGroup, gfGroup];
+			for (group in chars) {
+				for (char in group) {
+					if (curBeat % char.danceSpeed == 0 && !char.stunned && char.animation.curAnim.name != null && !char.animation.curAnim.name.startsWith("sing") && !char.specialAnim)
+					{
+						char.dance();
+					}
 				}
 			}
 

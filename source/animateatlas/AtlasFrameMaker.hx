@@ -25,7 +25,7 @@ class AtlasFrameMaker extends FlxFramesCollection
 	*
 	*/
 
-	public static function construct(key:String,?_excludeArray:Array<String> = null):FlxFramesCollection
+	public static function construct(key:String, ?_excludeArray:Array<String> = null, ?noAntialiasing:Bool = false):FlxFramesCollection
 	{
 		var frameCollection:FlxFramesCollection;
 		var frameArray:Array<Array<FlxFrame>> = [];
@@ -42,7 +42,7 @@ class AtlasFrameMaker extends FlxFramesCollection
 
 		var graphic = Paths.image('$key/spritemap');
 		var ss = new SpriteAnimationLibrary(animationData, atlasData, graphic.bitmap);
-		var t = ss.createAnimation();
+		var t = ss.createAnimation(noAntialiasing);
 		if (_excludeArray == null)
 		{
 			_excludeArray = t.getFrameLabels();

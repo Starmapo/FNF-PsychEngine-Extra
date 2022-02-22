@@ -153,8 +153,9 @@ class CoolUtil
 		if (diffStr != null && diffStr.length > 0)
 		{
 			var diffs:Array<String> = diffStr.split(',');
-			var i:Int = diffs.length - 1;
-			while (i > 0)
+			var i = 0;
+			var len = diffs.length;
+			while (i < len)
 			{
 				if (diffs[i] != null)
 				{
@@ -165,12 +166,12 @@ class CoolUtil
 				{
 					diffs.remove(diffs[i]);
 				}
-				--i;
+				i++;
 			}
 			
 			if (remove && song.length > 0) {
 				for (i in 0...diffs.length) {
-					if (diffs[i] != null) { //HTML5 why does this need to happen nulls should already be removed????
+					if (diffs[i] != null) {
 						var suffix = '-${Paths.formatToSongPath(diffs[i])}';
 						if (Paths.formatToSongPath(diffs[i]) == defaultDifficulty.toLowerCase()) {
 							suffix = '';

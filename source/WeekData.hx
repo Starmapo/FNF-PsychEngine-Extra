@@ -229,4 +229,26 @@ class WeekData {
 			Paths.currentModDirectory = data.folder;
 		}
 	}
+
+	public static function loadTheFirstEnabledMod()
+	{
+		Paths.currentModDirectory = '';
+
+		#if MODS_ALLOWED
+		if (FileSystem.exists("modsList.txt"))
+		{
+			var list:Array<String> = CoolUtil.listFromString(File.getContent("modsList.txt"));
+			var foundTheTop = false;
+			for (i in list)
+			{
+				var dat = i.split("|");
+				if (dat[1] == "1" && !foundTheTop)
+				{
+					foundTheTop = true;
+					Paths.currentModDirectory = dat[0];
+				}
+			}
+		}
+		#end
+	}
 }
