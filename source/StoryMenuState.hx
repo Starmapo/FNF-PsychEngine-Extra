@@ -193,18 +193,20 @@ class StoryMenuState extends MusicBeatState
 
 		if (!movedBack && !selectedWeek)
 		{
+			var shiftMult:Int = 1;
+			if (FlxG.keys.pressed.SHIFT) shiftMult = 3;
 			var upP = controls.UI_UP_P;
 			var downP = controls.UI_DOWN_P;
 			if (upP || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
 			{
-				changeWeek(-1);
+				changeWeek(-shiftMult);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				holdTime = 0;
 			}
 
 			if (downP || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
 			{
-				changeWeek(1);
+				changeWeek(shiftMult);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				holdTime = 0;
 			}
