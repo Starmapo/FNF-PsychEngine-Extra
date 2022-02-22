@@ -2615,7 +2615,7 @@ class ChartingState extends MusicBeatState
 	}
 
 	function setupSusNote(note:Note):FlxSprite {
-		var height:Int = FlxMath.maxInt(gridBG.height, Math.floor(FlxMath.remapToRange(note.sustainLength, 0, Conductor.stepCrochet * _song.notes[curSection].lengthInSteps, 0, (GRID_SIZE * _song.notes[curSection].lengthInSteps * zoomList[curZoom])) + (GRID_SIZE * zoomList[curZoom]) - GRID_SIZE / 2));
+		var height:Int = FlxMath.minInt(gridBG.height, Math.floor(FlxMath.remapToRange(note.sustainLength, 0, Conductor.stepCrochet * _song.notes[curSection].lengthInSteps, 0, (GRID_SIZE * _song.notes[curSection].lengthInSteps * zoomList[curZoom])) + (GRID_SIZE * zoomList[curZoom]) - GRID_SIZE / 2));
 		var minHeight:Int = Std.int((GRID_SIZE * zoomList[curZoom] / 2) + GRID_SIZE / 2);
 		if (height < minHeight) height = minHeight;
 		if (height < 1) height = 1; //Prevents error of invalid height
