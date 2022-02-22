@@ -14,6 +14,7 @@ import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.util.FlxSave;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
@@ -36,11 +37,11 @@ using StringTools;
 
 class FunkinLua {
 	#if windows
-	public static var Function_Stop = 1;
-	public static var Function_Continue = 0;
+	public static var Function_Stop:Dynamic = 1;
+	public static var Function_Continue:Dynamic = 0;
 	#else
-	public static var Function_Stop = 'Function_Stop';
-	public static var Function_Continue = 'Function_Continue';
+	public static var Function_Stop:Dynamic = 'Function_Stop';
+	public static var Function_Continue:Dynamic = 'Function_Continue';
 	#end
 
 	#if LUA_ALLOWED
@@ -97,6 +98,7 @@ class FunkinLua {
 
 		set('isStoryMode', PlayState.isStoryMode);
 		set('difficulty', PlayState.storyDifficulty);
+		set('difficultyName', CoolUtil.difficulties[PlayState.storyDifficulty]);
 		set('weekRaw', PlayState.storyWeek);
 		set('week', WeekData.weeksList[PlayState.storyWeek]);
 		set('seenCutscene', PlayState.seenCutscene);
@@ -111,6 +113,7 @@ class FunkinLua {
 
 		// PlayState cringe ass nae nae bullcrap
 		set('curBeat', 0);
+		set('curNumeratorBeat', 0);
 		set('curStep', 0);
 
 		set('score', 0);
@@ -180,6 +183,20 @@ class FunkinLua {
 
 		//FOR COMPATIBILITY REASONS
 		set('lowQuality', ClientPrefs.stageQuality != 'Normal');
+
+		#if windows
+		set('buildTarget', 'windows');
+		#elseif linux
+		set('buildTarget', 'linux');
+		#elseif mac
+		set('buildTarget', 'mac');
+		#elseif html5
+		set('buildTarget', 'browser');
+		#elseif android
+		set('buildTarget', 'android');
+		#else
+		set('buildTarget', 'unknown');
+		#end
 
 		// Block require and os, Should probably have a proper function but this should be good enough for now until someone smarter comes along and recreates a safe version of the OS library
 		set('require', false);
@@ -871,6 +888,30 @@ class FunkinLua {
 			var cam:FlxCamera = cameraFromString(camera);
 			return FlxG.mouse.getScreenPosition(cam).y;
 		});
+		Lua_helper.add_callback(lua, "getMidpointX", function(variable:String) {
+			var obj:FlxObject = getObjectDirectly(variable);
+			if(obj != null) return obj.getMidpoint().x;
+
+			return 0;
+		});
+		Lua_helper.add_callback(lua, "getMidpointY", function(variable:String) {
+			var obj:FlxObject = getObjectDirectly(variable);
+			if(obj != null) return obj.getMidpoint().y;
+
+			return 0;
+		});
+		Lua_helper.add_callback(lua, "getGraphicMidpointX", function(variable:String) {
+			var obj:FlxSprite = getObjectDirectly(variable);
+			if(obj != null) return obj.getGraphicMidpoint().x;
+
+			return 0;
+		});
+		Lua_helper.add_callback(lua, "getGraphicMidpointY", function(variable:String) {
+			var obj:FlxSprite = getObjectDirectly(variable);
+			if(obj != null) return obj.getGraphicMidpoint().y;
+
+			return 0;
+		});
 		Lua_helper.add_callback(lua, "getScreenPositionX", function(variable:String) {
 			var obj:FlxObject = getObjectDirectly(variable);
 			if(obj != null) return obj.getScreenPosition().x;
@@ -925,6 +966,15 @@ class FunkinLua {
 					daIcon = PlayState.instance.iconP2;
 			}
 			daIcon.changeIcon(char);
+		});
+		Lua_helper.add_callback(lua, "setHealthBarColors", function(left:String = '0xFFFF0000', right:String = '0xFF66FF33') {
+			var leftColorNum:Int = Std.parseInt(left);
+			if (!left.startsWith('0x')) leftColorNum = Std.parseInt('0xff$left');
+			var rightColorNum:Int = Std.parseInt(right);
+			if (!right.startsWith('0x')) rightColorNum = Std.parseInt('0xff$right');
+
+			PlayState.instance.healthBar.createFilledBar(leftColorNum, rightColorNum);
+			PlayState.instance.healthBar.updateBar();
 		});
 
 		Lua_helper.add_callback(lua, "makeLuaSprite", function(tag:String, image:String, x:Float, y:Float) {
@@ -1206,18 +1256,6 @@ class FunkinLua {
 				return spr.pixels.getPixel32(x, y);
 			}
 			return 0;
-		});
-		Lua_helper.add_callback(lua, "getMidpointX", function(obj:String) {
-			return getObjectDirectly(obj).getMidpoint().x;
-		});
-		Lua_helper.add_callback(lua, "getMidpointY", function(obj:String) {
-			return getObjectDirectly(obj).getMidpoint().y;
-		});
-		Lua_helper.add_callback(lua, "getGraphicMidpointX", function(obj:String) {
-			return getObjectDirectly(obj).getGraphicMidpoint().x;
-		});
-		Lua_helper.add_callback(lua, "getGraphicMidpointY", function(obj:String) {
-			return getObjectDirectly(obj).getGraphicMidpoint().y;
 		});
 		Lua_helper.add_callback(lua, "getRandomInt", function(min:Int, max:Int = FlxMath.MAX_VALUE_INT, exclude:String = '') {
 			var excludeArray:Array<String> = exclude.split(',');
@@ -1555,6 +1593,45 @@ class FunkinLua {
 			}
 		});
 
+		Lua_helper.add_callback(lua, "initSaveData", function(name:String, ?folder:String = 'psychenginemods') {
+			if(!PlayState.instance.modchartSaves.exists(name))
+			{
+				var save:FlxSave = new FlxSave();
+				save.bind(name, folder);
+				PlayState.instance.modchartSaves.set(name, save);
+				return;
+			}
+			luaTrace('Save file already initialized: ' + name);
+		});
+		Lua_helper.add_callback(lua, "flushSaveData", function(name:String) {
+			if(PlayState.instance.modchartSaves.exists(name))
+			{
+				PlayState.instance.modchartSaves.get(name).flush();
+				return;
+			}
+			luaTrace('Save file not initialized: ' + name);
+		});
+		Lua_helper.add_callback(lua, "getDataFromSave", function(name:String, field:String) {
+			if(PlayState.instance.modchartSaves.exists(name))
+			{
+				var retVal:Dynamic = Reflect.field(PlayState.instance.modchartSaves.get(name).data, field);
+				return retVal;
+			}
+			luaTrace('Save file not initialized: ' + name);
+			return null;
+		});
+		Lua_helper.add_callback(lua, "setDataFromSave", function(name:String, field:String, value:Dynamic) {
+			if(PlayState.instance.modchartSaves.exists(name))
+			{
+				Reflect.setField(PlayState.instance.modchartSaves.get(name).data, field, value);
+				return;
+			}
+			luaTrace('Save file not initialized: ' + name);
+		});
+
+		Lua_helper.add_callback(lua, "getTextFromFile", function(path:String, ?ignoreModFolders:Bool = false) {
+			return Paths.getTextFromFile(path, ignoreModFolders);
+		});
 
 		// DEPRECATED, DONT MESS WITH THESE SHITS, ITS JUST THERE FOR BACKWARD COMPATIBILITY
 		Lua_helper.add_callback(lua, "luaSpriteMakeGraphic", function(tag:String, width:Int, height:Int, color:String) {

@@ -38,6 +38,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.input.keyboard.FlxKey;
 import Note.EventNote;
 import openfl.events.KeyboardEvent;
+import flixel.util.FlxSave;
 import Achievements;
 import DialogueBoxPsych;
 import FunkinLua;
@@ -75,6 +76,7 @@ class PlayState extends MusicBeatState
 	public var modchartTimers:Map<String, FlxTimer> = new Map<String, FlxTimer>();
 	public var modchartSounds:Map<String, FlxSound> = new Map<String, FlxSound>();
 	public var modchartTexts:Map<String, ModchartText> = new Map<String, ModchartText>();
+	public var modchartSaves:Map<String, FlxSave> = new Map<String, FlxSave>();
 	//event variables
 	private var isCameraOnForcedPos:Bool = false;
 	public var boyfriendMap:Map<String, Character> = new Map();
@@ -131,6 +133,7 @@ class PlayState extends MusicBeatState
 	public var grpNoteSplashes:FlxTypedGroup<NoteSplash>;
 
 	public var camZooming:Bool = false;
+	public var camBop:Bool = true;
 	private var curSong:String = "";
 
 	public var health:Float = 1;
@@ -1252,7 +1255,7 @@ class PlayState extends MusicBeatState
 			healthBarBG.sprTracker = healthBar;
 
 			iconP1 = new HealthIcon(boyfriend.healthIcon, true);
-			if (bfGroupFile != null && bfGroupFile.characters != null) {
+			if (bfGroupFile != null) {
 				iconP1 = new HealthIcon(bfGroupFile.healthicon, true);
 			}
 			iconP1.y = healthBar.y - 75;
@@ -1261,7 +1264,7 @@ class PlayState extends MusicBeatState
 			add(iconP1);
 
 			iconP2 = new HealthIcon(dad.healthIcon, false);
-			if (dadGroupFile != null && dadGroupFile.characters != null) {
+			if (dadGroupFile != null) {
 				iconP2 = new HealthIcon(dadGroupFile.healthicon, false);
 			}
 			iconP2.y = healthBar.y - 75;
@@ -1518,10 +1521,10 @@ class PlayState extends MusicBeatState
 
 	public function reloadHealthBarColors() {
 		var healthColors = [dad.healthColorArray, boyfriend.healthColorArray];
-		if (dadGroupFile != null && dadGroupFile.characters != null) {
+		if (dadGroupFile != null) {
 			healthColors[0] = dadGroupFile.healthbar_colors;
 		}
-		if (bfGroupFile != null && bfGroupFile.characters != null) {
+		if (bfGroupFile != null) {
 			healthColors[1] = bfGroupFile.healthbar_colors;
 		}
 		if (!opponentChart) {
@@ -3547,7 +3550,7 @@ class PlayState extends MusicBeatState
 		if (SONG.notes[id].gfSection)
 		{
 			camFollow.set(gf.getMidpoint().x, gf.getMidpoint().y);
-			if (gfGroupFile != null && gfGroupFile.characters != null) {
+			if (gfGroupFile != null) {
 				camFollow.x += gfGroupFile.camera_position[0];
 				camFollow.y += gfGroupFile.camera_position[1];
 			} else {
@@ -3577,7 +3580,7 @@ class PlayState extends MusicBeatState
 		if (isDad)
 		{
 			camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
-			if (dadGroupFile != null && dadGroupFile.characters != null) {
+			if (dadGroupFile != null) {
 				camFollow.x += dadGroupFile.camera_position[0];
 				camFollow.y += dadGroupFile.camera_position[1];
 			} else {
@@ -3600,7 +3603,7 @@ class PlayState extends MusicBeatState
 					camFollow.x = boyfriend.getMidpoint().x - 200;
 					camFollow.y = boyfriend.getMidpoint().y - 200;
 			}
-			if (bfGroupFile != null && bfGroupFile.characters != null) {
+			if (bfGroupFile != null) {
 				camFollow.x -= bfGroupFile.camera_position[0];
 				camFollow.y += bfGroupFile.camera_position[1];
 			} else {
@@ -4639,14 +4642,12 @@ class PlayState extends MusicBeatState
 		lightningStrikeBeat = curBeat;
 		lightningOffset = FlxG.random.int(8, 24);
 
-		for (boyfriend in boyfriendGroup) {
-			if (boyfriend.animOffsets.exists('scared')) {
-				boyfriend.playAnim('scared', true);
-			}
-		}
-		for (gf in gfGroup) {
-			if (gf.animOffsets.exists('scared')) {
-				gf.playAnim('scared', true);
+		var chars = [boyfriendGroup, gfGroup];
+		for (group in chars) {
+			for (char in group) {
+				if (char.animOffsets.exists('scared')) {
+					char.playAnim('scared', true);
+				}
 			}
 		}
 
@@ -4780,6 +4781,7 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
+		var curNumeratorBeat = Conductor.getCurNumeratorBeat(SONG, curBeat);
 		var curSection = Conductor.getCurSection(SONG, curStep);
 		if (SONG.notes[curSection] != null)
 		{
@@ -4809,7 +4811,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if (!inEditor) {
-			if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && Conductor.getCurNumeratorBeat(SONG, curBeat) % Conductor.numerator == 0)
+			if (camZooming && camBop && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curNumeratorBeat % Conductor.numerator == 0)
 			{
 				FlxG.camera.zoom += 0.015;
 				camHUD.zoom += 0.03;
@@ -4862,7 +4864,7 @@ class PlayState extends MusicBeatState
 						if (!trainMoving)
 							trainCooldown += 1;
 
-						if (Conductor.getCurNumeratorBeat(SONG, curBeat) % Conductor.numerator == 0)
+						if (curNumeratorBeat % Conductor.numerator == 0)
 						{
 							phillyCityLights.forEach(function(light:BGSprite)
 							{
@@ -4875,7 +4877,7 @@ class PlayState extends MusicBeatState
 							phillyCityLights.members[curLight].alpha = 1;
 						}
 
-						if (Conductor.getCurNumeratorBeat(SONG, curBeat) % (Conductor.numerator * 2) == Conductor.numerator && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
+						if (curNumeratorBeat % (Conductor.numerator * 2) == Conductor.numerator && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
 						{
 							trainCooldown = FlxG.random.int(-4, 0);
 							trainStart();
@@ -4891,6 +4893,7 @@ class PlayState extends MusicBeatState
 		lastBeatHit = curBeat;
 
 		setOnLuas('curBeat', curBeat);//DAWGG?????
+		setOnLuas('curNumeratorBeat', curNumeratorBeat);
 		callOnLuas('onBeatHit', []);
 	}
 

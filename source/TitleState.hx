@@ -128,13 +128,6 @@ class TitleState extends MusicBeatState
 			StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
 		}
 
-		//common assets
-		Paths.excludeAsset('alphabet');
-		Paths.excludeAsset('freakyMenu');
-		Paths.excludeAsset('scrollMenu');
-		Paths.excludeAsset('confirmMenu');
-		Paths.excludeAsset('cancelMenu');
-
 		FlxG.mouse.visible = false;
 		#if FREEPLAY
 		MusicBeatState.switchState(new FreeplayState());

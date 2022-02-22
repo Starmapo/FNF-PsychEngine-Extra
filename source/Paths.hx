@@ -44,7 +44,15 @@ class Paths
 			dumpExclusions.push(key);
 	}
 
-	public static var dumpExclusions:Array<String> = [];
+	public static var dumpExclusions:Array<String> =
+	[
+		'assets/images/alphabet.png',
+		'assets/sounds/scrollMenu.$SOUND_EXT',
+		'assets/sounds/confirmMenu.$SOUND_EXT',
+		'assets/sounds/cancelMenu.$SOUND_EXT',
+		'assets/music/freakyMenu.$SOUND_EXT',
+		'shared:assets/shared/music/breakfast.$SOUND_EXT'
+	];
 	/// haya I love you for the base cache dump I took to the max
 	public static function clearUnusedMemory() {
 		// clear non local assets in the tracked assets list
@@ -292,27 +300,27 @@ class Paths
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
 	public static function returnGraphic(key:String, ?library:String) {
 		#if MODS_ALLOWED
-		if (FileSystem.exists(modsImages(key))) {
-			if (!currentTrackedAssets.exists(key)) {
-				var newBitmap:BitmapData = BitmapData.fromFile(modsImages(key));
-				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
-				currentTrackedAssets.set(key, newGraphic);
-				
+		var modKey:String = modsImages(key);
+		if(FileSystem.exists(modKey)) {
+			if(!currentTrackedAssets.exists(modKey)) {
+				var newBitmap:BitmapData = BitmapData.fromFile(modKey);
+				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, modKey);
+				currentTrackedAssets.set(modKey, newGraphic);
 			}
-			localTrackedAssets.push(key);
-			return currentTrackedAssets.get(key);
+			localTrackedAssets.push(modKey);
+			return currentTrackedAssets.get(modKey);
 		}
 		#end
 		var path = getPath('images/$key.png', IMAGE, library);
 		if (OpenFlAssets.exists(path, IMAGE)) {
-			if (!currentTrackedAssets.exists(key)) {
-				var newGraphic:FlxGraphic = FlxG.bitmap.add(path, false, key);
-				currentTrackedAssets.set(key, newGraphic);
+			if(!currentTrackedAssets.exists(path)) {
+				var newGraphic:FlxGraphic = FlxG.bitmap.add(path, false, path);
+				currentTrackedAssets.set(path, newGraphic);
 			}
-			localTrackedAssets.push(key);
-			return currentTrackedAssets.get(key);
+			localTrackedAssets.push(path);
+			return currentTrackedAssets.get(path);
 		}
-		trace('oh no its returning null NOOOO $key');
+		trace('oh no its returning null NOOOO: $path');
 		return null;
 	}
 
@@ -324,7 +332,7 @@ class Paths
 			if (!currentTrackedSounds.exists(file)) {
 				currentTrackedSounds.set(file, Sound.fromFile(file));
 			}
-			localTrackedAssets.push(key);
+			localTrackedAssets.push(file);
 			return currentTrackedSounds.get(file);
 		}
 		#end
@@ -332,15 +340,17 @@ class Paths
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
 		if (!OpenFlAssets.exists(gottenPath))
 		{
+			trace('oh no its returning null NOOOO: $gottenPath');
 			return null;
 		}
-		if (!currentTrackedSounds.exists(gottenPath)) 
-		#if MODS_ALLOWED
+		if (!currentTrackedSounds.exists(gottenPath)) {
+			#if MODS_ALLOWED
 			currentTrackedSounds.set(gottenPath, Sound.fromFile('./${gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length)}'));
-		#else
+			#else
 			currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(gottenPath));
-		#end
-		localTrackedAssets.push(key);
+			#end
+		}
+		localTrackedAssets.push(gottenPath);
 		return currentTrackedSounds.get(gottenPath);
 	}
 	
