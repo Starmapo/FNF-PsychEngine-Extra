@@ -2358,7 +2358,7 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.pause();
 
 		FlxG.sound.music.play();
-		if (FlxG.sound.music.time > 0 && (!SONG.needsVoices || (vocals.time > 0 && (!foundDadVocals || vocalsDad.time > 0)))) {
+		if (Conductor.songPosition - FlxG.sound.music.time < 1000 && FlxG.sound.music.time > 0 && (!SONG.needsVoices || (vocals.time > 0 && (!foundDadVocals || vocalsDad.time > 0)))) {
 			Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 		} else {
 			FlxG.sound.music.time = Conductor.songPosition * playbackRate;
