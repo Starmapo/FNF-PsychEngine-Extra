@@ -1519,14 +1519,12 @@ class ChartingState extends MusicBeatState
 					_song.notes[curSection].changeBPM = check.checked;
 					Conductor.mapBPMChanges(_song);
 					updateGrid();
-					FlxG.log.add('changed bpm shit');
 
 				case 'Change Signature':
 					_song.notes[curSection].changeSignature = check.checked;
 					updateSectionLengths();
 					Conductor.mapBPMChanges(_song);
 					reloadGridLayer();
-					FlxG.log.add('changed signature shit');
 				
 				case "Alt Animation":
 					_song.notes[curSection].altAnim = check.checked;
@@ -1536,7 +1534,6 @@ class ChartingState extends MusicBeatState
 		{
 			var nums:FlxUINumericStepper = cast sender;
 			var wname = nums.name;
-			FlxG.log.add(wname);
 			if (wname == 'section_length')
 			{
 				_song.notes[curSection].lengthInSteps = Std.int(nums.value);
@@ -1720,7 +1717,6 @@ class ChartingState extends MusicBeatState
 					&& FlxG.mouse.y > gridBG.y
 					&& FlxG.mouse.y < gridBG.y + (GRID_SIZE * _song.notes[curSection].lengthInSteps) * zoomList[curZoom])
 				{
-					FlxG.log.add('added note');
 					addNote();
 				}
 			}
@@ -2615,7 +2611,7 @@ class ChartingState extends MusicBeatState
 	}
 
 	function setupSusNote(note:Note):FlxSprite {
-		var height:Int = FlxMath.minInt(gridBG.height, Math.floor(FlxMath.remapToRange(note.sustainLength, 0, Conductor.stepCrochet * _song.notes[curSection].lengthInSteps, 0, (GRID_SIZE * _song.notes[curSection].lengthInSteps * zoomList[curZoom])) + (GRID_SIZE * zoomList[curZoom]) - GRID_SIZE / 2));
+		var height:Int = FlxMath.minInt(Std.int(gridBG.height), Math.floor(FlxMath.remapToRange(note.sustainLength, 0, Conductor.stepCrochet * _song.notes[curSection].lengthInSteps, 0, (GRID_SIZE * _song.notes[curSection].lengthInSteps * zoomList[curZoom])) + (GRID_SIZE * zoomList[curZoom]) - GRID_SIZE / 2));
 		var minHeight:Int = Std.int((GRID_SIZE * zoomList[curZoom] / 2) + GRID_SIZE / 2);
 		if (height < minHeight) height = minHeight;
 		if (height < 1) height = 1; //Prevents error of invalid height

@@ -533,10 +533,10 @@ class Controls extends FlxActionSet
 				inline bindKeys(Control.UI_DOWN, keysMap.get('ui_down'));
 				inline bindKeys(Control.UI_LEFT, keysMap.get('ui_left'));
 				inline bindKeys(Control.UI_RIGHT, keysMap.get('ui_right'));
-				inline bindKeys(Control.NOTE_UP, keysMap.get('note_up'));
-				inline bindKeys(Control.NOTE_DOWN, keysMap.get('note_down'));
-				inline bindKeys(Control.NOTE_LEFT, keysMap.get('note_left'));
-				inline bindKeys(Control.NOTE_RIGHT, keysMap.get('note_right'));
+				inline bindKeys(Control.NOTE_UP, keysMap.get('note4_0'));
+				inline bindKeys(Control.NOTE_DOWN, keysMap.get('note4_1'));
+				inline bindKeys(Control.NOTE_LEFT, keysMap.get('note4_2'));
+				inline bindKeys(Control.NOTE_RIGHT, keysMap.get('note4_3'));
 
 				inline bindKeys(Control.ACCEPT, keysMap.get('accept'));
 				inline bindKeys(Control.BACK, keysMap.get('back'));

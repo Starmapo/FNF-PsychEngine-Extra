@@ -303,19 +303,6 @@ class PlayState extends MusicBeatState
 		debugKeysCharacter = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_2'));
 		Achievements.loadAchievements();
 
-		keysArray = [
-			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left')),
-			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down')),
-			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_up')),
-			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_right'))
-		];
-
-		// For the "Just the Two of Us" achievement
-		for (i in 0...keysArray.length)
-		{
-			keysPressed.push(false);
-		}
-
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
@@ -370,134 +357,19 @@ class PlayState extends MusicBeatState
 		if (opponentChart) {
 			playerKeys = dadKeys;
 		}
-		switch (playerKeys) {
-			case 1:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note1'))
-				];
-			case 2:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'))
-				];
-			case 3:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_center')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note3_right'))
-				];
-			case 5:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_center')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_up')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_right'))
-				];
-			case 6:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_up')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_down')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right2'))
-				];
-			case 7:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_up')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_center')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_left2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_down')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note7_right2'))
-				];
-			case 8:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right2'))
-				];
-			case 9:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_center')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_left2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_down2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_up2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note9_right2'))
-				];
-			case 10:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_down')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_up')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_down3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_up3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right3'))
-				];
-			case 11:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_down')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_up')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_center')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_left3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_down3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_up3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note11_right3'))
-				];
-			case 12:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right3'))
-				];
-			case 13:
-				keysArray = [
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_center')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right2')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_left3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_down3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_up3')),
-					ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note13_right3'))
-				];
+		keysArray = [];
+		for (i in 0...playerKeys) {
+			keysArray.push(ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note${playerKeys}_$i')));
 		}
 		opponentKeys = dadKeys;
 		if (opponentChart) {
 			opponentKeys = bfKeys;
+		}
+
+		// For the "Just the Two of Us" achievement
+		for (i in 0...keysArray.length)
+		{
+			keysPressed.push(false);
 		}
 
 		if (SONG.uiSkin == null || SONG.uiSkin.length < 1) {
@@ -2486,7 +2358,7 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.pause();
 
 		FlxG.sound.music.play();
-		if (FlxG.sound.music.time > 0.2 && (!SONG.needsVoices || (vocals.time > 0.2 && (!foundDadVocals || vocalsDad.time > 0.2)))) {
+		if (FlxG.sound.music.time > 0 && (!SONG.needsVoices || (vocals.time > 0 && (!foundDadVocals || vocalsDad.time > 0)))) {
 			Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 		} else {
 			FlxG.sound.music.time = Conductor.songPosition * playbackRate;
