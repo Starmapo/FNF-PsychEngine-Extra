@@ -19,10 +19,10 @@ class ClientPrefs {
 	public static var hideHud:Bool = false;
 	public static var noteOffset:Int = 0;
 	public static var arrowHSV:Array<Array<Array<Int>>> = [];
-	public static var imagesPersist:Bool = false;
 	public static var ghostTapping:Bool = true;
 	public static var timeBarType:String = 'Time Left';
 	public static var scoreZoom:Bool = true;
+	public static var showRatings:Bool = true;
 	public static var noReset:Bool = false;
 	public static var healthBarAlpha:Float = 1;
 	public static var freeplayAlphabetic:Bool = false;
@@ -214,10 +214,10 @@ class ClientPrefs {
 		FlxG.save.data.noteOffset = noteOffset;
 		FlxG.save.data.hideHud = hideHud;
 		FlxG.save.data.arrowHSV = arrowHSV;
-		FlxG.save.data.imagesPersist = imagesPersist;
 		FlxG.save.data.ghostTapping = ghostTapping;
 		FlxG.save.data.timeBarType = timeBarType;
 		FlxG.save.data.scoreZoom = scoreZoom;
+		FlxG.save.data.showRatings = showRatings;
 		FlxG.save.data.noReset = noReset;
 		FlxG.save.data.healthBarAlpha = healthBarAlpha;
 		FlxG.save.data.comboOffset = comboOffset;
@@ -239,7 +239,7 @@ class ClientPrefs {
 	
 		FlxG.save.flush();
 
-		var save:FlxSave = new FlxSave();
+		var save = new FlxSave();
 		save.bind('controls_v2', 'ninjamuffin99'); //Placing this in a separate save so that it can be manually deleted without removing your Score and stuff
 		save.data.customControls = keyBinds;
 		save.flush();
@@ -307,6 +307,9 @@ class ClientPrefs {
 		if (FlxG.save.data.scoreZoom != null) {
 			scoreZoom = FlxG.save.data.scoreZoom;
 		}
+		if (FlxG.save.data.showRatings != null) {
+			showRatings = FlxG.save.data.showRatings;
+		}
 		if (FlxG.save.data.noReset != null) {
 			noReset = FlxG.save.data.noReset;
 		}
@@ -371,7 +374,7 @@ class ClientPrefs {
 			FlxG.sound.muted = FlxG.save.data.mute;
 		}
 
-		var save:FlxSave = new FlxSave();
+		var save = new FlxSave();
 		save.bind('controls_v2', 'ninjamuffin99');
 		if (save != null && save.data.customControls != null) {
 			var loadedControls:Map<String, Array<FlxKey>> = save.data.customControls;

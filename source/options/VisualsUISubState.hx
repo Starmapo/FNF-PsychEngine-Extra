@@ -52,8 +52,15 @@ class VisualsUISubState extends BaseOptionsMenu
 			true);
 		addOption(option);
 
+		var option:Option = new Option('Show Number of Ratings',
+			"Display the number of sicks, goods, bads,/n and shits you've gotten.",
+			'showRatings',
+			'bool',
+			true);
+		addOption(option);
+
 		var option:Option = new Option('Score Text Zoom on Hit',
-			"If unchecked, disables the Score text zooming\neverytime you hit a note.",
+			"If unchecked, disables the score and rating texts zooming\neverytime you hit a note.",
 			'scoreZoom',
 			'bool',
 			true);

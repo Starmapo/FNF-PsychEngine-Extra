@@ -18,7 +18,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 			'stageQuality',
 			'string',
 			'Normal',
-			['Normal', 'Low', 'Crappy']);
+			['Low', 'Crappy', 'Normal']);
 		addOption(option);
 
 		var option:Option = new Option('Anti-Aliasing',

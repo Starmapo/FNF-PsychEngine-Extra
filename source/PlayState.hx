@@ -1,13 +1,9 @@
 package;
 
-import openfl.display.BitmapData;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
-import Section.SwagSection;
-import Song.SwagSong;
-import UIData;
-import Character;
+import flash.media.Sound;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -18,6 +14,8 @@ import flixel.addons.effects.chainable.FlxWaveEffect;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.graphics.atlas.FlxAtlas;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup;
+import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
@@ -27,23 +25,24 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.util.FlxColor;
+import flixel.util.FlxSave;
 import flixel.util.FlxSort;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxTimer;
 import lime.utils.Assets;
+import openfl.events.KeyboardEvent;
 import openfl.utils.Assets as OpenFlAssets;
 import editors.ChartingState;
 import editors.CharacterEditorState;
-import flixel.group.FlxSpriteGroup;
-import flixel.input.keyboard.FlxKey;
-import Note.EventNote;
-import openfl.events.KeyboardEvent;
-import flixel.util.FlxSave;
 import Achievements;
+import Character;
 import DialogueBoxPsych;
 import FunkinLua;
+import Note.EventNote;
+import Section.SwagSection;
+import Song.SwagSong;
 import StageData;
-import flash.media.Sound;
+import UIData;
 #if MODS_ALLOWED
 import sys.FileSystem;
 #end
@@ -223,6 +222,9 @@ class PlayState extends MusicBeatState
 	var scoreTxtTween:FlxTween;
 	var stepTxt:FlxText;
 	var beatTxt:FlxText;
+
+	public var ratingTxtGroup:FlxTypedGroup<FlxText>;
+	public var ratingTxtTweens:Array<FlxTween> = [null, null, null, null, null];
 
 	public static var campaignScore:Int = 0;
 	public static var campaignMisses:Int = 0;
@@ -878,13 +880,6 @@ class PlayState extends MusicBeatState
 			}
 			boyfriend = boyfriendGroup.members[0];
 
-			//TEST
-			//imma make an automatic animations frame exporter later :P
-			/*var bmp:BitmapData = boyfriend.frame.paint();
-			var b:flash.utils.ByteArray = new flash.utils.ByteArray();
-			b = bmp.encode(bmp.rect, new flash.display.PNGEncoderOptions(true), b);
-			sys.io.File.saveBytes('test.png', b);*/
-
 			playerChar = boyfriendGroup;
 			opponentChar = dadGroup;
 			if (opponentChart) {
@@ -1185,11 +1180,22 @@ class PlayState extends MusicBeatState
 			FlxG.mouse.visible = false;
 		}
 
+		ratingTxtGroup = new FlxTypedGroup<FlxText>();
+		ratingTxtGroup.visible = !ClientPrefs.hideHud && ClientPrefs.showRatings;
+		for (i in 0...5) {
+			var ratingTxt = new FlxText(20, FlxG.height * 0.5 - 8 + (16 * (i - 2)), FlxG.width, "", 16);
+			ratingTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			ratingTxt.scrollFactor.set();
+			ratingTxtGroup.add(ratingTxt);
+		}
+		add(ratingTxtGroup);
+
 		if (!inEditor) {
 			strumLineNotes.cameras = [camHUD];
 			grpNoteSplashes.cameras = [camHUD];
 			notes.cameras = [camHUD];
 			scoreTxt.cameras = [camHUD];
+			ratingTxtGroup.cameras = [camHUD];
 			healthBar.cameras = [camHUD];
 			healthBarBG.cameras = [camHUD];
 			iconP1.cameras = [camHUD];
@@ -1738,7 +1744,7 @@ class PlayState extends MusicBeatState
 					var chars = [boyfriendGroup, dadGroup, gfGroup];
 					for (group in chars) {
 						for (char in group) {
-							if (tmr.loopsLeft % char.danceSpeed == 0 && !char.stunned && char.animation.curAnim.name != null && !char.animation.curAnim.name.startsWith("sing") && !char.specialAnim)
+							if (char.danceSpeed > 0 && tmr.loopsLeft % char.danceSpeed == 0 && !char.stunned && char.animation.curAnim.name != null && !char.animation.curAnim.name.startsWith("sing") && !char.specialAnim)
 							{
 								char.dance();
 							}
@@ -2363,8 +2369,12 @@ class PlayState extends MusicBeatState
 		} else {
 			FlxG.sound.music.time = Conductor.songPosition * playbackRate;
 		}
-		vocals.play();
-		vocalsDad.play();
+		if (FlxG.sound.music.time > 0 && vocals.time > 0) {
+			vocals.play();
+		}
+		if (FlxG.sound.music.time > 0 && vocalsDad.time > 0) {
+			vocalsDad.play();
+		}
 		vocals.time = vocalsDad.time = FlxG.sound.music.time;
 
 		#if cpp
@@ -2584,12 +2594,6 @@ class PlayState extends MusicBeatState
 		if (!inEditor && generatedMusic && SONG.notes[Conductor.getCurSection(SONG, curStep)] != null && !endingSong && !isCameraOnForcedPos)
 		{
 			moveCameraSection(Conductor.getCurSection(SONG, curStep));
-		}
-
-		if (ratingName == '?') {
-			scoreTxt.text = 'Score: $songScore | Misses: $songMisses | Rating: $ratingName';
-		} else {
-			scoreTxt.text = 'Score: $songScore | Misses: $songMisses | Rating: $ratingName (${Highscore.floorDecimal(ratingPercent * 100, 2)}%) - $ratingFC';//peeps wanted no integer rating
 		}
 
 		if (!inEditor) {
@@ -2873,6 +2877,27 @@ class PlayState extends MusicBeatState
 						char.dance();
 					}
 				}
+			}
+		}
+
+		if (ratingName == '?') {
+			scoreTxt.text = 'Score: $songScore' + (!ClientPrefs.showRatings ? ' | Misses: $songMisses' : '') + ' | Rating: $ratingName';
+		} else {
+			scoreTxt.text = 'Score: $songScore' + (!ClientPrefs.showRatings ? ' | Misses: $songMisses' : '') + ' | Rating: $ratingName (${Highscore.floorDecimal(ratingPercent * 100, 2)}%) - $ratingFC';//peeps wanted no integer rating
+		}
+		for (i in 0...ratingTxtGroup.members.length) {
+			var rating = ratingTxtGroup.members[i];
+			switch (i) {
+				case 0:
+					rating.text = 'Sick: $sicks';
+				case 1:
+					rating.text = 'Good: $goods';
+				case 2:
+					rating.text = 'Bad: $bads';
+				case 3:
+					rating.text = 'Shit: $shits';
+				case 4:
+					rating.text = 'Misses: $songMisses';
 			}
 		}
 
@@ -3756,17 +3781,21 @@ class PlayState extends MusicBeatState
 				totalNotesHit += 0;
 				score = 50;
 				shits++;
+				doRatingTween(3);
 			case "bad": // bad
 				totalNotesHit += 0.5;
 				score = 100;
 				bads++;
+				doRatingTween(2);
 			case "good": // good
 				totalNotesHit += 0.75;
 				score = 200;
 				goods++;
+				doRatingTween(1);
 			case "sick": // sick
 				totalNotesHit += 1;
 				sicks++;
+				doRatingTween(0);
 		}
 
 		if (daRating == 'sick' && !note.noteSplashDisabled)
@@ -3888,6 +3917,22 @@ class PlayState extends MusicBeatState
 			},
 			startDelay: Conductor.crochet * 0.001
 		});
+	}
+
+	function doRatingTween(ind:Int = 0) {
+		if (ClientPrefs.scoreZoom)
+		{
+			if (ratingTxtTweens[ind] != null) {
+				ratingTxtTweens[ind].cancel();
+			}
+			ratingTxtGroup.members[ind].scale.x = 1.02;
+			ratingTxtGroup.members[ind].scale.y = 1.02;
+			ratingTxtTweens[ind] = FlxTween.tween(ratingTxtGroup.members[ind].scale, {x: 1, y: 1}, 0.2, {
+				onComplete: function(twn:FlxTween) {
+					ratingTxtTweens[ind] = null;
+				}
+			});
+		}
 	}
 
 	private function onKeyPress(event:KeyboardEvent):Void
@@ -4069,6 +4114,7 @@ class PlayState extends MusicBeatState
 		}
 
 		songMisses++;
+		doRatingTween(4);
 		if (opponentChart && foundDadVocals)
 			vocalsDad.volume = 0;
 		else
@@ -4693,7 +4739,7 @@ class PlayState extends MusicBeatState
 			var chars = [boyfriendGroup, dadGroup, gfGroup];
 			for (group in chars) {
 				for (char in group) {
-					if (curBeat % char.danceSpeed == 0 && !char.stunned && char.animation.curAnim.name != null && !char.animation.curAnim.name.startsWith("sing") && !char.specialAnim)
+					if (char.danceSpeed > 0 && curBeat % char.danceSpeed == 0 && !char.stunned && char.animation.curAnim.name != null && !char.animation.curAnim.name.startsWith("sing") && !char.specialAnim)
 					{
 						char.dance();
 					}
@@ -4905,11 +4951,11 @@ class PlayState extends MusicBeatState
 				// Rating Name
 				if (ratingPercent >= 1)
 				{
-					ratingName = ratingStuff[ratingStuff.length-1][0]; //Uses last string
+					ratingName = ratingStuff[ratingStuff.length - 1][0]; //Uses last string
 				}
 				else
 				{
-					for (i in 0...ratingStuff.length-1)
+					for (i in 0...ratingStuff.length - 1)
 					{
 						if (ratingPercent < ratingStuff[i][1])
 						{
