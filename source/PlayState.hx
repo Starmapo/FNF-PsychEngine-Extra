@@ -3737,11 +3737,6 @@ class PlayState extends MusicBeatState
 	{
 		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 
-		if (opponentChart && foundDadVocals)
-			vocalsDad.volume = ClientPrefs.voicesVolume;
-		else
-			vocals.volume = ClientPrefs.voicesVolume;
-
 		var placement:String = Std.string(combo);
 
 		var coolText:FlxText = new FlxText(0, 0, 0, placement, 32);
@@ -3773,7 +3768,6 @@ class PlayState extends MusicBeatState
 				totalNotesHit += 1;
 				sicks++;
 		}
-
 
 		if (daRating == 'sick' && !note.noteSplashDisabled)
 		{
