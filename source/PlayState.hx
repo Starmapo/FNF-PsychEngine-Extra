@@ -2891,7 +2891,7 @@ class PlayState extends MusicBeatState
 			var rating = ratingTxtGroup.members[i];
 			switch (i) {
 				case 0:
-					rating.text = 'Sick: $sicks';
+					rating.text = 'Sick!: $sicks';
 				case 1:
 					rating.text = 'Good: $goods';
 				case 2:

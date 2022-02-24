@@ -31,7 +31,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		
 		var option:Option = new Option('Time Bar:',
-			"What should the Time Bar display?",
+			"What should the time bar display?",
 			'timeBarType',
 			'string',
 			'Time Left',
@@ -53,7 +53,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Show Number of Ratings',
-			"Display the number of sicks, goods, bads, and shits you've gotten.",
+			"Display the number of \"Sick!\"s, \"Good\"s, \"Bad\"s, and \"Shit\"s you've gotten.",
 			'showRatings',
 			'bool',
 			true);
@@ -67,7 +67,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Note Underlay Transparency',
-			'How much transparent should the note backgrounds be.',
+			'How visible the note backgrounds should be.',
 			'underlayAlpha',
 			'percent',
 			0);
@@ -79,7 +79,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Health Bar Transparency',
-			'How much transparent should the health bar and icons be.',
+			'How visible the health bar and icons should be.',
 			'healthBarAlpha',
 			'percent',
 			1);
@@ -99,7 +99,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		
 		#if !mobile
 		var option:Option = new Option('FPS & Memory Counter',
-			'If unchecked, hides the FPS & Memory Counter.',
+			'If unchecked, hides the FPS & memory counter.',
 			'showFPS',
 			'bool',
 			true);
