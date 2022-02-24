@@ -22,7 +22,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Anti-Aliasing',
-			'If unchecked, disables anti-aliasing, increases performance\nat the cost of sharper visuals.',
+			'If unchecked, disables anti-aliasing, increases performance at the cost of sharper visuals.',
 			'globalAntialiasing',
 			'bool',
 			true);

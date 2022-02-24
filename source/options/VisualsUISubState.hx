@@ -53,14 +53,14 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Show Number of Ratings',
-			"Display the number of sicks, goods, bads,/n and shits you've gotten.",
+			"Display the number of sicks, goods, bads, and shits you've gotten.",
 			'showRatings',
 			'bool',
 			true);
 		addOption(option);
 
 		var option:Option = new Option('Score Text Zoom on Hit',
-			"If unchecked, disables the score and rating texts zooming\neverytime you hit a note.",
+			"If unchecked, disables the score and rating texts zooming everytime you hit a note.",
 			'scoreZoom',
 			'bool',
 			true);
@@ -91,7 +91,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Sort Freeplay Alphabetically',
-			'If checked, songs in the Freeplay menu will be\nsorted alphabetically.',
+			'If checked, songs in the Freeplay menu will be sorted alphabetically.',
 			'freeplayAlphabetic',
 			'bool',
 			false);

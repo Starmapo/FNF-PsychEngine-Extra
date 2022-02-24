@@ -27,7 +27,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Ghost Tapping',
-			"If checked, you won't get misses from pressing keys\nwhile there are no notes able to be hit.",
+			"If checked, you won't get misses from pressing keys while there are no notes able to be hit.",
 			'ghostTapping',
 			'bool',
 			true);
@@ -73,7 +73,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Sick! Hit Window',
-			'Changes the amount of time you have\nfor hitting a "Sick!" in milliseconds.',
+			'Changes the amount of time you have for hitting a "Sick!" in milliseconds.',
 			'sickWindow',
 			'int',
 			45);
@@ -84,7 +84,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Good Hit Window',
-			'Changes the amount of time you have\nfor hitting a "Good" in milliseconds.',
+			'Changes the amount of time you have for hitting a "Good" in milliseconds.',
 			'goodWindow',
 			'int',
 			90);
@@ -95,7 +95,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Bad Hit Window',
-			'Changes the amount of time you have\nfor hitting a "Bad" in milliseconds.',
+			'Changes the amount of time you have for hitting a "Bad" in milliseconds.',
 			'badWindow',
 			'int',
 			135);
@@ -106,7 +106,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Safe Frames',
-			'Changes how many frames you have for\nhitting a note earlier or late.',
+			'Changes how many frames you have for hitting a note earlier or late.',
 			'safeFrames',
 			'float',
 			10);
@@ -117,7 +117,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Auto Pause',
-			"If checked, the game will be paused when you\nswitch to another window.",
+			"If checked, the game will be paused when you switch to another window.",
 			'autoPause',
 			'bool',
 			#if html5
