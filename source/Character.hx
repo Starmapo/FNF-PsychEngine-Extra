@@ -114,7 +114,18 @@ class Character extends FlxSprite
 					spriteType = "packer";
 				}
 				#if MODS_ALLOWED
-				var modAnimToFind:String = Paths.modFolders('images/${json.image}/Animation.json');
+				var modJsonToFind:String = Paths.modsJson(json.image);
+				var jsonToFind:String = Paths.getPath('images/${json.image}.json', TEXT);
+				
+				if (FileSystem.exists(modJsonToFind) || Assets.exists(jsonToFind))
+				#else
+				if (Assets.exists(Paths.getPath('images/${json.image}.json', TEXT)))
+				#end
+				{
+					spriteType = "texpacker";
+				}
+				#if MODS_ALLOWED
+				var modAnimToFind:String = Paths.modsJson('${json.image}/Animation');
 				var animToFind:String = Paths.getPath('images/${json.image}/Animation.json', TEXT);
 				
 				if (FileSystem.exists(modAnimToFind) || Assets.exists(animToFind))
@@ -131,6 +142,8 @@ class Character extends FlxSprite
 						frames = Paths.getSparrowAtlas(json.image);
 					case "texture":
 						frames = AtlasFrameMaker.construct(json.image);	
+					case "texpacker":
+						frames = Paths.getTexturePackerAtlas(json.image);
 				}
 				
 				imageFile = json.image;

@@ -292,6 +292,20 @@ class Paths
 		#end
 	}
 
+	inline static public function getTexturePackerAtlas(key:String, ?library:String):FlxAtlasFrames
+	{
+		#if MODS_ALLOWED
+		var imageLoaded:FlxGraphic = returnGraphic(key);
+		var jsonExists:Bool = false;
+		if (FileSystem.exists(modsJson(key))) {
+			jsonExists = true;
+		}
+		return FlxAtlasFrames.fromTexturePackerJson((imageLoaded != null ? imageLoaded : image(key, library)), (jsonExists ? File.getContent(modsJson(key)) : file('images/$key.json', library)));
+		#else
+		return FlxAtlasFrames.fromTexturePackerJson(image(key, library), file('images/$key.json', library));
+		#end
+	}
+
 	inline static public function formatToSongPath(path:String) {
 		return path.toLowerCase().replace(' ', '-');
 	}
@@ -363,7 +377,7 @@ class Paths
 		return modFolders('fonts/$key');
 	}
 
-	inline static public function modsJson(key:String) {
+	inline static public function modsData(key:String) {
 		return modFolders('data/$key.json');
 	}
 
@@ -385,6 +399,10 @@ class Paths
 
 	inline static public function modsTxt(key:String) {
 		return modFolders('images/$key.txt');
+	}
+
+	inline static public function modsJson(key:String) {
+		return modFolders('images/$key.json');
 	}
 
 	static public function modFolders(key:String) {

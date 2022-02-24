@@ -1279,7 +1279,7 @@ class FunkinLua {
 			return FlxG.random.bool(chance);
 		});
 		Lua_helper.add_callback(lua, "startDialogue", function(dialogueFile:String, music:String = null) {
-			var path:String = Paths.modsJson('${Paths.formatToSongPath(PlayState.SONG.song)}/$dialogueFile');
+			var path:String = Paths.modsData('${Paths.formatToSongPath(PlayState.SONG.song)}/$dialogueFile');
 			if (!FileSystem.exists(path)) {
 				path = Paths.json('${Paths.formatToSongPath(PlayState.SONG.song)}/$dialogueFile');
 			}
@@ -1781,6 +1781,9 @@ class FunkinLua {
 
 			case "packer" | "packeratlas" | "pac":
 				spr.frames = Paths.getPackerAtlas(image);
+
+			case "texturepacker" | "texpacker" | "packerjson" | "json":
+				spr.frames = Paths.getTexturePackerAtlas(image);
 
 			default:
 				spr.frames = Paths.getSparrowAtlas(image);

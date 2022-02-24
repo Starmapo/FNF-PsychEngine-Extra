@@ -178,7 +178,7 @@ class CoolUtil
 						}
 						var poop:String = song + suffix;
 						#if MODS_ALLOWED
-						if (!FileSystem.exists(Paths.modsJson('$song/$poop')) && !Assets.exists(Paths.json('$song/$poop')))
+						if (!FileSystem.exists(Paths.modsData('$song/$poop')) && !Assets.exists(Paths.json('$song/$poop')))
 						#else
 						if (!Assets.exists(Paths.json('$song/$poop')))
 						#end

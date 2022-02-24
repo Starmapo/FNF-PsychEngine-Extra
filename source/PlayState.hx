@@ -901,11 +901,11 @@ class PlayState extends MusicBeatState
 				{
 					case 'limo':
 						resetFastCar();
-						insert(members.indexOf(gfGroup) - 1, fastCar);
+						insert(members.indexOf(gfGroup), fastCar);
 					
 					case 'schoolEvil':
 						var evilTrail = new FlxTrail(dad, null, 4, 24, 0.3, 0.069); //nice
-						insert(members.indexOf(dadGroup) - 1, evilTrail);
+						insert(members.indexOf(dadGroup), evilTrail);
 				}
 			}
 		}
@@ -1055,7 +1055,7 @@ class PlayState extends MusicBeatState
 		var doof:DialogueBox = null;
 		if (!inEditor) {
 			#if MODS_ALLOWED
-			var file:String = Paths.modsJson('$curSong/dialogue'); //Checks for json/Psych Engine dialogue
+			var file:String = Paths.modsData('$curSong/dialogue'); //Checks for json/Psych Engine dialogue
 			if (FileSystem.exists(file)) {
 				dialogueJson = DialogueBoxPsych.parseDialogue(file);
 			}
@@ -1775,7 +1775,8 @@ class PlayState extends MusicBeatState
 
 							countdownReady.screenCenter();
 							countdownReady.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('ready').noAntialiasing;
-							add(countdownReady);
+							countdownReady.cameras = [camHUD];
+							insert(members.indexOf(strumLineNotes), countdownReady);
 							FlxTween.tween(countdownReady, {alpha: 0}, modifiedCrochet / 1000, {
 								ease: FlxEase.cubeInOut,
 								onComplete: function(twn:FlxTween)
@@ -1794,7 +1795,8 @@ class PlayState extends MusicBeatState
 
 							countdownSet.screenCenter();
 							countdownSet.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('set').noAntialiasing;
-							add(countdownSet);
+							countdownSet.cameras = [camHUD];
+							insert(members.indexOf(strumLineNotes), countdownSet);
 							FlxTween.tween(countdownSet, {alpha: 0}, modifiedCrochet / 1000, {
 								ease: FlxEase.cubeInOut,
 								onComplete: function(twn:FlxTween)
@@ -1816,7 +1818,8 @@ class PlayState extends MusicBeatState
 
 								countdownGo.screenCenter();
 								countdownGo.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('go').noAntialiasing;
-								add(countdownGo);
+								countdownGo.cameras = [camHUD];
+								insert(members.indexOf(strumLineNotes), countdownGo);
 								FlxTween.tween(countdownGo, {alpha: 0}, modifiedCrochet / 1000, {
 									ease: FlxEase.cubeInOut,
 									onComplete: function(twn:FlxTween)
@@ -1827,7 +1830,6 @@ class PlayState extends MusicBeatState
 								});
 								FlxG.sound.play(Paths.sound('introGo$introSoundsSuffix'), 0.6);
 							}
-						case 4:
 					}
 				}
 
@@ -1956,7 +1958,7 @@ class PlayState extends MusicBeatState
 		if (!inEditor) {
 			var file:String = Paths.json('$curSong/events');
 			#if MODS_ALLOWED
-			if (FileSystem.exists(Paths.modsJson('$curSong/events')) || OpenFlAssets.exists(file)) {
+			if (FileSystem.exists(Paths.modsData('$curSong/events')) || OpenFlAssets.exists(file)) {
 			#else
 			if (OpenFlAssets.exists(file)) {
 			#end
@@ -4881,7 +4883,7 @@ class PlayState extends MusicBeatState
 		}
 		var doubleTrail:Character = new Character(char.x, char.y, char.curCharacter, flipped);
 		doubleTrail.ID = id;
-		insert(members.indexOf(charGroup) - 1, doubleTrail);
+		insert(members.indexOf(charGroup), doubleTrail);
 		doubleTrailMap.set(name, doubleTrail);
 	}
 
