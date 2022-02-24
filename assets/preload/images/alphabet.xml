@@ -394,10 +394,10 @@
 	<SubTexture name="a lowercase0001" x="682" y="604" width="36" height="38"/>
 	<SubTexture name="a lowercase0002" x="722" y="604" width="36" height="38"/>
 	<SubTexture name="a lowercase0003" x="722" y="604" width="36" height="38"/>
-	<SubTexture name="amp0000" x="762" y="604" width="36" height="58" pivotX="0" pivotY="0"/>
-	<SubTexture name="amp0001" x="762" y="604" width="36" height="58"/>
-	<SubTexture name="amp0002" x="802" y="604" width="36" height="58"/>
-	<SubTexture name="amp0003" x="802" y="604" width="36" height="58"/>
+	<SubTexture name="&0000" x="762" y="604" width="36" height="58" pivotX="0" pivotY="0"/>
+	<SubTexture name="&0001" x="762" y="604" width="36" height="58"/>
+	<SubTexture name="&0002" x="802" y="604" width="36" height="58"/>
+	<SubTexture name="&0003" x="802" y="604" width="36" height="58"/>
 	<SubTexture name="angry faic0000" x="842" y="604" width="54" height="54" pivotX="0.35" pivotY="0"/>
 	<SubTexture name="angry faic0001" x="842" y="604" width="54" height="54"/>
 	<SubTexture name="angry faic0002" x="900" y="604" width="54" height="54"/>
