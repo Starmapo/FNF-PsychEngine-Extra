@@ -105,7 +105,7 @@ class ChartingState extends MusicBeatState
 	var highlight:FlxSprite;
 
 	public static var GRID_SIZE:Int = 40;
-	var CAM_OFFSET:Int = 360 - 21 - 32;
+	var CAM_OFFSET:Int = 360 - 21 - 32 - 400;
 	var NUMERATORS:Array<String> = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16'];
 	var DENOMINATORS:Array<String> = ['2', '4', '8', '16'];
 
@@ -300,7 +300,7 @@ class ChartingState extends MusicBeatState
 		add(strumLineNotes);
 
 		camPos = new FlxObject(0, 0, 1, 1);
-		camPos.setPosition(strumLine.x + CAM_OFFSET, strumLine.y);
+		camPos.setPosition(strumLine.x + CAM_OFFSET + 400, strumLine.y);
 
 		dummyArrow = new FlxSprite().makeGraphic(GRID_SIZE, GRID_SIZE);
 		add(dummyArrow);
