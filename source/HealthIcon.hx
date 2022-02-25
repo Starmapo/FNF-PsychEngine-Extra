@@ -46,7 +46,7 @@ class HealthIcon extends FlxSprite
 				name = 'icons/icon-face'; //Prevents crash from missing icon
 				FlxG.log.warn('Couldn\'t find icon file for $char!');
 			}
-			var file:Dynamic = Paths.image(name);
+			var file = Paths.image(name);
 
 			loadGraphic(file); //Load stupidly first for getting the file size
 			loadGraphic(file, true, Math.floor(width / 2), Math.floor(height)); //Then load it fr

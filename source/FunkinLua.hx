@@ -143,11 +143,9 @@ class FunkinLua {
 		set('opponentPlay', PlayState.instance.opponentChart);
 		set('playbackRate', PlayState.instance.playbackRate);
 
-		for (i in 0...PlayState.instance.bfKeys) {
+		for (i in 0...Note.MAX_KEYS) {
 			set('defaultPlayerStrumX$i', 0);
 			set('defaultPlayerStrumY$i', 0);
-		}
-		for (i in 0...PlayState.instance.dadKeys) {
 			set('defaultOpponentStrumX$i', 0);
 			set('defaultOpponentStrumY$i', 0);
 		}
@@ -1317,7 +1315,13 @@ class FunkinLua {
 			}
 			#end
 		});
+		
 		Lua_helper.add_callback(lua, "changeNoteSkin", function(index:Int = 0, name:String = '') {
+			if (PlayState.instance.notes.members[index] != null) {
+				PlayState.instance.notes.members[index].uiSkin = UIData.getUIFile(name);
+			}
+		});
+		Lua_helper.add_callback(lua, "changeUnspawnNoteSkin", function(index:Int = 0, name:String = '') {
 			if (PlayState.instance.unspawnNotes[index] != null) {
 				PlayState.instance.unspawnNotes[index].uiSkin = UIData.getUIFile(name);
 			}

@@ -55,8 +55,8 @@ class ChartingState extends MusicBeatState
 		'No Animation',
 		'Trail Note'
 	];
-	private var noteTypeIntMap:Map<Int, String> = new Map<Int, String>();
-	private var noteTypeMap:Map<String, Null<Int>> = new Map<String, Null<Int>>();
+	private var noteTypeIntMap:Map<Int, String> = new Map();
+	private var noteTypeMap:Map<String, Null<Int>> = new Map();
 	private var didAThing = false;
 	public var ignoreWarnings = false;
 	var undos = [];
@@ -178,7 +178,7 @@ class ChartingState extends MusicBeatState
 	var rightKeys:Int = 4;
 	var totalKeys:Int = 8;
 
-	public var uiSkinMap:Map<String, SkinFile> = new Map<String, SkinFile>();
+	public var uiSkinMap:Map<String, SkinFile> = new Map();
 
 	var autosaveTimer:FlxTimer;
 
@@ -246,7 +246,6 @@ class ChartingState extends MusicBeatState
 		var eventIcon:FlxSprite = new FlxSprite(-GRID_SIZE - 5, -90).loadGraphic(Paths.image('eventArrow'));
 		leftIcon = new HealthIcon('bf');
 		rightIcon = new HealthIcon('dad');
-		eventIcon.scrollFactor.set(1, 1);
 		leftIcon.scrollFactor.set(1, 1);
 		rightIcon.scrollFactor.set(1, 1);
 
@@ -481,7 +480,7 @@ class ChartingState extends MusicBeatState
 		var directories:Array<String> = [Paths.getPreloadPath('characters/')];
 		#end
 
-		var tempMap:Map<String, Bool> = new Map<String, Bool>();
+		var tempMap:Map<String, Bool> = new Map();
 		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
 		for (i in 0...characters.length) {
 			tempMap.set(characters[i], true);
@@ -712,6 +711,9 @@ class ChartingState extends MusicBeatState
 	var check_changeSignature:FlxUICheckBox;
 	var sectionNumeratorDropDown:FlxUIDropDownMenuCustom;
 	var sectionDenominatorDropDown:FlxUIDropDownMenuCustom;
+	var check_changeKeys:FlxUICheckBox;
+	var stepperSectionPlayerKeys:FlxUINumericStepper;
+	var stepperSectionOpponentKeys:FlxUINumericStepper;
 	var check_altAnim:FlxUICheckBox;
 
 	var sectionToCopy:Int = 0;
@@ -741,8 +743,6 @@ class ChartingState extends MusicBeatState
 		stepperSectionBPM = new FlxUINumericStepper(10, 110, 1, Conductor.bpm, 0, 1000, 1);
 		if (check_changeBPM.checked) {
 			stepperSectionBPM.value = _song.notes[curSection].bpm;
-		} else {
-			stepperSectionBPM.value = Conductor.bpm;
 		}
 		stepperSectionBPM.name = 'section_bpm';
 		blockPressWhileTypingOnStepper.push(stepperSectionBPM);
@@ -786,6 +786,24 @@ class ChartingState extends MusicBeatState
 			sectionDenominatorDropDown.selectedLabel = '${Conductor.denominator}';
 		}
 		blockPressWhileScrolling.push(sectionDenominatorDropDown);
+
+		check_changeKeys = new FlxUICheckBox(130, check_changeSignature.y + 65, null, null, 'Change Keys', 100);
+		check_changeKeys.checked = _song.notes[curSection].changeKeys;
+		check_changeKeys.name = 'check_changeKeys';
+
+		stepperSectionPlayerKeys = new FlxUINumericStepper(check_changeKeys.x, check_changeKeys.y + 20, 1, _song.playerKeyAmount, 1, Note.MAX_KEYS);
+		if (check_changeKeys.checked) {
+			stepperSectionPlayerKeys.value = _song.notes[curSection].playerKeys;
+		}
+		stepperSectionPlayerKeys.name = 'section_playerKeys';
+		blockPressWhileTypingOnStepper.push(stepperSectionPlayerKeys);
+
+		stepperSectionOpponentKeys = new FlxUINumericStepper(stepperSectionPlayerKeys.x, stepperSectionPlayerKeys.y + 20, 1, _song.opponentKeyAmount, 1, Note.MAX_KEYS);
+		if (check_changeKeys.checked) {
+			stepperSectionOpponentKeys.value = _song.notes[curSection].opponentKeys;
+		}
+		stepperSectionOpponentKeys.name = 'section_opponentKeys';
+		blockPressWhileTypingOnStepper.push(stepperSectionOpponentKeys);
 
 		var copyButton:FlxButton = new FlxButton(10, 150, "Copy Section", function()
 		{
@@ -1001,6 +1019,9 @@ class ChartingState extends MusicBeatState
 		tab_group_section.add(copyLastButton);
 		tab_group_section.add(duetButton);
 		tab_group_section.add(mirrorButton);
+		tab_group_section.add(check_changeKeys);
+		tab_group_section.add(stepperSectionPlayerKeys);
+		tab_group_section.add(stepperSectionOpponentKeys);
 		tab_group_section.add(check_changeSignature);
 		tab_group_section.add(sectionDenominatorDropDown);
 		tab_group_section.add(sectionNumeratorDropDown);
@@ -1098,7 +1119,7 @@ class ChartingState extends MusicBeatState
 		tab_group_event.name = 'Events';
 
 		#if LUA_ALLOWED
-		var eventPushedMap:Map<String, Bool> = new Map<String, Bool>();
+		var eventPushedMap:Map<String, Bool> = new Map();
 		var directories:Array<String> = [Paths.mods('custom_events/'), Paths.mods('${Paths.currentModDirectory}/custom_events/')];
 		for (i in 0...directories.length) {
 			var directory:String =  directories[i];
@@ -1525,6 +1546,11 @@ class ChartingState extends MusicBeatState
 					updateSectionLengths();
 					Conductor.mapBPMChanges(_song);
 					reloadGridLayer();
+
+				case 'Change Keys':
+					_song.notes[curSection].changeKeys = check.checked;
+					updateKeys();
+					reloadGridLayer();
 				
 				case "Alt Animation":
 					_song.notes[curSection].altAnim = check.checked;
@@ -1562,6 +1588,18 @@ class ChartingState extends MusicBeatState
 			{
 				_song.notes[curSection].bpm = nums.value;
 				updateGrid();
+			}
+			else if (wname == 'section_playerKeys')
+			{
+				_song.notes[curSection].playerKeys = Std.int(nums.value);
+				updateKeys();
+				reloadGridLayer();
+			}
+			else if (wname == 'section_opponentKeys')
+			{
+				_song.notes[curSection].opponentKeys = Std.int(nums.value);
+				updateKeys();
+				reloadGridLayer();
 			}
 			else if (wname == 'inst_volume')
 			{
@@ -2375,6 +2413,9 @@ class ChartingState extends MusicBeatState
 		check_changeSignature.checked = sec.changeSignature;
 		sectionNumeratorDropDown.selectedLabel = '${sec.numerator}';
 		sectionDenominatorDropDown.selectedLabel = '${sec.denominator}';
+		check_changeKeys.checked = sec.changeKeys;
+		stepperSectionPlayerKeys.value = sec.playerKeys;
+		stepperSectionOpponentKeys.value = sec.opponentKeys;
 
 		updateHeads();
 	}
@@ -2632,7 +2673,10 @@ class ChartingState extends MusicBeatState
 			mustHitSection: true,
 			gfSection: false,
 			sectionNotes: [],
-			altAnim: false
+			altAnim: false,
+			changeKeys: false,
+			playerKeys: _song.playerKeyAmount,
+			opponentKeys: _song.opponentKeyAmount
 		};
 
 		_song.notes.push(sec);
@@ -2841,8 +2885,16 @@ class ChartingState extends MusicBeatState
 	}
 
 	function updateKeys():Void {
-		leftKeys = (_song.notes[curSection].mustHitSection ? _song.playerKeyAmount : _song.opponentKeyAmount);
-		rightKeys = (!_song.notes[curSection].mustHitSection ? _song.playerKeyAmount : _song.opponentKeyAmount);
+		var curPlayer = _song.playerKeyAmount;
+		var curOpponent = _song.opponentKeyAmount;
+		for (i in 0...curSection + 1) {
+			if (_song.notes[i] != null && _song.notes[i].changeKeys) {
+				curPlayer = _song.notes[i].playerKeys;
+				curOpponent = _song.notes[i].opponentKeys;
+			}
+		}
+		leftKeys = (_song.notes[curSection].mustHitSection ? curPlayer : curOpponent);
+		rightKeys = (!_song.notes[curSection].mustHitSection ? curPlayer : curOpponent);
 		totalKeys = leftKeys + rightKeys;
 	}
 

@@ -209,7 +209,7 @@ class TileAnimationLibrary {
 	}
 
 	private function parseAtlasData(atlas:AtlasData):Void {
-		_atlas = new Map<String, SpriteData>();
+		_atlas = new Map();
 		if (atlas.ATLAS != null && atlas.ATLAS.SPRITES != null) {
 			for (s in atlas.ATLAS.SPRITES) {
 				_atlas.set(s.SPRITE.name, s.SPRITE);

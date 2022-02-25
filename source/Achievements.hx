@@ -33,7 +33,7 @@ class Achievements {
 		//Gets filled when loading achievements
 	];
 
-	public static var achievementsMap:Map<String, Bool> = new Map<String, Bool>();
+	public static var achievementsMap:Map<String, Bool> = new Map();
 
 	public static var henchmenDeath:Int = 0;
 	public static function unlockAchievement(name:String):Void {

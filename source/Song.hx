@@ -104,6 +104,9 @@ class Song
 			if (sec.denominator == null) sec.denominator = songJson.denominator;
 			if (sec.changeSignature == null) sec.changeSignature = false;
 			if (sec.altAnim == null) sec.altAnim = false;
+			if (sec.changeKeys == null) sec.changeKeys = false;
+			if (sec.playerKeys == null) sec.playerKeys = songJson.playerKeyAmount;
+			if (sec.opponentKeys == null) sec.opponentKeys = songJson.opponentKeyAmount;
 			var i:Int = 0;
 			var notes:Array<Dynamic> = sec.sectionNotes;
 			var len:Int = notes.length;

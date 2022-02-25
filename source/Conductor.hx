@@ -139,6 +139,9 @@ class Conductor
 
 	public static function getCurSection(song:SwagSong, step:Int):Int {
 		//every time i try to optimize this it just fucking stops working
+		if (step < 0) {
+			return 0;
+		}
 		var daNumerator:Int = song.numerator;
 		var daPos:Int = 0;
 		var lastStep:Int = 0;
@@ -149,7 +152,7 @@ class Conductor
 				}
 			}
 			if (lastStep + (daNumerator * 4) >= step) {
-				return daPos + Math.floor((step - lastStep) / (daNumerator * 4));
+				return FlxMath.maxInt(daPos + Math.floor((step - lastStep) / (daNumerator * 4)), 0);
 			}
 			lastStep += daNumerator * 4;
 			daPos++;

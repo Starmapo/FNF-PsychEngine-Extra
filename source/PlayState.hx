@@ -70,12 +70,12 @@ class PlayState extends MusicBeatState
 		['Perfect!!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	];
 
-	public var modchartTweens:Map<String, FlxTween> = new Map<String, FlxTween>();
-	public var modchartSprites:Map<String, ModchartSprite> = new Map<String, ModchartSprite>();
-	public var modchartTimers:Map<String, FlxTimer> = new Map<String, FlxTimer>();
-	public var modchartSounds:Map<String, FlxSound> = new Map<String, FlxSound>();
-	public var modchartTexts:Map<String, ModchartText> = new Map<String, ModchartText>();
-	public var modchartSaves:Map<String, FlxSave> = new Map<String, FlxSave>();
+	public var modchartTweens:Map<String, FlxTween> = new Map();
+	public var modchartSprites:Map<String, ModchartSprite> = new Map();
+	public var modchartTimers:Map<String, FlxTimer> = new Map();
+	public var modchartSounds:Map<String, FlxSound> = new Map();
+	public var modchartTexts:Map<String, ModchartText> = new Map();
+	public var modchartSaves:Map<String, FlxSave> = new Map();
 	//event variables
 	private var isCameraOnForcedPos:Bool = false;
 	public var boyfriendMap:Map<String, Character> = new Map();
@@ -272,7 +272,7 @@ class PlayState extends MusicBeatState
 	public var playerKeys:Int = 4;
 	public var opponentKeys:Int = 4;
 
-	public var uiSkinMap:Map<String, SkinFile> = new Map<String, SkinFile>();
+	public var uiSkinMap:Map<String, SkinFile> = new Map();
 	var playerColors:Array<String>;
 	var opponentColors:Array<String>;
 
@@ -284,6 +284,9 @@ class PlayState extends MusicBeatState
 	var startPos:Float = 0;
 
 	public var doubleTrailMap:Map<String, Character> = new Map();
+
+	public var playerStrumMap:Map<Int, FlxTypedGroup<StrumNote>> = new Map();
+	public var opponentStrumMap:Map<Int, FlxTypedGroup<StrumNote>> = new Map();
 
 	public function new(?inEditor:Bool = false, ?startPos:Float = 0) {
 		this.inEditor = inEditor;
@@ -359,19 +362,10 @@ class PlayState extends MusicBeatState
 		if (opponentChart) {
 			playerKeys = dadKeys;
 		}
-		keysArray = [];
-		for (i in 0...playerKeys) {
-			keysArray.push(ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note${playerKeys}_$i')));
-		}
+		setKeysArray(playerKeys);
 		opponentKeys = dadKeys;
 		if (opponentChart) {
 			opponentKeys = bfKeys;
-		}
-
-		// For the "Just the Two of Us" achievement
-		for (i in 0...keysArray.length)
-		{
-			keysPressed.push(false);
 		}
 
 		if (SONG.uiSkin == null || SONG.uiSkin.length < 1) {
@@ -1904,8 +1898,8 @@ class PlayState extends MusicBeatState
 	}
 
 	var debugNum:Int = 0;
-	private var noteTypeMap:Map<String, Bool> = new Map<String, Bool>();
-	private var eventPushedMap:Map<String, Bool> = new Map<String, Bool>();
+	private var noteTypeMap:Map<String, Bool> = new Map();
+	private var eventPushedMap:Map<String, Bool> = new Map();
 	private function generateSong():Void
 	{
 		if (!inEditor) {
@@ -1946,12 +1940,7 @@ class PlayState extends MusicBeatState
 		notes = new FlxTypedGroup<Note>();
 		add(notes);
 
-		var noteData:Array<SwagSection>;
-
-		// NEW SHIT
-		noteData = SONG.notes;
-
-		var playerCounter:Int = 0;
+		var noteData:Array<SwagSection> = SONG.notes;
 
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 		
@@ -1985,6 +1974,8 @@ class PlayState extends MusicBeatState
 		var curStepCrochet = Conductor.stepCrochet;
 		var curBPM = Conductor.bpm;
 		var curDenominator = Conductor.denominator;
+		var curPlayerKeys = SONG.playerKeyAmount;
+		var curOpponentKeys = SONG.opponentKeyAmount;
 		for (section in noteData)
 		{
 			if (section.changeBPM) {
@@ -1995,15 +1986,23 @@ class PlayState extends MusicBeatState
 				curDenominator = section.denominator;
 				curStepCrochet = (((60 / curBPM) * 4000) / curDenominator) / 4;
 			}
-			var leftKeys = (section.mustHitSection ? SONG.playerKeyAmount : SONG.opponentKeyAmount);
-			var rightKeys = (!section.mustHitSection ? SONG.playerKeyAmount : SONG.opponentKeyAmount);
+			if (section.changeKeys) {
+				curOpponentKeys = section.opponentKeys;
+				curPlayerKeys = section.playerKeys;
+				if (!opponentStrumMap.exists(curOpponentKeys))
+					generateStrumGroup(0, curOpponentKeys);
+				if (!playerStrumMap.exists(curPlayerKeys))
+					generateStrumGroup(1, curPlayerKeys);
+			}
+			var leftKeys = (section.mustHitSection ? curPlayerKeys : curOpponentKeys);
+			var rightKeys = (!section.mustHitSection ? curPlayerKeys : curOpponentKeys);
 			for (songNotes in section.sectionNotes)
 			{
 				var daStrumTime:Float = songNotes[0] / playbackRate;
 				if (inEditor && daStrumTime < startPos) continue;
-				var daNoteData:Int = songNotes[1];
+				var daNoteData:Int = Std.int(songNotes[1] % leftKeys);
 				if (songNotes[1] >= leftKeys) {
-					daNoteData = Std.int(songNotes[1] - leftKeys);
+					daNoteData = Std.int((songNotes[1] - leftKeys) % rightKeys);
 				}
 
 				var gottaHitNote:Bool = section.mustHitSection;
@@ -2024,8 +2023,8 @@ class PlayState extends MusicBeatState
 				else
 					oldNote = null;
 
-				var keys = playerKeys;
-				if (!gottaHitNote) keys = opponentKeys;
+				var keys = curPlayerKeys;
+				if (isOpponent) keys = curOpponentKeys;
 
 				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys, !isOpponent ? uiSkinMap.get('player') : uiSkinMap.get('opponent'));
 				swagNote.mustPress = gottaHitNote;
@@ -2041,7 +2040,7 @@ class PlayState extends MusicBeatState
 				var susLength:Float = swagNote.sustainLength / curStepCrochet;
 				var floorSus:Int = Math.floor(susLength);
 				if (floorSus > 0) {
-					for (susNote in 0...floorSus+1)
+					for (susNote in 0...floorSus + 1)
 					{
 						oldNote = unspawnNotes[unspawnNotes.length - 1];
 
@@ -2151,7 +2150,13 @@ class PlayState extends MusicBeatState
 	private function generateStaticArrows(player:Int):Void
 	{
 		var keys:Int = bfKeys;
-		if (player == 0) keys = dadKeys;
+		var strums = playerStrums;
+		var underlay = underlayPlayer;
+		if (player == 0) {
+			keys = dadKeys;
+			strums = opponentStrums;
+			underlay = underlayOpponent;
+		}
 
 		var delay = (Conductor.crochet * (Conductor.denominator / 4)) / (250 * keys);
 
@@ -2183,7 +2188,6 @@ class PlayState extends MusicBeatState
 						babyArrow.x += FlxG.width / 2 + 25;
 					}
 				}
-				playerStrums.add(babyArrow);
 			}
 			else
 			{
@@ -2196,27 +2200,81 @@ class PlayState extends MusicBeatState
 						}
 					}
 				}
-				opponentStrums.add(babyArrow);
 			}
 
+			strums.add(babyArrow);
 			strumLineNotes.add(babyArrow);
 			babyArrow.postAddedToGroup();
 		}
 
-		var strums = playerStrums;
-		var underlay = underlayPlayer;
-		if (player == 0) {
-			strums = opponentStrums;
-			underlay = underlayOpponent;
-		}
+		resetUnderlay(underlay, strums);
+	}
 
+	function resetUnderlay(underlay:FlxSprite, strums:FlxTypedGroup<StrumNote>) {
 		var fullWidth = 0.0;
-		for (i in strums) {
-			fullWidth += i.width - (i.width - i.swagWidth);
+		for (i in 0...strums.members.length) {
+			if (i == strums.members.length - 1) {
+				fullWidth += strums.members[i].width;
+			} else {
+				fullWidth += strums.members[i].swagWidth;
+			}
 		}
 		underlay.makeGraphic(Math.ceil(fullWidth), FlxG.height * 2, FlxColor.BLACK);
 		underlay.x = strums.members[0].x;
 		underlay.visible = true;
+	}
+
+	private function generateStrumGroup(player:Int, keys:Int = 4):Void
+	{
+		var strumGroup = new FlxTypedGroup<StrumNote>();
+		for (i in 0...keys)
+		{
+			var targetAlpha:Float = 1;
+			if ((player < 1 && ClientPrefs.middleScroll && !opponentChart) || (player > 0 && ClientPrefs.middleScroll && opponentChart)) targetAlpha = 0.35;
+
+			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, ClientPrefs.middleScroll && opponentChart ? 1 - player : player, keys, player > 0 ? uiSkinMap.get('player') : uiSkinMap.get('opponent'));
+			babyArrow.y += 80 - (babyArrow.height / 2);
+			babyArrow.downScroll = ClientPrefs.downScroll;
+			babyArrow.alpha = targetAlpha;
+
+			if (player == 1 && ClientPrefs.middleScroll && opponentChart)
+			{
+				babyArrow.x += 310;
+				if (i >= Math.floor(keys / 2)) {
+					babyArrow.x += FlxG.width / 2 + 25;
+				}
+			}
+			else if (ClientPrefs.middleScroll && !opponentChart)
+			{
+				babyArrow.x += 310;
+				if (i >= Math.floor(keys / 2)) {
+					babyArrow.x += FlxG.width / 2 + 25;
+				}
+			}
+
+			strumGroup.add(babyArrow);
+			babyArrow.postAddedToGroup();
+		}
+
+		if (player == 0) {
+			opponentStrumMap.set(keys, strumGroup);
+		} else {
+			playerStrumMap.set(keys, strumGroup);
+		}
+	}
+
+	function setKeysArray(keys:Int = 4) {
+		keysArray = [];
+		for (i in 0...keys) {
+			keysArray.push(ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note${keys}_$i')));
+		}
+
+		// For the "Just the Two of Us" achievement
+		keysPressed = [];
+		for (i in 0...keysArray.length)
+		{
+			keysPressed.push(false);
+		}
 	}
 
 	override function openSubState(SubState:FlxSubState)
@@ -2749,6 +2807,14 @@ class PlayState extends MusicBeatState
 			{
 				var strumGroup = playerStrums;
 				if (daNote.isOpponent) strumGroup = opponentStrums;
+
+				if (daNote.keyAmount != strumGroup.members.length) {
+					if (daNote.isOpponent) {
+						strumGroup = opponentStrumMap.get(daNote.keyAmount);
+					} else {
+						strumGroup = playerStrumMap.get(daNote.keyAmount);
+					}
+				}
 
 				var strumX:Float = strumGroup.members[daNote.noteData].x;
 				var strumY:Float = strumGroup.members[daNote.noteData].y;
@@ -3961,7 +4027,7 @@ class PlayState extends MusicBeatState
 				var sortedNotesList:Array<Note> = [];
 				notes.forEachAlive(function(daNote:Note)
 				{
-					if (daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit && !daNote.isSustainNote)
+					if (daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit && !daNote.isSustainNote && daNote.keyAmount == playerKeys)
 					{
 						if (daNote.noteData == key)
 						{
@@ -4716,6 +4782,10 @@ class PlayState extends MusicBeatState
 				setOnLuas('stepCrochet', Conductor.stepCrochet);
 				callOnLuas('onSignatureChange', []);
 			}
+			if (SONG.notes[curSection].changeKeys && (bfKeys != SONG.notes[curSection].playerKeys || dadKeys != SONG.notes[curSection].opponentKeys))
+			{
+				switchKeys(SONG.notes[curSection].playerKeys, SONG.notes[curSection].opponentKeys);
+			}
 			setOnLuas('mustHitSection', SONG.notes[curSection].mustHitSection);
 			setOnLuas('altAnim', SONG.notes[curSection].altAnim);
 			setOnLuas('gfSection', SONG.notes[curSection].gfSection);
@@ -4809,6 +4879,55 @@ class PlayState extends MusicBeatState
 		setOnLuas('curBeat', curBeat);//DAWGG?????
 		setOnLuas('curNumeratorBeat', curNumeratorBeat);
 		callOnLuas('onBeatHit', []);
+	}
+
+	function switchKeys(playerKeys:Int = 4, opponentKeys:Int = 4) {
+		if (bfKeys != playerKeys) {
+			bfKeys = playerKeys;
+			if (!opponentChart) {
+				this.playerKeys = playerKeys;
+			} else {
+				this.opponentKeys = playerKeys;
+			}
+			strumLineNotes.clear();
+			playerStrums = playerStrumMap.get(playerKeys);
+			for (i in opponentStrums) {
+				strumLineNotes.add(i);
+			}
+			for (i in playerStrums) {
+				strumLineNotes.add(i);
+			}
+			resetUnderlay(underlayPlayer, playerStrums);
+			setKeysArray(this.playerKeys);
+			setSkins();
+			for (i in 0...playerStrums.length) {
+				setOnLuas('defaultPlayerStrumX$i', playerStrums.members[i].x);
+				setOnLuas('defaultPlayerStrumY$i', playerStrums.members[i].y);
+			}
+		}
+		if (dadKeys != opponentKeys) {
+			dadKeys = opponentKeys;
+			if (!opponentChart) {
+				this.opponentKeys = opponentKeys;
+			} else {
+				this.playerKeys = opponentKeys;
+			}
+			strumLineNotes.clear();
+			opponentStrums = opponentStrumMap.get(opponentKeys);
+			for (i in opponentStrums) {
+				strumLineNotes.add(i);
+			}
+			for (i in playerStrums) {
+				strumLineNotes.add(i);
+			}
+			resetUnderlay(underlayOpponent, opponentStrums);
+			setKeysArray(this.playerKeys);
+			setSkins();
+			for (i in 0...opponentStrums.length) {
+				setOnLuas('defaultOpponentStrumX$i', opponentStrums.members[i].x);
+				setOnLuas('defaultOpponentStrumY$i', opponentStrums.members[i].y);
+			}
+		}
 	}
 
 	function setSkins():Void {

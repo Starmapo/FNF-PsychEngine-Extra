@@ -12,4 +12,7 @@ typedef SwagSection =
 	var denominator:Null<Int>;
 	var changeSignature:Null<Bool>;
 	var altAnim:Null<Bool>;
+	var changeKeys:Null<Bool>;
+	var playerKeys:Null<Int>;
+	var opponentKeys:Null<Int>;
 }

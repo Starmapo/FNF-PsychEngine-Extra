@@ -76,7 +76,7 @@ class Note extends FlxSprite
 	public var hitCausesMiss:Bool = false;
 	public var distance:Float = 2000;
 
-	var keyAmount:Int = 4;
+	public var keyAmount:Int = 4;
 	var colors:Array<String> = ['left', 'down', 'up', 'right'];
 	var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
@@ -94,6 +94,12 @@ class Note extends FlxSprite
 	private function set_noteType(value:String):String {
 		if (noteData > -1) {
 			noteSplashTexture = 'noteSplashes';
+			if (ClientPrefs.arrowHSV[keyAmount - 1] == null) {
+				trace('no $keyAmount keys in arrowhsv');
+			}
+			if (ClientPrefs.arrowHSV[keyAmount - 1][noteData] == null) {
+				trace('no color $noteData for $keyAmount in arrowhsv');
+			}
 			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount - 1][noteData][0] / 360;
 			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount - 1][noteData][1] / 100;
 			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount - 1][noteData][2] / 100;
