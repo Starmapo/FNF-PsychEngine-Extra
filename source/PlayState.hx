@@ -2031,9 +2031,9 @@ class PlayState extends MusicBeatState
 				swagNote.isOpponent = isOpponent;
 				swagNote.sustainLength = songNotes[2] / playbackRate;
 				swagNote.gfNote = (section.gfSection && (songNotes[1] < rightKeys));
-				swagNote.noteType = songNotes[3];
 				swagNote.characters = songNotes[4];
 				if (songNotes[4] == null) swagNote.characters = [0];
+				swagNote.noteType = songNotes[3];
 				swagNote.scrollFactor.set();
 				unspawnNotes.push(swagNote);
 
@@ -2044,13 +2044,13 @@ class PlayState extends MusicBeatState
 					{
 						oldNote = unspawnNotes[unspawnNotes.length - 1];
 
-						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / swagNote.speed), daNoteData, oldNote, true, false, keys, !isOpponent ? uiSkinMap.get('player') : uiSkinMap.get('opponent'), curStepCrochet);
+						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / 2 / swagNote.speed), daNoteData, oldNote, true, false, keys, !isOpponent ? uiSkinMap.get('player') : uiSkinMap.get('opponent'), curStepCrochet);
 						sustainNote.mustPress = gottaHitNote;
 						sustainNote.isOpponent = isOpponent;
 						sustainNote.gfNote = swagNote.gfNote;
-						sustainNote.noteType = swagNote.noteType;
 						sustainNote.characters = songNotes[4];
 						if (songNotes[4] == null) sustainNote.characters = [0];
+						sustainNote.noteType = swagNote.noteType;
 						sustainNote.scrollFactor.set();
 						unspawnNotes.push(sustainNote);
 
@@ -2858,8 +2858,7 @@ class PlayState extends MusicBeatState
 				if (daNote.copyY) {
 					daNote.y = strumY + Math.sin(angleDir) * daNote.distance;
 
-					if (strumScroll && daNote.isSustainNote)
-					{
+					if (daNote.isSustainNote && strumScroll) {
 						if (daNote.animation.curAnim.name.endsWith('end')) {
 							daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * daNote.speed + (46 * (daNote.speed - 1));
 							daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * daNote.speed;
@@ -4782,7 +4781,7 @@ class PlayState extends MusicBeatState
 				setOnLuas('stepCrochet', Conductor.stepCrochet);
 				callOnLuas('onSignatureChange', []);
 			}
-			if (SONG.notes[curSection].changeKeys && (bfKeys != SONG.notes[curSection].playerKeys || dadKeys != SONG.notes[curSection].opponentKeys))
+			if (SONG.notes[curSection].changeKeys)
 			{
 				switchKeys(SONG.notes[curSection].playerKeys, SONG.notes[curSection].opponentKeys);
 			}
@@ -5121,7 +5120,7 @@ class PlayState extends MusicBeatState
 				switch(achievementName)
 				{
 					case 'ur_bad':
-						if (totalPlayed > 0 && ratingPercent < 0.2 && !practiceMode) {
+						if (totalPlayed > 0 && ratingPercent < 0.2 && !usedPractice) {
 							unlock = true;
 						}
 					case 'ur_good':
@@ -5159,6 +5158,19 @@ class PlayState extends MusicBeatState
 						if (curSong == 'test' && !usedPractice) {
 							unlock = true;
 						}
+				}
+
+				if(isStoryMode && campaignMisses + songMisses < 1 && CoolUtil.difficultyString() == 'HARD' && storyPlaylist.length <= 1 && !changedDifficulty && !usedPractice)
+				{
+					var weekName:String = WeekData.getWeekFileName();
+
+					for (k in 0...Achievements.achievementsStuff.length) {
+						var unlockPoint:String = Achievements.achievementsStuff[k][3];
+						if (unlockPoint != null) {
+							if (unlockPoint == weekName && !unlock && !Achievements.isAchievementUnlocked(Achievements.achievementsStuff[k][2])) unlock = true;
+							achievementName = Achievements.achievementsStuff[k][2];
+						}
+					}
 				}
 			}
 
