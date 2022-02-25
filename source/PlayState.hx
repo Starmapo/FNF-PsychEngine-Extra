@@ -5160,15 +5160,15 @@ class PlayState extends MusicBeatState
 						}
 				}
 
-				if(isStoryMode && campaignMisses + songMisses < 1 && CoolUtil.difficultyString() == 'HARD' && storyPlaylist.length <= 1 && !changedDifficulty && !usedPractice)
+				if (!unlock && isStoryMode && campaignMisses + songMisses < 1 && CoolUtil.difficultyString() == 'HARD' && storyPlaylist.length <= 1 && !changedDifficulty && !usedPractice)
 				{
 					var weekName:String = WeekData.getWeekFileName();
-
 					for (k in 0...Achievements.achievementsStuff.length) {
-						var unlockPoint:String = Achievements.achievementsStuff[k][3];
-						if (unlockPoint != null) {
-							if (unlockPoint == weekName && !unlock && !Achievements.isAchievementUnlocked(Achievements.achievementsStuff[k][2])) unlock = true;
-							achievementName = Achievements.achievementsStuff[k][2];
+						if (Achievements.achievementsStuff[k][2] == achievementName) {
+							var unlockPoint:String = Achievements.achievementsStuff[k][3];
+							if (unlockPoint != null && unlockPoint == weekName && !unlock)
+								unlock = true;
+							break;
 						}
 					}
 				}
