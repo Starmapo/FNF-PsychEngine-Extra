@@ -315,7 +315,7 @@ class Note extends FlxSprite
 			prevNote.updateHitbox();
 		}
 
-		scale.y *= uiSkin.scale;
+		scale.y *= uiSkin.scale * uiSkin.noteScale;
 		updateHitbox();
 	}
 
