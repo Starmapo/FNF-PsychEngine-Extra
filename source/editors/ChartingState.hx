@@ -2573,8 +2573,13 @@ class ChartingState extends MusicBeatState
 		var usedLeftKeys = leftKeys;
 		var usedRightKeys = rightKeys;
 		if (isNextSection) {
-			usedLeftKeys = (_song.notes[sectionUsed].mustHitSection == _song.notes[curSection].mustHitSection ? leftKeys : rightKeys);
-			usedRightKeys =(_song.notes[sectionUsed].mustHitSection == _song.notes[curSection].mustHitSection ? rightKeys : leftKeys);
+			if (_song.notes[sectionUsed].changeKeys) {
+				usedLeftKeys = (_song.notes[sectionUsed].mustHitSection ? _song.notes[sectionUsed].playerKeys : _song.notes[sectionUsed].opponentKeys);
+				usedRightKeys = (!_song.notes[sectionUsed].mustHitSection ? _song.notes[sectionUsed].playerKeys : _song.notes[sectionUsed].opponentKeys);
+			} else {
+				usedLeftKeys = (_song.notes[sectionUsed].mustHitSection == _song.notes[curSection].mustHitSection ? leftKeys : rightKeys);
+				usedRightKeys = (_song.notes[sectionUsed].mustHitSection == _song.notes[curSection].mustHitSection ? rightKeys : leftKeys);
+			}
 		}
 
 		var daNoteInfo = i[1];
