@@ -1274,10 +1274,14 @@ class PlayState extends MusicBeatState
 						}
 					});
 					FlxG.sound.play(Paths.soundRandom('thunder_', 1, 2));
-					for (gf in gfGroup)
-						gf.playAnim('scared', true);
-					for (boyfriend in boyfriendGroup)
-						boyfriend.playAnim('scared', true);
+					for (gf in gfGroup) {
+						if (gf.animOffsets.exists('scared'))
+							gf.playAnim('scared', true);
+					}
+					for (boyfriend in boyfriendGroup) {
+						if (boyfriend.animOffsets.exists('scared'))
+							boyfriend.playAnim('scared', true);
+					}
 
 				case "winter-horrorland":
 					var blackScreen:FlxSprite = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
@@ -2654,9 +2658,10 @@ class PlayState extends MusicBeatState
 
 		super.update(elapsed);
 
-		if (!inEditor && generatedMusic && SONG.notes[Conductor.getCurSection(SONG, curStep)] != null && !endingSong && !isCameraOnForcedPos)
+		var curSection = Conductor.getCurSection(SONG, curStep);
+		if (!inEditor && generatedMusic && SONG.notes[curSection] != null && !endingSong && !isCameraOnForcedPos)
 		{
-			moveCameraSection(Conductor.getCurSection(SONG, curStep));
+			moveCameraSection(curSection);
 		}
 
 		if (!inEditor) {
@@ -3162,7 +3167,7 @@ class PlayState extends MusicBeatState
 
 				if (value != 0) {
 					for (dad in dadGroup) {
-						if (dad.curCharacter.startsWith('gf')) { //Tutorial GF is actually Dad! The GF is an imposter!! ding ding ding ding ding ding ding, dindinding, end my suffering
+						if (dad.curCharacter.startsWith('gf') && dad.animOffsets.exists('cheer')) { //Tutorial GF is actually Dad! The GF is an imposter!! ding ding ding ding ding ding ding, dindinding, end my suffering
 							dad.playAnim('cheer', true);
 							dad.specialAnim = true;
 							dad.heyTimer = time;
@@ -3170,9 +3175,11 @@ class PlayState extends MusicBeatState
 					}
 
 					for (gf in gfGroup) {
-						gf.playAnim('cheer', true);
-						gf.specialAnim = true;
-						gf.heyTimer = time;
+						if (gf.animOffsets.exists('cheer')) {
+							gf.playAnim('cheer', true);
+							gf.specialAnim = true;
+							gf.heyTimer = time;
+						}
 					}
 
 					if (curStage == 'mall' && ClientPrefs.stageQuality != 'Crappy') {
@@ -3182,9 +3189,11 @@ class PlayState extends MusicBeatState
 				}
 				if (value != 1) {
 					for (boyfriend in boyfriendGroup) {
-						boyfriend.playAnim('hey', true);
-						boyfriend.specialAnim = true;
-						boyfriend.heyTimer = time;
+						if (boyfriend.animOffsets.exists('hey')) {
+							boyfriend.playAnim('hey', true);
+							boyfriend.specialAnim = true;
+							boyfriend.heyTimer = time;
+						}
 					}
 				}
 
@@ -3347,8 +3356,10 @@ class PlayState extends MusicBeatState
 						charGroup = gfGroup;
 				}
 				if (charData[1] != null) index = Std.parseInt(charData[1]);
-				charGroup.members[index % charGroup.length].playAnim(value1, true);
-				charGroup.members[index % charGroup.length].specialAnim = true;
+				if (charGroup.members[index % charGroup.length].animOffsets.exists(value1)) {
+					charGroup.members[index % charGroup.length].playAnim(value1, true);
+					charGroup.members[index % charGroup.length].specialAnim = true;
+				}
 
 			case 'Camera Follow Pos':
 				var val1:Float = Std.parseFloat(value1);
@@ -4207,7 +4218,9 @@ class PlayState extends MusicBeatState
 					if (daNote.noteType == 'Alt Animation') daAlt = '-alt';
 
 					var animToPlay:String = '${singAnimations[daNote.noteData]}miss$daAlt';
-					charGroup.members[char].playAnim(animToPlay, true);
+					if (charGroup.members[char].animOffsets.exists(animToPlay)) {
+						charGroup.members[char].playAnim(animToPlay, true);
+					}
 				}
 			}
 		}
@@ -4251,9 +4264,10 @@ class PlayState extends MusicBeatState
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
 
 			if (!inEditor) {
+				var animToPlay = '${singAnimations[direction]}miss';
 				for (char in playerChar) {
-					if (char.hasMissAnimations) {
-						char.playAnim('${singAnimations[direction]}miss', true);
+					if (char.hasMissAnimations && char.animOffsets.exists(animToPlay)) {
+						char.playAnim(animToPlay, true);
 					}
 				}
 			}
@@ -4295,20 +4309,20 @@ class PlayState extends MusicBeatState
 						var animToPlay:String = dadSingAnimations[note.noteData] + altAnim;
 
 						if (note.noteType == 'Trail Note') {
-							if (note.gfNote) {
+							if (note.gfNote && doubleTrailMap.get('gf$char').animOffsets.exists(animToPlay)) {
 								doubleTrailMap.get('gf$char').playAnim(animToPlay, true);
 								doubleTrailMap.get('gf$char').holdTimer = 0;
 								doubleTrailMap.get('gf$char').lastAnim = animToPlay;
-							} else if (!opponentChart) {
+							} else if (!opponentChart && doubleTrailMap.get('dad$char').animOffsets.exists(animToPlay)) {
 								doubleTrailMap.get('dad$char').playAnim(animToPlay, true);
 								doubleTrailMap.get('dad$char').holdTimer = 0;
 								doubleTrailMap.get('dad$char').lastAnim = animToPlay;
-							} else {
+							} else if (doubleTrailMap.get('bf$char').animOffsets.exists(animToPlay)) {
 								doubleTrailMap.get('bf$char').playAnim(animToPlay, true);
 								doubleTrailMap.get('bf$char').holdTimer = 0;
 								doubleTrailMap.get('bf$char').lastAnim = animToPlay;
 							}
-						} else if (!charGroup.members[char].specialAnim) {
+						} else if (charGroup.members[char].animOffsets.exists(animToPlay)) {
 							charGroup.members[char].playAnim(animToPlay, true);
 							charGroup.members[char].holdTimer = 0;
 						}
@@ -4382,7 +4396,7 @@ class PlayState extends MusicBeatState
 						if (!inEditor) {
 							for (i in note.characters) {
 								if (i < charGroup.members.length) {
-									if (charGroup.members[i].animation.getByName('hurt') != null) {
+									if (charGroup.members[i].animOffsets.exists('hurt')) {
 										charGroup.members[i].playAnim('hurt', true);
 										charGroup.members[i].specialAnim = true;
 									}
@@ -4411,31 +4425,32 @@ class PlayState extends MusicBeatState
 
 			if (!note.noAnimation && !inEditor) {
 				var daAlt = '';
-				if (SONG.notes[Conductor.getCurSection(SONG, curStep)] != null) {
-					if ((SONG.notes[Conductor.getCurSection(SONG, curStep)].altAnim && opponentChart) || note.noteType == 'Alt Animation')
+				var curSection = Conductor.getCurSection(SONG, curStep);
+				if (SONG.notes[curSection] != null) {
+					if ((SONG.notes[curSection].altAnim && opponentChart) || note.noteType == 'Alt Animation')
 						daAlt = '-alt';
 				}
 	
-				var animToPlay:String = singAnimations[note.noteData];
+				var animToPlay:String = singAnimations[note.noteData] + daAlt;
 
 				for (i in note.characters) {
 					if (i < charGroup.members.length) {
 						if (note.noteType == 'Trail Note') {
-							if (note.gfNote) {
-								doubleTrailMap.get('gf$i').playAnim(animToPlay + daAlt, true);
+							if (note.gfNote && doubleTrailMap.get('gf$i').animOffsets.exists(animToPlay)) {
+								doubleTrailMap.get('gf$i').playAnim(animToPlay, true);
 								doubleTrailMap.get('gf$i').holdTimer = 0;
-								doubleTrailMap.get('gf$i').lastAnim = animToPlay + daAlt;
-							} else if (opponentChart) {
-								doubleTrailMap.get('dad$i').playAnim(animToPlay + daAlt, true);
+								doubleTrailMap.get('gf$i').lastAnim = animToPlay;
+							} else if (opponentChart && doubleTrailMap.get('dad$i').animOffsets.exists(animToPlay)) {
+								doubleTrailMap.get('dad$i').playAnim(animToPlay, true);
 								doubleTrailMap.get('dad$i').holdTimer = 0;
-								doubleTrailMap.get('dad$i').lastAnim = animToPlay + daAlt;
-							} else {
-								doubleTrailMap.get('bf$i').playAnim(animToPlay + daAlt, true);
+								doubleTrailMap.get('dad$i').lastAnim = animToPlay;
+							} else if (doubleTrailMap.get('bf$i').animOffsets.exists(animToPlay)) {
+								doubleTrailMap.get('bf$i').playAnim(animToPlay, true);
 								doubleTrailMap.get('bf$i').holdTimer = 0;
-								doubleTrailMap.get('bf$i').lastAnim = animToPlay + daAlt;
+								doubleTrailMap.get('bf$i').lastAnim = animToPlay;
 							}
-						} else if (!charGroup.members[i].specialAnim) {
-							charGroup.members[i].playAnim(animToPlay + daAlt, true);
+						} else if (charGroup.members[i].animOffsets.exists(animToPlay)) {
+							charGroup.members[i].playAnim(animToPlay, true);
 							charGroup.members[i].holdTimer = 0;
 						}
 					}
@@ -4578,8 +4593,10 @@ class PlayState extends MusicBeatState
 		{
 			startedMoving = true;
 			for (gf in gfGroup) {
-				gf.playAnim('hairBlow');
-				gf.specialAnim = true;
+				if (gf.animOffsets.exists('hairBlow')) {
+					gf.playAnim('hairBlow');
+					gf.specialAnim = true;
+				}
 			}
 		}
 
@@ -4604,9 +4621,11 @@ class PlayState extends MusicBeatState
 	function trainReset():Void
 	{
 		for (gf in gfGroup) {
-			gf.danced = false; //Sets head to the correct position once the animation ends
-			gf.playAnim('hairFall');
-			gf.specialAnim = true;
+			if (gf.animOffsets.exists('hairFall')) {
+				gf.danced = false; //Sets head to the correct position once the animation ends
+				gf.playAnim('hairFall');
+				gf.specialAnim = true;
+			}
 		}
 		phillyTrain.x = FlxG.width + 200;
 		trainMoving = false;
