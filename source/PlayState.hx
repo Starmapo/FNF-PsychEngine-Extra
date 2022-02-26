@@ -4492,7 +4492,7 @@ class PlayState extends MusicBeatState
 	}
 
 	function spawnNoteSplashOnNote(note:Note) {
-		if (note != null && ((ClientPrefs.noteSplashes && !note.isOpponent) || (ClientPrefs.noteSplashesOpponent && note.isOpponent))) {
+		if (note != null && ((ClientPrefs.noteSplashes && note.mustPress) || (ClientPrefs.noteSplashesOpponent && !note.mustPress))) {
 			var strum:StrumNote = playerStrums.members[note.noteData];
 			if (note.isOpponent) strum = opponentStrums.members[note.noteData];
 			if (strum != null) {
@@ -4503,7 +4503,6 @@ class PlayState extends MusicBeatState
 
 	public function spawnNoteSplash(x:Float, y:Float, data:Int, ?note:Note = null) {
 		var skin:String = 'noteSplashes';
-		var splashGroup = grpNoteSplashes;
 		var colors = playerColors;
 		var keys = playerKeys;
 		if (note != null && note.isOpponent) {
@@ -4521,9 +4520,9 @@ class PlayState extends MusicBeatState
 			brt = note.noteSplashBrt;
 		}
 
-		var splash:NoteSplash = splashGroup.recycle(NoteSplash);
+		var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
 		splash.setupNoteSplash(x, y, note, skin, hue, sat, brt, keys, colors);
-		splashGroup.add(splash);
+		grpNoteSplashes.add(splash);
 	}
 
 	var fastCarCanDrive:Bool = true;
