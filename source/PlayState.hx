@@ -3,16 +3,13 @@ package;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
-import flash.media.Sound;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
 import flixel.addons.effects.FlxTrail;
-import flixel.addons.effects.chainable.FlxWaveEffect;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.graphics.atlas.FlxAtlas;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.keyboard.FlxKey;
@@ -29,7 +26,6 @@ import flixel.util.FlxSave;
 import flixel.util.FlxSort;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxTimer;
-import lime.utils.Assets;
 import openfl.events.KeyboardEvent;
 import openfl.utils.Assets as OpenFlAssets;
 import editors.ChartingState;
@@ -3422,7 +3418,7 @@ class PlayState extends MusicBeatState
 							makeDoubleTrail(boyfriendGroup.members[index], 'bf$index', true, index, boyfriendGroup);
 							boyfriend = boyfriendGroup.members[0];
 							if (boyfriendGroup.members.length == 1) {
-								iconP1.changeIcon(boyfriend.curCharacter);
+								iconP1.changeIcon(boyfriend.healthIcon);
 							}
 							setOnLuas('boyfriendName', boyfriend.curCharacter);
 							reloadHealthBarColors();
@@ -3452,7 +3448,7 @@ class PlayState extends MusicBeatState
 							makeDoubleTrail(dadGroup.members[index], 'dad$index', false, index, dadGroup);
 							dad = dadGroup.members[0];
 							if (dadGroup.members.length == 1) {
-								iconP2.changeIcon(dad.curCharacter);
+								iconP2.changeIcon(dad.healthIcon);
 							}
 							setOnLuas('dadName', dad.curCharacter);
 							reloadHealthBarColors();
