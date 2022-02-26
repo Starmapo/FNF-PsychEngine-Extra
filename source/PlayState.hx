@@ -1918,11 +1918,18 @@ class PlayState extends MusicBeatState
 		if (SONG.needsVoices) {
 			vocals = new FlxSound().loadEmbedded(Paths.voices(curSong));
 
-			var file:Dynamic = Paths.voices(curSong, 'Dad');
 			vocalsDad = new FlxSound();
-			if (file != null) {
-				foundDadVocals = true;
-				vocalsDad.loadEmbedded(file);
+			#if MODS_ALLOWED
+			if (OpenFlAssets.exists(Paths.getPath('$curSong/VoicesDad.${Paths.SOUND_EXT}', MUSIC, 'songs')) || FileSystem.exists(Paths.modsSounds('songs/$curSong', 'VoicesDad')))
+			#else
+			if (OpenFlAssets.exists(Paths.getPath('$curSong/VoicesDad.${Paths.SOUND_EXT}', MUSIC, 'songs')))
+			#end
+			{
+				var file:Dynamic = Paths.voices(curSong, 'Dad');
+				if (file != null) {
+					foundDadVocals = true;
+					vocalsDad.loadEmbedded(file);
+				}
 			}
 		} else {
 			vocals = new FlxSound();
