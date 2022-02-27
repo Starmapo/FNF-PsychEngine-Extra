@@ -94,12 +94,6 @@ class Note extends FlxSprite
 	private function set_noteType(value:String):String {
 		if (noteData > -1) {
 			noteSplashTexture = 'noteSplashes';
-			if (ClientPrefs.arrowHSV[keyAmount - 1] == null) {
-				trace('no $keyAmount keys in arrowhsv');
-			}
-			if (ClientPrefs.arrowHSV[keyAmount - 1][noteData] == null) {
-				trace('no color $noteData for $keyAmount in arrowhsv');
-			}
 			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount - 1][noteData][0] / 360;
 			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount - 1][noteData][1] / 100;
 			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount - 1][noteData][2] / 100;
