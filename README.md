@@ -1,5 +1,4 @@
-# NOTE: THIS ENGINE IS BEING WORKED ON AND IS NOT FULLY READY!
-## It's still usable, just remember it's in prerelease state
+# NOTE: THIS ENGINE IS STILL BEING WORKED ON! Report any bugs in the issues page!
 
 ![Psych Engine Extra](https://user-images.githubusercontent.com/85134252/153526241-9f265b56-ffd1-4452-bb61-c7500471a910.png)
 
