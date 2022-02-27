@@ -2332,9 +2332,9 @@ class PlayState extends MusicBeatState
 	{
 		if (paused)
 		{
-			if (FlxG.sound.music != null && !startingSong && FlxG.sound.music.time > 0.2)
+			if (FlxG.sound.music != null && !startingSong && FlxG.sound.music.time > 0)
 			{
-				resyncVocals();
+				resyncVocals(true);
 			}
 
 			if (!startTimer.finished)
@@ -2388,7 +2388,7 @@ class PlayState extends MusicBeatState
 	{
 		if (health > 0 && !paused)
 		{
-			if (FlxG.sound.music != null && !startingSong && !endingSong && FlxG.sound.music.time > 0.2)
+			if (FlxG.sound.music != null && !startingSong && !endingSong && FlxG.sound.music.time > 0)
 			{
 				resyncVocals();
 			}
@@ -2421,9 +2421,12 @@ class PlayState extends MusicBeatState
 		super.onFocusLost();
 	}
 
-	function resyncVocals():Void
+	function resyncVocals(forcePlay:Bool = false):Void
 	{
 		if (FlxG.sound.music == null || startingSong || endingSong || endingTimer != null) return;
+
+		var playVocals = vocals.playing || forcePlay;
+		var playVocalsDad = vocalsDad.playing || forcePlay;
 
 		vocals.pause();
 		vocalsDad.pause();
@@ -2435,10 +2438,10 @@ class PlayState extends MusicBeatState
 		} else {
 			FlxG.sound.music.time = Conductor.songPosition * playbackRate;
 		}
-		if (FlxG.sound.music.time > 0 && vocals.time > 0) {
+		if (FlxG.sound.music.time > 0 && vocals.time > 0 && playVocals) {
 			vocals.play();
 		}
-		if (FlxG.sound.music.time > 0 && vocalsDad.time > 0) {
+		if (FlxG.sound.music.time > 0 && vocalsDad.time > 0 && playVocalsDad) {
 			vocalsDad.play();
 		}
 		vocals.time = vocalsDad.time = FlxG.sound.music.time;
@@ -3062,6 +3065,11 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.pause();
 			vocals.pause();
 			vocalsDad.pause();
+			@:privateAccess { //This is so hiding the debugger doesn't play the music again
+				FlxG.sound.music._alreadyPaused = true;
+				vocals._alreadyPaused = true;
+				vocalsDad._alreadyPaused = true;
+			}
 		}
 		openSubState(new PauseSubState());
 
@@ -4028,7 +4036,7 @@ class PlayState extends MusicBeatState
 			if ((inEditor || !playerChar.members[0].stunned) && generatedMusic && !endingSong)
 			{
 				var lastTime:Float = Conductor.songPosition;
-				if (FlxG.sound.music.time > 0.2) {
+				if (FlxG.sound.music.time > 0) {
 					//more accurate hit time for the ratings?
 					Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 				}
@@ -4085,7 +4093,7 @@ class PlayState extends MusicBeatState
 				//									- Shadow Mario
 				keysPressed[key] = true;
 
-				if (FlxG.sound.music.time > 0.2) {
+				if (FlxG.sound.music.time > 0) {
 					//more accurate hit time for the ratings? part 2 (Now that the calculations are done, go back to the time it was before for not causing a note stutter)
 					Conductor.songPosition = lastTime;
 				}
