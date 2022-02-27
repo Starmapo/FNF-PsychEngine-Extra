@@ -910,7 +910,7 @@ class ChartingState extends MusicBeatState
 				if (note[1] >= rightKeys) {
 					note[1] -= rightKeys;
 				} else {
-					note[1] += leftKeys;
+					note[1] += rightKeys;
 				}
 			}
 			updateGrid();
