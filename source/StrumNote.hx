@@ -80,7 +80,7 @@ class StrumNote extends FlxSprite
 			uiSkin = UIData.getUIFile('');
 		}
 		this.player = player;
-		this.noteData = leData;
+		this.noteData = leData % keyAmount;
 		this.keyAmount = keyAmount;
 		this.uiSkin = uiSkin;
 		super(x, y);
@@ -147,9 +147,9 @@ class StrumNote extends FlxSprite
 			colorSwap.saturation = 0;
 			colorSwap.brightness = 0;
 		} else {
-			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount - 1][noteData % keyAmount][0] / 360;
-			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount - 1][noteData % keyAmount][1] / 100;
-			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount - 1][noteData % keyAmount][2] / 100;
+			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount - 1][noteData][0] / 360;
+			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount - 1][noteData][1] / 100;
+			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount - 1][noteData][2] / 100;
 		}
 	}
 }
