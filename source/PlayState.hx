@@ -4532,9 +4532,9 @@ class PlayState extends MusicBeatState
 			keys = opponentKeys;
 		}
 		
-		var hue:Float = ClientPrefs.arrowHSV[keys - 1][data][0] / 360;
-		var sat:Float = ClientPrefs.arrowHSV[keys - 1][data][1] / 100;
-		var brt:Float = ClientPrefs.arrowHSV[keys - 1][data][2] / 100;
+		var hue:Float = ClientPrefs.arrowHSV[keys - 1][data % keys][0] / 360;
+		var sat:Float = ClientPrefs.arrowHSV[keys - 1][data % keys][1] / 100;
+		var brt:Float = ClientPrefs.arrowHSV[keys - 1][data % keys][2] / 100;
 		if (note != null) {
 			skin = note.noteSplashTexture;
 			hue = note.noteSplashHue;

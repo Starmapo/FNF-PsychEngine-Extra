@@ -100,9 +100,9 @@ class Note extends FlxSprite
 			if (ClientPrefs.arrowHSV[keyAmount - 1][noteData] == null) {
 				trace('no color $noteData for $keyAmount in arrowhsv');
 			}
-			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount - 1][noteData][0] / 360;
-			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount - 1][noteData][1] / 100;
-			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount - 1][noteData][2] / 100;
+			colorSwap.hue = ClientPrefs.arrowHSV[keyAmount - 1][noteData % keyAmount][0] / 360;
+			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount - 1][noteData % keyAmount][1] / 100;
+			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount - 1][noteData % keyAmount][2] / 100;
 			if (noteType != value) {
 				switch(value) {
 					case 'Hurt Note':
