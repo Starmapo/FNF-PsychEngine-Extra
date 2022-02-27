@@ -39,7 +39,7 @@ class DialogueEditorState extends MusicBeatState
 	var dialogueFile:DialogueFile = null;
 
 	override function create() {
-		persistentUpdate = persistentDraw = true;
+		persistentUpdate = true;
 		FlxG.camera.bgColor = FlxColor.fromHSL(0, 0, 0.5);
 
 		defaultLine = {

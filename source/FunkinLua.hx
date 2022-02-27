@@ -792,6 +792,9 @@ class FunkinLua {
 			PlayState.chartingMode = false;
 			PlayState.instance.transitioning = true;
 		});
+		Lua_helper.add_callback(lua, "pauseGame", function() {
+			PlayState.instance.pauseGame();
+		});
 		Lua_helper.add_callback(lua, "getSongPosition", function() {
 			return Conductor.songPosition;
 		});

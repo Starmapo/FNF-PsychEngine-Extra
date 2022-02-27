@@ -24,7 +24,7 @@ class PauseSubState extends MusicBeatSubstate
 	var pauseMusic:FlxSound;
 	var practiceText:FlxText;
 
-	public function new(x:Float, y:Float)
+	public function new()
 	{
 		super();
 		if (CoolUtil.difficulties.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!

@@ -342,7 +342,6 @@ class PlayState extends MusicBeatState
 			CustomFadeTransition.nextCamera = camOther;
 
 			persistentUpdate = true;
-			persistentDraw = true;
 		}
 
 		if (SONG == null)
@@ -1060,7 +1059,7 @@ class PlayState extends MusicBeatState
 			if (OpenFlAssets.exists(file)) {
 				dialogue = CoolUtil.coolTextFile(file);
 			}
-			doof = new DialogueBox(false, dialogue);
+			doof = new DialogueBox(dialogue);
 			doof.scrollFactor.set();
 			doof.finishThing = startCountdown;
 			doof.nextDialogueThing = startNextDialogue;
@@ -2674,20 +2673,7 @@ class PlayState extends MusicBeatState
 			{
 				var ret:Dynamic = callOnLuas('onPause', []);
 				if (ret != FunkinLua.Function_Stop) {
-					persistentUpdate = false;
-					persistentDraw = true;
-					paused = true;
-
-					if (FlxG.sound.music != null) {
-						FlxG.sound.music.pause();
-						vocals.pause();
-						vocalsDad.pause();
-					}
-					openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-			
-					#if DISCORD_ALLOWED
-					DiscordClient.changePresence(detailsPausedText, '${SONG.song} ($storyDifficultyText)', iconP2.getCharacter());
-					#end
+					pauseGame();
 				}
 			}
 
@@ -3068,6 +3054,22 @@ class PlayState extends MusicBeatState
 		callOnLuas('onUpdatePost', [elapsed]);
 	}
 
+	public function pauseGame() {
+		persistentUpdate = false;
+		paused = true;
+
+		if (FlxG.sound.music != null) {
+			FlxG.sound.music.pause();
+			vocals.pause();
+			vocalsDad.pause();
+		}
+		openSubState(new PauseSubState());
+
+		#if DISCORD_ALLOWED
+		DiscordClient.changePresence(detailsPausedText, '${SONG.song} ($storyDifficultyText)', iconP2.getCharacter());
+		#end
+	}
+
 	function openChartEditor()
 	{
 		persistentUpdate = false;
@@ -3111,7 +3113,7 @@ class PlayState extends MusicBeatState
 					SONG = originalSong;
 					MusicBeatState.resetState();
 				} else {
-					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
+					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1]));
 				}
 				
 				#if DISCORD_ALLOWED

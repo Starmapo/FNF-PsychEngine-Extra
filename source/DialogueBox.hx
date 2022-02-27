@@ -36,7 +36,7 @@ class DialogueBox extends FlxSpriteGroup
 
 	var songName:String;
 
-	public function new(talkingRight:Bool = true, ?dialogueList:Array<String>)
+	public function new(?dialogueList:Array<String>)
 	{
 		super();
 		songName = Paths.formatToSongPath(PlayState.SONG.song);

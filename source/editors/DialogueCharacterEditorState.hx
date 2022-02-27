@@ -64,7 +64,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 	var ghostIdle:DialogueCharacter;
 
 	override function create() {
-		persistentUpdate = persistentDraw = true;
+		persistentUpdate = true;
 		camGame = new FlxCamera();
 		camOther = new FlxCamera();
 		camGame.bgColor = FlxColor.fromHSL(0, 0, 0.5);
