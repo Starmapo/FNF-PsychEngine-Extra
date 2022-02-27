@@ -51,7 +51,7 @@ typedef CharArray = {
 
 class Character extends FlxSprite
 {
-	public var animOffsets:Map<String, Array<Dynamic>>;
+	public var animOffsets:Map<String, Array<Float>>;
 	public var debugMode:Bool = false;
 
 	public var isPlayer:Bool = false;

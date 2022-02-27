@@ -1464,17 +1464,26 @@ class ChartingState extends MusicBeatState
 			FlxG.sound.music.stop();
 		}
 
-		var file:Dynamic = Paths.voices(currentSongName);
 		vocals = new FlxSound();
-		if (file != null) {
-			vocals.loadEmbedded(file);
-			FlxG.sound.list.add(vocals);
+		if (_song.needsVoices) {
+			var file:Dynamic = Paths.voices(currentSongName);
+			if (file != null) {
+				vocals.loadEmbedded(file);
+				FlxG.sound.list.add(vocals);
+			}
 		}
-		var file:Dynamic = Paths.voices(currentSongName, 'Dad');
 		vocalsDad = new FlxSound();
-		if (file != null) {
-			vocalsDad.loadEmbedded(file);
-			FlxG.sound.list.add(vocalsDad);
+		#if MODS_ALLOWED
+		if (_song.needsVoices && (OpenFlAssets.exists(Paths.getPath('$currentSongName/VoicesDad.${Paths.SOUND_EXT}', MUSIC, 'songs')) || FileSystem.exists(Paths.modsSounds('songs/$currentSongName', 'VoicesDad'))))
+		#else
+		if (_song.needsVoices && OpenFlAssets.exists(Paths.getPath('$currentSongName/VoicesDad.${Paths.SOUND_EXT}', MUSIC, 'songs')))
+		#end
+		{
+			var file:Dynamic = Paths.voices(currentSongName, 'Dad');
+			if (file != null) {
+				vocalsDad.loadEmbedded(file);
+				FlxG.sound.list.add(vocalsDad);
+			}
 		}
 		generateSong();
 		FlxG.sound.music.pause();
