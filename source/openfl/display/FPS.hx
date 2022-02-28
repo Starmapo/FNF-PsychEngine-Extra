@@ -1,7 +1,5 @@
 package openfl.display;
 
-import haxe.Timer;
-import openfl.events.Event;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import flixel.math.FlxMath;
@@ -11,6 +9,7 @@ import openfl.display._internal.stats.DrawCallContext;
 #end
 #if flash
 import openfl.Lib;
+import openfl.events.Event;
 #end
 
 #if openfl
