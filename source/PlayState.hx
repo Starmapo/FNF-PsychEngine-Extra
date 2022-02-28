@@ -3015,6 +3015,8 @@ class PlayState extends MusicBeatState
 				vocals.pause();
 				vocalsDad.pause();
 				Conductor.songPosition += 10000;
+				updateCurStep();
+				Conductor.getLastBPM(SONG, curStep, playbackRate);
 				notes.forEachAlive(function(daNote:Note)
 				{
 					if (daNote.strumTime < Conductor.songPosition) {
