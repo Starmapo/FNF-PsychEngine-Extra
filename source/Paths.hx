@@ -1,18 +1,19 @@
 package;
 
-import openfl.system.System;
+import flash.media.Sound;
 import flixel.FlxG;
+import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
+import haxe.io.Path;
+import lime.utils.Assets;
+import openfl.display.BitmapData;
+import openfl.system.System;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
-import lime.utils.Assets;
 #if MODS_ALLOWED
 import sys.io.File;
 import sys.FileSystem;
 #end
-import flixel.graphics.FlxGraphic;
-import openfl.display.BitmapData;
-import flash.media.Sound;
 
 using StringTools;
 
@@ -420,7 +421,7 @@ class Paths
 		var modsFolder:String = mods();
 		if (FileSystem.exists(modsFolder)) {
 			for (folder in FileSystem.readDirectory(modsFolder)) {
-				var path = haxe.io.Path.join([modsFolder, folder]);
+				var path = Path.join([modsFolder, folder]);
 				if (FileSystem.isDirectory(path) && !ignoreModFolders.contains(folder) && !list.contains(folder)) {
 					list.push(folder);
 				}

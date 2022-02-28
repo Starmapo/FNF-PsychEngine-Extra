@@ -1,6 +1,8 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.util.FlxColor;
 import openfl.utils.Assets;
 #if MODS_ALLOWED
 import sys.io.File;
@@ -73,7 +75,7 @@ class CoolUtil
 
 		return daList;
 	}
-	public static function dominantColor(sprite:flixel.FlxSprite):Int {
+	public static function dominantColor(sprite:FlxSprite):Int {
 		var countByColor:Map<Int, Int> = [];
 		for (col in 0...sprite.frameWidth) {
 			for (row in 0...sprite.frameHeight) {
@@ -89,7 +91,7 @@ class CoolUtil
 		 }
 		var maxCount = 0;
 		var maxKey:Int = 0;//after the loop this will store the max color
-		countByColor[flixel.util.FlxColor.BLACK] = 0;
+		countByColor[FlxColor.BLACK] = 0;
 		for (key in countByColor.keys()) {
 			if (countByColor[key] >= maxCount) {
 				maxCount = countByColor[key];

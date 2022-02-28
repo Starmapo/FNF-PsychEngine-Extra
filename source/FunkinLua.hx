@@ -1,8 +1,8 @@
 #if LUA_ALLOWED
+import llua.Convert;
 import llua.Lua;
 import llua.LuaL;
 import llua.State;
-import llua.Convert;
 #end
 
 import animateatlas.AtlasFrameMaker;
@@ -17,18 +17,18 @@ import flixel.math.FlxMath;
 import flixel.util.FlxSave;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
-import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import flixel.util.FlxTimer;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
+import lime.app.Application;
 import openfl.display.BlendMode;
+import openfl.utils.Assets;
+import DialogueBoxPsych;
+import Type.ValueType;
 #if MODS_ALLOWED
 import sys.FileSystem;
 #end
-import openfl.utils.Assets;
-import Type.ValueType;
-import DialogueBoxPsych;
-
 #if DISCORD_ALLOWED
 import Discord;
 #end
@@ -60,7 +60,7 @@ class FunkinLua {
 		var result:Dynamic = LuaL.dofile(lua, script);
 		var resultStr:String = Lua.tostring(lua, result);
 		if (resultStr != null && result != 0) {
-			lime.app.Application.current.window.alert(resultStr, 'Error on .LUA script!');
+			Application.current.window.alert(resultStr, 'Error on .LUA script!');
 			trace('Error on .LUA script! $resultStr');
 			lua = null;
 			return;

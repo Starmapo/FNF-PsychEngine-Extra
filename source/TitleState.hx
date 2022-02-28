@@ -5,27 +5,20 @@ import Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.input.keyboard.FlxKey;
 import flixel.addons.transition.FlxTransitionableState;
-import haxe.Json;
-import openfl.display.BitmapData;
-#if MODS_ALLOWED
-import sys.FileSystem;
-import sys.io.File;
-#end
-import options.GraphicsSettingsSubState;
-import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;
-import flixel.math.FlxPoint;
-import flixel.math.FlxRect;
-import flixel.system.FlxSound;
+import flixel.input.keyboard.FlxKey;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import haxe.Json;
 import lime.app.Application;
 import openfl.Assets;
+#if CHECK_FOR_UPDATES
+import haxe.Http;
+#end
 
 using StringTools;
 
@@ -76,7 +69,7 @@ class TitleState extends MusicBeatState
 		#if CHECK_FOR_UPDATES
 		if (!closedState) {
 			trace('checking for update');
-			var http = new haxe.Http("https://raw.githubusercontent.com/Starmapo/FNF-PsychEngine-Extra/main/gitVersion.txt");
+			var http = new Http("https://raw.githubusercontent.com/Starmapo/FNF-PsychEngine-Extra/main/gitVersion.txt");
 			
 			http.onData = function (data:String)
 			{

@@ -3,6 +3,8 @@ package;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
+import editors.ChartingState;
+import editors.CharacterEditorState;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -28,8 +30,6 @@ import flixel.util.FlxStringUtil;
 import flixel.util.FlxTimer;
 import openfl.events.KeyboardEvent;
 import openfl.utils.Assets as OpenFlAssets;
-import editors.ChartingState;
-import editors.CharacterEditorState;
 import Achievements;
 import Character;
 import DialogueBoxPsych;

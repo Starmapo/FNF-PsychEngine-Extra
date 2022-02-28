@@ -2,6 +2,7 @@ package;
 
 #if DISCORD_ALLOWED
 import Sys.sleep;
+import sys.thread.Thread;
 import discord_rpc.DiscordRpc;
 
 #if LUA_ALLOWED
@@ -60,7 +61,7 @@ class DiscordClient
 
 	public static function initialize()
 	{
-		var DiscordDaemon = sys.thread.Thread.create(() ->
+		var DiscordDaemon = Thread.create(() ->
 		{
 			new DiscordClient();
 		});

@@ -5,6 +5,7 @@ import Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.text.FlxText;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import Controls;
@@ -88,7 +89,7 @@ class OptionsState extends MusicBeatState
 		{
 			var sprite:Dynamic = sprite; //Make it check for FlxSprite instead of FlxBasic
 			var sprite:FlxSprite = sprite; //Don't judge me ok
-			if (sprite != null && (sprite is FlxSprite) && !(sprite is flixel.text.FlxText)) {
+			if (sprite != null && (sprite is FlxSprite) && !(sprite is FlxText)) {
 				sprite.antialiasing = ClientPrefs.globalAntialiasing;
 			}
 		}

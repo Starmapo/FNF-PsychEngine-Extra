@@ -4,33 +4,31 @@ package editors;
 import Discord.DiscordClient;
 #end
 import animateatlas.AtlasFrameMaker;
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.FlxCamera;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.graphics.FlxGraphic;
-import flixel.text.FlxText;
-import flixel.util.FlxColor;
 import flixel.addons.ui.FlxUI;
 import flixel.addons.ui.FlxUICheckBox;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUITabMenu;
+import flixel.animation.FlxAnimation;
+import flixel.graphics.FlxGraphic;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.system.debug.interaction.tools.Pointer.GraphicCursorCross;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import flixel.ui.FlxButton;
-import openfl.net.FileReference;
+import haxe.Json;
+import haxe.io.Path;
+import lime.system.Clipboard;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
-import haxe.Json;
+import openfl.net.FileReference;
 import Character;
-import flixel.system.debug.interaction.tools.Pointer.GraphicCursorCross;
-import lime.system.Clipboard;
-import flixel.animation.FlxAnimation;
-
 #if MODS_ALLOWED
 import sys.FileSystem;
-#else
-import openfl.utils.Assets;
 #end
 
 using StringTools;
@@ -993,7 +991,7 @@ class CharacterEditorState extends MusicBeatState
 			var directory:String = directories[i];
 			if (FileSystem.exists(directory)) {
 				for (file in FileSystem.readDirectory(directory)) {
-					var path = haxe.io.Path.join([directory, file]);
+					var path = Path.join([directory, file]);
 					if (!FileSystem.isDirectory(path) && file.endsWith('.json')) {
 						var charToCheck:String = file.substr(0, file.length - 5);
 						if (!charsLoaded.exists(charToCheck)) {
