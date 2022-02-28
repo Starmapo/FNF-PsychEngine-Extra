@@ -7,6 +7,7 @@ import sys.FileSystem;
 import lime.utils.Assets;
 import openfl.utils.Assets as OpenFlAssets;
 import haxe.Json;
+import haxe.io.Path;
 
 using StringTools;
 
@@ -97,8 +98,8 @@ class WeekData {
 				}
 				else // Sort mod loading order based on modsList.txt file
 				{
-					var path = haxe.io.Path.join([Paths.mods(), splitName[0]]);
-					if (sys.FileSystem.isDirectory(path) && !Paths.ignoreModFolders.contains(splitName[0]) && !disabledMods.contains(splitName[0]) && !directories.contains('$path/'))
+					var path = Path.join([Paths.mods(), splitName[0]]);
+					if (FileSystem.isDirectory(path) && !Paths.ignoreModFolders.contains(splitName[0]) && !disabledMods.contains(splitName[0]) && !directories.contains('$path/'))
 					{
 						directories.push('$path/');
 					}
@@ -109,7 +110,7 @@ class WeekData {
 		var modsDirectories:Array<String> = Paths.getModDirectories();
 		for (folder in modsDirectories)
 		{
-			var pathThing:String = '${haxe.io.Path.join([Paths.mods(), folder])}/';
+			var pathThing:String = '${Path.join([Paths.mods(), folder])}/';
 			if (!disabledMods.contains(folder) && !directories.contains(pathThing))
 			{
 				directories.push(pathThing);
@@ -152,7 +153,7 @@ class WeekData {
 				for (daWeek in listOfWeeks)
 				{
 					var path:String = '${directory}${daWeek}.json';
-					if (sys.FileSystem.exists(path))
+					if (FileSystem.exists(path))
 					{
 						addWeek(daWeek, path, directories[i], i, originalLength);
 					}
@@ -160,8 +161,8 @@ class WeekData {
 
 				for (file in FileSystem.readDirectory(directory))
 				{
-					var path = haxe.io.Path.join([directory, file]);
-					if (!sys.FileSystem.isDirectory(path) && file.endsWith('.json'))
+					var path = Path.join([directory, file]);
+					if (!FileSystem.isDirectory(path) && file.endsWith('.json'))
 					{
 						addWeek(file.substr(0, file.length - 5), path, directories[i], i, originalLength);
 					}

@@ -33,6 +33,7 @@ import openfl.net.FileReference;
 import openfl.utils.Assets as OpenFlAssets;
 import lime.media.AudioBuffer;
 import haxe.io.Bytes;
+import haxe.io.Path;
 import flash.geom.Rectangle;
 import flash.media.Sound;
 import flixel.util.FlxSort;
@@ -492,7 +493,7 @@ class ChartingState extends MusicBeatState
 			var directory:String = directories[i];
 			if (FileSystem.exists(directory)) {
 				for (file in FileSystem.readDirectory(directory)) {
-					var path = haxe.io.Path.join([directory, file]);
+					var path = Path.join([directory, file]);
 					if (!FileSystem.isDirectory(path) && file.endsWith('.json')) {
 						var charToCheck:String = file.substr(0, file.length - 5);
 						if (!charToCheck.endsWith('-dead') && !tempMap.exists(charToCheck)) {
@@ -551,7 +552,7 @@ class ChartingState extends MusicBeatState
 			var directory:String = directories[i];
 			if (FileSystem.exists(directory)) {
 				for (file in FileSystem.readDirectory(directory)) {
-					var path = haxe.io.Path.join([directory, file]);
+					var path = Path.join([directory, file]);
 					if (!FileSystem.isDirectory(path) && file.endsWith('.json')) {
 						var stageToCheck:String = file.substr(0, file.length - 5);
 						if (!tempMap.exists(stageToCheck)) {
@@ -1066,7 +1067,7 @@ class ChartingState extends MusicBeatState
 			var directory:String =  directories[i];
 			if (FileSystem.exists(directory)) {
 				for (file in FileSystem.readDirectory(directory)) {
-					var path = haxe.io.Path.join([directory, file]);
+					var path = Path.join([directory, file]);
 					if (!FileSystem.isDirectory(path) && file.endsWith('.lua')) {
 						var fileToCheck:String = file.substr(0, file.length - 4);
 						if (!noteTypeMap.exists(fileToCheck)) {
@@ -1126,7 +1127,7 @@ class ChartingState extends MusicBeatState
 			var directory:String =  directories[i];
 			if (FileSystem.exists(directory)) {
 				for (file in FileSystem.readDirectory(directory)) {
-					var path = haxe.io.Path.join([directory, file]);
+					var path = Path.join([directory, file]);
 					if (!FileSystem.isDirectory(path) && file != 'readme.txt' && file.endsWith('.txt')) {
 						var fileToCheck:String = file.substr(0, file.length - 4);
 						if (!eventPushedMap.exists(fileToCheck)) {

@@ -994,7 +994,7 @@ class CharacterEditorState extends MusicBeatState
 			if (FileSystem.exists(directory)) {
 				for (file in FileSystem.readDirectory(directory)) {
 					var path = haxe.io.Path.join([directory, file]);
-					if (!sys.FileSystem.isDirectory(path) && file.endsWith('.json')) {
+					if (!FileSystem.isDirectory(path) && file.endsWith('.json')) {
 						var charToCheck:String = file.substr(0, file.length - 5);
 						if (!charsLoaded.exists(charToCheck)) {
 							var fileCheck = Character.getFile(charToCheck);
