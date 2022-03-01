@@ -2404,8 +2404,6 @@ class ChartingState extends MusicBeatState
 				updateCurStep();
 			}
 
-			recalculateSteps(sectionStartTime());
-
 			reloadGridLayer();
 			updateSectionUI();
 		}
@@ -2499,7 +2497,7 @@ class ChartingState extends MusicBeatState
 		nextRenderedNotes.clear();
 		nextRenderedSustains.clear();
 
-		Conductor.getLastBPM(_song, recalculateSteps());
+		Conductor.getLastBPM(_song, recalculateSteps(sectionStartTime()));
 
 		// CURRENT SECTION
 		for (i in _song.notes[curSection].sectionNotes)
