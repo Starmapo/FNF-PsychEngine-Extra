@@ -4976,7 +4976,11 @@ class PlayState extends MusicBeatState
 		}
 		if (maniaData == null) {
 			FlxG.log.warn('Couldn\'t get ${playerKeys}K data for ${uiSkin.name}!');
-			uiSkin = UIData.getUIFile('');
+			if (uiSkin.isPixel) {
+				uiSkin = UIData.getUIFile('pixel');
+			} else {
+				uiSkin = UIData.getUIFile('');
+			}
 			maniaData = uiSkin.mania[playerKeys - 1];
 		}
 		singAnimations = maniaData.singAnimations;
@@ -4997,7 +5001,11 @@ class PlayState extends MusicBeatState
 		}
 		if (maniaData == null) {
 			FlxG.log.warn('Couldn\'t get ${opponentKeys}K data for ${uiSkin.name}!');
-			uiSkin = UIData.getUIFile('');
+			if (uiSkin.isPixel) {
+				uiSkin = UIData.getUIFile('pixel');
+			} else {
+				uiSkin = UIData.getUIFile('');
+			}
 			maniaData = uiSkin.mania[opponentKeys - 1];
 		}
 		dadSingAnimations = maniaData.singAnimations;

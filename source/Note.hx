@@ -145,6 +145,9 @@ class Note extends FlxSprite
 		}
 		if (maniaData == null) {
 			var bad:SkinFile = UIData.getUIFile('');
+			if (uiSkin.isPixel) {
+				bad = UIData.getUIFile('pixel');
+			}
 			for (i in bad.mania) {
 				if (i.keys == keyAmount) {
 					maniaData = i;

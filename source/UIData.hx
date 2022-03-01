@@ -89,7 +89,11 @@ class UIData {
             #else
             if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
             #end
-			    path = 'uiskins/default/$file';
+                if (uiSkin.isPixel) {
+			        path = 'uiskins/pixel/$file';
+                } else {
+                    path = 'uiskins/default/$file';
+                }
             }
 		}
         return path;
@@ -108,7 +112,11 @@ class UIData {
             #else
             if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
             #end
-                return getUIFile('');
+                if (uiSkin.isPixel) {
+                    return getUIFile('pixel');
+                } else {
+                    return getUIFile('');
+                }
             }
 		}
         return uiSkin;
