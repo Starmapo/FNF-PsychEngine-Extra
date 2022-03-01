@@ -85,6 +85,9 @@ class PlayState extends MusicBeatState
 	public var GF_X:Float = 400;
 	public var GF_Y:Float = 130;
 
+	public var bfCamOffset:Array<Float> = [-100, -100];
+	public var dadCamOffset:Array<Float> = [150, -100];
+
 	public var songSpeedTween:FlxTween;
 	public var songSpeed(default, set):Float = 1;
 	public var songSpeedType:String = "multiplicative";
@@ -433,7 +436,10 @@ class PlayState extends MusicBeatState
 				
 					boyfriend: [770, 100],
 					girlfriend: [400, 130],
-					opponent: [100, 100]
+					opponent: [100, 100],
+
+					boyfriendCamOffset: [-100, -100],
+					opponentCamOffset: [150, -100]
 				};
 			}
 
@@ -444,6 +450,8 @@ class PlayState extends MusicBeatState
 			GF_Y = stageData.girlfriend[1];
 			DAD_X = stageData.opponent[0];
 			DAD_Y = stageData.opponent[1];
+			bfCamOffset = stageData.boyfriendCamOffset;
+			dadCamOffset = stageData.opponentCamOffset;
 
 			boyfriendGroup = new FlxTypedSpriteGroup(BF_X, BF_Y);
 			dadGroup = new FlxTypedSpriteGroup(DAD_X, DAD_Y);
@@ -3569,7 +3577,8 @@ class PlayState extends MusicBeatState
 	{
 		if (isDad)
 		{
-			camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
+			camFollow.set(dad.getMidpoint().x + dadCamOffset[0], dad.getMidpoint().y + dadCamOffset[1]);
+
 			if (dadGroupFile != null) {
 				camFollow.x += dadGroupFile.camera_position[0];
 				camFollow.y += dadGroupFile.camera_position[1];
@@ -3581,18 +3590,8 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
+			camFollow.set(boyfriend.getMidpoint().x + bfCamOffset[0], boyfriend.getMidpoint().y + bfCamOffset[1]);
 
-			switch (curStage)
-			{
-				case 'limo':
-					camFollow.x = boyfriend.getMidpoint().x - 300;
-				case 'mall':
-					camFollow.y = boyfriend.getMidpoint().y - 200;
-				case 'school' | 'schoolEvil':
-					camFollow.x = boyfriend.getMidpoint().x - 200;
-					camFollow.y = boyfriend.getMidpoint().y - 200;
-			}
 			if (bfGroupFile != null) {
 				camFollow.x -= bfGroupFile.camera_position[0];
 				camFollow.y += bfGroupFile.camera_position[1];
