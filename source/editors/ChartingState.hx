@@ -1597,19 +1597,25 @@ class ChartingState extends MusicBeatState
 			else if (wname == 'section_bpm')
 			{
 				_song.notes[curSection].bpm = nums.value;
-				updateGrid();
+				if (_song.notes[curSection].changeBPM) {
+					updateGrid();
+				}
 			}
 			else if (wname == 'section_playerKeys')
 			{
 				_song.notes[curSection].playerKeys = Std.int(nums.value);
-				updateKeys();
-				reloadGridLayer();
+				if (_song.notes[curSection].changeKeys) {
+					updateKeys();
+					reloadGridLayer();
+				}
 			}
 			else if (wname == 'section_opponentKeys')
 			{
 				_song.notes[curSection].opponentKeys = Std.int(nums.value);
-				updateKeys();
-				reloadGridLayer();
+				if (_song.notes[curSection].changeKeys) {
+					updateKeys();
+					reloadGridLayer();
+				}
 			}
 			else if (wname == 'inst_volume')
 			{
@@ -2331,24 +2337,25 @@ class ChartingState extends MusicBeatState
 		updateGrid();
 	}
 
-	function recalculateSteps(add:Float = 0):Int
+	function recalculateSteps(?time:Float):Int
 	{
+		if (time == null) time = FlxG.sound.music.time;
 		var lastChange:Dynamic = {
 			stepTime: 0,
-			songTime: 0
+			songTime: 0.0
 		}
 		for (i in 0...Conductor.bpmChangeMap.length)
 		{
-			if (FlxG.sound.music.time >= Conductor.bpmChangeMap[i].songTime)
+			if (time >= Conductor.bpmChangeMap[i].songTime)
 				lastChange = Conductor.bpmChangeMap[i];
 		}
 		for (i in 0...Conductor.signatureChangeMap.length)
 		{
-			if (FlxG.sound.music.time >= Conductor.signatureChangeMap[i].songTime && Conductor.signatureChangeMap[i].songTime > lastChange.songTime)
+			if (time >= Conductor.signatureChangeMap[i].songTime && Conductor.signatureChangeMap[i].songTime > lastChange.songTime)
 				lastChange = Conductor.signatureChangeMap[i];
 		}
 
-		curStep = lastChange.stepTime + Math.floor((FlxG.sound.music.time - lastChange.songTime + add) / Conductor.stepCrochet);
+		curStep = lastChange.stepTime + Math.floor((time - lastChange.songTime) / Conductor.stepCrochet);
 		updateBeat();
 
 		return curStep;
@@ -2396,6 +2403,8 @@ class ChartingState extends MusicBeatState
 				resyncVocals();
 				updateCurStep();
 			}
+
+			recalculateSteps(sectionStartTime());
 
 			reloadGridLayer();
 			updateSectionUI();

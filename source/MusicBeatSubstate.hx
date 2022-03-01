@@ -37,7 +37,7 @@ class MusicBeatSubstate extends FlxSubState
 	{
 		var lastChange:Dynamic = {
 			stepTime: 0,
-			songTime: 0
+			songTime: 0.0
 		}
 		for (i in 0...Conductor.bpmChangeMap.length)
 		{
