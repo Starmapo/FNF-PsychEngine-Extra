@@ -2629,9 +2629,9 @@ class ChartingState extends MusicBeatState
 		note.x = Math.floor(daNoteInfo * GRID_SIZE) + GRID_SIZE;
 		if (isNextSection && _song.notes[curSection].mustHitSection != _song.notes[sectionUsed].mustHitSection) {
 			if (daNoteInfo >= usedLeftKeys) {
-				note.x -= GRID_SIZE * usedLeftKeys;
+				note.x -= GRID_SIZE * usedRightKeys;
 			} else if (daSus != null) {
-				note.x += GRID_SIZE * usedLeftKeys;
+				note.x += GRID_SIZE * usedRightKeys;
 			}
 		}
 
