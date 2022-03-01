@@ -2124,7 +2124,7 @@ class ChartingState extends MusicBeatState
 				}
 			}
 
-			if (note.strumTime <= Conductor.songPosition) {
+			if (note.strumTime <= Conductor.songPosition && !note.ignoreNote && !note.hitCausesMiss) {
 				note.alpha = 0.4;
 				if (note.strumTime > lastConductorPos && FlxG.sound.music.playing && note.noteData > -1) {
 					var noteDataToCheck:Int = note.noteData;
@@ -2132,7 +2132,7 @@ class ChartingState extends MusicBeatState
 					strumLineNotes.members[noteDataToCheck].playAnim('confirm', true);
 					strumLineNotes.members[noteDataToCheck].resetAnim = (note.sustainLength / 1000) + 0.15;
 					if (!playedSound[note.noteData]) {
-						if ((playSoundBf.checked && note.mustPress) || (playSoundDad.checked && !note.mustPress) && !note.ignoreNote && !note.hitCausesMiss) {
+						if ((playSoundBf.checked && note.mustPress) || (playSoundDad.checked && !note.mustPress)) {
 							FlxG.sound.play(Paths.sound('ChartingTick')).pan = note.noteData < leftKeys ? -0.3 : 0.3; //would be coolio
 							playedSound[note.noteData] = true;
 						}
