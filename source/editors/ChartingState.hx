@@ -2609,7 +2609,7 @@ class ChartingState extends MusicBeatState
 			note.sustainLength = daSus;
 			note.mustPress = _song.notes[sectionUsed].mustHitSection;
 			if (daNoteInfo >= usedLeftKeys) note.mustPress = !note.mustPress;
-			note.isOpponent = note.mustPress;
+			note.isOpponent = !note.mustPress;
 			note.noteType = i[3];
 		} else { //Event note
 			note.loadGraphic(Paths.image('eventArrow'));
