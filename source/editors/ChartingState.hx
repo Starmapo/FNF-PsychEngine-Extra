@@ -2490,7 +2490,7 @@ class ChartingState extends MusicBeatState
 		nextRenderedNotes.clear();
 		nextRenderedSustains.clear();
 
-		Conductor.getLastBPM(_song, curStep);
+		Conductor.getLastBPM(_song, recalculateSteps());
 
 		// CURRENT SECTION
 		for (i in _song.notes[curSection].sectionNotes)
