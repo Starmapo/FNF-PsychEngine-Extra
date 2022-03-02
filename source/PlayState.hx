@@ -2136,6 +2136,8 @@ class PlayState extends MusicBeatState
 		if (!eventPushedMap.exists(event.event)) {
 			eventPushedMap.set(event.event, true);
 		}
+
+		callOnLuas('eventPushed', [event.event, event.strumTime, event.value1, event.value2]);
 	}
 
 	function eventNoteEarlyTrigger(event:EventNote):Float {

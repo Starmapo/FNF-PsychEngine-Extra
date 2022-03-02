@@ -156,6 +156,11 @@ function onEvent(name, value1, value2)
 	-- print('Event triggered: ', name, value1, value2);
 end
 
+function eventPushed(name, strumTime, value1, value2)
+	-- event note added during song generation
+	-- can be used if you need to setup something before the event plays
+end
+
 function eventEarlyTrigger(name)
 	--[[
 	Here's a port of the Kill Henchmen early trigger but on Lua instead of Haxe:
