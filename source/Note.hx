@@ -303,9 +303,9 @@ class Note extends FlxSprite
 		{
 			prevNote.animation.play('${colors[prevNote.noteData]}hold');
 
-			prevNote.scale.y *= stepCrochet / 100 * 1.05;
-			prevNote.scale.y *= speed;
-			prevNote.scale.y *= uiSkin.sustainYScale;
+			prevNote.scale.y *= prevNote.stepCrochet / 100 * 1.05;
+			prevNote.scale.y *= prevNote.speed;
+			prevNote.scale.y *= prevNote.uiSkin.sustainYScale;
 			if (uiSkin.isPixel) {
 				prevNote.scale.y *= (6 / height); //Auto adjust note size
 			}
