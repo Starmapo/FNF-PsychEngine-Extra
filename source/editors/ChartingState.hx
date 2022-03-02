@@ -1751,11 +1751,7 @@ class ChartingState extends MusicBeatState
 						}
 						else if (FlxG.keys.pressed.ALT)
 						{
-							selectNote(note);
-							curSelectedNote[3] = noteTypeIntMap.get(currentType);
-							curSelectedNote[4] = currentChars;
-							updateNoteUI();
-							updateGrid();
+							selectNote(note, true);
 						}
 						else
 						{
@@ -2475,6 +2471,9 @@ class ChartingState extends MusicBeatState
 					var chars:Array<Int> = curSelectedNote[4];
 					if (chars == null) chars = [];
 					charactersInputText.text = chars.join(',');
+					currentChars = curSelectedNote[4];
+				} else {
+					currentChars = [0];
 				}
 			} else {
 				eventDropDown.selectedLabel = curSelectedNote[1][curEventSelected][0];
@@ -2702,7 +2701,7 @@ class ChartingState extends MusicBeatState
 		updateSectionLengths();
 	}
 
-	function selectNote(note:Note):Void
+	function selectNote(note:Note, setType:Bool = false):Void
 	{
 		var noteDataToCheck:Int = note.noteData;
 
@@ -2733,6 +2732,11 @@ class ChartingState extends MusicBeatState
 		}
 		
 		stepperSusLength.stepSize = Conductor.stepCrochet / 2;
+
+		if (setType && curSelectedNote != null) {
+			curSelectedNote[3] = noteTypeIntMap.get(currentType);
+			curSelectedNote[4] = currentChars;
+		}
 
 		updateGrid();
 		updateNoteUI();
