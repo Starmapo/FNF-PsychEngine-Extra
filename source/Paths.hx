@@ -252,12 +252,12 @@ class Paths
 	inline static public function fileExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
 	{
 		#if MODS_ALLOWED
-		if (FileSystem.exists(mods('$currentModDirectory/$key')) || FileSystem.exists(mods(key))) {
+		if (!ignoreMods && (FileSystem.exists(mods('$currentModDirectory/' + (library != null ? '$library/' : '') + '$key')) || FileSystem.exists(mods((library != null ? '$library/' : '') + key)))) {
 			return true;
 		}
 		#end
 		
-		if (OpenFlAssets.exists(getPath(key, type))) {
+		if (OpenFlAssets.exists(getPath(key, type, library))) {
 			return true;
 		}
 		return false;

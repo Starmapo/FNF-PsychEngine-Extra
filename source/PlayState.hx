@@ -1492,6 +1492,7 @@ class PlayState extends MusicBeatState
 		if (gfCheck && char.curCharacter.startsWith('gf')) { //IF DAD IS GIRLFRIEND, HE GOES TO HER POSITION
 			char.setPosition(GF_X, GF_Y);
 			char.scrollFactor.set(0.95, 0.95);
+			char.danceSpeed = 2;
 		}
 		char.x += char.positionArray[0];
 		char.y += char.positionArray[1];
@@ -2810,6 +2811,18 @@ class PlayState extends MusicBeatState
 
 		if (generatedMusic)
 		{
+			if (!inCutscene) {
+				if (!cpuControlled) {
+					keyShit();
+				} else if (!inEditor) {
+					for (char in playerChar) {
+						if (char.holdTimer > Conductor.stepCrochet * 0.001 * char.singDuration * (Conductor.denominator / 4) && char.animation.curAnim.name.startsWith('sing') && !char.animation.curAnim.name.endsWith('miss')) {
+							char.dance();
+						}
+					}
+				}
+			}
+			
 			notes.forEachAlive(function(daNote:Note)
 			{
 				var strumGroup = playerStrums;
@@ -2941,18 +2954,6 @@ class PlayState extends MusicBeatState
 			});
 		}
 		if (!inEditor) checkEventNote();
-
-		if (!inCutscene) {
-			if (!cpuControlled) {
-				keyShit();
-			} else if (!inEditor) {
-				for (char in playerChar) {
-					if (char.holdTimer > Conductor.stepCrochet * 0.001 * char.singDuration * (Conductor.denominator / 4) && char.animation.curAnim.name.startsWith('sing') && !char.animation.curAnim.name.endsWith('miss')) {
-						char.dance();
-					}
-				}
-			}
-		}
 
 		if (ratingName == '?') {
 			scoreTxt.text = 'Score: $songScore' + (!ClientPrefs.showRatings ? ' | Misses: $songMisses' : '') + ' | Rating: $ratingName';
@@ -3222,6 +3223,7 @@ class PlayState extends MusicBeatState
 			case 'Set GF Speed':
 				var value:Int = Std.parseInt(value1);
 				if (Math.isNaN(value)) value = 1;
+				if (value < 0) value = 0;
 				for (gf in gfGroup) {
 					gf.danceSpeed = value;
 				}

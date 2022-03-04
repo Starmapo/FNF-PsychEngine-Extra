@@ -309,12 +309,24 @@ class Character extends FlxSprite
 		}
 	}
 
+	private var settingCharacterUp:Bool = true;
 	public function recalculateDanceIdle() {
+		var lastDanceIdle:Bool = danceIdle;
 		danceIdle = (animation.getByName('danceLeft$idleSuffix') != null && animation.getByName('danceRight$idleSuffix') != null);
-		if (danceIdle) {
-			danceSpeed = 1;
-		} else {
-			danceSpeed = 2;
+		if(settingCharacterUp)
+		{
+			danceSpeed = (danceIdle ? 1 : 2);
+			settingCharacterUp = false;
+		}
+		else if(lastDanceIdle != danceIdle)
+		{
+			var calc:Float = danceSpeed;
+			if(danceIdle)
+				calc /= 2;
+			else
+				calc *= 2;
+
+			danceSpeed = Math.round(Math.max(calc, 1));
 		}
 	}
 
