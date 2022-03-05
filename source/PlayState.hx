@@ -402,6 +402,7 @@ class PlayState extends MusicBeatState
 		#end
 
 		GameOverSubstate.resetVariables();
+		PauseSubState.resetVariables();
 
 		curStage = SONG.stage;
 		if (SONG.stage == null || SONG.stage.length < 1) {
@@ -1518,7 +1519,7 @@ class PlayState extends MusicBeatState
 	public function startVideo(name:String):Void {
 		#if VIDEOS_ALLOWED
 		var foundFile:Bool = false;
-		var fileName:String = #if MODS_ALLOWED Paths.modFolders('videos/$name.${Paths.VIDEO_EXT}'); #else ''; #end
+		var fileName:String = #if MODS_ALLOWED Paths.modsVideo(name); #else ''; #end
 		#if MODS_ALLOWED
 		if (FileSystem.exists(fileName)) {
 			foundFile = true;

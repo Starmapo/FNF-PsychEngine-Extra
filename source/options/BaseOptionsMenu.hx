@@ -13,7 +13,6 @@ import flixel.util.FlxColor;
 import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import Controls;
 
 using StringTools;
 

@@ -3,7 +3,6 @@ package;
 import flixel.FlxG;
 import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
-import Controls;
 
 class ClientPrefs {
 	public static var downScroll:Bool = false;
@@ -392,7 +391,7 @@ class ClientPrefs {
 	}
 
 	public static function reloadControls() {
-		PlayerSettings.player1.controls.setKeyboardScheme(KeyboardScheme.Solo);
+		PlayerSettings.player1.controls.setKeyboardScheme(Solo);
 
 		TitleState.muteKeys = copyKey(keyBinds.get('volume_mute'));
 		TitleState.volumeDownKeys = copyKey(keyBinds.get('volume_down'));

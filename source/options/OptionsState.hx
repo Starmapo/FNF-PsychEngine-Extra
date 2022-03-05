@@ -8,7 +8,6 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import Controls;
 
 using StringTools;
 
