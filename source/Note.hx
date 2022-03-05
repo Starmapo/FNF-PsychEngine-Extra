@@ -80,7 +80,6 @@ class Note extends FlxSprite
 	var colors:Array<String> = ['left', 'down', 'up', 'right'];
 	var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
-	var defaultSize:Float = 0.7;
 
 	public var uiSkin(default, set):SkinFile = null;
 
@@ -137,12 +136,8 @@ class Note extends FlxSprite
 		if (texture != null) value = UIData.checkSkinFile('notes/$texture', value);
 		uiSkin = value;
 
-		defaultSize = 0.7;
 		var maniaData:ManiaArray = null;
 		for (i in uiSkin.mania) {
-			if (i.keys == 4) {
-				defaultSize = i.noteSize;
-			}
 			if (i.keys == keyAmount) {
 				maniaData = i;
 			}
@@ -152,14 +147,7 @@ class Note extends FlxSprite
 			if (uiSkin.isPixel) {
 				bad = UIData.getUIFile('pixel');
 			}
-			for (i in bad.mania) {
-				if (i.keys == 4) {
-					defaultSize = i.noteSize;
-				}
-				if (i.keys == keyAmount) {
-					maniaData = i;
-				}
-			}
+			maniaData = bad.mania[keyAmount - 1];
 		}
 
 		colors = maniaData.colors;
@@ -175,7 +163,6 @@ class Note extends FlxSprite
 	}
 
 	private function set_speed(value:Float):Float {
-		value *= (noteSize / defaultSize);
 		if (isSustainNote && animation.curAnim != null && animation.curAnim.name.endsWith('hold'))
 		{
 			scale.y *= value / speed;
