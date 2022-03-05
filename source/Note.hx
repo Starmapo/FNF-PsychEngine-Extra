@@ -140,6 +140,7 @@ class Note extends FlxSprite
 		for (i in uiSkin.mania) {
 			if (i.keys == keyAmount) {
 				maniaData = i;
+				break;
 			}
 		}
 		if (maniaData == null) {
