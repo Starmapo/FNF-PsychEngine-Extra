@@ -191,6 +191,9 @@ class ChartingState extends MusicBeatState
 
 	override function create()
 	{
+		Paths.clearStoredMemory();
+		Paths.clearUnusedMemory();
+		
 		if (PlayState.SONG != null)
 			_song = PlayState.SONG;
 		else
