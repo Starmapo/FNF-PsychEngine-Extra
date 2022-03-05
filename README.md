@@ -20,7 +20,7 @@ Modified version of Psych Engine adding more stuff. (see below)
 
 * SqirraRNG - Chart Editor's Sound Waveform base code
 * iFlicky - Delay/Combo Menu Song Composer + Dialogue Sounds
-* PolybiusProxy - .MP4 Loader Extension
+* PolybiusProxy - Video Loader Extension
 * Keoiki - Note Splash Animations
 * Smokey - Spritemap Texture Atlas support
 _____________________________________
