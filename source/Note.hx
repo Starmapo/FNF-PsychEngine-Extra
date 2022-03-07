@@ -42,7 +42,7 @@ class Note extends FlxSprite
 	public var colorSwap:ColorSwap;
 	public var inEditor:Bool = false;
 	public var gfNote:Bool = false;
-	private var hitMult:Float = 1;
+	private var lateHitMult:Float = 1;
 	private var earlyHitMult:Float = 0.5;
 
 	public var swagWidth:Float = 160 * 0.7;
@@ -112,7 +112,7 @@ class Note extends FlxSprite
 							missHealth = 0.3;
 						}
 						hitCausesMiss = true;
-						hitMult = 0.5;
+						lateHitMult = 0.5;
 						if (isSustainNote) {
 							earlyHitMult = 0.3;
 						} else {
@@ -318,13 +318,13 @@ class Note extends FlxSprite
 		if (mustPress)
 		{
 			// ok river
-			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * hitMult)
+			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * lateHitMult)
 				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * earlyHitMult))
 				canBeHit = true;
 			else
 				canBeHit = false;
 
-			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit)
+			if (strumTime < Conductor.songPosition - (Conductor.safeZoneOffset * lateHitMult) && !wasGoodHit)
 				tooLate = true;
 		}
 		else
