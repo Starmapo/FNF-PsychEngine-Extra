@@ -79,14 +79,14 @@ class FPS extends TextField
 		currentFPS = Math.round((currentCount + cacheCount) / 2);
 		if (currentFPS > ClientPrefs.framerate) currentFPS = ClientPrefs.framerate;
 
-		if (currentCount != cacheCount /*&& visible*/)
+		if (currentCount != cacheCount)
 		{
-			text = "FPS: " + currentFPS;
+			text = 'FPS: $currentFPS';
 			var memoryMegas:Float = 0;
 
 			#if openfl
 			memoryMegas = Math.abs(FlxMath.roundDecimal(System.totalMemory / 1000000, 1));
-			text += "\nMemory: " + memoryMegas + " MB";
+			text += '\nMemory: $memoryMegas MB';
 			#end
 
 			textColor = 0xFFFFFFFF;
@@ -96,9 +96,9 @@ class FPS extends TextField
 			}
 
 			#if (gl_stats && !disable_cffi && (!html5 || !canvas))
-			text += "\ntotalDC: " + Context3DStats.totalDrawCalls();
-			text += "\nstageDC: " + Context3DStats.contextDrawCalls(DrawCallContext.STAGE);
-			text += "\nstage3DDC: " + Context3DStats.contextDrawCalls(DrawCallContext.STAGE3D);
+			text += '\ntotalDC: ${Context3DStats.totalDrawCalls()}';
+			text += '\nstageDC: ${Context3DStats.contextDrawCalls(DrawCallContext.STAGE)}';
+			text += '\nstage3DDC: ${Context3DStats.contextDrawCalls(DrawCallContext.STAGE3D)}';
 			#end
 
 			text += "\n";

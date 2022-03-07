@@ -155,7 +155,7 @@ class PlayState extends MusicBeatState
 	
 	private var generatedMusic:Bool = false;
 	public var endingSong:Bool = false;
-	private var startingSong:Bool = false;
+	public var startingSong:Bool = false;
 	private var updateTime:Bool = true;
 	public static var changedDifficulty:Bool = false;
 	public static var chartingMode:Bool = false;
@@ -1696,6 +1696,7 @@ class PlayState extends MusicBeatState
 	public var countdownReady:FlxSprite;
 	public var countdownSet:FlxSprite;
 	public var countdownGo:FlxSprite;
+	public static var startOnTime:Float = 0;
 
 	public function startCountdown():Void
 	{
@@ -1707,6 +1708,8 @@ class PlayState extends MusicBeatState
 		inCutscene = false;
 		var ret:Dynamic = callOnLuas('onStartCountdown', []);
 		if (ret != FunkinLua.Function_Stop) {
+			if (skipCountdown || startOnTime > 0) skipArrowStartTween = true;
+
 			generateStaticArrows(0);
 			generateStaticArrows(1);
 			for (i in 0...playerStrums.length) {
@@ -1736,10 +1739,12 @@ class PlayState extends MusicBeatState
 
 			var swagCounter:Int = 0;
 
-			if (skipCountdown) {
-				Conductor.songPosition = startPos;
-				Conductor.songPosition -= modifiedCrochet;
-				swagCounter = 3;
+			trace(startOnTime);
+
+			if (skipCountdown || startOnTime > 0) {
+				clearNotesBefore(startOnTime - 500);
+				setSongTime(startOnTime - 500);
+				return;
 			}
 			startTimer = new FlxTimer().start(modifiedCrochet / 1000, function(tmr:FlxTimer)
 			{
@@ -1810,29 +1815,27 @@ class PlayState extends MusicBeatState
 							});
 							FlxG.sound.play(Paths.sound('intro1$introSoundsSuffix'), 0.6);
 						case 3:
-							if (!skipCountdown) {
-								var introSoundsSuffix = uiSkinMap.get('go').introSoundsSuffix;
-								countdownGo = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('go', uiSkinMap.get('go'))));
-								countdownGo.scrollFactor.set();
+							var introSoundsSuffix = uiSkinMap.get('go').introSoundsSuffix;
+							countdownGo = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('go', uiSkinMap.get('go'))));
+							countdownGo.scrollFactor.set();
 
-								countdownGo.setGraphicSize(Std.int(countdownGo.width * uiSkinMap.get('go').scale * uiSkinMap.get('go').countdownScale));
+							countdownGo.setGraphicSize(Std.int(countdownGo.width * uiSkinMap.get('go').scale * uiSkinMap.get('go').countdownScale));
 
-								countdownGo.updateHitbox();
+							countdownGo.updateHitbox();
 
-								countdownGo.screenCenter();
-								countdownGo.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('go').noAntialiasing;
-								countdownGo.cameras = [camHUD];
-								insert(members.indexOf(strumLineNotes), countdownGo);
-								FlxTween.tween(countdownGo, {alpha: 0}, modifiedCrochet / 1000, {
-									ease: FlxEase.cubeInOut,
-									onComplete: function(twn:FlxTween)
-									{
-										remove(countdownGo);
-										countdownGo.destroy();
-									}
-								});
-								FlxG.sound.play(Paths.sound('introGo$introSoundsSuffix'), 0.6);
-							}
+							countdownGo.screenCenter();
+							countdownGo.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('go').noAntialiasing;
+							countdownGo.cameras = [camHUD];
+							insert(members.indexOf(strumLineNotes), countdownGo);
+							FlxTween.tween(countdownGo, {alpha: 0}, modifiedCrochet / 1000, {
+								ease: FlxEase.cubeInOut,
+								onComplete: function(twn:FlxTween)
+								{
+									remove(countdownGo);
+									countdownGo.destroy();
+								}
+							});
+							FlxG.sound.play(Paths.sound('introGo$introSoundsSuffix'), 0.6);
 					}
 				}
 
@@ -1848,6 +1851,62 @@ class PlayState extends MusicBeatState
 				swagCounter += 1;
 			}, 5);
 		}
+	}
+
+	public function clearNotesBefore(time:Float)
+	{
+		var i:Int = unspawnNotes.length - 1;
+		while (i >= 0) {
+			var daNote:Note = unspawnNotes[i];
+			if(daNote.strumTime < time)
+			{
+				daNote.active = false;
+				daNote.visible = false;
+				daNote.ignoreNote = true;
+
+				daNote.kill();
+				unspawnNotes.remove(daNote);
+				daNote.destroy();
+			}
+			--i;
+		}
+
+		i = notes.length - 1;
+		while (i >= 0) {
+			var daNote:Note = notes.members[i];
+			if(daNote.strumTime < time)
+			{
+				daNote.active = false;
+				daNote.visible = false;
+				daNote.ignoreNote = true;
+
+				daNote.kill();
+				notes.remove(daNote, true);
+				daNote.destroy();
+			}
+			--i;
+		}
+	}
+
+	public function setSongTime(time:Float)
+	{
+		if(time < 0) time = 0;
+
+		FlxG.sound.music.pause();
+		vocals.pause();
+		vocalsDad.pause();
+
+		FlxG.sound.music.time = time * playbackRate;
+		FlxG.sound.music.play();
+
+		vocals.time = FlxG.sound.music.time;
+		vocals.play();
+		vocalsDad.time = FlxG.sound.music.time;
+		vocalsDad.play();
+		Conductor.songPosition = time;
+
+		updateCurStep();
+		Conductor.getLastBPM(SONG, curStep, playbackRate);
 	}
 
 	function startNextDialogue() {
@@ -1884,6 +1943,11 @@ class PlayState extends MusicBeatState
 			}
 		}
 		#end
+
+		if(startOnTime > 0)
+		{
+			setSongTime(startOnTime - 500);
+		}
 
 		if (paused) {
 			FlxG.sound.music.pause();
@@ -2165,6 +2229,7 @@ class PlayState extends MusicBeatState
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.strumTime, Obj2.strumTime);
 	}
 
+	public var skipArrowStartTween:Bool = false; //for lua
 	private function generateStaticArrows(player:Int):Void
 	{
 		var keys:Int = bfKeys;
@@ -2186,7 +2251,7 @@ class PlayState extends MusicBeatState
 			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, ClientPrefs.middleScroll && opponentChart ? 1 - player : player, keys, player > 0 ? uiSkinMap.get('player') : uiSkinMap.get('opponent'));
 			babyArrow.y += 80 - (babyArrow.height / 2);
 			babyArrow.downScroll = ClientPrefs.downScroll;
-			if (!isStoryMode && !inEditor)
+			if (!isStoryMode && !inEditor && !skipArrowStartTween)
 			{
 				babyArrow.y -= 10;
 				babyArrow.alpha = 0;
@@ -2306,7 +2371,7 @@ class PlayState extends MusicBeatState
 				vocalsDad.pause();
 			}
 
-			if (!startTimer.finished)
+			if (startTimer != null && !startTimer.finished)
 				startTimer.active = false;
 			if (endingTimer != null && !endingTimer.finished)
 				endingTimer.active = false;
@@ -2349,7 +2414,7 @@ class PlayState extends MusicBeatState
 				resyncVocals(true);
 			}
 
-			if (!startTimer.finished)
+			if (startTimer != null && !startTimer.finished)
 				startTimer.active = true;
 			if (endingTimer != null && !endingTimer.finished)
 				endingTimer.active = true;
@@ -2382,7 +2447,7 @@ class PlayState extends MusicBeatState
 			callOnLuas('onResume', []);
 
 			#if DISCORD_ALLOWED
-			if (startTimer.finished)
+			if (startTimer != null && startTimer.finished)
 			{
 				DiscordClient.changePresence(detailsText, '${SONG.song} ($storyDifficultyText)', iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
 			}
@@ -2499,7 +2564,7 @@ class PlayState extends MusicBeatState
 		{
 			if (FlxG.sound.music != null && Conductor.songPosition >= songLength)
 			{
-				finishSong();
+				onSongComplete();
 			}
 		}
 
@@ -3023,41 +3088,8 @@ class PlayState extends MusicBeatState
 				finishSong();
 			}
 			if (FlxG.keys.justPressed.TWO) { //Go 10 seconds into the future :O
-				FlxG.sound.music.pause();
-				vocals.pause();
-				vocalsDad.pause();
-				Conductor.songPosition += 10000;
-				updateCurStep();
-				Conductor.getLastBPM(SONG, curStep, playbackRate);
-				notes.forEachAlive(function(daNote:Note)
-				{
-					if (daNote.strumTime < Conductor.songPosition) {
-						daNote.active = false;
-						daNote.visible = false;
-
-						daNote.kill();
-						notes.remove(daNote, true);
-						daNote.destroy();
-					}
-				});
-				for (i in 0...unspawnNotes.length) {
-					var daNote:Note = unspawnNotes[0];
-					if (daNote.strumTime >= Conductor.songPosition) {
-						break;
-					}
-
-					daNote.active = false;
-					daNote.visible = false;
-
-					daNote.kill();
-					unspawnNotes.splice(unspawnNotes.indexOf(daNote), 1);
-					daNote.destroy();
-				}
-
-				FlxG.sound.music.time = vocals.time = vocalsDad.time = Conductor.songPosition * playbackRate;
-				FlxG.sound.music.play();
-				vocals.play();
-				vocalsDad.play();
+				setSongTime(Conductor.songPosition + 10000);
+				clearNotesBefore(Conductor.songPosition);
 			}
 		}
 		#end
@@ -3632,7 +3664,12 @@ class PlayState extends MusicBeatState
 		camFollowPos.setPosition(x, y);
 	}
 
-	public function finishSong(?forceInstant:Bool = false):Void
+	//Any way to do this without using a different function? kinda dumb
+	private function onSongComplete()
+	{
+		finishSong(false);
+	}
+	public function finishSong(?ignoreNoteOffset:Bool = false):Void
 	{
 		var finishCallback:Void->Void = endSong; //In case you want to change it in a specific song.
 
@@ -3642,7 +3679,7 @@ class PlayState extends MusicBeatState
 		vocals.pause();
 		vocalsDad.volume = 0;
 		vocalsDad.pause();
-		if (ClientPrefs.noteOffset <= 0 || forceInstant) {
+		if (ClientPrefs.noteOffset <= 0 || ignoreNoteOffset) {
 			finishCallback();
 		} else {
 			endingTimer = new FlxTimer().start(ClientPrefs.noteOffset / 1000, function(tmr:FlxTimer) {

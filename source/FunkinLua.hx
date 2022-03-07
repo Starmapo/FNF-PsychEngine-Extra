@@ -262,7 +262,10 @@ class FunkinLua {
 			luaTrace("Script doesn't exist!");
 		});
 
-		//stuff 4 noobz like you B)
+		Lua_helper.add_callback(lua, "clearUnusedMemory", function() {
+			Paths.clearUnusedMemory();
+			return true;
+		});
 
 		Lua_helper.add_callback(lua, "loadGraphic", function(variable:String, image:String) {
 			var spr:FlxSprite = getObjectDirectly(variable);
@@ -740,8 +743,15 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "startCountdown", function(variable:String) {
 			PlayState.instance.startCountdown();
 		});
-		Lua_helper.add_callback(lua, "loadSong", function(name:String, ?suffix:String = null, ?skipTransition:Bool = false) {
-			if (suffix == null) suffix = CoolUtil.getDifficultyFilePath();
+		Lua_helper.add_callback(lua, "loadSong", function(name:String = null, ?difficultyNum:Int = -1, ?skipTransition:Bool = false) {
+			if (name == null) name = PlayState.SONG.song;
+			if (difficultyNum < 0) difficultyNum = PlayState.storyDifficulty;
+
+			if (skipTransition)
+			{
+				FlxTransitionableState.skipNextTransIn = true;
+				FlxTransitionableState.skipNextTransOut = true;
+			}
 
 			if (PlayState.isStoryMode) {
 				PlayState.campaignScore += PlayState.instance.songScore;
@@ -750,16 +760,24 @@ class FunkinLua {
 				PlayState.storyPlaylist.insert(0, name);
 			}
 
-			if (skipTransition)
-			{
-				FlxTransitionableState.skipNextTransIn = true;
-				FlxTransitionableState.skipNextTransOut = true;
-			}
-
 			CoolUtil.getDifficulties(name, true);
-			PlayState.SONG = Song.loadFromJson(name + suffix, name);
-			FlxG.sound.music.stop();
+			var poop = Highscore.formatSong(name, difficultyNum);
+			PlayState.SONG = Song.loadFromJson(poop, name);
+			PlayState.storyDifficulty = difficultyNum;
+			PlayState.instance.persistentUpdate = false;
 			PlayState.cancelMusicFadeTween();
+			FlxG.sound.music.pause();
+			FlxG.sound.music.volume = 0;
+			if(PlayState.instance.vocals != null)
+			{
+				PlayState.instance.vocals.pause();
+				PlayState.instance.vocals.volume = 0;
+			}
+			if(PlayState.instance.vocalsDad != null)
+			{
+				PlayState.instance.vocalsDad.pause();
+				PlayState.instance.vocalsDad.volume = 0;
+			}
 			LoadingState.loadAndSwitchState(new PlayState());
 		});
 		Lua_helper.add_callback(lua, "endSong", function() {

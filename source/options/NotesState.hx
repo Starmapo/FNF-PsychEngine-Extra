@@ -64,7 +64,7 @@ class NotesState extends MusicBeatState
 		
 		blackBG = new FlxSprite(posX - 25).makeGraphic(870, 200, FlxColor.BLACK);
 		blackBG.alpha = 0.4;
-		blackBG.scrollFactor.set(0, scr);
+		blackBG.scrollFactor.set(0, 1);
 		add(blackBG);
 
 		grpNotes = new FlxTypedGroup<FlxSprite>();
@@ -78,7 +78,7 @@ class NotesState extends MusicBeatState
 			for (j in 0...3) {
 				var optionText:Alphabet = new Alphabet(0, yPos + 60, Std.string(currentData[i][j]), true);
 				optionText.x = posX + (225 * j) + 250;
-				optionText.scrollFactor.set(0, scr);
+				optionText.scrollFactor.set(0, 1);
 				grpNumbers.add(optionText);
 			}
 
@@ -88,7 +88,7 @@ class NotesState extends MusicBeatState
 			note.animation.addByPrefix('idle', '${animations[i]}0');
 			note.animation.play('idle');
 			note.antialiasing = ClientPrefs.globalAntialiasing;
-			note.scrollFactor.set(0, scr);
+			note.scrollFactor.set(0, 1);
 			grpNotes.add(note);
 
 			var newShader:ColorSwap = new ColorSwap();
@@ -101,7 +101,7 @@ class NotesState extends MusicBeatState
 
 		hsbText = new Alphabet(0, 0, "Hue    Saturation  Brightness", false, false, 0, 0.65);
 		hsbText.x = posX + 240;
-		hsbText.scrollFactor.set(0, scr);
+		hsbText.scrollFactor.set(0, 1);
 		add(hsbText);
 
 		changeSelection();

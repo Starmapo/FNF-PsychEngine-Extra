@@ -22,6 +22,7 @@ class OutdatedState extends MusicBeatState
 			'Sup bro, looks like you\'re running an   \n
 			outdated version of Psych Engine Extra (${MainMenuState.psychEngineExtraVersion}),\n
 			please update to ${TitleState.updateVersion}!\n
+			Press ESCAPE to proceed anyway.\n
 			\n
 			Thank you for using the Engine!',
 			32);
@@ -33,9 +34,16 @@ class OutdatedState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		if (!leftState) {
-			if (controls.ACCEPT || controls.BACK) {
+			if (controls.ACCEPT || FlxG.mouse.justPressed) {
 				leftState = true;
 				CoolUtil.browserLoad("https://github.com/Starmapo/FNF-PsychEngine-Extra/releases");
+			}
+			else if(controls.BACK) {
+				leftState = true;
+			}
+
+			if(leftState)
+			{
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 				FlxTween.tween(warnText, {alpha: 0}, 1, {
 					onComplete: function (twn:FlxTween) {
