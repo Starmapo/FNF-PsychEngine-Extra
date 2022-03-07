@@ -239,7 +239,7 @@ class ClientPrefs {
 		FlxG.save.flush();
 
 		var save = new FlxSave();
-		save.bind('controls_v2', 'ninjamuffin99'); //Placing this in a separate save so that it can be manually deleted without removing your Score and stuff
+		save.bind('controls_v2', 'extra'); //Placing this in a separate save so that it can be manually deleted without removing your Score and stuff
 		save.data.customControls = keyBinds;
 		save.flush();
 		FlxG.log.add("Settings saved!");
@@ -374,7 +374,7 @@ class ClientPrefs {
 		}
 
 		var save = new FlxSave();
-		save.bind('controls_v2', 'ninjamuffin99');
+		save.bind('controls_v2', 'extra');
 		if (save != null && save.data.customControls != null) {
 			var loadedControls:Map<String, Array<FlxKey>> = save.data.customControls;
 			if (loadedControls.get('note_left') == null) { //prevent having old controls

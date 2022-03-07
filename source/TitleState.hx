@@ -110,7 +110,7 @@ class TitleState extends MusicBeatState
 		swagShader = new ColorSwap();
 		super.create();
 
-		FlxG.save.bind('funkin', 'ninjamuffin99');
+		FlxG.save.bind('funkin', 'extra');
 
 		ClientPrefs.loadPrefs();
 
