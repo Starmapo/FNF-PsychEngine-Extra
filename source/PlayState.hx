@@ -3173,8 +3173,8 @@ class PlayState extends MusicBeatState
 				for (timer in modchartTimers) {
 					timer.active = true;
 				}
+				SONG = originalSong;
 				if (ClientPrefs.instantRestart) {
-					SONG = originalSong;
 					FlxG.resetState();
 				} else {
 					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1]));
