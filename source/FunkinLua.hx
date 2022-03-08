@@ -952,7 +952,7 @@ class FunkinLua {
 					if (PlayState.instance.dadGroup.members[index % PlayState.instance.dadGroup.members.length].animOffsets.exists(anim))
 						PlayState.instance.dadGroup.members[index % PlayState.instance.dadGroup.members.length].playAnim(anim, forced);
 				case 'gf' | 'girlfriend' | '2':
-					if (PlayState.instance.gfGroup.members[index % PlayState.instance.gfGroup.members.length].animOffsets.exists(anim))
+					if (PlayState.instance.gfGroup.members[index % PlayState.instance.gfGroup.members.length] != null && PlayState.instance.gfGroup.members[index % PlayState.instance.gfGroup.members.length].animOffsets.exists(anim))
 						PlayState.instance.gfGroup.members[index % PlayState.instance.gfGroup.members.length].playAnim(anim, forced);
 				default: 
 					if (PlayState.instance.boyfriendGroup.members[index % PlayState.instance.boyfriendGroup.members.length].animOffsets.exists(anim))
@@ -965,7 +965,7 @@ class FunkinLua {
 			if (charData[1] != null) index = Std.parseInt(charData[1]);
 			switch(charData[0].toLowerCase()) {
 				case 'dad' | '1': PlayState.instance.dadGroup.members[index % PlayState.instance.dadGroup.members.length].dance();
-				case 'gf' | 'girlfriend' | '2': PlayState.instance.gfGroup.members[index % PlayState.instance.gfGroup.members.length].dance();
+				case 'gf' | 'girlfriend' | '2': if (PlayState.instance.gfGroup.members[index % PlayState.instance.gfGroup.members.length] != null) PlayState.instance.gfGroup.members[index % PlayState.instance.gfGroup.members.length].dance();
 				default: PlayState.instance.boyfriendGroup.members[index % PlayState.instance.boyfriendGroup.members.length].dance();
 			}
 		});

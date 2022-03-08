@@ -5,8 +5,5 @@
 
 	"boyfriend": [970, 100],
 	"girlfriend": [400, 130],
-	"opponent": [100, 100],
-
-	"boyfriendCamOffset": [-100, -200],
-	"opponentCamOffset": [150, -100]
+	"opponent": [100, 100]
 }

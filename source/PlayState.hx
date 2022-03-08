@@ -85,9 +85,6 @@ class PlayState extends MusicBeatState
 	public var GF_X:Float = 400;
 	public var GF_Y:Float = 130;
 
-	public var bfCamOffset:Array<Float> = [-100, -100];
-	public var dadCamOffset:Array<Float> = [150, -100];
-
 	public var songSpeedTween:FlxTween;
 	public var songSpeed(default, set):Float = 1;
 	public var songSpeedType:String = "multiplicative";
@@ -107,9 +104,9 @@ class PlayState extends MusicBeatState
 	public var vocalsDad:FlxSound;
 	var foundDadVocals:Bool = false;
 
-	public var dad:Character;
-	public var gf:Character;
-	public var boyfriend:Character;
+	public var dad:Character = null;
+	public var gf:Character = null;
+	public var boyfriend:Character = null;
 	var playerChar:FlxTypedSpriteGroup<Character>;
 	var opponentChar:FlxTypedSpriteGroup<Character>;
 
@@ -242,6 +239,10 @@ class PlayState extends MusicBeatState
 	public var skipCountdown:Bool = false;
 	var songLength:Float = 0;
 
+	public var boyfriendCameraOffset:Array<Float> = null;
+	public var opponentCameraOffset:Array<Float> = null;
+	public var girlfriendCameraOffset:Array<Float> = null;
+
 	#if DISCORD_ALLOWED
 	// Discord RPC variables
 	var storyDifficultyText:String = "";
@@ -275,9 +276,9 @@ class PlayState extends MusicBeatState
 	var playerColors:Array<String>;
 	var opponentColors:Array<String>;
 
-	var bfGroupFile:CharacterGroupFile;
-	var dadGroupFile:CharacterGroupFile;
-	var gfGroupFile:CharacterGroupFile;
+	var bfGroupFile:CharacterGroupFile = null;
+	var dadGroupFile:CharacterGroupFile = null;
+	var gfGroupFile:CharacterGroupFile = null;
 
 	public var inEditor:Bool = false;
 	var startPos:Float = 0;
@@ -438,9 +439,12 @@ class PlayState extends MusicBeatState
 					boyfriend: [770, 100],
 					girlfriend: [400, 130],
 					opponent: [100, 100],
+					hide_girlfriend: false,
 
-					boyfriendCamOffset: [-100, -100],
-					opponentCamOffset: [150, -100]
+					camera_boyfriend: [0, 0],
+					camera_opponent: [0, 0],
+					camera_girlfriend: [0, 0],
+					camera_speed: 1
 				};
 			}
 
@@ -451,8 +455,21 @@ class PlayState extends MusicBeatState
 			GF_Y = stageData.girlfriend[1];
 			DAD_X = stageData.opponent[0];
 			DAD_Y = stageData.opponent[1];
-			bfCamOffset = stageData.boyfriendCamOffset;
-			dadCamOffset = stageData.opponentCamOffset;
+			
+			if(stageData.camera_speed != null)
+				cameraSpeed = stageData.camera_speed;
+	
+			boyfriendCameraOffset = stageData.camera_boyfriend;
+			if(boyfriendCameraOffset == null) //Fucks sake should have done it since the start :rolling_eyes:
+				boyfriendCameraOffset = [0, 0];
+	
+			opponentCameraOffset = stageData.camera_opponent;
+			if(opponentCameraOffset == null)
+				opponentCameraOffset = [0, 0];
+	
+			girlfriendCameraOffset = stageData.camera_girlfriend;
+			if(girlfriendCameraOffset == null)
+				girlfriendCameraOffset = [0, 0];
 
 			boyfriendGroup = new FlxTypedSpriteGroup(BF_X, BF_Y);
 			dadGroup = new FlxTypedSpriteGroup(DAD_X, DAD_Y);
@@ -730,7 +747,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			add(gfGroup);
+			add(gfGroup); //Needed for blammed lights
 
 			// Shitty layering but whatev it works LOL
 			if (curStage == 'limo' && ClientPrefs.stageQuality != 'Crappy')
@@ -845,16 +862,19 @@ class PlayState extends MusicBeatState
 				SONG.gfVersion = gfVersion; //Fix for the Chart Editor
 			}
 
-			gfGroupFile = Character.getFile(gfVersion);
-			if (gfGroupFile != null && gfGroupFile.characters != null && gfGroupFile.characters.length > 0) {
-				for (i in 0...gfGroupFile.characters.length) {
-					addCharacter(gfGroupFile.characters[i].name, i, false, false, gfGroup, 'gf$i', gfGroupFile.characters[i].position[0] + gfGroupFile.position[0], gfGroupFile.characters[i].position[1] + gfGroupFile.position[1], 0.95, 0.95);
+			if (stageData.hide_girlfriend == false)
+			{
+				gfGroupFile = Character.getFile(gfVersion);
+				if (gfGroupFile != null && gfGroupFile.characters != null && gfGroupFile.characters.length > 0) {
+					for (i in 0...gfGroupFile.characters.length) {
+						addCharacter(gfGroupFile.characters[i].name, i, false, false, gfGroup, 'gf$i', gfGroupFile.characters[i].position[0] + gfGroupFile.position[0], gfGroupFile.characters[i].position[1] + gfGroupFile.position[1], 0.95, 0.95);
+					}
+				} else {
+					gfGroupFile = null;
+					addCharacter(gfVersion, 0, false, false, gfGroup, 'gf0', 0, 0, 0.95, 0.95);
 				}
-			} else {
-				gfGroupFile = null;
-				addCharacter(gfVersion, 0, false, false, gfGroup, 'gf0', 0, 0, 0.95, 0.95);
+				gf = gfGroup.members[0];
 			}
-			gf = gfGroup.members[0];
 
 			dadGroupFile = Character.getFile(SONG.player2);
 			if (dadGroupFile != null && dadGroupFile.characters != null && dadGroupFile.characters.length > 0) {
@@ -885,13 +905,17 @@ class PlayState extends MusicBeatState
 				opponentChar = boyfriendGroup;
 			}
 			
-			camPos = new FlxPoint(gf.getGraphicMidpoint().x, gf.getGraphicMidpoint().y);
-			camPos.x += gf.cameraPosition[0];
-			camPos.y += gf.cameraPosition[1];
+			var camPos:FlxPoint = new FlxPoint(girlfriendCameraOffset[0], girlfriendCameraOffset[1]);
+			if(gf != null)
+			{
+				camPos.x += gf.getGraphicMidpoint().x + gf.cameraPosition[0];
+				camPos.y += gf.getGraphicMidpoint().y + gf.cameraPosition[1];
+			}
 
 			if (dad.curCharacter.startsWith('gf')) {
 				dad.setPosition(GF_X, GF_Y);
-				gf.visible = false;
+				if(gf != null)
+					gf.visible = false;
 			}
 
 			if (ClientPrefs.stageQuality != 'Crappy') {
@@ -1714,19 +1738,11 @@ class PlayState extends MusicBeatState
 			generateStaticArrows(1);
 			for (i in 0...playerStrums.length) {
 				setOnLuas('defaultPlayerStrumX$i', playerStrums.members[i].x);
-				if (!isStoryMode) {
-					setOnLuas('defaultPlayerStrumY$i', playerStrums.members[i].y + 10);
-				} else {
-					setOnLuas('defaultPlayerStrumY$i', playerStrums.members[i].y);
-				}
+				setOnLuas('defaultPlayerStrumY$i', playerStrums.members[i].y);
 			}
 			for (i in 0...opponentStrums.length) {
 				setOnLuas('defaultOpponentStrumX$i', opponentStrums.members[i].x);
-				if (!isStoryMode) {
-					setOnLuas('defaultOpponentStrumY$i', opponentStrums.members[i].y + 10);
-				} else {
-					setOnLuas('defaultOpponentStrumY$i', opponentStrums.members[i].y);
-				}
+				setOnLuas('defaultOpponentStrumY$i', opponentStrums.members[i].y);
 			}
 
 			var modifiedCrochet:Float = Conductor.crochet * (Conductor.denominator / 4); //slows or speeds up to mimic normal quarter notes
@@ -2253,9 +2269,8 @@ class PlayState extends MusicBeatState
 			babyArrow.downScroll = ClientPrefs.downScroll;
 			if (!isStoryMode && !inEditor && !skipArrowStartTween)
 			{
-				babyArrow.y -= 10;
 				babyArrow.alpha = 0;
-				FlxTween.tween(babyArrow, {y: babyArrow.y + 10, alpha: targetAlpha}, delay, {ease: FlxEase.circOut, startDelay: delay * (i + 1)});
+				FlxTween.tween(babyArrow, {alpha: targetAlpha}, delay, {ease: FlxEase.circOut, startDelay: delay * (i + 1)});
 			}
 			else
 			{
@@ -3413,7 +3428,7 @@ class PlayState extends MusicBeatState
 						charGroup = gfGroup;
 				}
 				if (charData[1] != null) index = Std.parseInt(charData[1]);
-				if (charGroup.members[index % charGroup.length].animOffsets.exists(value1)) {
+				if (charGroup.members[index % charGroup.length] != null && charGroup.members[index % charGroup.length].animOffsets.exists(value1)) {
 					charGroup.members[index % charGroup.length].playAnim(value1, true);
 					charGroup.members[index % charGroup.length].specialAnim = true;
 				}
@@ -3442,8 +3457,10 @@ class PlayState extends MusicBeatState
 						charGroup = gfGroup;
 				}
 				if (charData[1] != null) index = Std.parseInt(charData[1]);
-				charGroup.members[index % charGroup.length].idleSuffix = value2;
-				charGroup.members[index % charGroup.length].recalculateDanceIdle();
+				if (charGroup.members[index % charGroup.length] != null) {
+					charGroup.members[index % charGroup.length].idleSuffix = value2;
+					charGroup.members[index % charGroup.length].recalculateDanceIdle();
+				}
 
 			case 'Screen Shake':
 				var valuesArray:Array<String> = [value1, value2];
@@ -3512,12 +3529,14 @@ class PlayState extends MusicBeatState
 							dadGroup.members[index].alpha = 0.00001;
 							dadGroup.remove(dadGroup.members[index], true);
 							dadGroup.insert(index, dadMap.get(value2));
-							if (!dadGroup.members[index].curCharacter.startsWith('gf')) {
-								if (wasGf) {
-									gf.visible = true;
+							if (gf != null) {
+								if (!dadGroup.members[index].curCharacter.startsWith('gf')) {
+									if (wasGf) {
+										gf.visible = true;
+									}
+								} else {
+									gf.visible = false;
 								}
-							} else {
-								gf.visible = false;
 							}
 							dadGroup.members[index].alpha = lastAlpha;
 							makeDoubleTrail(dadGroup.members[index], 'dad$index', false, index, dadGroup);
@@ -3530,21 +3549,23 @@ class PlayState extends MusicBeatState
 						}
 
 					case 2:
-						index %= gfGroup.length;
-						if (gfGroup.members[index].curCharacter != value2) {
-							if (!gfMap.exists(value2)) {
-								addCharacterToList(value2, charType, index);
-							}
+						if (gf != null) {
+							index %= gfGroup.length;
+							if (gfGroup.members[index].curCharacter != value2) {
+								if (!gfMap.exists(value2)) {
+									addCharacterToList(value2, charType, index);
+								}
 
-							remove(gfMap.get(value2));
-							var lastAlpha:Float = gfGroup.members[index].alpha;
-							gfGroup.members[index].alpha = 0.00001;
-							gfGroup.remove(gfGroup.members[index], true);
-							gfGroup.insert(index, gfMap.get(value2));
-							gfGroup.members[index].alpha = lastAlpha;
-							makeDoubleTrail(gfGroup.members[index], 'gf$index', false, index, gfGroup);
-							gf = gfGroup.members[0];
-							setOnLuas('gfName', gf.curCharacter);
+								remove(gfMap.get(value2));
+								var lastAlpha:Float = gfGroup.members[index].alpha;
+								gfGroup.members[index].alpha = 0.00001;
+								gfGroup.remove(gfGroup.members[index], true);
+								gfGroup.insert(index, gfMap.get(value2));
+								gfGroup.members[index].alpha = lastAlpha;
+								makeDoubleTrail(gfGroup.members[index], 'gf$index', false, index, gfGroup);
+								gf = gfGroup.members[0];
+								setOnLuas('gfName', gf.curCharacter);
+							}
 						}
 				}
 			
@@ -3582,15 +3603,15 @@ class PlayState extends MusicBeatState
 	function moveCameraSection(?id:Int = 0):Void {
 		if (SONG.notes[id] == null) return;
 
-		if (SONG.notes[id].gfSection)
+		if (gf != null && SONG.notes[id].gfSection)
 		{
 			camFollow.set(gf.getMidpoint().x, gf.getMidpoint().y);
 			if (gfGroupFile != null) {
-				camFollow.x += gfGroupFile.camera_position[0];
-				camFollow.y += gfGroupFile.camera_position[1];
+				camFollow.x += gfGroupFile.camera_position[0] + girlfriendCameraOffset[0];
+				camFollow.y += gfGroupFile.camera_position[1] + girlfriendCameraOffset[1];
 			} else {
-				camFollow.x += gf.cameraPosition[0];
-				camFollow.y += gf.cameraPosition[1];
+				camFollow.x += gf.cameraPosition[0] + girlfriendCameraOffset[0];
+				camFollow.y += gf.cameraPosition[1] + girlfriendCameraOffset[1];
 			}
 			tweenCamIn();
 			callOnLuas('onMoveCamera', ['gf']);
@@ -3614,27 +3635,37 @@ class PlayState extends MusicBeatState
 	{
 		if (isDad)
 		{
-			camFollow.set(dad.getMidpoint().x + dadCamOffset[0], dad.getMidpoint().y + dadCamOffset[1]);
+			camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
 
 			if (dadGroupFile != null) {
-				camFollow.x += dadGroupFile.camera_position[0];
-				camFollow.y += dadGroupFile.camera_position[1];
+				camFollow.x += dadGroupFile.camera_position[0] + opponentCameraOffset[0];
+				camFollow.y += dadGroupFile.camera_position[1] + opponentCameraOffset[1];
 			} else {
-				camFollow.x += dad.cameraPosition[0];
-				camFollow.y += dad.cameraPosition[1];
+				camFollow.x += dad.cameraPosition[0] + opponentCameraOffset[0];
+				camFollow.y += dad.cameraPosition[1] + opponentCameraOffset[1];
 			}
 			tweenCamIn();
 		}
 		else
 		{
-			camFollow.set(boyfriend.getMidpoint().x + bfCamOffset[0], boyfriend.getMidpoint().y + bfCamOffset[1]);
+			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
 
+			switch (curStage)
+			{
+				case 'limo':
+					camFollow.x = boyfriend.getMidpoint().x - 300;
+				case 'mall':
+					camFollow.y = boyfriend.getMidpoint().y - 200;
+				case 'school' | 'schoolEvil':
+					camFollow.x = boyfriend.getMidpoint().x - 200;
+					camFollow.y = boyfriend.getMidpoint().y - 200;
+			}
 			if (bfGroupFile != null) {
-				camFollow.x -= bfGroupFile.camera_position[0];
-				camFollow.y += bfGroupFile.camera_position[1];
+				camFollow.x -= bfGroupFile.camera_position[0] - boyfriendCameraOffset[0];
+				camFollow.y += bfGroupFile.camera_position[1] + boyfriendCameraOffset[1];
 			} else {
-				camFollow.x -= boyfriend.cameraPosition[0];
-				camFollow.y += boyfriend.cameraPosition[1];
+				camFollow.x -= boyfriend.cameraPosition[0] - boyfriendCameraOffset[0];
+				camFollow.y += boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
 			}
 
 			if (curSong == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1)
@@ -3892,6 +3923,10 @@ class PlayState extends MusicBeatState
 
 	public var totalPlayed:Int = 0;
 	public var totalNotesHit:Float = 0.0;
+
+	public var showCombo:Bool = true;
+	public var showRating:Bool = true;
+
 	private function popUpScore(note:Note = null):Void
 	{
 		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
@@ -3932,6 +3967,8 @@ class PlayState extends MusicBeatState
 				doRatingTween(0);
 		}
 
+		note.rating = daRating;
+
 		if (daRating == 'sick' && !note.noteSplashDisabled)
 		{
 			spawnNoteSplashOnNote(note);
@@ -3966,7 +4003,7 @@ class PlayState extends MusicBeatState
 		rating.acceleration.y = 550;
 		rating.velocity.y -= FlxG.random.int(140, 175);
 		rating.velocity.x -= FlxG.random.int(0, 10);
-		rating.visible = !ClientPrefs.hideHud;
+		rating.visible = (!ClientPrefs.hideHud && showRating);
 		rating.x += ClientPrefs.comboOffset[0];
 		rating.y -= ClientPrefs.comboOffset[1];
 
@@ -3977,7 +4014,7 @@ class PlayState extends MusicBeatState
 		comboSpr.y += 60;
 		comboSpr.acceleration.y = 600;
 		comboSpr.velocity.y -= 150;
-		comboSpr.visible = !ClientPrefs.hideHud;
+		comboSpr.visible = (!ClientPrefs.hideHud && showCombo);
 		comboSpr.x += ClientPrefs.comboOffset[0];
 		comboSpr.y -= ClientPrefs.comboOffset[1];
 
@@ -4265,7 +4302,7 @@ class PlayState extends MusicBeatState
 			}
 
 			for (char in daNote.characters) {
-				if (char < charGroup.members.length && charGroup.members[char].hasMissAnimations)
+				if (char < charGroup.members.length && charGroup.members[char] != null && charGroup.members[char].hasMissAnimations)
 				{
 					var daAlt = '';
 					if (daNote.noteType == 'Alt Animation') daAlt = '-alt';
@@ -4343,7 +4380,7 @@ class PlayState extends MusicBeatState
 			}
 
 			for (char in note.characters) {
-				if (char < charGroup.members.length) {
+				if (char < charGroup.members.length && charGroup.members[char] != null) {
 					if (note.noteType == 'Hey!' && charGroup.members[char].animOffsets.exists('hey')) {
 						charGroup.members[char].playAnim('hey', true);
 						charGroup.members[char].specialAnim = true;
@@ -4362,7 +4399,7 @@ class PlayState extends MusicBeatState
 						var animToPlay:String = dadSingAnimations[note.noteData] + altAnim;
 
 						if (note.noteType == 'Trail Note') {
-							if (note.gfNote && doubleTrailMap.get('gf$char').animOffsets.exists(animToPlay)) {
+							if (note.gfNote && doubleTrailMap.get('gf$char') != null && doubleTrailMap.get('gf$char').animOffsets.exists(animToPlay)) {
 								doubleTrailMap.get('gf$char').playAnim(animToPlay, true);
 								doubleTrailMap.get('gf$char').holdTimer = 0;
 								doubleTrailMap.get('gf$char').lastAnim = animToPlay;
@@ -4449,7 +4486,7 @@ class PlayState extends MusicBeatState
 						if (!inEditor) {
 							for (i in note.characters) {
 								if (i < charGroup.members.length) {
-									if (charGroup.members[i].animOffsets.exists('hurt')) {
+									if (charGroup.members[i] != null && charGroup.members[i].animOffsets.exists('hurt')) {
 										charGroup.members[i].playAnim('hurt', true);
 										charGroup.members[i].specialAnim = true;
 									}
@@ -4489,7 +4526,7 @@ class PlayState extends MusicBeatState
 				for (i in note.characters) {
 					if (i < charGroup.members.length) {
 						if (note.noteType == 'Trail Note') {
-							if (note.gfNote && doubleTrailMap.get('gf$i').animOffsets.exists(animToPlay)) {
+							if (note.gfNote && doubleTrailMap.get('gf$i') != null && doubleTrailMap.get('gf$i').animOffsets.exists(animToPlay)) {
 								doubleTrailMap.get('gf$i').playAnim(animToPlay, true);
 								doubleTrailMap.get('gf$i').holdTimer = 0;
 								doubleTrailMap.get('gf$i').lastAnim = animToPlay;
@@ -4502,7 +4539,7 @@ class PlayState extends MusicBeatState
 								doubleTrailMap.get('bf$i').holdTimer = 0;
 								doubleTrailMap.get('bf$i').lastAnim = animToPlay;
 							}
-						} else if (charGroup.members[i].animOffsets.exists(animToPlay)) {
+						} else if (charGroup.members[i] != null && charGroup.members[i].animOffsets.exists(animToPlay)) {
 							charGroup.members[i].playAnim(animToPlay, true);
 							charGroup.members[i].holdTimer = 0;
 						}
@@ -4511,7 +4548,7 @@ class PlayState extends MusicBeatState
 
 				if (note.noteType == 'Hey!') {
 					for (i in note.characters) {
-						if (i < charGroup.members.length && charGroup.members[i].animOffsets.exists('hey')) {
+						if (i < charGroup.members.length && charGroup.members[i] != null && charGroup.members[i].animOffsets.exists('hey')) {
 							charGroup.members[i].playAnim('hey', true);
 							charGroup.members[i].specialAnim = true;
 							charGroup.members[i].heyTimer = 0.6 / playbackRate;

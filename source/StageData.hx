@@ -18,9 +18,12 @@ typedef StageFile = {
 	var boyfriend:Array<Dynamic>;
 	var girlfriend:Array<Dynamic>;
 	var opponent:Array<Dynamic>;
+	var hide_girlfriend:Bool;
 
-	var boyfriendCamOffset:Array<Float>;
-	var opponentCamOffset:Array<Float>;
+	var camera_boyfriend:Array<Float>;
+	var camera_opponent:Array<Float>;
+	var camera_girlfriend:Array<Float>;
+	var camera_speed:Null<Float>;
 }
 
 class StageData {
@@ -83,12 +86,6 @@ class StageData {
 		}
 
 		var stageFile:StageFile = cast Json.parse(rawJson);
-		if (stageFile.boyfriendCamOffset == null || stageFile.boyfriendCamOffset.length < 2) {
-			stageFile.boyfriendCamOffset = [-100, -100];
-		}
-		if (stageFile.opponentCamOffset == null || stageFile.opponentCamOffset.length < 2) {
-			stageFile.opponentCamOffset = [150, -100];
-		}
 		return stageFile;
 	}
 }
