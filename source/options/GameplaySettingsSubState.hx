@@ -61,6 +61,18 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			1);
 		addOption(option);
 
+		var option:Option = new Option('Hitsound Volume',
+			'A "tick" sound plays when you hit a note.',
+			'hitsoundVolume',
+			'percent',
+			0);
+		option.scrollSpeed = 1.6;
+		option.minValue = 0.0;
+		option.maxValue = 1;
+		option.changeValue = 0.1;
+		option.decimals = 1;
+		addOption(option);
+
 		var option:Option = new Option('Rating Offset',
 			'Changes how late/early you have to hit for a "Sick!"\nHigher values mean you have to hit later.',
 			'ratingOffset',

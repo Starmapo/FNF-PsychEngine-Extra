@@ -25,6 +25,7 @@ typedef SkinFile = {
     var introSoundsSuffix:String; //suffix for the countdown sounds
 }
 
+//just for backwards compatibility, ignore this
 typedef OldSkin = {
     var tailYOffset:Null<Float>; //was renamed to be more clear as there's no ui editor yet
 }
@@ -77,46 +78,30 @@ class UIData {
     }
 
     public static function checkImageFile(file:String, uiSkin:SkinFile):String {
+        if (Paths.fileExists('images/$file.png', IMAGE) && uiSkin.name == 'default') {
+            return file;
+        }
         var path:String = 'uiskins/${uiSkin.name}/$file';
-		#if MODS_ALLOWED
-		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-		#else
-		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-		#end
-            path = file; //check for it outside of 'uiskins'
-            #if MODS_ALLOWED
-            if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-            #else
-            if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-            #end
-                if (uiSkin.isPixel && Paths.fileExists('images/uiskins/pixel/$file.png', IMAGE)) {
-			        path = 'uiskins/pixel/$file';
-                } else {
-                    path = 'uiskins/default/$file';
-                }
+		if (!Paths.fileExists('images/$path.png', IMAGE)) {
+            if (uiSkin.isPixel && Paths.fileExists('images/uiskins/pixel/$file.png', IMAGE)) {
+                path = 'uiskins/pixel/$file';
+            } else {
+                path = 'uiskins/default/$file';
             }
 		}
         return path;
     }
 
     public static function checkSkinFile(file:String, uiSkin:SkinFile):SkinFile {
+        if (Paths.fileExists('images/$file.png', IMAGE) && uiSkin.name == 'default') {
+            return uiSkin;
+        }
         var path:String = 'uiskins/${uiSkin.name}/$file';
-		#if MODS_ALLOWED
-		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-		#else
-		if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-		#end
-            path = file; //check for it outside of 'uiskins'
-            #if MODS_ALLOWED
-            if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE)) && !FileSystem.exists(Paths.modFolders('images/$path.png'))) {
-            #else
-            if (!Assets.exists(Paths.getPath('images/$path.png', IMAGE))) {
-            #end
-                if (uiSkin.isPixel && Paths.fileExists('images/uiskins/pixel/$file.png', IMAGE)) {
-                    return getUIFile('pixel');
-                } else {
-                    return getUIFile('');
-                }
+		if (!Paths.fileExists('images/$path.png', IMAGE)) {
+            if (uiSkin.isPixel && Paths.fileExists('images/uiskins/pixel/$file.png', IMAGE)) {
+                return getUIFile('pixel');
+            } else {
+                return getUIFile('');
             }
 		}
         return uiSkin;

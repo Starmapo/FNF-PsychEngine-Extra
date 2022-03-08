@@ -215,7 +215,9 @@ class ChartingState extends MusicBeatState
 				opponentKeyAmount: 4,
 				numerator: 4,
 				denominator: 4,
-				validScore: false
+				validScore: false,
+				arrowSkin: null,
+				splashSkin: null
 			};
 			addSection(_song.numerator * 4);
 			PlayState.SONG = _song;
@@ -2138,7 +2140,7 @@ class ChartingState extends MusicBeatState
 					strumLineNotes.members[noteDataToCheck].resetAnim = (note.sustainLength / 1000) + 0.15;
 					if (!playedSound[note.noteData]) {
 						if ((playSoundBf.checked && note.mustPress) || (playSoundDad.checked && !note.mustPress)) {
-							FlxG.sound.play(Paths.sound('ChartingTick')).pan = note.noteData < leftKeys ? -0.3 : 0.3; //would be coolio
+							FlxG.sound.play(Paths.sound('hitsound')).pan = note.noteData < leftKeys ? -0.3 : 0.3; //would be coolio
 							playedSound[note.noteData] = true;
 						}
 					}
@@ -3023,7 +3025,10 @@ class ChartingState extends MusicBeatState
 			opponentKeyAmount: _song.opponentKeyAmount,
 			numerator: _song.numerator,
 			denominator: _song.denominator,
-			validScore: false
+			validScore: false,
+
+			arrowSkin: null,
+			splashSkin: null
 		};
 		var json = {
 			"song": eventsSong

@@ -70,12 +70,16 @@ class Note extends FlxSprite
 	public var hitHealth:Float = 0.023;
 	public var missHealth:Float = 0.0475;
 	public var rating:String = 'unknown';
+	public var ratingMod:Float = -1; //-1 = unknown, 0 = shit, 0.5 = bad, 0.75 = good, 1 = sick
+	public var ratingDisabled:Bool = false;
 
 	public var texture(default, set):String = null;
 
 	public var noAnimation:Bool = false;
 	public var hitCausesMiss:Bool = false;
 	public var distance:Float = 2000;
+
+	public var hitsoundDisabled:Bool = false;
 
 	public var keyAmount:Int = 4;
 	var colors:Array<String> = ['left', 'down', 'up', 'right'];
@@ -214,6 +218,7 @@ class Note extends FlxSprite
 		}
 
 		if (isSustainNote && prevNote != null) {
+			hitsoundDisabled = true;
 			setSustainData();
 		} else if (!isSustainNote) {
 			earlyHitMult = 1;
@@ -230,6 +235,9 @@ class Note extends FlxSprite
 		var skin:String = texture;
 		if (skin == null || skin.length < 1) {
 			skin = 'NOTE_assets';
+			if (PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 0) {
+				skin = PlayState.SONG.arrowSkin;
+			}
 		}
 
 		var animName:String = null;
@@ -241,7 +249,11 @@ class Note extends FlxSprite
 		arraySkin[arraySkin.length - 1] = prefix + arraySkin[arraySkin.length - 1] + suffix;
 
 		var lastScaleY:Float = scale.y;
-		frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/${arraySkin.join('/')}', uiSkin));
+		if (Paths.fileExists('images/uiskins/${uiSkin.name}/notes/${arraySkin.join('/')}.png', IMAGE)) {
+			frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/${arraySkin.join('/')}', uiSkin));
+		} else { //try getting it outside the uiskins folder
+			frames = Paths.getSparrowAtlas(${arraySkin.join('/')});
+		}
 		loadNoteAnims();
 		antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;
 		if (isSustainNote) {
@@ -266,6 +278,26 @@ class Note extends FlxSprite
 			if (isSustainNote) {
 				animation.addByPrefix('${i}hold', '${i} hold0');
 				animation.addByPrefix('${i}holdend', '${i} tail0');
+			}
+		}
+
+		if (colors.length < 1 || animation.getByName(colors[0]) == null) { //didn't find animations, assume it uses the old note assets
+			animation.addByPrefix('up', 'green0');
+			animation.addByPrefix('right', 'red0');
+			animation.addByPrefix('down', 'blue0');
+			animation.addByPrefix('left', 'purple0');
+
+			if (isSustainNote)
+			{
+				animation.addByPrefix('leftholdend', 'pruple end hold0');
+				animation.addByPrefix('upholdend', 'green hold end0');
+				animation.addByPrefix('rightholdend', 'red hold end0');
+				animation.addByPrefix('downholdend', 'blue hold end0');
+
+				animation.addByPrefix('lefthold', 'purple hold piece0');
+				animation.addByPrefix('uphold', 'green hold piece0');
+				animation.addByPrefix('righthold', 'red hold piece0');
+				animation.addByPrefix('downhold', 'blue hold piece0');
 			}
 		}
 

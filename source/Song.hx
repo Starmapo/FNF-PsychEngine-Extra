@@ -33,6 +33,10 @@ typedef SwagSong =
 	var opponentKeyAmount:Null<Int>;
 	var numerator:Null<Int>;
 	var denominator:Null<Int>;
+
+	//FOR BACKWARDS COMPATIBILITY
+	var arrowSkin:String;
+	var splashSkin:String;
 }
 
 typedef DifferentJSON =

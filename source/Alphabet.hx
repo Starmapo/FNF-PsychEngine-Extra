@@ -192,7 +192,7 @@ class Alphabet extends FlxSpriteGroup
 	var dialogueSound:FlxSound = null;
 	private static var soundDialog:Sound = null;
 	var consecutiveSpaces:Int = 0;
-	public static function setDialogueSound(name:String)
+	public static function setDialogueSound(name:String = '')
 	{
 		if (name == null || name.trim() == '') name = 'dialogue';
 		soundDialog = Paths.sound(name);
@@ -204,6 +204,11 @@ class Alphabet extends FlxSpriteGroup
 	{
 		_finalText = text;
 		doSplitWords();
+
+		if(soundDialog == null)
+		{
+			Alphabet.setDialogueSound();
+		}
 
 		if (speed <= 0) {
 			while(!finishedText) { 

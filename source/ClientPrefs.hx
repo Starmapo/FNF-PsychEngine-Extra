@@ -24,6 +24,7 @@ class ClientPrefs {
 	public static var showRatings:Bool = true;
 	public static var noReset:Bool = false;
 	public static var healthBarAlpha:Float = 1;
+	public static var hitsoundVolume:Float = 0;
 	public static var freeplayAlphabetic:Bool = false;
 	public static var instVolume:Float = 1;
 	public static var voicesVolume:Float = 1;
@@ -234,6 +235,7 @@ class ClientPrefs {
 		FlxG.save.data.goodWindow = goodWindow;
 		FlxG.save.data.badWindow = badWindow;
 		FlxG.save.data.safeFrames = safeFrames;
+		FlxG.save.data.hitsoundVolume = hitsoundVolume;
 		FlxG.save.data.gameplaySettings = gameplaySettings;
 	
 		FlxG.save.flush();
@@ -333,6 +335,9 @@ class ClientPrefs {
 		}
 		if (FlxG.save.data.safeFrames != null) {
 			safeFrames = FlxG.save.data.safeFrames;
+		}
+		if(FlxG.save.data.hitsoundVolume != null) {
+			hitsoundVolume = FlxG.save.data.hitsoundVolume;
 		}
 		if (FlxG.save.data.gameplaySettings != null)
 		{

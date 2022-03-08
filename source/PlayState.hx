@@ -905,7 +905,7 @@ class PlayState extends MusicBeatState
 				opponentChar = boyfriendGroup;
 			}
 			
-			var camPos:FlxPoint = new FlxPoint(girlfriendCameraOffset[0], girlfriendCameraOffset[1]);
+			camPos = new FlxPoint(girlfriendCameraOffset[0], girlfriendCameraOffset[1]);
 			if(gf != null)
 			{
 				camPos.x += gf.getGraphicMidpoint().x + gf.cameraPosition[0];
@@ -1363,6 +1363,7 @@ class PlayState extends MusicBeatState
 		RecalculateRating();
 
 		//PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
+		if(ClientPrefs.hitsoundVolume > 0) CoolUtil.precacheSound('hitsound');
 		CoolUtil.precacheSound('missnote1');
 		CoolUtil.precacheSound('missnote2');
 		CoolUtil.precacheSound('missnote3');
@@ -1755,8 +1756,6 @@ class PlayState extends MusicBeatState
 
 			var swagCounter:Int = 0;
 
-			trace(startOnTime);
-
 			if (skipCountdown || startOnTime > 0) {
 				clearNotesBefore(startOnTime - 500);
 				setSongTime(startOnTime - 500);
@@ -1765,12 +1764,14 @@ class PlayState extends MusicBeatState
 			startTimer = new FlxTimer().start(modifiedCrochet / 1000, function(tmr:FlxTimer)
 			{
 				if (!inEditor) {
-					var chars = [boyfriendGroup, dadGroup, gfGroup];
-					for (group in chars) {
-						for (char in group) {
-							if (char.danceSpeed > 0 && tmr.loopsLeft % char.danceSpeed == 0 && !char.stunned && char.animation.curAnim.name != null && !char.animation.curAnim.name.startsWith("sing") && !char.specialAnim)
-							{
-								char.dance();
+					if (swagCounter < 4) {
+						var chars = [boyfriendGroup, dadGroup, gfGroup];
+						for (group in chars) {
+							for (char in group) {
+								if (char.danceSpeed > 0 && tmr.loopsLeft % char.danceSpeed == 0 && !char.stunned && char.animation.curAnim.name != null && !char.animation.curAnim.name.startsWith("sing") && !char.specialAnim)
+								{
+									char.dance();
+								}
 							}
 						}
 					}
@@ -1964,6 +1965,7 @@ class PlayState extends MusicBeatState
 		{
 			setSongTime(startOnTime - 500);
 		}
+		startOnTime = 0;
 
 		if (paused) {
 			FlxG.sound.music.pause();
@@ -2426,7 +2428,7 @@ class PlayState extends MusicBeatState
 		{
 			if (FlxG.sound.music != null && !startingSong && FlxG.sound.music.time > 0)
 			{
-				resyncVocals(true);
+				resyncVocals();
 			}
 
 			if (startTimer != null && !startTimer.finished)
@@ -2513,30 +2515,23 @@ class PlayState extends MusicBeatState
 		super.onFocusLost();
 	}
 
-	function resyncVocals(forcePlay:Bool = false):Void
+	function resyncVocals():Void
 	{
 		if (FlxG.sound.music == null || startingSong || endingSong || endingTimer != null) return;
-
-		var playVocals = vocals.playing || forcePlay;
-		var playVocalsDad = vocalsDad.playing || forcePlay;
 
 		vocals.pause();
 		vocalsDad.pause();
 		FlxG.sound.music.pause();
 
-		FlxG.sound.music.play();
-		if (Conductor.songPosition - FlxG.sound.music.time / playbackRate < 1000 && FlxG.sound.music.time > 0 && (!SONG.needsVoices || (vocals.time > 0 && (!foundDadVocals || vocalsDad.time > 0)))) {
+		if (playbackRate >= 1) {
 			Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 		} else {
 			FlxG.sound.music.time = Conductor.songPosition * playbackRate;
 		}
-		if (FlxG.sound.music.time > 0 && vocals.time > 0 && playVocals) {
-			vocals.play();
-		}
-		if (FlxG.sound.music.time > 0 && vocalsDad.time > 0 && playVocalsDad) {
-			vocalsDad.play();
-		}
+		FlxG.sound.music.play();
 		vocals.time = vocalsDad.time = FlxG.sound.music.time;
+		vocals.play();
+		vocalsDad.play();
 
 		#if cpp
 		@:privateAccess
@@ -3171,7 +3166,7 @@ class PlayState extends MusicBeatState
 				FlxG.sound.music.stop();
 
 				persistentUpdate = false;
-				if (!ClientPrefs.instantRestart) persistentDraw = false;
+				persistentDraw = false;
 				for (tween in modchartTweens) {
 					tween.active = true;
 				}
@@ -3180,7 +3175,7 @@ class PlayState extends MusicBeatState
 				}
 				if (ClientPrefs.instantRestart) {
 					SONG = originalSong;
-					MusicBeatState.resetState();
+					FlxG.resetState();
 				} else {
 					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1]));
 				}
@@ -3650,16 +3645,6 @@ class PlayState extends MusicBeatState
 		{
 			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
 
-			switch (curStage)
-			{
-				case 'limo':
-					camFollow.x = boyfriend.getMidpoint().x - 300;
-				case 'mall':
-					camFollow.y = boyfriend.getMidpoint().y - 200;
-				case 'school' | 'schoolEvil':
-					camFollow.x = boyfriend.getMidpoint().x - 200;
-					camFollow.y = boyfriend.getMidpoint().y - 200;
-			}
 			if (bfGroupFile != null) {
 				camFollow.x -= bfGroupFile.camera_position[0] - boyfriendCameraOffset[0];
 				camFollow.y += bfGroupFile.camera_position[1] + boyfriendCameraOffset[1];
@@ -3761,7 +3746,9 @@ class PlayState extends MusicBeatState
 		if (achievementObj != null) {
 			return;
 		} else {
-			var achieve:String = checkForAchievement();
+			var achieve:String = checkForAchievement(['week1_nomiss', 'week2_nomiss', 'week3_nomiss', 'week4_nomiss',
+				'week5_nomiss', 'week6_nomiss', 'week7_nomiss', 'ur_bad',
+				'ur_good', 'hype', 'two_keys', 'toastie', 'debugger']);
 
 			if (achieve != null) {
 				startAchievement(achieve);
@@ -3769,7 +3756,6 @@ class PlayState extends MusicBeatState
 			}
 		}
 		#end
-
 		
 		#if LUA_ALLOWED
 		var ret:Dynamic = callOnLuas('onEndSong', []);
@@ -3948,23 +3934,35 @@ class PlayState extends MusicBeatState
 		{
 			case "shit": // shit
 				totalNotesHit += 0;
+				note.ratingMod = 0;
 				score = 50;
-				shits++;
-				doRatingTween(3);
+				if(!note.ratingDisabled) {
+					shits++;
+					doRatingTween(3);
+				}
 			case "bad": // bad
 				totalNotesHit += 0.5;
+				note.ratingMod = 0.5;
 				score = 100;
-				bads++;
-				doRatingTween(2);
+				if(!note.ratingDisabled) {
+					bads++;
+					doRatingTween(2);
+				}
 			case "good": // good
 				totalNotesHit += 0.75;
+				note.ratingMod = 0.75;
 				score = 200;
-				goods++;
-				doRatingTween(1);
+				if(!note.ratingDisabled) {
+					goods++;
+					doRatingTween(1);
+				}
 			case "sick": // sick
 				totalNotesHit += 1;
-				sicks++;
-				doRatingTween(0);
+				note.ratingMod = 1;
+				if(!note.ratingDisabled) {
+					sicks++;
+					doRatingTween(0);
+				}
 		}
 
 		note.rating = daRating;
@@ -3976,9 +3974,11 @@ class PlayState extends MusicBeatState
 
 		if (!practiceMode && !cpuControlled) {
 			songScore += score;
-			songHits++;
-			totalPlayed++;
-			RecalculateRating();
+			if(!note.ratingDisabled) {
+				songHits++;
+				totalPlayed++;
+				RecalculateRating();
+			}
 
 			if (ClientPrefs.scoreZoom)
 			{
@@ -4459,6 +4459,11 @@ class PlayState extends MusicBeatState
 		if (!note.wasGoodHit)
 		{
 			if (cpuControlled && (note.ignoreNote || note.hitCausesMiss)) return;
+
+			if (ClientPrefs.hitsoundVolume > 0 && !note.hitsoundDisabled)
+			{
+				FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
+			}
 
 			if (opponentChart && curSong != 'tutorial')
 				camZooming = true;
@@ -5219,25 +5224,39 @@ class PlayState extends MusicBeatState
 	}
 
 	#if ACHIEVEMENTS_ALLOWED
-	private function checkForAchievement(achievesToCheck:Array<String> = null):String {
+	private function checkForAchievement(achievesToCheck:Array<String> = null):String
+	{
 		if (chartingMode) return null;
 
 		var usedPractice:Bool = (ClientPrefs.getGameplaySetting('practice', false) || ClientPrefs.getGameplaySetting('botplay', false));
-		var achievementsToCheck:Array<String> = achievesToCheck;
-		if (achievementsToCheck == null) {
-			achievementsToCheck = [];
-			for (i in 0...Achievements.achievementsStuff.length) {
-				achievementsToCheck.push(Achievements.achievementsStuff[i][2]);
-			}
-		}
-
-		for (i in 0...achievementsToCheck.length) {
-			var achievementName:String = achievementsToCheck[i];
-			var unlock:Bool = false;
-
-			if (!Achievements.isAchievementUnlocked(achievementName) && !cpuControlled) {
+		for (i in 0...achievesToCheck.length) {
+			var achievementName:String = achievesToCheck[i];
+			if(!Achievements.isAchievementUnlocked(achievementName) && !cpuControlled) {
+				var unlock:Bool = false;
 				switch(achievementName)
 				{
+					case 'week1_nomiss' | 'week2_nomiss' | 'week3_nomiss' | 'week4_nomiss' | 'week5_nomiss' | 'week6_nomiss' | 'week7_nomiss':
+						if(isStoryMode && campaignMisses + songMisses < 1 && CoolUtil.difficultyString() == 'HARD' && storyPlaylist.length <= 1 && !changedDifficulty && !usedPractice)
+						{
+							var weekName:String = WeekData.getWeekFileName();
+							switch(weekName) //I know this is a lot of duplicated code, but it's easier readable and you can add weeks with different names than the achievement tag
+							{
+								case 'week1':
+									if(achievementName == 'week1_nomiss') unlock = true;
+								case 'week2':
+									if(achievementName == 'week2_nomiss') unlock = true;
+								case 'week3':
+									if(achievementName == 'week3_nomiss') unlock = true;
+								case 'week4':
+									if(achievementName == 'week4_nomiss') unlock = true;
+								case 'week5':
+									if(achievementName == 'week5_nomiss') unlock = true;
+								case 'week6':
+									if(achievementName == 'week6_nomiss') unlock = true;
+								case 'week7':
+									if(achievementName == 'week7_nomiss') unlock = true;
+							}
+						}
 					case 'ur_bad':
 						if (totalPlayed > 0 && ratingPercent < 0.2 && !usedPractice) {
 							unlock = true;
@@ -5279,23 +5298,10 @@ class PlayState extends MusicBeatState
 						}
 				}
 
-				if (!unlock && isStoryMode && campaignMisses + songMisses < 1 && CoolUtil.difficultyString() == 'HARD' && storyPlaylist.length <= 1 && !changedDifficulty && !usedPractice)
-				{
-					var weekName:String = WeekData.getWeekFileName();
-					for (k in 0...Achievements.achievementsStuff.length) {
-						if (Achievements.achievementsStuff[k][2] == achievementName) {
-							var unlockPoint:String = Achievements.achievementsStuff[k][3];
-							if (unlockPoint != null && unlockPoint == weekName && !unlock)
-								unlock = true;
-							break;
-						}
-					}
+				if (unlock) {
+					Achievements.unlockAchievement(achievementName);
+					return achievementName;
 				}
-			}
-
-			if (unlock) {
-				Achievements.unlockAchievement(achievementName);
-				return achievementName;
 			}
 		}
 		return null;

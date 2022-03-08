@@ -67,20 +67,21 @@ class CreditsState extends MusicBeatState
 				}
 				creditsStuff.push(['']);
 			}
-		};
+		}
+
 		var folder = "";
-			var creditsFile:String = Paths.mods('data/credits.txt');
-			if (FileSystem.exists(creditsFile))
+		var creditsFile:String = Paths.mods('data/credits.txt');
+		if (FileSystem.exists(creditsFile))
+		{
+			var firstarray:Array<String> = File.getContent(creditsFile).split('\n');
+			for(i in firstarray)
 			{
-				var firstarray:Array<String> = File.getContent(creditsFile).split('\n');
-				for(i in firstarray)
-				{
-					var arr:Array<String> = i.replace('\\n', '\n').split("::");
-					if (arr.length >= 5) arr.push(folder);
-					creditsStuff.push(arr);
-				}
-				creditsStuff.push(['']);
+				var arr:Array<String> = i.replace('\\n', '\n').split("::");
+				if (arr.length >= 5) arr.push(folder);
+				creditsStuff.push(arr);
 			}
+			creditsStuff.push(['']);
+		}
 		#end
 
 		var pisspoop:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
@@ -93,7 +94,7 @@ class CreditsState extends MusicBeatState
 			[''],
 			['Psych Engine Team'],
 			['Shadow Mario',		'shadowmario',		'Main Programmer of Psych Engine',						'https://twitter.com/Shadow_Mario_',	'444444'],
-			['RiverOaken',			'riveroaken',		'Main Artist/Animator of Psych Engine',					'https://twitter.com/river_oaken',		'C30085'],
+			['RiverOaken',			'riveroaken',		'Main Artist/Animator of Psych Engine',					'https://twitter.com/RiverOaken',		'C30085'],
 			['shubs',				'shubs',			'Additional Programmer of Psych Engine',				'https://twitter.com/yoshubs',			'279ADC'],
 			[''],
 			['Former Engine Members'],
