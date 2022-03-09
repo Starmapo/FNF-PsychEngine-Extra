@@ -306,7 +306,7 @@ class PlayState extends MusicBeatState
 
 		debugKeysChart = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_1'));
 		debugKeysCharacter = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_2'));
-		Achievements.loadAchievements();
+		PauseSubState.songName = null; //Reset to default
 
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
@@ -403,7 +403,6 @@ class PlayState extends MusicBeatState
 		#end
 
 		GameOverSubstate.resetVariables();
-		PauseSubState.resetVariables();
 
 		curStage = SONG.stage;
 		if (SONG.stage == null || SONG.stage.length < 1) {
@@ -1367,7 +1366,12 @@ class PlayState extends MusicBeatState
 		CoolUtil.precacheSound('missnote1');
 		CoolUtil.precacheSound('missnote2');
 		CoolUtil.precacheSound('missnote3');
-		CoolUtil.precacheMusic('breakfast');
+		
+		if (PauseSubState.songName != null) {
+			CoolUtil.precacheMusic(PauseSubState.songName);
+		} else if(ClientPrefs.pauseMusic != 'None') {
+			CoolUtil.precacheMusic(Paths.formatToSongPath(ClientPrefs.pauseMusic));
+		}
 
 		#if DISCORD_ALLOWED
 		if (!inEditor) {

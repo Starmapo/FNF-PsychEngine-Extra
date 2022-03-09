@@ -52,7 +52,8 @@ class Paths
 		'assets/sounds/confirmMenu.$SOUND_EXT',
 		'assets/sounds/cancelMenu.$SOUND_EXT',
 		'assets/music/freakyMenu.$SOUND_EXT',
-		'shared:assets/shared/music/breakfast.$SOUND_EXT'
+		'shared:assets/shared/music/breakfast.$SOUND_EXT',
+		'shared:assets/shared/music/tea-time.$SOUND_EXT'
 	];
 	/// haya I love you for the base cache dump I took to the max
 	public static function clearUnusedMemory() {
