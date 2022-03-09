@@ -4061,7 +4061,7 @@ class PlayState extends MusicBeatState
 			numScore.acceleration.y = FlxG.random.int(200, 300);
 			numScore.velocity.y -= FlxG.random.int(140, 160);
 			numScore.velocity.x = FlxG.random.float(-5, 5);
-			numScore.visible = !ClientPrefs.hideHud;
+			numScore.visible = (!ClientPrefs.hideHud && showCombo);
 
 			insert(members.indexOf(strumLineNotes), numScore);
 
