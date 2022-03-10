@@ -57,16 +57,21 @@ class FunkinLua {
 		LuaL.openlibs(lua);
 		Lua.init_callbacks(lua);
 
+		LuaL.dostring(lua, CLENSE);
 		var result:Dynamic = LuaL.dofile(lua, script);
 		var resultStr:String = Lua.tostring(lua, result);
 		if (resultStr != null && result != 0) {
-			Application.current.window.alert(resultStr, 'Error on .LUA script!');
-			trace('Error on .LUA script! $resultStr');
+			trace('Error on lua script! ' + resultStr);
+			#if windows
+			Application.current.window.alert(resultStr, 'Error on lua script!');
+			#else
+			luaTrace('Error loading lua script: "$script"\n' + resultStr,true,false);
+			#end
 			lua = null;
 			return;
 		}
 		scriptName = script;
-		trace('Lua file loaded succesfully: $script');
+		trace('lua file loaded succesfully: $script');
 
 		// Lua shit
 		#if windows
@@ -196,9 +201,7 @@ class FunkinLua {
 		set('buildTarget', 'unknown');
 		#end
 
-		// Block require and os, Should probably have a proper function but this should be good enough for now until someone smarter comes along and recreates a safe version of the OS library
 		set('require', false);
-		set('os', false);
 
 		Lua_helper.add_callback(lua, "addLuaScript", function(luaFile:String, ?ignoreAlreadyRunning:Bool = false) { //would be dope asf. 
 			var cervix = '$luaFile.lua';
@@ -2088,6 +2091,15 @@ class FunkinLua {
 	{
 		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
 	}
+
+	static inline var CLENSE:String = "
+	os.execute = nil;
+	os.exit = nil;
+	package.loaded.os.execute = nil;
+	package.loaded.os.exit = nil;
+	process = nil;
+	package.loaded.process = nil;
+	"; // Fuck this, I can't figure out linc_lua, so I'mma set everything in Lua itself - Super
 }
 
 class ModchartSprite extends FlxSprite
