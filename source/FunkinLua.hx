@@ -2098,6 +2098,12 @@ class FunkinLua {
 	static inline var CLEANSE:String = "
 	os.execute = nil;
 	package.loaded.os.execute = nil;
+	os.getenv = nil;
+	os.remove = nil;
+	os.rename = nil;
+	package.loaded.os.getenv = nil;
+	package.loaded.os.remove = nil;
+	package.loaded.os.rename = nil;
 	"; // Fuck this, I can't figure out linc_lua, so I'mma set everything in Lua itself - Super
 }
 
