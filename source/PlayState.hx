@@ -5002,6 +5002,9 @@ class PlayState extends MusicBeatState
 
 	function switchKeys(playerKeys:Int = 4, opponentKeys:Int = 4) {
 		if (bfKeys != playerKeys) {
+			if (!playerStrumMap.exists(playerKeys)) {
+				generateStrumGroup(1, playerKeys);
+			}
 			bfKeys = playerKeys;
 			if (!opponentChart) {
 				this.playerKeys = playerKeys;
@@ -5025,6 +5028,9 @@ class PlayState extends MusicBeatState
 			}
 		}
 		if (dadKeys != opponentKeys) {
+			if (!opponentStrumMap.exists(opponentKeys)) {
+				generateStrumGroup(0, opponentKeys);
+			}
 			dadKeys = opponentKeys;
 			if (!opponentChart) {
 				this.opponentKeys = opponentKeys;
