@@ -57,7 +57,7 @@ class FunkinLua {
 		LuaL.openlibs(lua);
 		Lua.init_callbacks(lua);
 
-		LuaL.dostring(lua, CLENSE);
+		LuaL.dostring(lua, CLEANSE);
 		var result:Dynamic = LuaL.dofile(lua, script);
 		var resultStr:String = Lua.tostring(lua, result);
 		if (resultStr != null && result != 0) {
@@ -2095,13 +2095,9 @@ class FunkinLua {
 		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
 	}
 
-	static inline var CLENSE:String = "
+	static inline var CLEANSE:String = "
 	os.execute = nil;
-	os.exit = nil;
 	package.loaded.os.execute = nil;
-	package.loaded.os.exit = nil;
-	process = nil;
-	package.loaded.process = nil;
 	"; // Fuck this, I can't figure out linc_lua, so I'mma set everything in Lua itself - Super
 }
 
