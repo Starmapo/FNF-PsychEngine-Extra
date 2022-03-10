@@ -4787,7 +4787,7 @@ class PlayState extends MusicBeatState
 				} else {
 					FlxG.save.flush();
 				}
-				FlxG.log.add('Deaths: $Achievements.henchmenDeath');
+				FlxG.log.add('Deaths: ${Achievements.henchmenDeath}');
 				#end
 			}
 		}
