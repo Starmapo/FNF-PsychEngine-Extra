@@ -51,7 +51,7 @@ class CoolUtil
 	{
 		var daList:Array<String> = [];
 		#if MODS_ALLOWED
-		if (FileSystem.exists(path)) daList = File.getContent(path).trim().split('\n');
+		if (Assets.exists(path) || FileSystem.exists(path)) daList = File.getContent(path).trim().split('\n');
 		#else
 		if (Assets.exists(path)) daList = Assets.getText(path).trim().split('\n');
 		#end
@@ -138,11 +138,10 @@ class CoolUtil
 				var songs:Array<Dynamic> = WeekData.weeksLoaded.get(i).songs;
 				for (daSong in songs) {
 					var name:String = daSong[0];
-					name.toLowerCase().trim();
+					name = name.toLowerCase().trim();
 					if (name == song) {
 						PlayState.storyWeek = num;
 						diffStr = WeekData.getCurrentWeek().difficulties;
-						//trace('found difficulties');
 						break;
 					}
 				}
@@ -162,30 +161,32 @@ class CoolUtil
 				if (diffs[i] != null)
 				{
 					diffs[i] = diffs[i].trim();
-					if (diffs[i].length < 1 || diffs[i] == null) diffs.remove(diffs[i]);
+					if (diffs[i].length < 1 || diffs[i] == null) {
+						diffs.remove(diffs[i]);
+					} else {
+						i++;
+					}
 				}
 				else
 				{
 					diffs.remove(diffs[i]);
 				}
-				i++;
 			}
 			
 			if (remove && song.length > 0) {
-				for (i in 0...diffs.length) {
+				var i = 0;
+				var len = diffs.length;
+				while (i < len) {
 					if (diffs[i] != null) {
 						var suffix = '-${Paths.formatToSongPath(diffs[i])}';
 						if (Paths.formatToSongPath(diffs[i]) == defaultDifficulty.toLowerCase()) {
 							suffix = '';
 						}
 						var poop:String = song + suffix;
-						#if MODS_ALLOWED
-						if (!FileSystem.exists(Paths.modsData('$song/$poop')) && !Assets.exists(Paths.json('$song/$poop')))
-						#else
-						if (!Assets.exists(Paths.json('$song/$poop')))
-						#end
-						{
+						if (!Paths.fileExists('data/$song/$poop.json', TEXT)) {
 							diffs.remove(diffs[i]);
+						} else {
+							i++;
 						}
 					} else {
 						diffs.remove(diffs[i]);

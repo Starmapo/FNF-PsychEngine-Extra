@@ -756,7 +756,7 @@ class FunkinLua {
 				FlxTransitionableState.skipNextTransOut = true;
 			}
 
-			if (PlayState.isStoryMode) {
+			if (PlayState.isStoryMode && !PlayState.instance.transitioning) {
 				PlayState.campaignScore += PlayState.instance.songScore;
 				PlayState.campaignMisses += PlayState.instance.songMisses;
 				PlayState.storyPlaylist.remove(PlayState.storyPlaylist[0]);
@@ -764,6 +764,9 @@ class FunkinLua {
 			}
 
 			CoolUtil.getDifficulties(name, true);
+			if (difficultyNum >= CoolUtil.difficulties.length) {
+				difficultyNum = CoolUtil.difficulties.length - 1;
+			}
 			var poop = Highscore.formatSong(name, difficultyNum);
 			PlayState.SONG = Song.loadFromJson(poop, name);
 			PlayState.storyDifficulty = difficultyNum;

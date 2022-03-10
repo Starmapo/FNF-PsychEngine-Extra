@@ -229,7 +229,6 @@ class StoryMenuState extends MusicBeatState
 				if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
 				{
 					changeWeek((checkNewHold - checkLastHold) * (controls.UI_UP ? -shiftMult : shiftMult));
-					changeDifficulty();
 				}
 			}
 
@@ -247,8 +246,6 @@ class StoryMenuState extends MusicBeatState
 				changeDifficulty(1);
 			else if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
 				changeDifficulty(-1);
-			else if (upP || downP)
-				changeDifficulty();
 
 			if (FlxG.keys.justPressed.CONTROL)
 			{
@@ -423,6 +420,9 @@ class StoryMenuState extends MusicBeatState
 			curDifficulty = newPos;
 		}
 		updateText();
+		if (change != 0) {
+			changeDifficulty();
+		}
 	}
 
 	function weekIsLocked(name:String):Bool {
