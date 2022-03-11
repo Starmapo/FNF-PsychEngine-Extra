@@ -138,9 +138,12 @@ class CreditsState extends MusicBeatState
 					Paths.currentModDirectory = creditsStuff[i][5];
 				}
 
-				if ((skipToCurrentMod && Paths.currentModDirectory == lastMod && !skipped) || curSelected == -1) {
+				if (skipToCurrentMod && Paths.currentModDirectory == lastMod && !skipped) {
 					curSelected = i;
 					skipped = true;
+				}
+				if (curSelected == -1) {
+					curSelected = i;
 				}
 
 				var icon:AttachedSprite = new AttachedSprite('credits/${creditsStuff[i][1]}');
