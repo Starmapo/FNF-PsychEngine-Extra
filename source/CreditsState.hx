@@ -117,6 +117,7 @@ class CreditsState extends MusicBeatState
 		}
 	
 		var lastMod:String = Paths.currentModDirectory;
+		var skipped = false;
 		for (i in 0...creditsStuff.length)
 		{
 			var isSelectable:Bool = !unselectableCheck(i);
@@ -137,8 +138,9 @@ class CreditsState extends MusicBeatState
 					Paths.currentModDirectory = creditsStuff[i][5];
 				}
 
-				if ((skipToCurrentMod && Paths.currentModDirectory == lastMod) || curSelected == -1) {
+				if ((skipToCurrentMod && Paths.currentModDirectory == lastMod && !skipped) || curSelected == -1) {
 					curSelected = i;
+					skipped = true;
 				}
 
 				var icon:AttachedSprite = new AttachedSprite('credits/${creditsStuff[i][1]}');
