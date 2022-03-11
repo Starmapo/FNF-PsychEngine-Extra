@@ -4,14 +4,15 @@ import flixel.FlxSprite;
 #if MODS_ALLOWED
 import sys.io.File;
 import sys.FileSystem;
-#end
+#else
 import openfl.utils.Assets;
+#end
 import haxe.Json;
 
 typedef MenuCharacterFile = {
 	var image:String;
 	var scale:Float;
-	var position:Array<Int>;
+	var position:Array<Float>;
 	var idle_anim:String;
 	var confirm_anim:String;
 	var flipX:Bool;

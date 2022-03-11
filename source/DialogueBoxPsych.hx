@@ -26,9 +26,9 @@ typedef DialogueCharacterFile = {
 typedef DialogueAnimArray = {
 	var anim:String;
 	var loop_name:String;
-	var loop_offsets:Array<Int>;
+	var loop_offsets:Array<Float>;
 	var idle_name:String;
-	var idle_offsets:Array<Int>;
+	var idle_offsets:Array<Float>;
 }
 
 // Gonna try to kind of make it compatible to Forever Engine,

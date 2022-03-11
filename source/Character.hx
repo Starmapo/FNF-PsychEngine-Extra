@@ -33,18 +33,18 @@ typedef AnimArray = {
 	var fps:Int;
 	var loop:Bool;
 	var indices:Array<Int>;
-	var offsets:Array<Int>;
+	var offsets:Array<Float>;
 }
 
 typedef CharacterGroupFile = {
-	var characters:Array<CharArray>;
+	var characters:Array<GroupCharacter>;
 	var position:Array<Float>;
 	var healthicon:String;
 	var camera_position:Array<Float>;
 	var healthbar_colors:Array<Int>;
 }
 
-typedef CharArray = {
+typedef GroupCharacter = {
 	var name:String;
 	var position:Array<Float>;
 }
