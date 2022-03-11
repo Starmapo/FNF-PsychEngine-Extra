@@ -141,4 +141,8 @@ class Highscore
 			songRating = FlxG.save.data.songRating;
 		}
 	}
+
+	public static function completedWeek(week:String) {
+		return (!StoryMenuState.weekCompleted.exists((Paths.currentModDirectory.length > 0 ? '${Paths.currentModDirectory}/' : '') + week) || !StoryMenuState.weekCompleted.get((Paths.currentModDirectory.length > 0 ? '${Paths.currentModDirectory}/' : '') + week));
+	}
 }
