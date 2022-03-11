@@ -3807,7 +3807,7 @@ class PlayState extends MusicBeatState
 					MusicBeatState.switchState(new StoryMenuState());
 
 					if (!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false)) {
-						StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
+						StoryMenuState.weekCompleted.set((Paths.currentModDirectory.length > 0 ? '${Paths.currentModDirectory}/' : '') + WeekData.weeksList[storyWeek], true);
 
 						if (SONG.validScore)
 						{

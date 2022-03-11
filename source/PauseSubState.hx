@@ -195,7 +195,7 @@ class PauseSubState extends MusicBeatSubstate
 			{
 				if(menuItems.length - 1 != curSelected && difficultyChoices.contains(daSelected)) {
 					var name:String = PlayState.SONG.song;
-					var poop = Highscore.formatSong(name, curSelected);
+					var poop = Highscore.formatSong(name, curSelected, false);
 					PlayState.SONG = Song.loadFromJson(poop, name);
 					PlayState.storyDifficulty = curSelected;
 					LoadingState.loadAndSwitchState(new PlayState());

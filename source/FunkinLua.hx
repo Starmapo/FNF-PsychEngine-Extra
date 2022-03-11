@@ -767,7 +767,7 @@ class FunkinLua {
 			if (difficultyNum >= CoolUtil.difficulties.length) {
 				difficultyNum = CoolUtil.difficulties.length - 1;
 			}
-			var poop = Highscore.formatSong(name, difficultyNum);
+			var poop = Highscore.formatSong(name, difficultyNum, false);
 			PlayState.SONG = Song.loadFromJson(poop, name);
 			PlayState.storyDifficulty = difficultyNum;
 			PlayState.instance.persistentUpdate = false;

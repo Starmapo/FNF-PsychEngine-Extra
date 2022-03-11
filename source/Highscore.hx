@@ -10,7 +10,6 @@ class Highscore
 	public static var songScores:Map<String, Int> = new Map();
 	public static var songRating:Map<String, Float> = new Map();
 
-
 	public static function resetSong(song:String, diff:Int = 0):Void
 	{
 		var daSong:String = formatSong(song, diff);
@@ -95,9 +94,9 @@ class Highscore
 		FlxG.save.flush();
 	}
 
-	public static function formatSong(song:String, diff:Int):String
+	public static function formatSong(song:String, diff:Int, useCurrentMod:Bool = true):String
 	{
-		return Paths.formatToSongPath(song) + CoolUtil.getDifficultyFilePath(diff);
+		return ((useCurrentMod && Paths.currentModDirectory.length > 0) ? '${Paths.currentModDirectory}/' : '') + Paths.formatToSongPath(song) + CoolUtil.getDifficultyFilePath(diff);
 	}
 
 	public static function getScore(song:String, diff:Int):Int
