@@ -819,6 +819,21 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "pauseGame", function() {
 			PlayState.instance.pauseGame();
 		});
+		Lua_helper.add_callback(lua, "openCredits", function(playMusic:Bool = true) {
+			PlayState.cancelMusicFadeTween();
+			CustomFadeTransition.nextCamera = PlayState.instance.camOther;
+			if (FlxTransitionableState.skipNextTransIn)
+				CustomFadeTransition.nextCamera = null;
+
+			CreditsState.skipToCurrentMod = true;
+			MusicBeatState.switchState(new CreditsState());
+
+			if (playMusic)
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			PlayState.changedDifficulty = false;
+			PlayState.chartingMode = false;
+			PlayState.instance.transitioning = true;
+		});
 		Lua_helper.add_callback(lua, "getSongPosition", function() {
 			return Conductor.songPosition;
 		});

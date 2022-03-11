@@ -37,6 +37,8 @@ class CreditsState extends MusicBeatState
 	var warningText:FlxText;
 	var warningBG:FlxSprite;
 
+	public static var skipToCurrentMod = false;
+
 	override function create()
 	{
 		#if DISCORD_ALLOWED
@@ -114,6 +116,7 @@ class CreditsState extends MusicBeatState
 			creditsStuff.push(i);
 		}
 	
+		var lastMod:String = Paths.currentModDirectory;
 		for (i in 0...creditsStuff.length)
 		{
 			var isSelectable:Bool = !unselectableCheck(i);
@@ -134,6 +137,10 @@ class CreditsState extends MusicBeatState
 					Paths.currentModDirectory = creditsStuff[i][5];
 				}
 
+				if ((skipToCurrentMod && Paths.currentModDirectory == lastMod) || curSelected == -1) {
+					curSelected = i;
+				}
+
 				var icon:AttachedSprite = new AttachedSprite('credits/${creditsStuff[i][1]}');
 				icon.xAdd = optionText.width + 10;
 				icon.sprTracker = optionText;
@@ -142,10 +149,9 @@ class CreditsState extends MusicBeatState
 				iconArray.push(icon);
 				add(icon);
 				Paths.currentModDirectory = '';
-
-				if (curSelected == -1) curSelected = i;
 			}
 		}
+		skipToCurrentMod = false;
 
 		descBox = new AttachedSprite().makeGraphic(1, 1, FlxColor.BLACK);
 		descBox.xAdd = -10;
