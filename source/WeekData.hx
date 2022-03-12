@@ -137,7 +137,7 @@ class WeekData {
 		for (i in 0...sexList.length) {
 			for (j in 0...directories.length) {
 				var fileToCheck:String = '${directories[j]}weeks/${sexList[i]}.json';
-				var weekName:String = ((modNames[j].length > 0) ? '${modNames[j]}:' : '') + sexList[i];
+				var weekName = WeekData.formatWeek(sexList[i], modNames[j]);
 				if (!weeksLoaded.exists(weekName)) {
 					var week:WeekFile = getWeekFile(fileToCheck);
 					if (week != null) {
@@ -187,7 +187,7 @@ class WeekData {
 
 	private static function addWeek(weekToCheck:String, path:String, directory:String, i:Int, originalLength:Int, modName:String = '')
 	{
-		var modAndWeek = '${(modName.length > 0) ? '${modName}:' : ''}$weekToCheck';
+		var modAndWeek = WeekData.formatWeek(weekToCheck, modName);
 		if (!weeksLoaded.exists(modAndWeek))
 		{
 			var week:WeekFile = getWeekFile(path);
@@ -243,6 +243,11 @@ class WeekData {
 		if (data != null && data.folder != null && data.folder.length > 0) {
 			Paths.currentModDirectory = data.folder;
 		}
+	}
+
+	public static function formatWeek(week:String, ?directory:String):String {
+		if (directory == null) directory = Paths.currentModDirectory;
+		return ((directory.length > 0) ? '${directory}:' : '') + week;
 	}
 
 	public static function loadTheFirstEnabledMod()

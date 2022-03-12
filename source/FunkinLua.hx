@@ -1678,6 +1678,15 @@ class FunkinLua {
 			}
 			luaTrace('Save file not initialized: ' + name);
 		});
+		Lua_helper.add_callback(lua, "setWeekCompleted", function(name:String = '') {
+			if(name.length > 0)
+			{
+				var weekName = WeekData.formatWeek(name);
+				StoryMenuState.weekCompleted.set(weekName, true);
+				FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
+				FlxG.save.flush();
+			}
+		});
 
 		Lua_helper.add_callback(lua, "getTextFromFile", function(path:String, ?ignoreModFolders:Bool = false) {
 			return Paths.getTextFromFile(path, ignoreModFolders);

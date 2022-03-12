@@ -281,7 +281,7 @@ class StoryMenuState extends MusicBeatState
 
 	function selectWeek()
 	{
-		if (!weekIsLocked('${(loadedWeeks[curWeek].folder.length > 0) ? '${loadedWeeks[curWeek].folder}:' : ''}${loadedWeeks[curWeek].fileName}'))
+		if (!weekIsLocked(WeekData.formatWeek(loadedWeeks[curWeek].fileName)))
 		{
 			if (stopspamming == false)
 			{
@@ -381,7 +381,7 @@ class StoryMenuState extends MusicBeatState
 
 		var bullShit:Int = 0;
 
-		var unlocked:Bool = !weekIsLocked('${(leWeek.folder.length > 0) ? '${leWeek.folder}:' : ''}${leWeek.fileName}');
+		var unlocked:Bool = !weekIsLocked(WeekData.formatWeek(leWeek.fileName));
 		for (item in grpWeekText.members)
 		{
 			item.targetY = bullShit - curWeek;
