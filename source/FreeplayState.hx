@@ -65,17 +65,16 @@ class FreeplayState extends MusicBeatState
 		#end
 
 		for (i in 0...WeekData.weeksList.length) {
+			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
+			WeekData.setDirectoryFromWeek(leWeek);
 			if(weekIsLocked(WeekData.weeksList[i])) continue;
 
-			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
-
-			WeekData.setDirectoryFromWeek(leWeek);
 			for (song in leWeek.songs)
 			{
 				var colors:Array<Int> = song[2];
 				if (colors == null || colors.length < 3)
 				{
-					FlxG.log.warn('Failed to load ${song[0]'s colors'}!');
+					FlxG.log.warn('Failed to load ${song[0]}\'s colors!');
 					colors = [146, 113, 253];
 				}
 				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
@@ -432,7 +431,7 @@ class FreeplayState extends MusicBeatState
 
 		lastDifficultyName = CoolUtil.difficulties[curDifficulty];
 
-		#if !switch
+		#if HIGHSCORE_ALLOWED
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
 		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
 		#end
@@ -466,7 +465,7 @@ class FreeplayState extends MusicBeatState
 			});
 		}
 
-		#if !switch
+		#if HIGHSCORE_ALLOWED
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
 		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
 		#end

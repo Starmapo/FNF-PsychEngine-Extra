@@ -78,7 +78,7 @@ class UIData {
     }
 
     public static function checkImageFile(file:String, uiSkin:SkinFile):String {
-        if (Paths.fileExists('images/$file.png', IMAGE) && uiSkin.name == 'default') {
+        if (Paths.fileExists('images/$file.png', IMAGE)) {
             return file;
         }
         var path:String = 'uiskins/${uiSkin.name}/$file';
@@ -93,7 +93,7 @@ class UIData {
     }
 
     public static function checkSkinFile(file:String, uiSkin:SkinFile):SkinFile {
-        if (Paths.fileExists('images/$file.png', IMAGE) && uiSkin.name == 'default') {
+        if (Paths.fileExists('images/$file.png', IMAGE)) {
             return uiSkin;
         }
         var path:String = 'uiskins/${uiSkin.name}/$file';

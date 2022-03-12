@@ -235,7 +235,7 @@ class Note extends FlxSprite
 		var skin:String = texture;
 		if (skin == null || skin.length < 1) {
 			skin = 'NOTE_assets';
-			if (PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 0) {
+			if (PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 0 && Paths.fileExists('images/${PlayState.SONG.arrowSkin}.png', IMAGE)) {
 				skin = PlayState.SONG.arrowSkin;
 			}
 		}
@@ -249,10 +249,10 @@ class Note extends FlxSprite
 		arraySkin[arraySkin.length - 1] = prefix + arraySkin[arraySkin.length - 1] + suffix;
 
 		var lastScaleY:Float = scale.y;
-		if (Paths.fileExists('images/uiskins/${uiSkin.name}/notes/${arraySkin.join('/')}.png', IMAGE)) {
-			frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/${arraySkin.join('/')}', uiSkin));
-		} else { //try getting it outside the uiskins folder
+		if (Paths.fileExists('images/${arraySkin.join('/')}.png', IMAGE)) {
 			frames = Paths.getSparrowAtlas(${arraySkin.join('/')});
+		} else {
+			frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/${arraySkin.join('/')}', uiSkin));
 		}
 		loadNoteAnims();
 		antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;

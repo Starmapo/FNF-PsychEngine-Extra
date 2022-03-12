@@ -53,7 +53,7 @@ class PauseSubState extends MusicBeatSubstate
 
 		for (i in 0...CoolUtil.difficulties.length) {
 			if (i != PlayState.storyDifficulty) {
-				var diff:String = '${CoolUtil.difficulties[i]}';
+				var diff:String = CoolUtil.difficulties[i];
 				difficultyChoices.push(diff);
 			}
 		}
@@ -194,10 +194,11 @@ class PauseSubState extends MusicBeatSubstate
 			if (menuItems == difficultyChoices)
 			{
 				if(menuItems.length - 1 != curSelected && difficultyChoices.contains(daSelected)) {
+					var actualDiff = CoolUtil.difficulties.indexOf(daSelected);
 					var name:String = PlayState.SONG.song;
-					var poop = Highscore.formatSong(name, curSelected, false);
+					var poop = Highscore.formatSong(name, actualDiff, false);
 					PlayState.SONG = Song.loadFromJson(poop, name);
-					PlayState.storyDifficulty = curSelected;
+					PlayState.storyDifficulty = actualDiff;
 					LoadingState.loadAndSwitchState(new PlayState());
 					FlxG.sound.music.volume = 0;
 					PlayState.changedDifficulty = true;

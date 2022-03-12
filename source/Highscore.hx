@@ -96,7 +96,7 @@ class Highscore
 
 	public static function formatSong(song:String, diff:Int, useCurrentMod:Bool = true):String
 	{
-		return ((useCurrentMod && Paths.currentModDirectory.length > 0) ? '${Paths.currentModDirectory}/' : '') + Paths.formatToSongPath(song) + CoolUtil.getDifficultyFilePath(diff);
+		return ((useCurrentMod && Paths.currentModDirectory.length > 0) ? '${Paths.currentModDirectory}:' : '') + Paths.formatToSongPath(song) + CoolUtil.getDifficultyFilePath(diff);
 	}
 
 	public static function getScore(song:String, diff:Int):Int
@@ -143,6 +143,7 @@ class Highscore
 	}
 
 	public static function completedWeek(week:String) {
-		return (!StoryMenuState.weekCompleted.exists((Paths.currentModDirectory.length > 0 ? '${Paths.currentModDirectory}/' : '') + week) || !StoryMenuState.weekCompleted.get((Paths.currentModDirectory.length > 0 ? '${Paths.currentModDirectory}/' : '') + week));
+		var weekName = (Paths.currentModDirectory.length > 0 ? '${Paths.currentModDirectory}:' : '') + week;
+		return (StoryMenuState.weekCompleted.exists(weekName) && StoryMenuState.weekCompleted.get(weekName));
 	}
 }

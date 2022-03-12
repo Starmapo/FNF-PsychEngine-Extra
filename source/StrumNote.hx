@@ -101,7 +101,11 @@ class StrumNote extends FlxSprite
 		var lastAnim:String = null;
 		if (animation.curAnim != null) lastAnim = animation.curAnim.name;
 
-		frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/$texture', uiSkin));
+		if (Paths.fileExists('images/$texture.png', IMAGE)) {
+			frames = Paths.getSparrowAtlas(texture);
+		} else {
+			frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/$texture', uiSkin));
+		}
 		animation.addByPrefix('static', 'arrow${directions[noteData]}0');
 		animation.addByPrefix('pressed', '${colors[noteData]} press', 24, false);
 		animation.addByPrefix('confirm', '${colors[noteData]} confirm', 24, false);

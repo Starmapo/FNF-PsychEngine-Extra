@@ -21,7 +21,7 @@ typedef WeekFile =
 	var storyName:String;
 	var weekName:String;
 	var startUnlocked:Bool;
-	var hiddenUntilUnlocked:Bool;
+	var ?hiddenUntilUnlocked:Bool;
 	var hideStoryMode:Bool;
 	var hideFreeplay:Bool;
 	var difficulties:String;
@@ -40,7 +40,7 @@ class WeekData {
 	public var storyName:String;
 	public var weekName:String;
 	public var startUnlocked:Bool;
-	public var hiddenUntilUnlocked:Bool;
+	public var hiddenUntilUnlocked:Null<Bool>;
 	public var hideStoryMode:Bool;
 	public var hideFreeplay:Bool;
 	public var difficulties:String;
@@ -78,10 +78,14 @@ class WeekData {
 		hideFreeplay = weekFile.hideFreeplay;
 		difficulties = weekFile.difficulties;
 
+		if (hiddenUntilUnlocked == null) {
+			hiddenUntilUnlocked = false;
+		}
+
 		this.fileName = fileName;
 	}
 
-	public static function reloadWeekFiles(isStoryMode:Null<Bool> = false)
+	public static function reloadWeekFiles(?isStoryMode:Bool = false)
 	{
 		weeksList = [];
 		weeksLoaded.clear();
@@ -89,6 +93,7 @@ class WeekData {
 		var disabledMods:Array<String> = [];
 		var modsListPath:String = 'modsList.txt';
 		var directories:Array<String> = [Paths.mods(), Paths.getPreloadPath()];
+		var modNames:Array<String> = ['', ''];
 		var originalLength:Int = directories.length;
 		if (FileSystem.exists(modsListPath))
 		{
@@ -106,6 +111,7 @@ class WeekData {
 					if (FileSystem.isDirectory(path) && !Paths.ignoreModFolders.contains(splitName[0]) && !disabledMods.contains(splitName[0]) && !directories.contains('$path/'))
 					{
 						directories.push('$path/');
+						modNames.push(splitName[0]);
 					}
 				}
 			}
@@ -118,10 +124,12 @@ class WeekData {
 			if (!disabledMods.contains(folder) && !directories.contains(pathThing))
 			{
 				directories.push(pathThing);
+				modNames.push(folder);
 			}
 		}
 		#else
 		var directories:Array<String> = [Paths.getPreloadPath()];
+		var modNames:Array<String> = [''];
 		var originalLength:Int = directories.length;
 		#end
 
@@ -129,20 +137,21 @@ class WeekData {
 		for (i in 0...sexList.length) {
 			for (j in 0...directories.length) {
 				var fileToCheck:String = '${directories[j]}weeks/${sexList[i]}.json';
-				if (!weeksLoaded.exists(sexList[i])) {
+				var weekName:String = ((modNames[j].length > 0) ? '${modNames[j]}:' : '') + sexList[i];
+				if (!weeksLoaded.exists(weekName)) {
 					var week:WeekFile = getWeekFile(fileToCheck);
 					if (week != null) {
 						var weekFile:WeekData = new WeekData(week, sexList[i]);
 
 						#if MODS_ALLOWED
 						if (j >= originalLength) {
-							weekFile.folder = directories[j].substring(Paths.mods().length, directories[j].length-1);
+							weekFile.folder = directories[j].substring(Paths.mods().length, directories[j].length - 1);
 						}
 						#end
 
 						if (weekFile != null && (isStoryMode == null || (isStoryMode && !weekFile.hideStoryMode) || (!isStoryMode && !weekFile.hideFreeplay))) {
-							weeksLoaded.set(sexList[i], weekFile);
-							weeksList.push(sexList[i]);
+							weeksLoaded.set(weekName, weekFile);
+							weeksList.push(weekName);
 						}
 					}
 				}
@@ -159,7 +168,7 @@ class WeekData {
 					var path:String = '${directory}${daWeek}.json';
 					if (FileSystem.exists(path))
 					{
-						addWeek(daWeek, path, directories[i], i, originalLength);
+						addWeek(daWeek, path, directories[i], i, originalLength, modNames[i]);
 					}
 				}
 
@@ -168,7 +177,7 @@ class WeekData {
 					var path = Path.join([directory, file]);
 					if (!FileSystem.isDirectory(path) && file.endsWith('.json'))
 					{
-						addWeek(file.substr(0, file.length - 5), path, directories[i], i, originalLength);
+						addWeek(file.substr(0, file.length - 5), path, directories[i], i, originalLength, modNames[i]);
 					}
 				}
 			}
@@ -176,9 +185,10 @@ class WeekData {
 		#end
 	}
 
-	private static function addWeek(weekToCheck:String, path:String, directory:String, i:Int, originalLength:Int)
+	private static function addWeek(weekToCheck:String, path:String, directory:String, i:Int, originalLength:Int, modName:String = '')
 	{
-		if (!weeksLoaded.exists(weekToCheck))
+		var modAndWeek = '${(modName.length > 0) ? '${modName}:' : ''}$weekToCheck';
+		if (!weeksLoaded.exists(modAndWeek))
 		{
 			var week:WeekFile = getWeekFile(path);
 			if (week != null)
@@ -187,13 +197,13 @@ class WeekData {
 				if (i >= originalLength)
 				{
 					#if MODS_ALLOWED
-					weekFile.folder = directory.substring(Paths.mods().length, directory.length-1);
+					weekFile.folder = directory.substring(Paths.mods().length, directory.length - 1);
 					#end
 				}
 				if ((PlayState.isStoryMode && !weekFile.hideStoryMode) || (!PlayState.isStoryMode && !weekFile.hideFreeplay))
 				{
-					weeksLoaded.set(weekToCheck, weekFile);
-					weeksList.push(weekToCheck);
+					weeksLoaded.set(modAndWeek, weekFile);
+					weeksList.push(modAndWeek);
 				}
 			}
 		}

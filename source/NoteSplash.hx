@@ -38,7 +38,7 @@ class NoteSplash extends FlxSprite
 		updateHitbox();
 		alphaMult = 0.6;
 
-		if (texture == null || texture.length < 1) {
+		if (texture == null || texture.length < 1 || texture == 'noteSplashes') {
 			texture = 'noteSplashes';
 			if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) texture = PlayState.SONG.splashSkin;
 		}
@@ -69,7 +69,7 @@ class NoteSplash extends FlxSprite
 			frames = Paths.getSparrowAtlas('uiskins/default/splashes/noteSplashes');
 			animation.addByPrefix("note0-1", "note splash left 1", 24, false);
 		} else {
-			if (PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) { //assume its the old skin system
+			if (PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0 && Paths.fileExists('images/${PlayState.SONG.splashSkin}.png', IMAGE)) { //assume its the old skin system
 				frames = Paths.getSparrowAtlas(skin);
 				for (i in 1...3) {
 					animation.addByPrefix("note1-" + i, "note splash blue " + i, 24, false);
@@ -79,8 +79,13 @@ class NoteSplash extends FlxSprite
 				}
 			} else {
 				var uiSkin = UIData.checkSkinFile('splashes/$skin', daNote.uiSkin);
+				trace(skin, uiSkin.name);
 				antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;
-				frames = Paths.getSparrowAtlas(UIData.checkImageFile('splashes/$skin', uiSkin));
+				if (Paths.fileExists('images/$skin.png', IMAGE)) {
+					frames = Paths.getSparrowAtlas(skin);
+				} else {
+					frames = Paths.getSparrowAtlas(UIData.checkImageFile('splashes/$skin', uiSkin));
+				}
 				for (i in 1...3) {
 					animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${colors[daNote.noteData]} ${i}0', 24, false);
 				}

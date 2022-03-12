@@ -3215,8 +3215,18 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	public function getControl(key:String) {
-		var pressed:Bool = Reflect.getProperty(controls, key);
+	public function controlJustPressed(key:String) {
+		var pressed:Bool = FlxG.keys.anyJustPressed(ClientPrefs.copyKey(ClientPrefs.keyBinds.get(key)));
+		return pressed;
+	}
+
+	public function controlPressed(key:String) {
+		var pressed:Bool = FlxG.keys.anyPressed(ClientPrefs.copyKey(ClientPrefs.keyBinds.get(key)));
+		return pressed;
+	}
+
+	public function controlReleased(key:String) {
+		var pressed:Bool = FlxG.keys.anyJustReleased(ClientPrefs.copyKey(ClientPrefs.keyBinds.get(key)));
 		return pressed;
 	}
 
@@ -3761,16 +3771,11 @@ class PlayState extends MusicBeatState
 		}
 		#end
 		
-		#if LUA_ALLOWED
 		var ret:Dynamic = callOnLuas('onEndSong', []);
-		#else
-		var ret:Dynamic = FunkinLua.Function_Continue;
-		#end
-
 		if (ret != FunkinLua.Function_Stop && !transitioning) {
 			if (SONG.validScore)
 			{
-				#if !switch
+				#if HIGHSCORE_ALLOWED
 				var percent:Float = ratingPercent;
 				if (Math.isNaN(percent)) percent = 0;
 				Highscore.saveScore(curSong, songScore, storyDifficulty, percent);
@@ -3792,6 +3797,7 @@ class PlayState extends MusicBeatState
 
 				if (storyPlaylist.length <= 0)
 				{
+					WeekData.loadTheFirstEnabledMod();
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 					#if cpp
 					@:privateAccess
@@ -3807,7 +3813,7 @@ class PlayState extends MusicBeatState
 					MusicBeatState.switchState(new StoryMenuState());
 
 					if (!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false)) {
-						StoryMenuState.weekCompleted.set((Paths.currentModDirectory.length > 0 ? '${Paths.currentModDirectory}/' : '') + WeekData.weeksList[storyWeek], true);
+						StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
 
 						if (SONG.validScore)
 						{
@@ -3861,6 +3867,7 @@ class PlayState extends MusicBeatState
 			else
 			{
 				trace('WENT BACK TO FREEPLAY??');
+				WeekData.loadTheFirstEnabledMod();
 				cancelMusicFadeTween();
 				if (FlxTransitionableState.skipNextTransIn) {
 					CustomFadeTransition.nextCamera = null;
@@ -4444,11 +4451,7 @@ class PlayState extends MusicBeatState
 			spawnNoteSplashOnNote(note);
 		}
 
-		if (opponentChart) {
-			callOnLuas('goodNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
-		} else {
-			callOnLuas('opponentNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
-		}
+		callOnLuas('opponentNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
 
 		if (!note.isSustainNote)
 		{
@@ -4597,11 +4600,7 @@ class PlayState extends MusicBeatState
 			else
 				vocals.volume = ClientPrefs.voicesVolume;
 
-			if (!opponentChart) {
-				callOnLuas('goodNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
-			} else {
-				callOnLuas('opponentNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
-			}
+			callOnLuas('goodNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
 
 			if (!note.isSustainNote)
 			{

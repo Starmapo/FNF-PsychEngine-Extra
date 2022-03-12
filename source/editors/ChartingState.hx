@@ -578,7 +578,7 @@ class ChartingState extends MusicBeatState
 		stageDropDown.selectedLabel = _song.stage;
 		blockPressWhileScrolling.push(stageDropDown);
 
-		WeekData.reloadWeekFiles(false);
+		WeekData.reloadWeekFiles(PlayState.isStoryMode);
 		CoolUtil.getDifficulties(currentSongName);
 		if (PlayState.storyDifficulty > CoolUtil.difficulties.length - 1) {
 			PlayState.storyDifficulty = CoolUtil.difficulties.indexOf('Normal');

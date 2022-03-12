@@ -93,19 +93,18 @@ class StoryMenuState extends MusicBeatState
 		for (i in 0...WeekData.weeksList.length)
 		{
 			var weekFile:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
+			WeekData.setDirectoryFromWeek(weekFile);
 			var isLocked:Bool = weekIsLocked(WeekData.weeksList[i]);
 			if(!isLocked || !weekFile.hiddenUntilUnlocked)
 			{
 				loadedWeeks.push(weekFile);
-				WeekData.setDirectoryFromWeek(weekFile);
-				var weekThing:MenuItem = new MenuItem(0, bgSprite.y + 396, WeekData.weeksList[i]);
+				var weekThing:MenuItem = new MenuItem(0, bgSprite.y + 396, weekFile.fileName);
 				weekThing.y += ((weekThing.height + 20) * num);
 				weekThing.targetY = num;
 				grpWeekText.add(weekThing);
 
 				weekThing.screenCenter(X);
 				weekThing.antialiasing = ClientPrefs.globalAntialiasing;
-				// weekThing.updateHitbox();
 
 				// Needs an offset thingie
 				if (isLocked)
@@ -282,7 +281,7 @@ class StoryMenuState extends MusicBeatState
 
 	function selectWeek()
 	{
-		if (!weekIsLocked(loadedWeeks[curWeek].fileName))
+		if (!weekIsLocked('${(loadedWeeks[curWeek].folder.length > 0) ? '${loadedWeeks[curWeek].folder}:' : ''}${loadedWeeks[curWeek].fileName}'))
 		{
 			if (stopspamming == false)
 			{
@@ -356,7 +355,7 @@ class StoryMenuState extends MusicBeatState
 		}
 		lastDifficultyName = diff;
 
-		#if !switch
+		#if HIGHSCORE_ALLOWED
 		intendedScore = Highscore.getWeekScore(loadedWeeks[curWeek].fileName, curDifficulty);
 		#end
 	}
@@ -382,7 +381,7 @@ class StoryMenuState extends MusicBeatState
 
 		var bullShit:Int = 0;
 
-		var unlocked:Bool = !weekIsLocked(leWeek.fileName);
+		var unlocked:Bool = !weekIsLocked('${(leWeek.folder.length > 0) ? '${leWeek.folder}:' : ''}${leWeek.fileName}');
 		for (item in grpWeekText.members)
 		{
 			item.targetY = bullShit - curWeek;
@@ -454,7 +453,7 @@ class StoryMenuState extends MusicBeatState
 		txtTracklist.screenCenter(X);
 		txtTracklist.x -= FlxG.width * 0.35;
 
-		#if !switch
+		#if HIGHSCORE_ALLOWED
 		intendedScore = Highscore.getWeekScore(loadedWeeks[curWeek].fileName, curDifficulty);
 		#end
 	}
