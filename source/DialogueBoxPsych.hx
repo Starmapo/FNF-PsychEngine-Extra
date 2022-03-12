@@ -16,7 +16,7 @@ using StringTools;
 typedef DialogueCharacterFile = {
 	var image:String;
 	var dialogue_pos:String;
-	var no_antialiasing:Bool;
+	var ?no_antialiasing:Bool;
 
 	var animations:Array<DialogueAnimArray>;
 	var position:Array<Float>;
