@@ -61,8 +61,6 @@ class DialogueCharacter extends FlxSprite
 	public var skiptimer = 0;
 	public var skipping = 0;
 
-	static var characterMap:Map<String, DialogueCharacterFile> = new Map();
-
 	public function new(x:Float = 0, y:Float = 0, character:String = null)
 	{
 		super(x, y);
@@ -98,6 +96,7 @@ class DialogueCharacter extends FlxSprite
 		#end
 		
 		jsonFile = cast Json.parse(rawJson);
+		if (jsonFile.no_antialiasing == null) jsonFile.no_antialiasing = false;
 	}
 
 	public function reloadAnimations() {
