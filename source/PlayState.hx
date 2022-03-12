@@ -1992,7 +1992,6 @@ class PlayState extends MusicBeatState
 		callOnLuas('onSongStart', []);
 	}
 
-	var debugNum:Int = 0;
 	private var noteTypeMap:Map<String, Bool> = new Map();
 	private var eventPushedMap:Map<String, Bool> = new Map();
 	private function generateSong():Void
@@ -2018,11 +2017,7 @@ class PlayState extends MusicBeatState
 			vocals = new FlxSound().loadEmbedded(Paths.voices(curSong));
 
 			vocalsDad = new FlxSound();
-			#if MODS_ALLOWED
-			if (OpenFlAssets.exists(Paths.getPath('$curSong/VoicesDad.${Paths.SOUND_EXT}', MUSIC, 'songs')) || FileSystem.exists(Paths.modsSounds('songs/$curSong', 'VoicesDad')))
-			#else
-			if (OpenFlAssets.exists(Paths.getPath('$curSong/VoicesDad.${Paths.SOUND_EXT}', MUSIC, 'songs')))
-			#end
+			if (Paths.fileExists('$curSong/VoicesDad.${Paths.SOUND_EXT}', MUSIC, false, 'songs'))
 			{
 				var file:Dynamic = Paths.voices(curSong, 'Dad');
 				if (file != null) {
@@ -2047,12 +2042,7 @@ class PlayState extends MusicBeatState
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 		
 		if (!inEditor) {
-			var file:String = Paths.json('$curSong/events');
-			#if MODS_ALLOWED
-			if (FileSystem.exists(Paths.modsData('$curSong/events')) || OpenFlAssets.exists(file)) {
-			#else
-			if (OpenFlAssets.exists(file)) {
-			#end
+			if (Paths.fileExists('data/$curSong/events.json', TEXT)) {
 				var eventsData:Array<Dynamic> = Song.loadFromJson('events', curSong).events;
 				for (event in eventsData) //Event Notes
 				{

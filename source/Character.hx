@@ -101,37 +101,16 @@ class Character extends FlxSprite
 			default:
 				var json:CharacterFile = getFile(curCharacter);
 
-				var spriteType = "sparrow";
-				#if MODS_ALLOWED
-				var modTxtToFind:String = Paths.modsTxt(json.image);
-				var txtToFind:String = Paths.getPath('images/${json.image}.txt', TEXT);
-				
-				if (FileSystem.exists(modTxtToFind) || Assets.exists(txtToFind))
-				#else
-				if (Assets.exists(Paths.getPath('images/${json.image}.txt', TEXT)))
-				#end
+				var spriteType = "sparrow";		
+				if (Paths.fileExists('images/${json.image}.txt', TEXT))
 				{
 					spriteType = "packer";
 				}
-				#if MODS_ALLOWED
-				var modJsonToFind:String = Paths.modsJson(json.image);
-				var jsonToFind:String = Paths.getPath('images/${json.image}.json', TEXT);
-				
-				if (FileSystem.exists(modJsonToFind) || Assets.exists(jsonToFind))
-				#else
-				if (Assets.exists(Paths.getPath('images/${json.image}.json', TEXT)))
-				#end
+				if (Paths.fileExists('images/${json.image}.json', TEXT))
 				{
 					spriteType = "texpacker";
 				}
-				#if MODS_ALLOWED
-				var modAnimToFind:String = Paths.modsJson('${json.image}/Animation');
-				var animToFind:String = Paths.getPath('images/${json.image}/Animation.json', TEXT);
-				
-				if (FileSystem.exists(modAnimToFind) || Assets.exists(animToFind))
-				#else
-				if (Assets.exists(Paths.getPath('images/${json.image}/Animation.json', TEXT)))
-				#end
+				if (Paths.fileExists('images/${json.image}/Animation.json', TEXT))
 				{
 					spriteType = "texture";
 				}

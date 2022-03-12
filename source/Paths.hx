@@ -245,8 +245,8 @@ class Paths
 
 		if (FileSystem.exists(getPreloadPath(key)))
 			return File.getContent(getPreloadPath(key));
-		
 		#end
+
 		return Assets.getText(getPath(key, TEXT));
 	}
 

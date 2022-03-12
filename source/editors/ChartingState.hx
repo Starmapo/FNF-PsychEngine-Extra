@@ -442,11 +442,7 @@ class ChartingState extends MusicBeatState
 		{
 			var songName:String = Paths.formatToSongPath(_song.song);
 			var file:String = Paths.json('${songName}/events');
-			#if MODS_ALLOWED
-			if (#if MODS_ALLOWED FileSystem.exists(Paths.modsData('${songName}/events')) || #end OpenFlAssets.exists(file))
-			#else
-			if (OpenFlAssets.exists(file))
-			#end
+			if (Paths.fileExists('data/$songName/events.json', TEXT))
 			{
 				clearEvents();
 				var events:SwagSong = Song.loadFromJson('events', songName);
@@ -1478,11 +1474,7 @@ class ChartingState extends MusicBeatState
 			}
 		}
 		vocalsDad = new FlxSound();
-		#if MODS_ALLOWED
-		if (_song.needsVoices && (OpenFlAssets.exists(Paths.getPath('$currentSongName/VoicesDad.${Paths.SOUND_EXT}', MUSIC, 'songs')) || FileSystem.exists(Paths.modsSounds('songs/$currentSongName', 'VoicesDad'))))
-		#else
-		if (_song.needsVoices && OpenFlAssets.exists(Paths.getPath('$currentSongName/VoicesDad.${Paths.SOUND_EXT}', MUSIC, 'songs')))
-		#end
+		if (Paths.fileExists('$currentSongName/VoicesDad.${Paths.SOUND_EXT}', MUSIC, false, 'songs'))
 		{
 			var file:Dynamic = Paths.voices(currentSongName, 'Dad');
 			if (file != null) {
