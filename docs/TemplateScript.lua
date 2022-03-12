@@ -107,7 +107,6 @@ end
 -- Note miss/hit
 function goodNoteHit(id, direction, noteType, isSustainNote, characters)
 	-- Function called when Boyfriend/player 1 hits a note (after note hit calculations)
-	-- NOTE: Will be right side regardless of if opponent play is on
 	-- id: The note member id, you can get whatever variable you want from this note, example: "getPropertyFromGroup('notes', id, 'strumTime')"
 	-- noteData: 0 = Left, 1 = Down, 2 = Up, 3 = Right
 	-- noteType: The note type string/tag
@@ -117,7 +116,6 @@ end
 
 function opponentNoteHit(id, direction, noteType, isSustainNote, characters)
 	-- Works the same as goodNoteHit, but for Opponent/player 2's notes being hit
-	-- NOTE: Will be left side regardless of if opponent play is on
 end
 
 function noteMissPress(direction)
