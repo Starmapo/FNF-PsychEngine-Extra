@@ -2763,7 +2763,10 @@ class PlayState extends MusicBeatState
 
 			if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene)
 			{
-				openChartEditor();
+				var ret:Dynamic = callOnLuas('onOpenChartEditor', []);
+				if (ret != FunkinLua.Function_Stop) {
+					openChartEditor();
+				}
 			}
 
 			shownHealth = FlxMath.lerp(shownHealth, health, CoolUtil.boundTo(elapsed * 7, 0, 1));
@@ -2803,11 +2806,14 @@ class PlayState extends MusicBeatState
 				stupidIcons[1].animation.curAnim.curFrame = 0;
 
 			if (FlxG.keys.anyJustPressed(debugKeysCharacter) && !endingSong && !inCutscene) {
-				persistentUpdate = false;
-				paused = true;
-				cancelMusicFadeTween();
-				SONG = originalSong;
-				MusicBeatState.switchState(new CharacterEditorState(dad.curCharacter));
+				var ret:Dynamic = callOnLuas('onOpenCharacterEditor', []);
+				if (ret != FunkinLua.Function_Stop) {
+					persistentUpdate = false;
+					paused = true;
+					cancelMusicFadeTween();
+					SONG = originalSong;
+					MusicBeatState.switchState(new CharacterEditorState(dad.curCharacter));
+				}
 			}
 		}
 

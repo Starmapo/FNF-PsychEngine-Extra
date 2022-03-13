@@ -83,19 +83,7 @@ class FreeplayState extends MusicBeatState
 		WeekData.loadTheFirstEnabledMod();
 
 		if (ClientPrefs.freeplayAlphabetic) {
-			songs.sort(function(a:SongMetadata, b:SongMetadata):Int {
-				var val1 = a.songName.toUpperCase();
-				var val2 = b.songName.toUpperCase();
-			  
-				if (val1 < val2) {
-				  return -1;
-				}
-				else if (val1 > val2) {
-				  return 1;
-				} else {
-				  return 0;
-				}
-			});
+			songs.sort(sortAlphabetically);
 		}
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
@@ -521,6 +509,18 @@ class FreeplayState extends MusicBeatState
 		scoreBG.x = FlxG.width - (scoreBG.scale.x / 2);
 		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
 		diffText.x -= diffText.width / 2;
+	}
+
+	function sortAlphabetically(a:SongMetadata, b:SongMetadata):Int {
+		var val1 = a.songName.toUpperCase();
+		var val2 = b.songName.toUpperCase();
+		if (val1 < val2) {
+		  return -1;
+		} else if (val1 > val2) {
+		  return 1;
+		} else {
+		  return 0;
+		}
 	}
 }
 

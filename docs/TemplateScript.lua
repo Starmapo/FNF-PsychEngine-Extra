@@ -1,5 +1,4 @@
 -- Lua stuff
-
 function onCreate()
 	-- triggered when the lua file is started, some variables weren't created yet
 end
@@ -68,6 +67,18 @@ end
 function onSignatureChange()
 	-- triggered when the song's time signature is changed
 	-- use "numerator" and "denominator" to get the current time signature
+end
+
+function onOpenChartEditor()
+	-- Called when you press the chart editor debug key
+	-- return Function_Stop if you want to stop the player from opening the chart editor
+	return Function_Continue;
+end
+
+function onOpenCharacterEditor()
+	-- Called when you press the character editor debug key
+	-- return Function_Stop if you want to stop the player from opening the character editor
+	return Function_Continue;
 end
 
 
