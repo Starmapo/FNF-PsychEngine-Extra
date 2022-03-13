@@ -49,6 +49,7 @@ class StoryMenuState extends MusicBeatState
 	{
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
+		animateatlas.AtlasFrameMaker.clearCache();
 
 		PlayState.isStoryMode = true;
 		WeekData.reloadWeekFiles(true);

@@ -191,7 +191,12 @@ class DialogueEditorState extends MusicBeatState
 	}
 
 	function reloadCharacter() {
-		character.frames = Paths.getSparrowAtlas('dialogue/${character.jsonFile.image}');
+		var imagePath = 'dialogue/${character.jsonFile.image}';
+		if (Paths.fileExists('images/$imagePath/Animation.json', TEXT)) {
+			character.frames = animateatlas.AtlasFrameMaker.construct(imagePath);
+		} else {
+			character.frames = Paths.getSparrowAtlas(imagePath);
+		}
 		character.jsonFile = character.jsonFile;
 		character.reloadAnimations();
 		character.setGraphicSize(Std.int(character.width * DialogueCharacter.DEFAULT_SCALE * character.jsonFile.scale));

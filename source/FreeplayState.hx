@@ -54,6 +54,7 @@ class FreeplayState extends MusicBeatState
 	{
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
+		animateatlas.AtlasFrameMaker.clearCache();
 		
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;

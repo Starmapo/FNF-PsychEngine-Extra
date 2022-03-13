@@ -451,6 +451,7 @@ class CharacterEditorState extends MusicBeatState
 		imageInputText = new FlxUIInputText(15, 30, 200, 'characters/BOYFRIEND', 8);
 		var reloadImage:FlxButton = new FlxButton(imageInputText.x + 210, imageInputText.y - 3, "Reload Image", function()
 		{
+			animateatlas.AtlasFrameMaker.clearCache();
 			char.imageFile = imageInputText.text;
 			reloadCharacterImage();
 			if (char.animation.curAnim != null) {
@@ -838,6 +839,7 @@ class CharacterEditorState extends MusicBeatState
 	}
 
 	function loadChar(isDad:Bool, blahBlahBlah:Bool = true) {
+		animateatlas.AtlasFrameMaker.clearCache();
 		var i:Int = charLayer.members.length - 1;
 		while(i >= 0) {
 			var memb:Character = charLayer.members[i];
