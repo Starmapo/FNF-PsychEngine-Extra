@@ -2906,120 +2906,122 @@ class PlayState extends MusicBeatState
 					}
 				}
 
-				var strumX:Float = strumGroup.members[daNote.noteData].x;
-				var strumY:Float = strumGroup.members[daNote.noteData].y;
-				var strumAngle:Float = strumGroup.members[daNote.noteData].angle;
-				var strumDirection:Float = strumGroup.members[daNote.noteData].direction;
-				var strumAlpha:Float = strumGroup.members[daNote.noteData].alpha;
-				var strumScroll:Bool = strumGroup.members[daNote.noteData].downScroll;
-				var strumHeight:Float = strumGroup.members[daNote.noteData].height;
+				if (strumGroup != null && strumGroup.members[daNote.noteData] != null) {
+					var strumX:Float = strumGroup.members[daNote.noteData].x;
+					var strumY:Float = strumGroup.members[daNote.noteData].y;
+					var strumAngle:Float = strumGroup.members[daNote.noteData].angle;
+					var strumDirection:Float = strumGroup.members[daNote.noteData].direction;
+					var strumAlpha:Float = strumGroup.members[daNote.noteData].alpha;
+					var strumScroll:Bool = strumGroup.members[daNote.noteData].downScroll;
+					var strumHeight:Float = strumGroup.members[daNote.noteData].height;
 
-				strumX += daNote.offsetX;
-				strumY += daNote.offsetY;
-				strumAngle += daNote.offsetAngle;
-				strumAlpha *= daNote.multAlpha;
+					strumX += daNote.offsetX;
+					strumY += daNote.offsetY;
+					strumAngle += daNote.offsetAngle;
+					strumAlpha *= daNote.multAlpha;
 
-				if (strumScroll) //Downscroll
-				{
-					daNote.distance = (0.45 * (Conductor.songPosition - daNote.strumTime) * daNote.speed);
-				}
-				else //Upscroll
-				{
-					daNote.distance = (-0.45 * (Conductor.songPosition - daNote.strumTime) * daNote.speed);
-				}
-
-				var angleDir = strumDirection * Math.PI / 180;
-				if (daNote.copyAngle)
-					daNote.angle = strumDirection - 90 + strumAngle;
-
-				if (daNote.copyAlpha)
-					daNote.alpha = strumAlpha;
-
-				if (daNote.copyScale) {
-					daNote.scale.x = strumGroup.members[daNote.noteData].scale.x;
-					if (!daNote.isSustainNote) {
-						daNote.scale.y = strumGroup.members[daNote.noteData].scale.y;
+					if (strumScroll) //Downscroll
+					{
+						daNote.distance = (0.45 * (Conductor.songPosition - daNote.strumTime) * daNote.speed);
 					}
-				}
-				
-				if (daNote.copyX)
-					daNote.x = strumX + Math.cos(angleDir) * daNote.distance;
+					else //Upscroll
+					{
+						daNote.distance = (-0.45 * (Conductor.songPosition - daNote.strumTime) * daNote.speed);
+					}
 
-				if (daNote.copyY) {
-					daNote.y = strumY + Math.sin(angleDir) * daNote.distance;
+					var angleDir = strumDirection * Math.PI / 180;
+					if (daNote.copyAngle)
+						daNote.angle = strumDirection - 90 + strumAngle;
 
-					if (daNote.isSustainNote && strumScroll) {
-						if (daNote.animation.curAnim.name.endsWith('end')) {
-							daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * daNote.speed + (46 * (daNote.speed - 1));
-							daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * daNote.speed;
-							if (daNote.uiSkin.isPixel) {
-								daNote.y += daNote.uiSkin.downscrollTailYOffset + (6 - daNote.originalHeightForCalcs) * (daNote.uiSkin.scale * daNote.uiSkin.noteScale);
-							} else {
-								daNote.y += daNote.uiSkin.downscrollTailYOffset;
-							}
+					if (daNote.copyAlpha)
+						daNote.alpha = strumAlpha;
+
+					if (daNote.copyScale) {
+						daNote.scale.x = strumGroup.members[daNote.noteData].scale.x;
+						if (!daNote.isSustainNote) {
+							daNote.scale.y = strumGroup.members[daNote.noteData].scale.y;
 						}
-						
-						daNote.y += (strumHeight / 2) - (60.5 * (daNote.speed - 1));
-						daNote.y += 27.5 * ((Conductor.bpm / 100) - 1) * (daNote.speed - 1);
 					}
-				}
+					
+					if (daNote.copyX)
+						daNote.x = strumX + Math.cos(angleDir) * daNote.distance;
 
-				if (!daNote.mustPress && daNote.wasGoodHit && !daNote.hitByOpponent && !daNote.ignoreNote)
-				{
-					opponentNoteHit(daNote);
-				}
+					if (daNote.copyY) {
+						daNote.y = strumY + Math.sin(angleDir) * daNote.distance;
 
-				if (daNote.mustPress && cpuControlled) {
-					if (daNote.isSustainNote) {
-						if (daNote.canBeHit) {
+						if (daNote.isSustainNote && strumScroll) {
+							if (daNote.animation.curAnim.name.endsWith('end')) {
+								daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * daNote.speed + (46 * (daNote.speed - 1));
+								daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * daNote.speed;
+								if (daNote.uiSkin.isPixel) {
+									daNote.y += daNote.uiSkin.downscrollTailYOffset + (6 - daNote.originalHeightForCalcs) * (daNote.uiSkin.scale * daNote.uiSkin.noteScale);
+								} else {
+									daNote.y += daNote.uiSkin.downscrollTailYOffset;
+								}
+							}
+							
+							daNote.y += (strumHeight / 2) - (60.5 * (daNote.speed - 1));
+							daNote.y += 27.5 * ((Conductor.bpm / 100) - 1) * (daNote.speed - 1);
+						}
+					}
+
+					if (!daNote.mustPress && daNote.wasGoodHit && !daNote.hitByOpponent && !daNote.ignoreNote)
+					{
+						opponentNoteHit(daNote);
+					}
+
+					if (daNote.mustPress && cpuControlled) {
+						if (daNote.isSustainNote) {
+							if (daNote.canBeHit) {
+								goodNoteHit(daNote);
+							}
+						} else if (daNote.strumTime <= Conductor.songPosition) {
 							goodNoteHit(daNote);
 						}
-					} else if (daNote.strumTime <= Conductor.songPosition) {
-						goodNoteHit(daNote);
 					}
-				}
 
-				var center:Float = strumY + strumHeight / 2;
-				if (strumGroup.members[daNote.noteData].sustainReduce && daNote.isSustainNote && (daNote.mustPress || !daNote.ignoreNote) &&
-					(!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
-				{
-					if (strumScroll)
+					var center:Float = strumY + strumHeight / 2;
+					if (strumGroup.members[daNote.noteData].sustainReduce && daNote.isSustainNote && (daNote.mustPress || !daNote.ignoreNote) &&
+						(!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
 					{
-						if (daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= center)
+						if (strumScroll)
 						{
-							var swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
-							swagRect.height = (center - daNote.y) / daNote.scale.y;
-							swagRect.y = daNote.frameHeight - swagRect.height;
+							if (daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= center)
+							{
+								var swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
+								swagRect.height = (center - daNote.y) / daNote.scale.y;
+								swagRect.y = daNote.frameHeight - swagRect.height;
 
-							daNote.clipRect = swagRect;
+								daNote.clipRect = swagRect;
+							}
+						}
+						else
+						{
+							if (daNote.y + daNote.offset.y * daNote.scale.y <= center)
+							{
+								var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
+								swagRect.y = (center - daNote.y) / daNote.scale.y;
+								swagRect.height -= swagRect.y;
+
+								daNote.clipRect = swagRect;
+							}
 						}
 					}
-					else
+
+					// Kill extremely late notes and cause misses
+					if (Conductor.songPosition > (350 / daNote.speed) + daNote.strumTime)
 					{
-						if (daNote.y + daNote.offset.y * daNote.scale.y <= center)
-						{
-							var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
-							swagRect.y = (center - daNote.y) / daNote.scale.y;
-							swagRect.height -= swagRect.y;
-
-							daNote.clipRect = swagRect;
+						if (daNote.mustPress && !cpuControlled && !daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit)) {
+							noteMiss(daNote);
 						}
+
+						daNote.active = false;
+						daNote.visible = false;
+
+						daNote.kill();
+						notes.remove(daNote, true);
+						daNote.destroy();
 					}
-				}
-
-				// Kill extremely late notes and cause misses
-				if (Conductor.songPosition > (350 / daNote.speed) + daNote.strumTime)
-				{
-					if (daNote.mustPress && !cpuControlled && !daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit)) {
-						noteMiss(daNote);
-					}
-
-					daNote.active = false;
-					daNote.visible = false;
-
-					daNote.kill();
-					notes.remove(daNote, true);
-					daNote.destroy();
 				}
 			});
 		}
