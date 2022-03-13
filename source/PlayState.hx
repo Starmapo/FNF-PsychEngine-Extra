@@ -3502,7 +3502,6 @@ class PlayState extends MusicBeatState
 								addCharacterToList(value2, charType, index);
 							}
 
-							remove(boyfriendMap.get(value2));
 							var lastAlpha:Float = boyfriendGroup.members[index].alpha;
 							boyfriendGroup.members[index].alpha = 0.00001;
 							boyfriendGroup.remove(boyfriendGroup.members[index], true);
@@ -3524,7 +3523,6 @@ class PlayState extends MusicBeatState
 								addCharacterToList(value2, charType, index);
 							}
 
-							remove(dadMap.get(value2));
 							var wasGf:Bool = dadGroup.members[index].curCharacter.startsWith('gf');
 							var lastAlpha:Float = dadGroup.members[index].alpha;
 							dadGroup.members[index].alpha = 0.00001;
@@ -3557,7 +3555,6 @@ class PlayState extends MusicBeatState
 									addCharacterToList(value2, charType, index);
 								}
 
-								remove(gfMap.get(value2));
 								var lastAlpha:Float = gfGroup.members[index].alpha;
 								gfGroup.members[index].alpha = 0.00001;
 								gfGroup.remove(gfGroup.members[index], true);
@@ -5120,9 +5117,10 @@ class PlayState extends MusicBeatState
 
 	function makeDoubleTrail(char:Character, name:String, flipped:Bool = false, id:Int = 0, charGroup:FlxTypedSpriteGroup<Character>) {
 		if (doubleTrailMap.exists(name)) {
+			doubleTrailMap.get(name).kill();
 			remove(doubleTrailMap.get(name));
-			doubleTrailMap.get(name).destroy();
 			doubleTrailMap.remove(name);
+			doubleTrailMap.get(name).destroy();
 		}
 		var doubleTrail:Character = new Character(char.x, char.y, char.curCharacter, flipped);
 		doubleTrail.ID = id;
