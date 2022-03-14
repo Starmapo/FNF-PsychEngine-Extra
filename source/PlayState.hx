@@ -232,8 +232,8 @@ class PlayState extends MusicBeatState
 
 	// how big to stretch the pixel art assets
 	public static var daPixelZoom:Float = 6;
-	var singAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
-	var dadSingAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
+	var playerSingAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
+	var opponentSingAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
 
 	public var inCutscene:Bool = false;
 	public var skipCountdown:Bool = false;
@@ -273,8 +273,8 @@ class PlayState extends MusicBeatState
 	public var opponentKeys:Int = 4;
 
 	public var uiSkinMap:Map<String, SkinFile> = new Map();
-	var playerColors:Array<String>;
-	var opponentColors:Array<String>;
+	var playerColors:Array<String> = [];
+	var opponentColors:Array<String> = [];
 
 	var bfGroupFile:CharacterGroupFile = null;
 	var dadGroupFile:CharacterGroupFile = null;
@@ -4313,7 +4313,7 @@ class PlayState extends MusicBeatState
 					var daAlt = '';
 					if (daNote.noteType == 'Alt Animation') daAlt = '-alt';
 
-					var animToPlay:String = '${singAnimations[daNote.noteData]}miss$daAlt';
+					var animToPlay:String = '${playerSingAnimations[daNote.noteData]}miss$daAlt';
 					if (charGroup.members[char].animOffsets.exists(animToPlay)) {
 						charGroup.members[char].playAnim(animToPlay, true);
 					}
@@ -4360,7 +4360,7 @@ class PlayState extends MusicBeatState
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
 
 			if (!inEditor) {
-				var animToPlay = '${singAnimations[direction]}miss';
+				var animToPlay = '${playerSingAnimations[direction]}miss';
 				for (char in playerChar) {
 					if (char.hasMissAnimations && char.animOffsets.exists(animToPlay)) {
 						char.playAnim(animToPlay, true);
@@ -4402,7 +4402,7 @@ class PlayState extends MusicBeatState
 							}
 						}
 
-						var animToPlay:String = dadSingAnimations[note.noteData] + altAnim;
+						var animToPlay:String = playerSingAnimations[note.noteData] + altAnim;
 
 						if (note.noteType == 'Trail Note') {
 							if (note.gfNote && doubleTrailMap.get('gf$char') != null && doubleTrailMap.get('gf$char').animOffsets.exists(animToPlay)) {
@@ -4528,7 +4528,7 @@ class PlayState extends MusicBeatState
 						daAlt = '-alt';
 				}
 	
-				var animToPlay:String = singAnimations[note.noteData] + daAlt;
+				var animToPlay:String = playerSingAnimations[note.noteData] + daAlt;
 
 				for (i in note.characters) {
 					if (i < charGroup.members.length) {
@@ -5071,7 +5071,7 @@ class PlayState extends MusicBeatState
 			}
 			maniaData = uiSkin.mania[playerKeys - 1];
 		}
-		singAnimations = maniaData.singAnimations;
+		playerSingAnimations = maniaData.singAnimations;
 		playerColors = maniaData.colors;
 		uiSkinMap.set('player', uiSkin);
 		
@@ -5096,7 +5096,7 @@ class PlayState extends MusicBeatState
 			}
 			maniaData = uiSkin.mania[opponentKeys - 1];
 		}
-		dadSingAnimations = maniaData.singAnimations;
+		opponentSingAnimations = maniaData.singAnimations;
 		opponentColors = maniaData.colors;
 		uiSkinMap.set('opponent', uiSkin);
 
