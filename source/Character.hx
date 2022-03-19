@@ -211,7 +211,7 @@ class Character extends FlxSprite
 				if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished)
 				{
 					dance();
-					playAnim(animation.curAnim.name, true, false, 10);
+					playAnim(animation.curAnim.name, true, false, animation.curAnim.numFrames - 1);
 				}
 			} else {
 				if (animation.curAnim.name.startsWith('sing')) {

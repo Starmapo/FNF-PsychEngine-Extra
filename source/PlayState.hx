@@ -3065,7 +3065,7 @@ class PlayState extends MusicBeatState
 			stepTxt.text = 'Step: $curStep';
 		}
 
-		if (playerStrums.length > 0) {
+		if (playerStrums.length > 0 && opponentStrums.length > 0) {
 			underlayPlayer.x = playerStrums.members[0].x;
 			underlayOpponent.x = opponentStrums.members[0].x;
 		}
@@ -3790,7 +3790,7 @@ class PlayState extends MusicBeatState
 
 						if (SONG.validScore)
 						{
-							Highscore.saveWeekScore(WeekData.getWeekName(), campaignScore, storyDifficulty);
+							Highscore.saveWeekScore(WeekData.getWeekFileName(), campaignScore, storyDifficulty);
 						}
 
 						FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
