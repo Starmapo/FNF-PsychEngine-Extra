@@ -56,9 +56,7 @@ class SkinEditorState extends MusicBeatState {
         camMenu.bgColor.alpha = 0;
 
         FlxG.cameras.reset(camEditor);
-		FlxG.cameras.setDefaultDrawTarget(camEditor, true);
-		FlxG.cameras.add(camMenu);
-		FlxG.cameras.setDefaultDrawTarget(camMenu, false);
+		FlxG.cameras.add(camMenu, false);
 
         gridBG = FlxGridOverlay.create(40, 40);
         add(gridBG);

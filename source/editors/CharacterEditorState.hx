@@ -3,7 +3,6 @@ package editors;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
-import animateatlas.AtlasFrameMaker;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -80,11 +79,8 @@ class CharacterEditorState extends MusicBeatState
 		camMenu.bgColor.alpha = 0;
 
 		FlxG.cameras.reset(camEditor);
-		FlxG.cameras.setDefaultDrawTarget(camEditor, true);
-		FlxG.cameras.add(camHUD);
-		FlxG.cameras.setDefaultDrawTarget(camHUD, false);
-		FlxG.cameras.add(camMenu);
-		FlxG.cameras.setDefaultDrawTarget(camMenu, false);
+		FlxG.cameras.add(camHUD, false);
+		FlxG.cameras.add(camMenu, false);
 
 		bgLayer = new FlxTypedGroup<FlxSprite>();
 		add(bgLayer);
@@ -451,7 +447,7 @@ class CharacterEditorState extends MusicBeatState
 		imageInputText = new FlxUIInputText(15, 30, 200, 'characters/BOYFRIEND', 8);
 		var reloadImage:FlxButton = new FlxButton(imageInputText.x + 210, imageInputText.y - 3, "Reload Image", function()
 		{
-			animateatlas.AtlasFrameMaker.clearCache();
+			AtlasFrameMaker.clearCache();
 			char.imageFile = imageInputText.text;
 			reloadCharacterImage();
 			if (char.animation.curAnim != null) {
@@ -839,7 +835,7 @@ class CharacterEditorState extends MusicBeatState
 	}
 
 	function loadChar(isDad:Bool, blahBlahBlah:Bool = true) {
-		animateatlas.AtlasFrameMaker.clearCache();
+		AtlasFrameMaker.clearCache();
 		var i:Int = charLayer.members.length - 1;
 		while(i >= 0) {
 			var memb:Character = charLayer.members[i];

@@ -56,7 +56,7 @@ class Option
 			}
 		}
 
-		if (getValue() == null) {
+		if (variable.length > 0 && getValue() == null) {
 			setValue(defaultValue);
 		}
 
@@ -120,7 +120,7 @@ class Option
 		var newValue:String = 'bool';
 		switch(type.toLowerCase().trim())
 		{
-			case 'int' | 'float' | 'percent' | 'string': newValue = type;
+			case 'int' | 'float' | 'percent' | 'string' | 'button': newValue = type;
 			case 'integer': newValue = 'int';
 			case 'str': newValue = 'string';
 			case 'fl': newValue = 'float';

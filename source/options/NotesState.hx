@@ -42,7 +42,6 @@ class NotesState extends MusicBeatState
 	{
 		camGame = new FlxCamera();
 		FlxG.cameras.reset(camGame);
-		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 		FlxG.camera.zoom = 0.9;
 		
 		var scr:Float = Math.max(currentData.length - 4, 0) * 0.135 - (0.1 * Math.max(currentData.length - 11, 0));
@@ -202,7 +201,7 @@ class NotesState extends MusicBeatState
 				changeSelection();
 			}
 			changingNote = false;
-			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 		}
 
 		if (nextAccept > 0) {

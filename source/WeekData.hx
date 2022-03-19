@@ -257,7 +257,7 @@ class WeekData {
 		#if MODS_ALLOWED
 		if (FileSystem.exists("modsList.txt"))
 		{
-			var list:Array<String> = CoolUtil.listFromString(File.getContent("modsList.txt"));
+			var list:Array<String> = CoolUtil.coolTextFile("modsList.txt");
 			for (i in list)
 			{
 				var dat = i.split("|");

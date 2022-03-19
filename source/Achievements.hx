@@ -8,25 +8,33 @@ import flixel.text.FlxText;
 
 using StringTools;
 
+typedef AchievementFile = {
+	var displayName:String; //Name
+	var description:String; //Description
+	var name:String; //Achievement save tag
+	var hiddenUntilUnlocked:Bool; //Hidden achievement
+}
+
 class Achievements {
-	public static var achievementsStuff:Array<Dynamic> = [ //Name, Description, Achievement save tag, Hidden achievement
-		["Freaky on a Friday Night",	"Play on a Friday... Night.",						'friday_night_play',	 true],
-		["She Calls Me Daddy Too",		"Beat Week 1 on Hard with no Misses.",				'week1_nomiss',			false],
-		["No More Tricks",				"Beat Week 2 on Hard with no Misses.",				'week2_nomiss',			false],
-		["Call Me The Hitman",			"Beat Week 3 on Hard with no Misses.",				'week3_nomiss',			false],
-		["Lady Killer",					"Beat Week 4 on Hard with no Misses.",				'week4_nomiss',			false],
-		["Missless Christmas",			"Beat Week 5 on Hard with no Misses.",				'week5_nomiss',			false],
-		["Highscore!!",					"Beat Week 6 on Hard with no Misses.",				'week6_nomiss',			false],
-		["You'll Pay For That...",		"Beat Week 7 on Hard with no Misses.",				'week7_nomiss',			 true],
-		["What a Funkin' Disaster!",	"Complete a Song with a rating lower than 20%.",	'ur_bad',				false],
-		["Perfectionist",				"Complete a Song with a rating of 100%.",			'ur_good',				false],
-		["Roadkill Enthusiast",			"Watch the Henchmen die over 100 times.",			'roadkill_enthusiast',	false],
-		["Oversinging Much...?",		"Hold down a note for 10 seconds.",					'oversinging',			false],
-		["Hyperactive",					"Finish a Song without going Idle.",				'hype',					false],
-		["Just the Two of Us",			"Finish a Song pressing only two keys.",			'two_keys',				false],
-		["Toaster Gamer",				"Have you tried to run the game on a toaster?",		'toastie',				false],
-		["Debugger",					"Beat the \"Test\" Stage from the Chart Editor.",	'debugger',				 true]
+	public static var baseAchievements:Array<AchievementFile> = [
+		{displayName: "Freaky on a Friday Night", 	description: "Play on a Friday... Night.", 						name: "friday_night_play", 		hiddenUntilUnlocked: true},
+		{displayName: "She Calls Me Daddy Too", 	description: "Beat Week 1 on Hard with no misses.", 			name: "week1_nomiss", 			hiddenUntilUnlocked: false},
+		{displayName: "No More Tricks", 			description: "Beat Week 2 on Hard with no misses.", 			name: "week2_nomiss", 			hiddenUntilUnlocked: false},
+		{displayName: "Call Me The Hitman", 		description: "Beat Week 3 on Hard with no misses.", 			name: "week3_nomiss", 			hiddenUntilUnlocked: false},
+		{displayName: "Lady Killer", 				description: "Beat Week 4 on Hard with no misses.", 			name: "week4_nomiss", 			hiddenUntilUnlocked: false},
+		{displayName: "Missless Christmas", 		description: "Beat Week 5 on Hard with no misses.", 			name: "week5_nomiss", 			hiddenUntilUnlocked: false},
+		{displayName: "Highscore!!", 				description: "Beat Week 6 on Hard with no misses.", 			name: "week6_nomiss", 			hiddenUntilUnlocked: false},
+		{displayName: "You'll Pay For That...", 	description: "Beat Week 7 on Hard with no misses.", 			name: "week7_nomiss", 			hiddenUntilUnlocked: true},
+		{displayName: "What a Funkin' Disaster!",	description: "Complete a song with a rating lower than 20%.",	name: "ur_bad", 				hiddenUntilUnlocked: false},
+		{displayName: "Perfectionist",				description: "Complete a song with a rating of 100%.",			name: "ur_good", 				hiddenUntilUnlocked: false},
+		{displayName: "Roadkill Enthusiast",		description: "Watch the Henchmen die over 100 times.",			name: "roadkill_enthusiast",	hiddenUntilUnlocked: false},
+		{displayName: "Oversinging Much...?",		description: "Hold down a note for 10 seconds.",				name: "oversinging", 			hiddenUntilUnlocked: false},
+		{displayName: "Hyperactive",				description: "Finish a song without going idle.",				name: "hype", 					hiddenUntilUnlocked: false},
+		{displayName: "Just the Two of Us",			description: "Finish a song pressing only two keys.",			name: "two_keys", 				hiddenUntilUnlocked: false},
+		{displayName: "Toaster Gamer",				description: "Have you tried to run the game on a toaster?",	name: "toastie", 				hiddenUntilUnlocked: false},
+		{displayName: "Debugger",					description: 'Beat the "Test" stage from the Chart Editor.',	name: "debugger", 				hiddenUntilUnlocked: true}
 	];
+	public static var achievementsStuff:Array<AchievementFile> = [];
 
 	public static var achievementsMap:Map<String, Bool> = new Map();
 
@@ -34,6 +42,7 @@ class Achievements {
 	public static function unlockAchievement(name:String):Void {
 		FlxG.log.add('Completed achievement "$name"');
 		achievementsMap.set(name, true);
+		ClientPrefs.saveSettings();
 		FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 	}
 
@@ -46,7 +55,7 @@ class Achievements {
 
 	public static function getAchievementIndex(name:String) {
 		for (i in 0...achievementsStuff.length) {
-			if (achievementsStuff[i][2] == name) {
+			if (achievementsStuff[i].name == name) {
 				return i;
 			}
 		}
@@ -54,6 +63,7 @@ class Achievements {
 	}
 
 	public static function loadAchievements():Void {
+		achievementsStuff = baseAchievements.copy();
 		if (FlxG.save.data != null) {
 			if (FlxG.save.data.achievementsMap != null) {
 				achievementsMap = FlxG.save.data.achievementsMap;
@@ -127,7 +137,6 @@ class AchievementObject extends FlxSpriteGroup {
 	public function new(name:String, ?camera:FlxCamera = null)
 	{
 		super(x, y);
-		ClientPrefs.saveSettings();
 
 		var id:Int = Achievements.getAchievementIndex(name);
 		var achievementBG:FlxSprite = new FlxSprite(60, 50).makeGraphic(420, 120, FlxColor.BLACK);
@@ -141,11 +150,11 @@ class AchievementObject extends FlxSpriteGroup {
 		achievementIcon.updateHitbox();
 		achievementIcon.antialiasing = ClientPrefs.globalAntialiasing;
 
-		var achievementName:FlxText = new FlxText(achievementIcon.x + achievementIcon.width + 20, achievementIcon.y + 16, 280, Achievements.achievementsStuff[id][0], 16);
+		var achievementName:FlxText = new FlxText(achievementIcon.x + achievementIcon.width + 20, achievementIcon.y + 16, 280, Achievements.achievementsStuff[id].displayName, 16);
 		achievementName.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT);
 		achievementName.scrollFactor.set();
 
-		var achievementText:FlxText = new FlxText(achievementName.x, achievementName.y + 32, 280, Achievements.achievementsStuff[id][1], 16);
+		var achievementText:FlxText = new FlxText(achievementName.x, achievementName.y + 32, 280, Achievements.achievementsStuff[id].description, 16);
 		achievementText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT);
 		achievementText.scrollFactor.set();
 

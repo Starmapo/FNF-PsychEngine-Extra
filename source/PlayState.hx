@@ -328,11 +328,8 @@ class PlayState extends MusicBeatState
 			camOther.bgColor.alpha = 0;
 
 			FlxG.cameras.reset(camGame);
-			FlxG.cameras.setDefaultDrawTarget(camGame, true);
-			FlxG.cameras.add(camHUD);
-			FlxG.cameras.setDefaultDrawTarget(camHUD, false);
-			FlxG.cameras.add(camOther);
-			FlxG.cameras.setDefaultDrawTarget(camOther, false);
+			FlxG.cameras.add(camHUD, false);
+			FlxG.cameras.add(camOther, false);
 		} else {
 			var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 			bg.scrollFactor.set();
@@ -955,9 +952,7 @@ class PlayState extends MusicBeatState
 			'combo',
 			'ready',
 			'set',
-			'go',
-			'healthBar',
-			'timeBar'
+			'go'
 		];
 		for (i in 0...10) {
 			imagesToCheck.push('num$i');
@@ -1080,6 +1075,11 @@ class PlayState extends MusicBeatState
 			if (FileSystem.exists(file)) {
 				dialogueJson = DialogueBoxPsych.parseDialogue(file);
 			}
+
+			var file:String = Paths.modsDataTxt('$curSong/${curSong}Dialogue'); //Checks for vanilla/Senpai dialogue
+			if (FileSystem.exists(file)) {
+				dialogue = CoolUtil.coolTextFile(file);
+			}
 			#end
 
 			var file:String = Paths.json('$curSong/dialogue'); //Checks for json/Psych Engine dialogue
@@ -1088,7 +1088,7 @@ class PlayState extends MusicBeatState
 			}
 
 			var file:String = Paths.txt('$curSong/${curSong}Dialogue'); //Checks for vanilla/Senpai dialogue
-			if (OpenFlAssets.exists(file)) {
+			if (OpenFlAssets.exists(file) && dialogue == null) {
 				dialogue = CoolUtil.coolTextFile(file);
 			}
 			doof = new DialogueBox(dialogue);
@@ -1769,7 +1769,7 @@ class PlayState extends MusicBeatState
 			{
 				if (!inEditor) {
 					if (swagCounter < 4) {
-						var chars = [boyfriendGroup, dadGroup, gfGroup];
+						var chars = [boyfriendGroup, dadGroup];
 						for (group in chars) {
 							for (char in group) {
 								if (char.danceSpeed > 0 && tmr.loopsLeft % char.danceSpeed == 0 && !char.stunned && char.animation.curAnim.name != null && !char.animation.curAnim.name.startsWith("sing") && !char.specialAnim)
@@ -1778,15 +1778,15 @@ class PlayState extends MusicBeatState
 								}
 							}
 						}
-					}
 
-					// head bopping for bg characters on Mall
-					if (curStage == 'mall' && ClientPrefs.stageQuality != 'Crappy') {
-						if (ClientPrefs.stageQuality == 'Normal')
-							upperBoppers.dance(true);
-		
-						bottomBoppers.dance(true);
-						santa.dance(true);
+						// head bopping for bg characters on Mall
+						if (curStage == 'mall' && ClientPrefs.stageQuality != 'Crappy') {
+							if (ClientPrefs.stageQuality == 'Normal')
+								upperBoppers.dance(true);
+			
+							bottomBoppers.dance(true);
+							santa.dance(true);
+						}
 					}
 
 					switch (swagCounter)
@@ -1945,6 +1945,7 @@ class PlayState extends MusicBeatState
 
 		FlxG.sound.playMusic(Paths.inst(curSong), ClientPrefs.instVolume, false);
 		FlxG.sound.music.time = startPos;
+		FlxG.sound.music.endTime = FlxG.sound.music.length / playbackRate; //turns out i dont need to edit flxsound to do this :)
 		vocals.time = startPos;
 		vocals.play();
 		vocals.volume = ClientPrefs.voicesVolume;
@@ -1952,18 +1953,7 @@ class PlayState extends MusicBeatState
 		vocalsDad.play();
 		vocalsDad.volume = ClientPrefs.voicesVolume;
 
-		#if cpp
-		@:privateAccess
-		{
-			if (playbackRate != 1 && FlxG.sound.music != null && FlxG.sound.music._channel != null) {
-				AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, playbackRate);
-				if (vocals.playing)
-					AL.sourcef(vocals._channel.__source.__backend.handle, AL.PITCH, playbackRate);
-				if (vocalsDad.playing)
-					AL.sourcef(vocalsDad._channel.__source.__backend.handle, AL.PITCH, playbackRate);
-			}
-		}
-		#end
+		setSongPitch();
 
 		if(startOnTime > 0)
 		{
@@ -2517,25 +2507,26 @@ class PlayState extends MusicBeatState
 		vocalsDad.pause();
 		FlxG.sound.music.pause();
 
-		if (playbackRate >= 1) {
-			Conductor.songPosition = FlxG.sound.music.time / playbackRate;
-		} else {
-			FlxG.sound.music.time = Conductor.songPosition * playbackRate;
-		}
+		Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 		FlxG.sound.music.play();
 		vocals.time = vocalsDad.time = FlxG.sound.music.time;
 		vocals.play();
 		vocalsDad.play();
 
+		setSongPitch();
+	}
+
+	function setSongPitch() {
 		#if cpp
 		@:privateAccess
 		{
-			if (playbackRate != 1) {
-				AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, playbackRate);
-				if (vocals.playing)
-					AL.sourcef(vocals._channel.__source.__backend.handle, AL.PITCH, playbackRate);
-				if (vocalsDad.playing)
-					AL.sourcef(vocalsDad._channel.__source.__backend.handle, AL.PITCH, playbackRate);
+			if (playbackRate != 1 && !transitioning && FlxG.sound.music != null) {
+				var songAudio = [FlxG.sound.music, vocals, vocalsDad];
+				for (audio in songAudio) {
+					if (audio != null && audio.playing && audio._channel != null && AL.getSourcef(audio._channel.__source.__backend.handle, AL.PITCH) != playbackRate) {
+						AL.sourcef(audio._channel.__source.__backend.handle, AL.PITCH, playbackRate);
+					}
+				}
 			}
 		}
 		#end
@@ -2551,25 +2542,11 @@ class PlayState extends MusicBeatState
 	{
 		callOnLuas('onUpdate', [elapsed]);
 
-		#if cpp
-		@:privateAccess
-		{
-			if (!transitioning && playbackRate != 1 && FlxG.sound.music != null && FlxG.sound.music.playing && AL.getSourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH) != playbackRate) {
-				AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, playbackRate);
-				if (vocals.playing)
-					AL.sourcef(vocals._channel.__source.__backend.handle, AL.PITCH, playbackRate);
-				if (vocalsDad.playing)
-					AL.sourcef(vocalsDad._channel.__source.__backend.handle, AL.PITCH, playbackRate);
-			}
-		}
-		#end
+		setSongPitch();
 		
-		if (generatedMusic && !startingSong && !endingSong)
+		if (generatedMusic && !startingSong && !endingSong && FlxG.sound.music != null && Conductor.songPosition >= songLength)
 		{
-			if (FlxG.sound.music != null && Conductor.songPosition >= songLength)
-			{
-				onSongComplete();
-			}
+			onSongComplete();
 		}
 
 		if (!inEditor) {
@@ -3745,6 +3722,7 @@ class PlayState extends MusicBeatState
 		canPause = false;
 		endingSong = true;
 		camZooming = false;
+		camBop = false;
 		inCutscene = false;
 		updateTime = false;
 
@@ -4376,8 +4354,10 @@ class PlayState extends MusicBeatState
 
 	function opponentNoteHit(note:Note):Void
 	{
-		if (!opponentChart && curSong != 'tutorial')
+		if (!opponentChart && curSong != 'tutorial') {
 			camZooming = true;
+			camBop = true;
+		}
 
 		if (!inEditor) {
 			var charGroup = opponentChar;
@@ -4467,8 +4447,10 @@ class PlayState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
 			}
 
-			if (opponentChart && curSong != 'tutorial')
+			if (opponentChart && curSong != 'tutorial') {
 				camZooming = true;
+				camBop = true;
+			}
 
 			var charGroup = playerChar;
 			if (note.gfNote) charGroup = gfGroup;
@@ -4908,7 +4890,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if (!inEditor) {
-			if (camZooming && camBop && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curNumeratorBeat % Conductor.numerator == 0)
+			if (camBop && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curNumeratorBeat % Conductor.numerator == 0)
 			{
 				FlxG.camera.zoom += 0.015;
 				camHUD.zoom += 0.03;
@@ -5125,8 +5107,8 @@ class PlayState extends MusicBeatState
 		if (doubleTrailMap.exists(name)) {
 			doubleTrailMap.get(name).kill();
 			remove(doubleTrailMap.get(name));
-			doubleTrailMap.remove(name);
 			doubleTrailMap.get(name).destroy();
+			doubleTrailMap.remove(name);
 		}
 		var doubleTrail:Character = new Character(char.x, char.y, char.curCharacter, flipped);
 		doubleTrail.ID = id;

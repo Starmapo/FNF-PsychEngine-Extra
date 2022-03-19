@@ -54,7 +54,7 @@ class FreeplayState extends MusicBeatState
 	{
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
-		animateatlas.AtlasFrameMaker.clearCache();
+		AtlasFrameMaker.clearCache();
 		
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;
@@ -270,7 +270,7 @@ class FreeplayState extends MusicBeatState
 			if (colorTween != null) {
 				colorTween.cancel();
 			}
-			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 			MusicBeatState.switchState(new MainMenuState());
 		}
 

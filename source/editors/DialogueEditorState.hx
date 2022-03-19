@@ -193,7 +193,7 @@ class DialogueEditorState extends MusicBeatState
 	function reloadCharacter() {
 		var imagePath = 'dialogue/${character.jsonFile.image}';
 		if (Paths.fileExists('images/$imagePath/Animation.json', TEXT)) {
-			character.frames = animateatlas.AtlasFrameMaker.construct(imagePath);
+			character.frames = AtlasFrameMaker.construct(imagePath);
 		} else {
 			character.frames = Paths.getSparrowAtlas(imagePath);
 		}

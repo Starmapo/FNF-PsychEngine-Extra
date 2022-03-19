@@ -63,9 +63,7 @@ class MainMenuState extends MusicBeatState
 		camAchievement.bgColor.alpha = 0;
 
 		FlxG.cameras.reset(camGame);
-		FlxG.cameras.setDefaultDrawTarget(camGame, true);
-		FlxG.cameras.add(camAchievement);
-		FlxG.cameras.setDefaultDrawTarget(camAchievement, false);
+		FlxG.cameras.add(camAchievement, false);
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
@@ -138,11 +136,9 @@ class MainMenuState extends MusicBeatState
 		Achievements.loadAchievements();
 		var leDate = Date.now();
 		if (leDate.getDay() == 5 && leDate.getHours() >= 18) {
-			var achieveID:Int = Achievements.getAchievementIndex('friday_night_play');
-			if (!Achievements.isAchievementUnlocked(Achievements.achievementsStuff[achieveID][2])) { //It's a friday night. WEEEEEEEEEEEEEEEEEE
-				Achievements.achievementsMap.set(Achievements.achievementsStuff[achieveID][2], true);
+			if (!Achievements.isAchievementUnlocked('friday_night_play')) { //It's a friday night. WEEEEEEEEEEEEEEEEEE
+				Achievements.unlockAchievement('friday_night_play');
 				giveAchievement();
-				ClientPrefs.saveSettings();
 			}
 		}
 		#end
@@ -154,7 +150,6 @@ class MainMenuState extends MusicBeatState
 	// Unlocks "Freaky on a Friday Night" achievement
 	function giveAchievement() {
 		add(new AchievementObject('friday_night_play', camAchievement));
-		FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 		trace('Giving achievement "friday_night_play"');
 	}
 	#end
@@ -188,7 +183,7 @@ class MainMenuState extends MusicBeatState
 			if (controls.BACK)
 			{
 				selectedSomethin = true;
-				FlxG.sound.play(Paths.sound('cancelMenu'));
+				FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 				MusicBeatState.switchState(new TitleState());
 			}
 
@@ -201,7 +196,7 @@ class MainMenuState extends MusicBeatState
 				else
 				{
 					selectedSomethin = true;
-					FlxG.sound.play(Paths.sound('confirmMenu'));
+					FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 
 					if (ClientPrefs.flashing) FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 

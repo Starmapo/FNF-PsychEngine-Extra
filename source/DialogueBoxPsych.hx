@@ -71,7 +71,7 @@ class DialogueCharacter extends FlxSprite
 		reloadCharacterJson(character);
 		var imagePath = 'dialogue/${jsonFile.image}';
 		if (Paths.fileExists('images/$imagePath/Animation.json', TEXT)) {
-			frames = animateatlas.AtlasFrameMaker.construct(imagePath);
+			frames = AtlasFrameMaker.construct(imagePath);
 		} else {
 			frames = Paths.getSparrowAtlas(imagePath);
 		}

@@ -3,7 +3,6 @@ package editors;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
-import animateatlas.AtlasFrameMaker;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -76,10 +75,8 @@ class DialogueCharacterEditorState extends MusicBeatState
 		camGame.bgColor = FlxColor.fromHSL(0, 0, 0.5);
 		camOther.bgColor.alpha = 0;
 
-		FlxG.cameras.reset(camGame);
-		FlxG.cameras.setDefaultDrawTarget(camGame, false);
-		FlxG.cameras.add(camOther);
-		FlxG.cameras.setDefaultDrawTarget(camOther, true);
+		FlxG.cameras.reset(camOther);
+		FlxG.cameras.add(camGame, false);
 		
 		mainGroup = new FlxSpriteGroup();
 		mainGroup.cameras = [camGame];

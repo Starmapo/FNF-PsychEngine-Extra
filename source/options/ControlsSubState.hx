@@ -223,7 +223,7 @@ class ControlsSubState extends MusicBeatSubstate {
 			if (controls.BACK) {
 				ClientPrefs.reloadControls();
 				close();
-				FlxG.sound.play(Paths.sound('cancelMenu'));
+				FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 			}
 
 			if ((controls.ACCEPT || FlxG.mouse.justPressed) && nextAccept <= 0) {
@@ -231,7 +231,7 @@ class ControlsSubState extends MusicBeatSubstate {
 					ClientPrefs.keyBinds = ClientPrefs.defaultKeys.copy();
 					reloadKeys();
 					changeSelection();
-					FlxG.sound.play(Paths.sound('confirmMenu'));
+					FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 				} else if (!unselectableCheck(curSelected)) {
 					bindingTime = 0;
 					rebindingKey = true;
@@ -256,7 +256,7 @@ class ControlsSubState extends MusicBeatSubstate {
 				ClientPrefs.keyBinds.set(optionShit[curSelected][1], keysArray);
 
 				reloadKeys();
-				FlxG.sound.play(Paths.sound('confirmMenu'));
+				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 				rebindingKey = false;
 			}
 

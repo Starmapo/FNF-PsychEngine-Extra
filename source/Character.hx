@@ -1,6 +1,5 @@
 package;
 
-import animateatlas.AtlasFrameMaker;
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 #if MODS_ALLOWED

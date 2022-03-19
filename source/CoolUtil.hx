@@ -25,9 +25,10 @@ class CoolUtil
 	public static function getDifficultyFilePath(num:Null<Int> = null)
 	{
 		if (num == null) num = PlayState.storyDifficulty;
+		if (num >= difficulties.length) num = difficulties.length - 1;
 
 		var fileSuffix:String = difficulties[num];
-		if (fileSuffix != defaultDifficulty)
+		if (fileSuffix.toLowerCase().trim() != defaultDifficulty.toLowerCase())
 		{
 			fileSuffix = '-$fileSuffix';
 		}
@@ -51,10 +52,12 @@ class CoolUtil
 	{
 		var daList:Array<String> = [];
 		#if MODS_ALLOWED
-		if (Assets.exists(path) || FileSystem.exists(path)) daList = File.getContent(path).trim().split('\n');
+		if (FileSystem.exists(path)) daList = File.getContent(path).trim().split('\n');
+		else if (Assets.exists(path))
 		#else
-		if (Assets.exists(path)) daList = Assets.getText(path).trim().split('\n');
+		if (Assets.exists(path))
 		#end
+			daList = Assets.getText(path).trim().split('\n');
 
 		for (i in 0...daList.length)
 		{
@@ -63,18 +66,7 @@ class CoolUtil
 
 		return daList;
 	}
-	public static function listFromString(string:String):Array<String>
-	{
-		var daList:Array<String> = [];
-		daList = string.trim().split('\n');
 
-		for (i in 0...daList.length)
-		{
-			daList[i] = daList[i].trim();
-		}
-
-		return daList;
-	}
 	public static function dominantColor(sprite:FlxSprite):Int {
 		var countByColor:Map<Int, Int> = [];
 		for (col in 0...sprite.frameWidth) {

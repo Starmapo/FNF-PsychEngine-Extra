@@ -6,6 +6,7 @@ import Discord.DiscordClient;
 import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
@@ -13,7 +14,7 @@ import flixel.util.FlxColor;
 
 using StringTools;
 
-class BaseOptionsMenu extends MusicBeatSubstate
+class SaveDataState extends MusicBeatState
 {
 	private var curOption:Option = null;
 	private var curSelected:Int = 0;
@@ -27,8 +28,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private var descBox:FlxSprite;
 	private var descText:FlxText;
 
-	public var title:String;
-	public var rpcTitle:String;
+	public var title:String = 'Save Data';
+	public var rpcTitle:String = 'Save Data Settings Menu';
 
 	public function new()
 	{
@@ -40,6 +41,56 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence(rpcTitle, null);
 		#end
+
+        var option:Option = new Option('Reset Highscores',
+			'Clears all song and week highscores.',
+			'',
+			'button');
+        option.onChange = function() {
+            openSubState(new Prompt('Are you sure you want to reset all of your highscores?\n\nThis action is irreversible.', function() {
+				clearScores();
+				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+			}, null));
+        }
+		addOption(option);
+
+		var option:Option = new Option('Reset Completed Weeks',
+			'Clears all week completions.',
+			'',
+			'button');
+		option.onChange = function() {
+			openSubState(new Prompt('Are you sure you want to reset all of your completed weeks?\nThis action is irreversible.', function() {
+				clearWeeks();
+				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+			}, null));
+		}
+		addOption(option);
+
+		var option:Option = new Option('Reset Achievement Data',
+			'Clears all achievement progress.',
+			'',
+			'button');
+		option.onChange = function() {
+			openSubState(new Prompt('Are you sure you want to reset all of your achievement progress?\nThis action is irreversible.', function() {
+				clearAchievements();
+				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+			}, null));
+		}
+		addOption(option);
+
+		var option:Option = new Option('Reset All Data',
+			'Clears all of the above.',
+			'',
+			'button');
+		option.onChange = function() {
+			openSubState(new Prompt('Are you sure you want to reset ALL of your saved data?\n\nThis action is irreversible.', function() {
+				clearScores();
+				clearWeeks();
+				clearAchievements();
+				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+			}, null));
+		}
+		addOption(option);
 		
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xFFea71fd;
@@ -132,7 +183,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 
 		if (controls.BACK) {
-			close();
+			FlxTransitionableState.skipNextTransIn = true;
+            FlxTransitionableState.skipNextTransOut = true;
+            MusicBeatState.switchState(new options.OptionsState());
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 		}
 
@@ -154,11 +207,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 					reloadCheckboxes();
 				}
 			} else if (curOption.type == 'button') {
-				if (controls.ACCEPT || FlxG.mouse.justPressed)
-				{
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-					curOption.change();
-				}
+                if (controls.ACCEPT || FlxG.mouse.justPressed)
+                {
+                    FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+                    curOption.change();
+                }
 			} else {
 				if (controls.UI_LEFT || controls.UI_RIGHT || (FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT)) {
 					var pressed = (controls.UI_LEFT_P || controls.UI_RIGHT_P);
@@ -350,4 +403,29 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			checkbox.daValue = (optionsArray[checkbox.ID].getValue() == true);
 		}
 	}
+
+    function clearScores() {
+        Highscore.songScores.clear();
+        Highscore.songRating.clear();
+        Highscore.weekScores.clear();
+        FlxG.save.data.songScores = Highscore.songScores;
+        FlxG.save.data.songRating = Highscore.songRating;
+        FlxG.save.data.weekScores = Highscore.weekScores;
+        FlxG.save.flush();
+    }
+
+	function clearWeeks() {
+        StoryMenuState.weekCompleted.clear();
+        FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
+        FlxG.save.flush();
+    }
+
+	function clearAchievements() {
+        Achievements.achievementsMap.clear();
+		Achievements.henchmenDeath = 0;
+        FlxG.save.data.achievementsMap = Achievements.achievementsMap;
+		FlxG.save.data.achievementsUnlocked = null;
+		FlxG.save.data.henchmenDeath = Achievements.henchmenDeath;
+        FlxG.save.flush();
+    }
 }

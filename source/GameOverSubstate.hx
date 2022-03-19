@@ -51,7 +51,6 @@ class GameOverSubstate extends MusicBeatSubstate
 		camGame = new FlxCamera();
 
 		FlxG.cameras.reset(camGame);
-		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 
 		boyfriend = new Boyfriend(x, y, characterName);
 		boyfriend.x += boyfriend.positionArray[0];

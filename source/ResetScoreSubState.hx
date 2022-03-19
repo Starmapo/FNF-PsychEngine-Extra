@@ -86,7 +86,7 @@ class ResetScoreSubState extends MusicBeatSubstate
 			updateOptions();
 		}
 		if (controls.BACK) {
-			FlxG.sound.play(Paths.sound('cancelMenu'), 1);
+			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 			close();
 		} else if (controls.ACCEPT || FlxG.mouse.justPressed) {
 			if (onYes) {
@@ -96,7 +96,7 @@ class ResetScoreSubState extends MusicBeatSubstate
 					Highscore.resetWeek(WeekData.weeksList[week], difficulty);
 				}
 			}
-			FlxG.sound.play(Paths.sound('cancelMenu'), 1);
+			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 			close();
 		}
 		super.update(elapsed);

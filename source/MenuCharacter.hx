@@ -76,7 +76,7 @@ class MenuCharacter extends FlxSprite
 
 				var imagePath = 'menucharacters/${charFile.image}';
 				if (Paths.fileExists('images/$imagePath/Animation.json', TEXT)) {
-					frames = animateatlas.AtlasFrameMaker.construct(imagePath);
+					frames = AtlasFrameMaker.construct(imagePath);
 				} else {
 					frames = Paths.getSparrowAtlas(imagePath);
 				}
