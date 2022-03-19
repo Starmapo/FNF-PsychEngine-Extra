@@ -111,8 +111,6 @@ class FreeplayState extends MusicBeatState
 					letter.x *= textScale;
 					letter.offset.x *= textScale;
 				}
-				//songText.updateHitbox();
-				//trace(songs[i].songName + ' new scale: ' + textScale);
 			}
 
 			Paths.currentModDirectory = songs[i].folder;
@@ -347,7 +345,7 @@ class FreeplayState extends MusicBeatState
 			PlayState.isStoryMode = false;
 			PlayState.storyDifficulty = curDifficulty;
 
-			trace('CURRENT WEEK: ${WeekData.getWeekFileName()}');
+			trace('CURRENT WEEK: ${WeekData.getWeekName()}');
 			if (colorTween != null) {
 				colorTween.cancel();
 			}

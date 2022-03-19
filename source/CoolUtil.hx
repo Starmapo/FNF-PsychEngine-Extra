@@ -124,22 +124,6 @@ class CoolUtil
 		song = Paths.formatToSongPath(song);
 		difficulties = defaultDifficulties.copy();
 		var diffStr:String = WeekData.getCurrentWeek().difficulties;
-		if ((diffStr == null || diffStr.length == 0) && song.length > 0) {
-			var num:Int = 0;
-			for (i in WeekData.weeksLoaded.keys()) {
-				var songs:Array<Dynamic> = WeekData.weeksLoaded.get(i).songs;
-				for (daSong in songs) {
-					var name:String = daSong[0];
-					name = name.toLowerCase().trim();
-					if (name == song) {
-						PlayState.storyWeek = num;
-						diffStr = WeekData.getCurrentWeek().difficulties;
-						break;
-					}
-				}
-				num++;
-			}
-		}
 		if (diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
 		diffStr = diffStr.trim(); //Fuck you HTML5
 
