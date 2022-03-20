@@ -147,6 +147,7 @@ class CoolUtil
 				{
 					diffs.remove(diffs[i]);
 				}
+				len = diffs.length;
 			}
 			
 			if (remove && song.length > 0) {
@@ -167,6 +168,7 @@ class CoolUtil
 					} else {
 						diffs.remove(diffs[i]);
 					}
+					len = diffs.length;
 				}
 			}
 

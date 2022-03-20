@@ -79,7 +79,6 @@ class NoteSplash extends FlxSprite
 				}
 			} else {
 				var uiSkin = UIData.checkSkinFile('splashes/$skin', daNote.uiSkin);
-				trace(skin, uiSkin.name);
 				antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;
 				if (Paths.fileExists('images/$skin.png', IMAGE)) {
 					frames = Paths.getSparrowAtlas(skin);

@@ -431,6 +431,7 @@ class PlayState extends MusicBeatState
 				stageData = {
 					directory: "",
 					defaultZoom: 0.9,
+					isPixelStage: false,
 				
 					boyfriend: [770, 100],
 					girlfriend: [400, 130],
@@ -451,6 +452,11 @@ class PlayState extends MusicBeatState
 			GF_Y = stageData.girlfriend[1];
 			DAD_X = stageData.opponent[0];
 			DAD_Y = stageData.opponent[1];
+			if (stageData.isPixelStage) {
+				SONG.uiSkin = 'pixel';
+				SONG.uiSkinOpponent = 'pixel';
+				setSkins();
+			}
 			
 			if(stageData.camera_speed != null)
 				cameraSpeed = stageData.camera_speed;
@@ -1726,6 +1732,7 @@ class PlayState extends MusicBeatState
 	public var countdownSet:FlxSprite;
 	public var countdownGo:FlxSprite;
 	public static var startOnTime:Float = 0;
+	public var introSoundsSuffix = '';
 
 	public function startCountdown():Void
 	{
@@ -1792,10 +1799,16 @@ class PlayState extends MusicBeatState
 					switch (swagCounter)
 					{
 						case 0:
-							var introSoundsSuffix = !opponentChart ? uiSkinMap.get('player').introSoundsSuffix : uiSkinMap.get('opponent').introSoundsSuffix;
-							FlxG.sound.play(Paths.sound('intro3$introSoundsSuffix'), 0.6);
+							var introSuffix = !opponentChart ? uiSkinMap.get('player').introSoundsSuffix : uiSkinMap.get('opponent').introSoundsSuffix;
+							if (introSoundsSuffix != null && introSoundsSuffix.length > 0) {
+								introSuffix = introSoundsSuffix;
+							}
+							FlxG.sound.play(Paths.sound('intro3$introSuffix'), 0.6);
 						case 1:
-							var introSoundsSuffix = uiSkinMap.get('ready').introSoundsSuffix;
+							var introSuffix = uiSkinMap.get('ready').introSoundsSuffix;
+							if (introSoundsSuffix != null && introSoundsSuffix.length > 0) {
+								introSuffix = introSoundsSuffix;
+							}
 							countdownReady = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('ready', uiSkinMap.get('ready'))));
 							countdownReady.scrollFactor.set();
 							countdownReady.updateHitbox();
@@ -1814,9 +1827,12 @@ class PlayState extends MusicBeatState
 									countdownReady.destroy();
 								}
 							});
-							FlxG.sound.play(Paths.sound('intro2$introSoundsSuffix'), 0.6);
+							FlxG.sound.play(Paths.sound('intro2$introSuffix'), 0.6);
 						case 2:
-							var introSoundsSuffix = uiSkinMap.get('set').introSoundsSuffix;
+							var introSuffix = uiSkinMap.get('set').introSoundsSuffix;
+							if (introSoundsSuffix != null && introSoundsSuffix.length > 0) {
+								introSuffix = introSoundsSuffix;
+							}
 							countdownSet = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('set', uiSkinMap.get('set'))));
 							countdownSet.scrollFactor.set();
 
@@ -1834,9 +1850,12 @@ class PlayState extends MusicBeatState
 									countdownSet.destroy();
 								}
 							});
-							FlxG.sound.play(Paths.sound('intro1$introSoundsSuffix'), 0.6);
+							FlxG.sound.play(Paths.sound('intro1$introSuffix'), 0.6);
 						case 3:
-							var introSoundsSuffix = uiSkinMap.get('go').introSoundsSuffix;
+							var introSuffix = uiSkinMap.get('go').introSoundsSuffix;
+							if (introSoundsSuffix != null && introSoundsSuffix.length > 0) {
+								introSuffix = introSoundsSuffix;
+							}
 							countdownGo = new FlxSprite().loadGraphic(Paths.image(UIData.checkImageFile('go', uiSkinMap.get('go'))));
 							countdownGo.scrollFactor.set();
 
@@ -1856,7 +1875,7 @@ class PlayState extends MusicBeatState
 									countdownGo.destroy();
 								}
 							});
-							FlxG.sound.play(Paths.sound('introGo$introSoundsSuffix'), 0.6);
+							FlxG.sound.play(Paths.sound('introGo$introSuffix'), 0.6);
 					}
 				}
 
@@ -1945,7 +1964,6 @@ class PlayState extends MusicBeatState
 
 		FlxG.sound.playMusic(Paths.inst(curSong), ClientPrefs.instVolume, false);
 		FlxG.sound.music.time = startPos;
-		FlxG.sound.music.endTime = FlxG.sound.music.length / playbackRate; //turns out i dont need to edit flxsound to do this :)
 		vocals.time = startPos;
 		vocals.play();
 		vocals.volume = ClientPrefs.voicesVolume;
@@ -2410,7 +2428,7 @@ class PlayState extends MusicBeatState
 	{
 		if (paused)
 		{
-			if (FlxG.sound.music != null && !startingSong && FlxG.sound.music.time > 0)
+			if (FlxG.sound.music != null && !startingSong)
 			{
 				resyncVocals();
 			}
@@ -2466,7 +2484,7 @@ class PlayState extends MusicBeatState
 	{
 		if (health > 0 && !paused)
 		{
-			if (FlxG.sound.music != null && !startingSong && !endingSong && FlxG.sound.music.time > 0)
+			if (FlxG.sound.music != null && !startingSong && !endingSong)
 			{
 				resyncVocals();
 			}
@@ -2505,13 +2523,16 @@ class PlayState extends MusicBeatState
 
 		vocals.pause();
 		vocalsDad.pause();
-		FlxG.sound.music.pause();
 
-		Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 		FlxG.sound.music.play();
-		vocals.time = vocalsDad.time = FlxG.sound.music.time;
 		vocals.play();
 		vocalsDad.play();
+		if (playbackRate >= 1) { //I HATE FlxG.sound.music.time I HATE FlxG.sound.music.time I HATE FlxG.sound.music.time I HATE
+			Conductor.songPosition = FlxG.sound.music.time / playbackRate;
+		} else {
+			FlxG.sound.music.time = Conductor.songPosition * playbackRate;
+		}
+		vocals.time = vocalsDad.time = FlxG.sound.music.time;
 
 		setSongPitch();
 	}
@@ -4100,7 +4121,7 @@ class PlayState extends MusicBeatState
 			if ((inEditor || !playerChar.members[0].stunned) && generatedMusic && !endingSong)
 			{
 				var lastTime:Float = Conductor.songPosition;
-				if (FlxG.sound.music.time > 0) {
+				if (FlxG.sound.music.time > 300) {
 					//more accurate hit time for the ratings?
 					Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 				}
@@ -4157,10 +4178,8 @@ class PlayState extends MusicBeatState
 				//									- Shadow Mario
 				keysPressed[key] = true;
 
-				if (FlxG.sound.music.time > 0) {
-					//more accurate hit time for the ratings? part 2 (Now that the calculations are done, go back to the time it was before for not causing a note stutter)
-					Conductor.songPosition = lastTime;
-				}
+				//more accurate hit time for the ratings? part 2 (Now that the calculations are done, go back to the time it was before for not causing a note stutter)
+				Conductor.songPosition = lastTime;
 			}
 
 			var spr:StrumNote = playerStrums.members[key];
@@ -5039,22 +5058,27 @@ class PlayState extends MusicBeatState
 		}
 		var maniaData:ManiaArray = null;
 		for (i in uiSkin.mania) {
-			if (i.keys == playerKeys) {
+			if (i.keys == bfKeys) {
 				maniaData = i;
 				break;
 			}
 		}
 		if (maniaData == null) {
-			FlxG.log.warn('Couldn\'t get ${playerKeys}K data for ${uiSkin.name}!');
+			FlxG.log.warn('Couldn\'t get ${bfKeys}K data for ${uiSkin.name}!');
 			if (uiSkin.isPixel) {
 				uiSkin = UIData.getUIFile('pixel');
 			} else {
 				uiSkin = UIData.getUIFile('');
 			}
-			maniaData = uiSkin.mania[playerKeys - 1];
+			maniaData = uiSkin.mania[bfKeys - 1];
 		}
-		playerSingAnimations = maniaData.singAnimations;
-		playerColors = maniaData.colors;
+		if (!opponentChart) {
+			playerSingAnimations = maniaData.singAnimations;
+			playerColors = maniaData.colors;
+		} else {
+			opponentSingAnimations = maniaData.singAnimations;
+			opponentColors = maniaData.colors;
+		}
 		uiSkinMap.set('player', uiSkin);
 		
 		//OPPONENT
@@ -5064,22 +5088,27 @@ class PlayState extends MusicBeatState
 		}
 		var maniaData:ManiaArray = null;
 		for (i in uiSkin.mania) {
-			if (i.keys == opponentKeys) {
+			if (i.keys == dadKeys) {
 				maniaData = i;
 				break;
 			}
 		}
 		if (maniaData == null) {
-			FlxG.log.warn('Couldn\'t get ${opponentKeys}K data for ${uiSkin.name}!');
+			FlxG.log.warn('Couldn\'t get ${dadKeys}K data for ${uiSkin.name}!');
 			if (uiSkin.isPixel) {
 				uiSkin = UIData.getUIFile('pixel');
 			} else {
 				uiSkin = UIData.getUIFile('');
 			}
-			maniaData = uiSkin.mania[opponentKeys - 1];
+			maniaData = uiSkin.mania[dadKeys - 1];
 		}
-		opponentSingAnimations = maniaData.singAnimations;
-		opponentColors = maniaData.colors;
+		if (opponentChart) {
+			playerSingAnimations = maniaData.singAnimations;
+			playerColors = maniaData.colors;
+		} else {
+			opponentSingAnimations = maniaData.singAnimations;
+			opponentColors = maniaData.colors;
+		}
 		uiSkinMap.set('opponent', uiSkin);
 
 		var imagesToCheck = [

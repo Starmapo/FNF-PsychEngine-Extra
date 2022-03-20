@@ -14,6 +14,7 @@ using StringTools;
 typedef StageFile = {
 	var directory:String;
 	var defaultZoom:Float;
+	var ?isPixelStage:Bool;
 
 	var boyfriend:Array<Dynamic>;
 	var girlfriend:Array<Dynamic>;
@@ -86,6 +87,9 @@ class StageData {
 		}
 
 		var stageFile:StageFile = cast Json.parse(rawJson);
+		if (stageFile.isPixelStage == null) {
+			stageFile.isPixelStage = false;
+		}
 		return stageFile;
 	}
 }
