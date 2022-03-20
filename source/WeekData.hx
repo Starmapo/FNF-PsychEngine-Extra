@@ -64,19 +64,13 @@ class WeekData {
 		return weekFile;
 	}
 
-	// HELP: Is there any way to convert a WeekFile to WeekData without having to put all variables there manually? I'm kind of a noob in haxe lmao
 	public function new(weekFile:WeekFile, fileName:String) {
-		songs = weekFile.songs;
-		weekCharacters = weekFile.weekCharacters;
-		weekBackground = weekFile.weekBackground;
-		weekBefore = weekFile.weekBefore;
-		storyName = weekFile.storyName;
-		weekName = weekFile.weekName;
-		startUnlocked = weekFile.startUnlocked;
-		hiddenUntilUnlocked = weekFile.hiddenUntilUnlocked;
-		hideStoryMode = weekFile.hideStoryMode;
-		hideFreeplay = weekFile.hideFreeplay;
-		difficulties = weekFile.difficulties;
+		var template = createWeekFile();
+		for (i in Reflect.fields(weekFile)) {
+			if (Reflect.hasField(template, i)) {
+				Reflect.setProperty(this, i, Reflect.field(weekFile, i));
+			}
+		}
 
 		if (hiddenUntilUnlocked == null) {
 			hiddenUntilUnlocked = false;
