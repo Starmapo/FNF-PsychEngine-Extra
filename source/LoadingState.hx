@@ -122,6 +122,8 @@ class LoadingState extends MusicBeatState
 				new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
 			}
 		);
+
+		super.create();
 	}
 	
 	function checkLoadSong(path:String)

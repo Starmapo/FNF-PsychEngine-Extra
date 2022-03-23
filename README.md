@@ -50,9 +50,11 @@ _____________________________________
 
 ## Build Instructions:
 ### Installing the Required Programs
-First, you need to install Haxe and HaxeFlixel. I'm too lazy to write and keep updated with that setup (which is pretty simple). 
+First, you need to install the **latest** Haxe and HaxeFlixel. I'm too lazy to write and keep updated with that setup (which is pretty simple). 
 1. [Install Haxe](https://haxe.org/download/)
 2. [Install HaxeFlixel](https://haxeflixel.com/documentation/install-haxeflixel/) after downloading Haxe (make sure to do `haxelib run lime setup flixel` to install the necessary libraries, basically just follow the whole guide)
+
+You should make sure to keep Haxe & Flixel updated. If there is a compilation error, it might be due to having an outdated version.
 
 You'll also need to install a couple things that involve Gits. To do this, you need to do a few things first.
 1. Download [git-scm](https://git-scm.com/downloads). Works for Windows, Mac, and Linux, just select your build.

@@ -387,12 +387,10 @@ class ClientPrefs {
 		save.bind('controls_v2', 'extra');
 		if (save != null && save.data.customControls != null) {
 			var loadedControls:Map<String, Array<FlxKey>> = save.data.customControls;
-			if (loadedControls.get('note_left') == null) { //prevent having old controls
-				for (control => keys in loadedControls) {
-					keyBinds.set(control, keys);
-				}
-				reloadControls();
+			for (control => keys in loadedControls) {
+				keyBinds.set(control, keys);
 			}
+			reloadControls();
 		}
 	}
 

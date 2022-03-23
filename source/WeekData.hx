@@ -67,7 +67,7 @@ class WeekData {
 	public function new(weekFile:WeekFile, fileName:String) {
 		var template = createWeekFile();
 		for (i in Reflect.fields(weekFile)) {
-			if (Reflect.hasField(template, i)) {
+			if (Reflect.hasField(template, i)) { //just doing Reflect.hasField on itself doesnt work for some reason so we are doing it on a template
 				Reflect.setProperty(this, i, Reflect.field(weekFile, i));
 			}
 		}

@@ -456,7 +456,7 @@ class ChartingState extends MusicBeatState
 			saveEvents();
 		});
 
-		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 1000, 1);
+		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 1000, 3);
 		stepperBPM.value = _song.bpm;
 		stepperBPM.name = 'song_bpm';
 		blockPressWhileTypingOnStepper.push(stepperBPM);
@@ -742,7 +742,7 @@ class ChartingState extends MusicBeatState
 		check_changeBPM.checked = _song.notes[curSection].changeBPM;
 		check_changeBPM.name = 'check_changeBPM';
 
-		stepperSectionBPM = new FlxUINumericStepper(10, 110, 1, Conductor.bpm, 0, 1000, 1);
+		stepperSectionBPM = new FlxUINumericStepper(10, 110, 1, Conductor.bpm, 0, 1000, 3);
 		if (check_changeBPM.checked) {
 			stepperSectionBPM.value = _song.notes[curSection].bpm;
 		}
