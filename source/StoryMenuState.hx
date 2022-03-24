@@ -411,8 +411,8 @@ class StoryMenuState extends MusicBeatState
 			PlayState.storyWeek = curWeek;
 
 			CoolUtil.getDifficulties();
-			difficultySelectors.visible = unlocked && loadedWeeks.length > 0;
 			leftArrow.visible = rightArrow.visible = CoolUtil.difficulties.length > 1;
+			difficultySelectors.visible = unlocked && loadedWeeks.length > 0;
 			
 			updateText();
 		} else {
