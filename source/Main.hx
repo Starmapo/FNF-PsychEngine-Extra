@@ -1,14 +1,15 @@
 package;
 
 import flixel.graphics.FlxGraphic;
-import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
 import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
-import openfl.display.StageScaleMode;
+#if html5
+import flixel.FlxG;
+#end
 
 class Main extends Sprite
 {
@@ -79,8 +80,6 @@ class Main extends Sprite
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
-		Lib.current.stage.align = "topLeft";
-		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		if (fpsVar != null) {
 			fpsVar.visible = ClientPrefs.showFPS;
 		}

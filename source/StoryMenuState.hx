@@ -54,7 +54,6 @@ class StoryMenuState extends MusicBeatState
 		PlayState.isStoryMode = true;
 		WeekData.reloadWeekFiles(true);
 		if (curWeek >= WeekData.weeksList.length) curWeek = 0;
-		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 		persistentUpdate = true;
 
 		scoreText = new FlxText(10, 10, 0, "SCORE: 49324858", 36);
@@ -412,26 +411,32 @@ class StoryMenuState extends MusicBeatState
 			PlayState.storyWeek = curWeek;
 
 			CoolUtil.getDifficulties();
-			difficultySelectors.visible = unlocked;
+			difficultySelectors.visible = unlocked && loadedWeeks.length > 0;
+			leftArrow.visible = rightArrow.visible = CoolUtil.difficulties.length > 1;
 			
-			if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
-			{
-				curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty)));
-			}
-			else
-			{
-				curDifficulty = 0;
-			}
-			
-			var newPos:Int = CoolUtil.difficulties.indexOf(lastDifficultyName);
-			if (newPos > -1)
-			{
-				curDifficulty = newPos;
-			}
 			updateText();
 		} else {
 			bgSprite.visible = false;
 		}
+
+		if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
+		{
+			curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty)));
+		}
+		else
+		{
+			curDifficulty = 0;
+		}
+		
+		var newPos:Int = CoolUtil.difficulties.indexOf(lastDifficultyName);
+		if (newPos < 0) newPos = CoolUtil.difficulties.indexOf(lastDifficultyName.charAt(0).toUpperCase() + lastDifficultyName.substr(1));
+		if (newPos < 0) newPos = CoolUtil.difficulties.indexOf(lastDifficultyName.toLowerCase());
+		if (newPos < 0) newPos = CoolUtil.difficulties.indexOf(lastDifficultyName.toUpperCase());
+		if (newPos > -1)
+		{
+			curDifficulty = newPos;
+		}
+
 		if (change != 0) {
 			changeDifficulty();
 		}

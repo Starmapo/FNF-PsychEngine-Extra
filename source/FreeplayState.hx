@@ -254,13 +254,13 @@ class FreeplayState extends MusicBeatState
 					changeDiff();
 				}
 			}
+		}
 
-			if (CoolUtil.difficulties.length > 1) {
-				if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
-					changeDiff(-1);
-				else if (controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
-					changeDiff(1);
-			}
+		if (songs.length > 0 && CoolUtil.difficulties.length > 1) {
+			if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
+				changeDiff(-1);
+			else if (controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
+				changeDiff(1);
 		}
 
 		if (controls.BACK)
@@ -429,7 +429,11 @@ class FreeplayState extends MusicBeatState
 		#end
 
 		PlayState.storyDifficulty = curDifficulty;
-		diffText.text = '< ${CoolUtil.difficultyString()} >';
+		if (CoolUtil.difficulties.length > 1) {
+			diffText.text = '< ${CoolUtil.difficultyString()} >';
+		} else {
+			diffText.text = CoolUtil.difficultyString();
+		}
 		positionHighscore();
 	}
 
@@ -489,18 +493,21 @@ class FreeplayState extends MusicBeatState
 			PlayState.storyWeek = songs[curSelected].week;
 
 			CoolUtil.getDifficulties(songs[curSelected].songName, true);
-			
-			if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
-			{
-				curDifficulty = FlxMath.maxInt(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty));
-			}
-			else
-			{
-				curDifficulty = 0;
-			}
 		}
-		
+
+		if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
+		{
+			curDifficulty = FlxMath.maxInt(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty));
+		}
+		else
+		{
+			curDifficulty = 0;
+		}
+
 		var newPos:Int = CoolUtil.difficulties.indexOf(lastDifficultyName);
+		if (newPos < 0) newPos = CoolUtil.difficulties.indexOf(lastDifficultyName.charAt(0).toUpperCase() + lastDifficultyName.substr(1));
+		if (newPos < 0) newPos = CoolUtil.difficulties.indexOf(lastDifficultyName.toLowerCase());
+		if (newPos < 0) newPos = CoolUtil.difficulties.indexOf(lastDifficultyName.toUpperCase());
 		if (newPos > -1)
 		{
 			curDifficulty = newPos;

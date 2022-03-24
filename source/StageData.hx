@@ -19,12 +19,12 @@ typedef StageFile = {
 	var boyfriend:Array<Dynamic>;
 	var girlfriend:Array<Dynamic>;
 	var opponent:Array<Dynamic>;
-	var hide_girlfriend:Bool;
+	var ?hide_girlfriend:Bool;
 
-	var camera_boyfriend:Array<Float>;
-	var camera_opponent:Array<Float>;
-	var camera_girlfriend:Array<Float>;
-	var camera_speed:Null<Float>;
+	var ?camera_boyfriend:Array<Float>;
+	var ?camera_opponent:Array<Float>;
+	var ?camera_girlfriend:Array<Float>;
+	var ?camera_speed:Null<Float>;
 }
 
 class StageData {
@@ -89,6 +89,21 @@ class StageData {
 		var stageFile:StageFile = cast Json.parse(rawJson);
 		if (stageFile.isPixelStage == null) {
 			stageFile.isPixelStage = false;
+		}
+		if (stageFile.hide_girlfriend == null) {
+			stageFile.hide_girlfriend = false;
+		}
+		if (stageFile.camera_boyfriend == null) {
+			stageFile.camera_boyfriend = [0, 0];
+		}
+		if (stageFile.camera_opponent == null) {
+			stageFile.camera_opponent = [0, 0];
+		}
+		if (stageFile.camera_girlfriend == null) {
+			stageFile.camera_girlfriend = [0, 0];
+		}
+		if (stageFile.camera_speed == null) {
+			stageFile.camera_speed = 1;
 		}
 		return stageFile;
 	}
