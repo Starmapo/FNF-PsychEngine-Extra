@@ -59,6 +59,7 @@ class FreeplayState extends MusicBeatState
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
+		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
@@ -137,7 +138,7 @@ class FreeplayState extends MusicBeatState
 		add(scoreText);
 
 		if (curSelected >= songs.length) curSelected = 0;
-		bg.color = songs[curSelected].color;
+		if (songs.length > 0) bg.color = songs[curSelected].color;
 		intendedColor = bg.color;
 
 		if (lastDifficultyName == '')
@@ -253,13 +254,13 @@ class FreeplayState extends MusicBeatState
 					changeDiff();
 				}
 			}
-		}
 
-		if (CoolUtil.difficulties.length > 1) {
-			if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
-				changeDiff(-1);
-			else if (controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
-				changeDiff(1);
+			if (CoolUtil.difficulties.length > 1) {
+				if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
+					changeDiff(-1);
+				else if (controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
+					changeDiff(1);
+			}
 		}
 
 		if (controls.BACK)
@@ -279,94 +280,96 @@ class FreeplayState extends MusicBeatState
 			persistentUpdate = false;
 			openSubState(new GameplayChangersSubstate());
 		}
-		else if (space)
+		else if (songs.length > 0)
 		{
-			if (instPlaying != curSelected || speedPlaying != ClientPrefs.getGameplaySetting('songspeed', 1))
+			if (space)
 			{
-				#if PRELOAD_ALL
-				destroyFreeplayVocals();
-				FlxG.sound.music.volume = 0;
-				Paths.currentModDirectory = songs[curSelected].folder;
-				var poop:String = Highscore.formatSong(songs[curSelected].songName, curDifficulty, false);
-				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName);
-				if (PlayState.SONG.needsVoices) {
-					vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
-
-					var file:Dynamic = Paths.voices(Paths.formatToSongPath(PlayState.SONG.song), 'Dad');
-					vocalsDad = new FlxSound();
-					if (file != null) {
-						vocalsDad.loadEmbedded(file);
-					}
-				} else {
-					vocals = new FlxSound();
-					vocalsDad = new FlxSound();
-				}
-
-				FlxG.sound.list.add(vocals);
-				FlxG.sound.list.add(vocalsDad);
-				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.7);
-				vocals.play();
-				vocals.persist = true;
-				vocals.looped = true;
-				vocals.volume = 0.7;
-				vocalsDad.play();
-				vocalsDad.persist = true;
-				vocalsDad.looped = true;
-				vocalsDad.volume = 0.7;
-				Conductor.mapBPMChanges(PlayState.SONG, ClientPrefs.getGameplaySetting('songspeed', 1));
-				Conductor.changeBPM(PlayState.SONG.bpm, ClientPrefs.getGameplaySetting('songspeed', 1));
-				Conductor.changeSignature(PlayState.SONG.numerator, PlayState.SONG.denominator);
-				instPlaying = curSelected;
-				speedPlaying = ClientPrefs.getGameplaySetting('songspeed', 1);
-				#if cpp
-				@:privateAccess
+				if (instPlaying != curSelected || speedPlaying != ClientPrefs.getGameplaySetting('songspeed', 1))
 				{
-					if (ClientPrefs.getGameplaySetting('songspeed', 1) != 1) {
-						AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
-						if (vocals.playing)
-							AL.sourcef(vocals._channel.__source.__backend.handle, AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
-						if (vocalsDad.playing)
-							AL.sourcef(vocalsDad._channel.__source.__backend.handle, AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+					#if PRELOAD_ALL
+					destroyFreeplayVocals();
+					FlxG.sound.music.volume = 0;
+					Paths.currentModDirectory = songs[curSelected].folder;
+					var poop:String = Highscore.formatSong(songs[curSelected].songName, curDifficulty, false);
+					PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName);
+					if (PlayState.SONG.needsVoices) {
+						vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+
+						var file:Dynamic = Paths.voices(Paths.formatToSongPath(PlayState.SONG.song), 'Dad');
+						vocalsDad = new FlxSound();
+						if (file != null) {
+							vocalsDad.loadEmbedded(file);
+						}
+					} else {
+						vocals = new FlxSound();
+						vocalsDad = new FlxSound();
 					}
+
+					FlxG.sound.list.add(vocals);
+					FlxG.sound.list.add(vocalsDad);
+					FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.7);
+					vocals.play();
+					vocals.persist = true;
+					vocals.looped = true;
+					vocals.volume = 0.7;
+					vocalsDad.play();
+					vocalsDad.persist = true;
+					vocalsDad.looped = true;
+					vocalsDad.volume = 0.7;
+					Conductor.mapBPMChanges(PlayState.SONG, ClientPrefs.getGameplaySetting('songspeed', 1));
+					Conductor.changeBPM(PlayState.SONG.bpm, ClientPrefs.getGameplaySetting('songspeed', 1));
+					Conductor.changeSignature(PlayState.SONG.numerator, PlayState.SONG.denominator);
+					instPlaying = curSelected;
+					speedPlaying = ClientPrefs.getGameplaySetting('songspeed', 1);
+					#if cpp
+					@:privateAccess
+					{
+						if (ClientPrefs.getGameplaySetting('songspeed', 1) != 1) {
+							AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+							if (vocals.playing)
+								AL.sourcef(vocals._channel.__source.__backend.handle, AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+							if (vocalsDad.playing)
+								AL.sourcef(vocalsDad._channel.__source.__backend.handle, AL.PITCH, ClientPrefs.getGameplaySetting('songspeed', 1));
+						}
+					}
+					#end
+					#end
 				}
-				#end
-				#end
 			}
-		}
+			else if (accepted)
+			{
+				persistentUpdate = false;
+				var songLowercase:String = songs[curSelected].songName;
+				var poop:String = Highscore.formatSong(songLowercase, curDifficulty, false);
+				trace(poop);
 
-		else if (accepted)
-		{
-			persistentUpdate = false;
-			var songLowercase:String = songs[curSelected].songName;
-			var poop:String = Highscore.formatSong(songLowercase, curDifficulty, false);
-			trace(poop);
+				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+				PlayState.isStoryMode = false;
+				PlayState.storyDifficulty = curDifficulty;
 
-			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-			PlayState.isStoryMode = false;
-			PlayState.storyDifficulty = curDifficulty;
+				trace('CURRENT WEEK: ${WeekData.getWeekName()}');
+				if (colorTween != null) {
+					colorTween.cancel();
+				}
+				
+				if (FlxG.keys.pressed.SHIFT) {
+					PlayState.chartingMode = true;
+					LoadingState.loadAndSwitchState(new ChartingState(false));
+				} else {
+					LoadingState.loadAndSwitchState(new PlayState());
+				}
 
-			trace('CURRENT WEEK: ${WeekData.getWeekName()}');
-			if (colorTween != null) {
-				colorTween.cancel();
+				FlxG.sound.music.volume = 0;
+						
+				destroyFreeplayVocals();
+				instPlaying = -1;
 			}
-			
-			if (FlxG.keys.pressed.SHIFT) {
-				PlayState.chartingMode = true;
-				LoadingState.loadAndSwitchState(new ChartingState(false));
-			} else {
-				LoadingState.loadAndSwitchState(new PlayState());
+			else if (controls.RESET)
+			{
+				persistentUpdate = false;
+				openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
+				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			}
-
-			FlxG.sound.music.volume = 0;
-					
-			destroyFreeplayVocals();
-			instPlaying = -1;
-		}
-		else if (controls.RESET)
-		{
-			persistentUpdate = false;
-			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		}
 		#if cpp
 		@:privateAccess
@@ -412,15 +415,17 @@ class FreeplayState extends MusicBeatState
 		curDifficulty += change;
 
 		if (curDifficulty < 0)
-			curDifficulty = CoolUtil.difficulties.length-1;
+			curDifficulty = CoolUtil.difficulties.length - 1;
 		if (curDifficulty >= CoolUtil.difficulties.length)
 			curDifficulty = 0;
 
 		lastDifficultyName = CoolUtil.difficulties[curDifficulty];
 
 		#if HIGHSCORE_ALLOWED
-		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
-		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
+		if (songs.length > 0) {
+			intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
+			intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
+		}
 		#end
 
 		PlayState.storyDifficulty = curDifficulty;
@@ -438,59 +443,61 @@ class FreeplayState extends MusicBeatState
 			curSelected = songs.length - 1;
 		if (curSelected >= songs.length)
 			curSelected = 0;
-			
-		var newColor:Int = songs[curSelected].color;
-		if (newColor != intendedColor) {
-			if (colorTween != null) {
-				colorTween.cancel();
-			}
-			intendedColor = newColor;
-			colorTween = FlxTween.color(bg, 1, bg.color, intendedColor, {
-				onComplete: function(twn:FlxTween) {
-					colorTween = null;
+		
+		if (songs.length > 0) {
+			var newColor:Int = songs[curSelected].color;
+			if (newColor != intendedColor) {
+				if (colorTween != null) {
+					colorTween.cancel();
 				}
-			});
-		}
-
-		#if HIGHSCORE_ALLOWED
-		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
-		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
-		#end
-
-		var bullShit:Int = 0;
-
-		for (i in 0...iconArray.length)
-		{
-			iconArray[i].alpha = 0.6;
-		}
-
-		iconArray[curSelected].alpha = 1;
-
-		for (item in grpSongs.members)
-		{
-			item.targetY = bullShit - curSelected;
-			bullShit++;
-
-			item.alpha = 0.6;
-
-			if (item.targetY == 0)
-			{
-				item.alpha = 1;
+				intendedColor = newColor;
+				colorTween = FlxTween.color(bg, 1, bg.color, intendedColor, {
+					onComplete: function(twn:FlxTween) {
+						colorTween = null;
+					}
+				});
 			}
-		}
-		
-		Paths.currentModDirectory = songs[curSelected].folder;
-		PlayState.storyWeek = songs[curSelected].week;
 
-		CoolUtil.getDifficulties(songs[curSelected].songName, true);
-		
-		if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
-		{
-			curDifficulty = FlxMath.maxInt(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty));
-		}
-		else
-		{
-			curDifficulty = 0;
+			#if HIGHSCORE_ALLOWED
+			intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
+			intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
+			#end
+
+			var bullShit:Int = 0;
+
+			for (i in 0...iconArray.length)
+			{
+				iconArray[i].alpha = 0.6;
+			}
+
+			iconArray[curSelected].alpha = 1;
+
+			for (item in grpSongs.members)
+			{
+				item.targetY = bullShit - curSelected;
+				bullShit++;
+
+				item.alpha = 0.6;
+
+				if (item.targetY == 0)
+				{
+					item.alpha = 1;
+				}
+			}
+			
+			Paths.currentModDirectory = songs[curSelected].folder;
+			PlayState.storyWeek = songs[curSelected].week;
+
+			CoolUtil.getDifficulties(songs[curSelected].songName, true);
+			
+			if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
+			{
+				curDifficulty = FlxMath.maxInt(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty));
+			}
+			else
+			{
+				curDifficulty = 0;
+			}
 		}
 		
 		var newPos:Int = CoolUtil.difficulties.indexOf(lastDifficultyName);

@@ -1587,6 +1587,7 @@ class PlayState extends MusicBeatState
 		} else {
 			FlxG.log.warn('Couldnt find video file: $fileName');
 			startAndEnd();
+			return;
 		}
 		#end
 		startAndEnd();
@@ -2974,7 +2975,7 @@ class PlayState extends MusicBeatState
 						opponentNoteHit(daNote);
 					}
 
-					if (daNote.mustPress && cpuControlled) {
+					if (cpuControlled && daNote.mustPress && !daNote.ignoreNote && !daNote.hitCausesMiss) {
 						if (daNote.isSustainNote) {
 							if (daNote.canBeHit) {
 								goodNoteHit(daNote);

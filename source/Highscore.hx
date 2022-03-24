@@ -144,7 +144,12 @@ class Highscore
 	}
 
 	public static function completedWeek(week:String) {
-		if (!week.contains(':')) week = WeekData.formatWeek(week);
-		return (StoryMenuState.weekCompleted.exists(week) && StoryMenuState.weekCompleted.get(week));
+		var daWeek = week;
+		if (!week.contains(':')) {
+			daWeek = WeekData.formatWeek(week);
+			if (!WeekData.weeksLoaded.exists(daWeek))
+				daWeek = week;
+		}
+		return (StoryMenuState.weekCompleted.exists(daWeek) && StoryMenuState.weekCompleted.get(daWeek));
 	}
 }
