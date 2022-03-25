@@ -1361,17 +1361,17 @@ class FunkinLua {
 			#end
 		});
 		
-		Lua_helper.add_callback(lua, "changeNoteSkin", function(index:Int = 0, name:String = '') {
+		Lua_helper.add_callback(lua, "changeNoteSkin", function(index:Int = 0, name:String = 'default') {
 			if (PlayState.instance.notes.members[index] != null) {
 				PlayState.instance.notes.members[index].uiSkin = UIData.getUIFile(name);
 			}
 		});
-		Lua_helper.add_callback(lua, "changeUnspawnNoteSkin", function(index:Int = 0, name:String = '') {
+		Lua_helper.add_callback(lua, "changeUnspawnNoteSkin", function(index:Int = 0, name:String = 'default') {
 			if (PlayState.instance.unspawnNotes[index] != null) {
 				PlayState.instance.unspawnNotes[index].uiSkin = UIData.getUIFile(name);
 			}
 		});
-		Lua_helper.add_callback(lua, "changeStrumNoteSkin", function(index:Int = 0, name:String = '') {
+		Lua_helper.add_callback(lua, "changeStrumNoteSkin", function(index:Int = 0, name:String = 'default') {
 			if (PlayState.instance.strumLineNotes != null && PlayState.instance.strumLineNotes.members[index] != null) {
 				PlayState.instance.strumLineNotes.members[index].uiSkin = UIData.getUIFile(name);
 			}
@@ -1493,7 +1493,7 @@ class FunkinLua {
 			gonnaClose = true;
 		});
 
-		Lua_helper.add_callback(lua, "changePresence", function(details:String, state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float) {
+		Lua_helper.add_callback(lua, "changePresence", function(details:String, ?state:String, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float) {
 			#if DISCORD_ALLOWED
 			DiscordClient.changePresence(details, state, smallImageKey, hasStartTimestamp, endTimestamp);
 			#end
@@ -2070,7 +2070,7 @@ class FunkinLua {
 	}
 
 	#if LUA_ALLOWED
-	function resultIsAllowed(leLua:State, leResult:Null<Int>) { //Makes it ignore warnings
+	function resultIsAllowed(leLua:State, ?leResult:Int) { //Makes it ignore warnings
 		switch(Lua.type(leLua, leResult)) {
 			case Lua.LUA_TNIL | Lua.LUA_TBOOLEAN | Lua.LUA_TNUMBER | Lua.LUA_TSTRING | Lua.LUA_TTABLE:
 				return true;

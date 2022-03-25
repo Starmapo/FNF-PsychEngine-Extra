@@ -22,7 +22,7 @@ class CoolUtil
 
 	public static var difficulties:Array<String> = [];
 
-	public static function getDifficultyFilePath(num:Null<Int> = null)
+	public static function getDifficultyFilePath(?num:Int = null)
 	{
 		if (num == null) num = PlayState.storyDifficulty;
 		if (num >= difficulties.length) num = difficulties.length - 1;

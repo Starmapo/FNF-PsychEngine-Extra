@@ -26,12 +26,15 @@ class Note extends FlxSprite
 	public var ignoreNote:Bool = false;
 	public var hitByOpponent:Bool = false;
 	public var prevNote:Note;
-	public var stepCrochet:Float = 150;
 	public var characters:Array<Int> = [0];
 	public var speed(default, set):Float = 1;
 
+	//sustain stuff
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
+	public var stepCrochet:Float = 150;
+	public var ogStrumTime:Float = 0;
+
 	public var noteType(default, set):String = null;
 
 	public var eventName:String = '';
@@ -82,8 +85,8 @@ class Note extends FlxSprite
 	public var hitsoundDisabled:Bool = false;
 
 	public var keyAmount:Int = 4;
-	var colors:Array<String> = ['left', 'down', 'up', 'right'];
-	var xOff:Float = 54;
+	public var colors:Array<String> = ['left', 'down', 'up', 'right'];
+	public var xOff:Float = 54;
 	public var noteSize:Float = 0.7;
 
 	public var uiSkin(default, set):SkinFile = null;
@@ -119,7 +122,7 @@ class Note extends FlxSprite
 						hitCausesMiss = true;
 						lateHitMult = 0.5;
 						if (isSustainNote) {
-							earlyHitMult = 0.3;
+							earlyHitMult = 0.25;
 						} else {
 							earlyHitMult = 0.5;
 						}
@@ -369,12 +372,6 @@ class Note extends FlxSprite
 				if ((isSustainNote && prevNote.wasGoodHit) || strumTime <= Conductor.songPosition)
 					wasGoodHit = true;
 			}
-		}
-
-		if (tooLate && !inEditor)
-		{
-			if (alpha > 0.3)
-				alpha = 0.3;
 		}
 	}
 }

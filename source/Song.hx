@@ -29,10 +29,10 @@ typedef SwagSong =
 	var uiSkinOpponent:String;
 	var validScore:Bool;
 
-	var playerKeyAmount:Null<Int>;
-	var opponentKeyAmount:Null<Int>;
-	var numerator:Null<Int>;
-	var denominator:Null<Int>;
+	var ?playerKeyAmount:Int;
+	var ?opponentKeyAmount:Int;
+	var ?numerator:Int;
+	var ?denominator:Int;
 
 	//FOR BACKWARDS COMPATIBILITY
 	var arrowSkin:String;
@@ -42,10 +42,10 @@ typedef SwagSong =
 typedef DifferentJSON =
 {
 	var player3:String; //Psych Engine
-	var mania:Null<Int>; //Shaggy
+	var ?mania:Int; //Shaggy
 	var gf:String; //Leather Engine
-	var keyCount:Null<Int>; //Leather Engine
-	var playerKeyCount:Null<Int>; //Leather Engine
+	var ?keyCount:Int; //Leather Engine
+	var ?playerKeyCount:Int; //Leather Engine
 	var timescale:Array<Int>; //Leather Engine
 	var ui_Skin:String; //Leather Engine
 }

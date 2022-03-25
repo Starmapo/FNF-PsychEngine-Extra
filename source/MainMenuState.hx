@@ -241,7 +241,7 @@ class MainMenuState extends MusicBeatState
 					});
 				}
 			}
-			#if (desktop || debug)
+			#if desktop
 			else if (FlxG.keys.anyJustPressed(debugKeys))
 			{
 				selectedSomethin = true;

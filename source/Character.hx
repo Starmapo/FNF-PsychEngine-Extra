@@ -100,28 +100,21 @@ class Character extends FlxSprite
 			default:
 				var json:CharacterFile = getFile(curCharacter);
 
-				var spriteType = "sparrow";		
 				if (Paths.fileExists('images/${json.image}.txt', TEXT))
 				{
-					spriteType = "packer";
+					frames = Paths.getPackerAtlas(json.image);
 				}
-				if (Paths.fileExists('images/${json.image}.json', TEXT))
+				else if (Paths.fileExists('images/${json.image}.json', TEXT))
 				{
-					spriteType = "texpacker";
+					frames = Paths.getTexturePackerAtlas(json.image);
 				}
-				if (Paths.fileExists('images/${json.image}/Animation.json', TEXT))
+				else if (Paths.fileExists('images/${json.image}/Animation.json', TEXT))
 				{
-					spriteType = "texture";
+					frames = AtlasFrameMaker.construct(json.image);	
 				}
-				switch (spriteType) {
-					case "packer":
-						frames = Paths.getPackerAtlas(json.image);
-					case "sparrow":
-						frames = Paths.getSparrowAtlas(json.image);
-					case "texture":
-						frames = AtlasFrameMaker.construct(json.image);	
-					case "texpacker":
-						frames = Paths.getTexturePackerAtlas(json.image);
+				else
+				{
+					frames = Paths.getSparrowAtlas(json.image);
 				}
 				
 				imageFile = json.image;

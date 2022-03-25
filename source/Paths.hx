@@ -43,6 +43,12 @@ class Paths
 		'scripts'
 	];
 	#end
+	public static var ignoreLibraries:Array<String> = [
+		'default',
+		'shared',
+		'songs',
+		'videos'
+	];
 
 	public static function excludeAsset(key:String) {
 		if (!dumpExclusions.contains(key))
@@ -175,6 +181,16 @@ class Paths
 		return promise.future;
 	}
 
+	static public function getLibraries(ignore:Bool = false):Array<String> {
+		var libraries:Array<String> = [];
+		@:privateAccess
+		for (i in Assets.libraryPaths.keys()) {
+			if (!ignore || !ignoreLibraries.contains(i))
+				libraries.push(i);
+		}
+		return libraries;
+	}
+
 	static public var currentModDirectory:String = '';
 	static public var currentLevel:String;
 	static public function setCurrentLevel(name:String)
@@ -182,7 +198,7 @@ class Paths
 		currentLevel = name.toLowerCase();
 	}
 
-	public static function getPath(file:String, type:AssetType, ?library:Null<String> = null)
+	public static function getPath(file:String, type:AssetType, library:String = null)
 	{
 		if (library != null)
 			return getLibraryPath(file, library);
