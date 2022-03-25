@@ -37,11 +37,7 @@ class LoadingState extends MusicBeatState
 	var loadBar:FlxSprite;
 	override function create()
 	{
-		#if EXTRA_WATERMARKS
 		var curStage = 'funkay';
-		#else
-		var curStage = 'funkayCooler';
-		#end
 		if (PlayState.SONG != null && PlayState.SONG.stage != null && PlayState.SONG.stage.length > 0)
 			curStage = PlayState.SONG.stage;
 		else if (PlayState.SONG != null) {
@@ -64,11 +60,7 @@ class LoadingState extends MusicBeatState
 					curStage = 'schoolEvil';
 			}
 		}
-		#if EXTRA_WATERMARKS
 		var imagePath = Paths.image('preloaders/funkay');
-		#else
-		var imagePath = Paths.image('preloaders/funkayCooler');
-		#end
 		var imageSuffix = (PlayState.isStoryMode ? '-story' : '');
 		if (Assets.exists(Paths.getPath('images/preloaders/${curStage + imageSuffix}.png', IMAGE))) {
 			imagePath = Paths.image('preloaders/${curStage + imageSuffix}');
