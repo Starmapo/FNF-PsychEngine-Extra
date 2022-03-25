@@ -15,10 +15,10 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 
 		var option:Option = new Option('Game Quality:',
 			'How much detail should the game have?',
-			'stageQuality',
+			'gameQuality',
 			'string',
 			'Normal',
-			['Low', 'Crappy', 'Normal']);
+			['Crappy', 'Low', 'Normal']);
 		addOption(option);
 
 		var option:Option = new Option('Anti-Aliasing',

@@ -477,7 +477,7 @@ class PlayState extends MusicBeatState
 			dadGroup = new FlxTypedSpriteGroup(DAD_X, DAD_Y);
 			gfGroup = new FlxTypedSpriteGroup(GF_X, GF_Y);
 
-			if (ClientPrefs.stageQuality != 'Crappy') {
+			if (ClientPrefs.gameQuality != 'Crappy') {
 				switch (curStage)
 				{
 					case 'stage': //Week 1
@@ -489,7 +489,7 @@ class PlayState extends MusicBeatState
 						stageFront.updateHitbox();
 						add(stageFront);
 
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							var stageLight:BGSprite = new BGSprite('stage_light', -125, -100, 0.9, 0.9);
 							stageLight.setGraphicSize(Std.int(stageLight.width * 1.1));
 							stageLight.updateHitbox();
@@ -507,7 +507,7 @@ class PlayState extends MusicBeatState
 						}
 
 					case 'spooky': //Week 2
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							halloweenBG = new BGSprite('halloween_bg', -200, -100, ['halloweem bg0', 'halloweem bg lightning strike']);
 						} else {
 							halloweenBG = new BGSprite('halloween_bg_low', -200, -100);
@@ -524,7 +524,7 @@ class PlayState extends MusicBeatState
 						CoolUtil.precacheSound('thunder_2');
 
 					case 'philly': //Week 3
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							var bg:BGSprite = new BGSprite('philly/sky', -100, 0, 0.1, 0.1);
 							add(bg);
 						}
@@ -546,7 +546,7 @@ class PlayState extends MusicBeatState
 							phillyCityLights.add(light);
 						}
 
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							var streetBehind:BGSprite = new BGSprite('philly/behindTrain', -40, 50);
 							add(streetBehind);
 						}
@@ -565,7 +565,7 @@ class PlayState extends MusicBeatState
 						var skyBG:BGSprite = new BGSprite('limo/limoSunset', -120, -50, 0.1, 0.1);
 						add(skyBG);
 
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							limoMetalPole = new BGSprite('gore/metalPole', -500, 220, 0.4, 0.4);
 							add(limoMetalPole);
 
@@ -616,7 +616,7 @@ class PlayState extends MusicBeatState
 						bg.updateHitbox();
 						add(bg);
 
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							upperBoppers = new BGSprite('christmas/upperBop', -240, -90, 0.33, 0.33, ['Upper Crowd Bob']);
 							upperBoppers.setGraphicSize(Std.int(upperBoppers.width * 0.85));
 							upperBoppers.updateHitbox();
@@ -677,7 +677,7 @@ class PlayState extends MusicBeatState
 						bgStreet.antialiasing = false;
 
 						var widShit = Std.int(bgSky.width * 6);
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							var fgTrees:BGSprite = new BGSprite('weeb/weebTreesBack', repositionShit + 170, 130, 0.9, 0.9);
 							fgTrees.setGraphicSize(Std.int(widShit * 0.8));
 							fgTrees.updateHitbox();
@@ -693,7 +693,7 @@ class PlayState extends MusicBeatState
 						add(bgTrees);
 						bgTrees.antialiasing = false;
 
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							var treeLeaves:BGSprite = new BGSprite('weeb/petals', repositionShit, -40, 0.85, 0.85, ['PETALS ALL'], true);
 							treeLeaves.setGraphicSize(widShit);
 							treeLeaves.updateHitbox();
@@ -711,7 +711,7 @@ class PlayState extends MusicBeatState
 						bgStreet.updateHitbox();
 						bgTrees.updateHitbox();
 
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							bgGirls = new BackgroundGirls(-100, 190);
 							bgGirls.scrollFactor.set(0.9, 0.9);
 
@@ -728,7 +728,7 @@ class PlayState extends MusicBeatState
 
 						var posX = 400;
 						var posY = 200;
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							var bg:BGSprite = new BGSprite('weeb/animatedEvilSchool', posX, posY, 0.8, 0.9, ['background 2'], true);
 							bg.scale.set(6, 6);
 							bg.antialiasing = false;
@@ -752,13 +752,13 @@ class PlayState extends MusicBeatState
 			add(gfGroup); //Needed for blammed lights
 
 			// Shitty layering but whatev it works LOL
-			if (curStage == 'limo' && ClientPrefs.stageQuality != 'Crappy')
+			if (curStage == 'limo' && ClientPrefs.gameQuality != 'Crappy')
 				add(limo);
 
 			add(dadGroup);
 			add(boyfriendGroup);
 			
-			if (curStage == 'spooky' && ClientPrefs.stageQuality != 'Crappy') {
+			if (curStage == 'spooky' && ClientPrefs.gameQuality != 'Crappy') {
 				add(halloweenWhite);
 			}
 
@@ -768,7 +768,7 @@ class PlayState extends MusicBeatState
 			add(luaDebugGroup);
 			#end
 
-			if (curStage == 'philly' && ClientPrefs.stageQuality != 'Crappy') {
+			if (curStage == 'philly' && ClientPrefs.gameQuality != 'Crappy') {
 				phillyCityLightsEvent = new FlxTypedGroup<BGSprite>();
 				for (i in 0...5)
 				{
@@ -810,7 +810,7 @@ class PlayState extends MusicBeatState
 			
 			// STAGE SCRIPTS
 			#if (MODS_ALLOWED && LUA_ALLOWED)
-			if (ClientPrefs.stageQuality != 'Crappy') {
+			if (ClientPrefs.gameQuality != 'Crappy') {
 				var doPush:Bool = false;
 				var luaFile:String = 'stages/$curStage.lua';
 				if (FileSystem.exists(Paths.modFolders(luaFile))) {
@@ -828,7 +828,7 @@ class PlayState extends MusicBeatState
 			}
 			#end
 
-			if (ClientPrefs.stageQuality != 'Crappy') {
+			if (ClientPrefs.gameQuality != 'Crappy') {
 				if (!modchartSprites.exists('blammedLightsBlack')) { //Creates blammed light black fade in case you didn't make your own
 					blammedLightsBlack = new ModchartSprite(FlxG.width * -0.5, FlxG.height * -0.5);
 					blammedLightsBlack.makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
@@ -920,7 +920,7 @@ class PlayState extends MusicBeatState
 					gf.visible = false;
 			}
 
-			if (ClientPrefs.stageQuality != 'Crappy') {
+			if (ClientPrefs.gameQuality != 'Crappy') {
 				switch(curStage)
 				{
 					case 'limo':
@@ -1330,7 +1330,7 @@ class PlayState extends MusicBeatState
 							remove(blackScreen);
 						}
 					});
-					if (ClientPrefs.stageQuality != 'Crappy') {
+					if (ClientPrefs.gameQuality != 'Crappy') {
 						camHUD.visible = false;
 						inCutscene = true;
 
@@ -1788,8 +1788,8 @@ class PlayState extends MusicBeatState
 						}
 
 						// head bopping for bg characters on Mall
-						if (curStage == 'mall' && ClientPrefs.stageQuality != 'Crappy') {
-							if (ClientPrefs.stageQuality == 'Normal')
+						if (curStage == 'mall' && ClientPrefs.gameQuality != 'Crappy') {
+							if (ClientPrefs.gameQuality == 'Normal')
 								upperBoppers.dance(true);
 			
 							bottomBoppers.dance(true);
@@ -2602,11 +2602,11 @@ class PlayState extends MusicBeatState
 				iconP1.swapOldIcon();
 			}
 
-			if (ClientPrefs.stageQuality != 'Crappy') {
+			if (ClientPrefs.gameQuality != 'Crappy') {
 				switch (curStage)
 				{
 					case 'schoolEvil':
-						if (ClientPrefs.stageQuality == 'Normal' && bgGhouls.animation.curAnim.finished) {
+						if (ClientPrefs.gameQuality == 'Normal' && bgGhouls.animation.curAnim.finished) {
 							bgGhouls.visible = false;
 						}
 					case 'philly':
@@ -2622,7 +2622,7 @@ class PlayState extends MusicBeatState
 						}
 						phillyCityLights.members[curLight].alpha -= (Conductor.crochet / 1000) * FlxG.elapsed * 1.5;
 					case 'limo':
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							grpLimoParticles.forEach(function(spr:BGSprite) {
 								if (spr.animation.curAnim.finished) {
 									spr.kill();
@@ -3259,7 +3259,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 
-					if (curStage == 'mall' && ClientPrefs.stageQuality != 'Crappy') {
+					if (curStage == 'mall' && ClientPrefs.gameQuality != 'Crappy') {
 						bottomBoppers.animation.play('hey', true);
 						heyTimer = time;
 					}
@@ -3304,7 +3304,7 @@ class PlayState extends MusicBeatState
 					}
 					curLightEvent = lightId;
 
-					if (ClientPrefs.stageQuality != 'Crappy' && blammedLightsBlack.alpha == 0) {
+					if (ClientPrefs.gameQuality != 'Crappy' && blammedLightsBlack.alpha == 0) {
 						if (blammedLightsBlackTween != null) {
 							blammedLightsBlackTween.cancel();
 						}
@@ -3345,7 +3345,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 					
-					if (curStage == 'philly' && ClientPrefs.stageQuality != 'Crappy') {
+					if (curStage == 'philly' && ClientPrefs.gameQuality != 'Crappy') {
 						if (phillyCityLightsEvent != null) {
 							phillyCityLightsEvent.forEach(function(spr:BGSprite) {
 								spr.visible = false;
@@ -3355,7 +3355,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 				} else {
-					if (ClientPrefs.stageQuality != 'Crappy' && blammedLightsBlack.alpha != 0) {
+					if (ClientPrefs.gameQuality != 'Crappy' && blammedLightsBlack.alpha != 0) {
 						if (blammedLightsBlackTween != null) {
 							blammedLightsBlackTween.cancel();
 						}
@@ -3366,7 +3366,7 @@ class PlayState extends MusicBeatState
 						});
 					}
 
-					if (curStage == 'philly' && ClientPrefs.stageQuality != 'Crappy') {
+					if (curStage == 'philly' && ClientPrefs.gameQuality != 'Crappy') {
 						phillyCityLights.forEach(function(spr:BGSprite) {
 							spr.visible = false;
 						});
@@ -3418,7 +3418,7 @@ class PlayState extends MusicBeatState
 				}
 
 			case 'Trigger BG Ghouls':
-				if (curStage == 'schoolEvil' && ClientPrefs.stageQuality == 'Normal') {
+				if (curStage == 'schoolEvil' && ClientPrefs.gameQuality == 'Normal') {
 					bgGhouls.dance(true);
 					bgGhouls.visible = true;
 				}
@@ -4732,7 +4732,7 @@ class PlayState extends MusicBeatState
 	function lightningStrikeShit():Void
 	{
 		FlxG.sound.play(Paths.soundRandom('thunder_', 1, 2));
-		if (ClientPrefs.stageQuality == 'Normal') halloweenBG.animation.play('halloweem bg lightning strike');
+		if (ClientPrefs.gameQuality == 'Normal') halloweenBG.animation.play('halloweem bg lightning strike');
 
 		lightningStrikeBeat = curBeat;
 		lightningOffset = FlxG.random.int(8, 24);
@@ -4765,7 +4765,7 @@ class PlayState extends MusicBeatState
 
 	function killHenchmen():Void
 	{
-		if (ClientPrefs.stageQuality == 'Normal' && curStage == 'limo') {
+		if (ClientPrefs.gameQuality == 'Normal' && curStage == 'limo') {
 			if (limoKillingState < 1) {
 				limoMetalPole.x = -400;
 				limoMetalPole.visible = true;
@@ -4933,16 +4933,16 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			if (ClientPrefs.stageQuality != 'Crappy') {
+			if (ClientPrefs.gameQuality != 'Crappy') {
 				switch (curStage)
 				{
 					case 'school':
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							bgGirls.dance();
 						}
 
 					case 'mall':
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							upperBoppers.dance(true);
 						}
 
@@ -4950,7 +4950,7 @@ class PlayState extends MusicBeatState
 						santa.dance(true);
 
 					case 'limo':
-						if (ClientPrefs.stageQuality == 'Normal') {
+						if (ClientPrefs.gameQuality == 'Normal') {
 							grpLimoDancers.forEach(function(dancer:BackgroundDancer)
 							{
 								dancer.dance();
@@ -4984,7 +4984,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			if (curStage == 'spooky' && FlxG.random.bool(10) && curBeat > lightningStrikeBeat + lightningOffset && ClientPrefs.stageQuality != 'Crappy')
+			if (curStage == 'spooky' && FlxG.random.bool(10) && curBeat > lightningStrikeBeat + lightningOffset && ClientPrefs.gameQuality != 'Crappy')
 			{
 				lightningStrikeShit();
 			}
@@ -5306,7 +5306,7 @@ class PlayState extends MusicBeatState
 							}
 						}
 					case 'toastie':
-						if (ClientPrefs.stageQuality != 'Normal' && !ClientPrefs.globalAntialiasing) {
+						if (ClientPrefs.gameQuality != 'Normal' && !ClientPrefs.globalAntialiasing) {
 							unlock = true;
 						}
 					case 'debugger':

@@ -12,7 +12,7 @@ class ClientPrefs {
 	public static var globalAntialiasing:Bool = true;
 	public static var noteSplashes:Bool = true;
 	public static var noteSplashesOpponent:Bool = false;
-	public static var stageQuality:String = 'Normal';
+	public static var gameQuality:String = 'Normal';
 	public static var framerate:Int = 60;
 	public static var camZooms:Bool = true;
 	public static var hideHud:Bool = false;
@@ -209,7 +209,7 @@ class ClientPrefs {
 		FlxG.save.data.globalAntialiasing = globalAntialiasing;
 		FlxG.save.data.noteSplashes = noteSplashes;
 		FlxG.save.data.noteSplashesOpponent = noteSplashesOpponent;
-		FlxG.save.data.stageQuality = stageQuality;
+		FlxG.save.data.gameQuality = gameQuality;
 		FlxG.save.data.framerate = framerate;
 		FlxG.save.data.camZooms = camZooms;
 		FlxG.save.data.noteOffset = noteOffset;
@@ -274,10 +274,10 @@ class ClientPrefs {
 		if (FlxG.save.data.noteSplashesOpponent != null) {
 			noteSplashesOpponent = FlxG.save.data.noteSplashesOpponent;
 		}
-		if (FlxG.save.data.stageQuality != null) {
-			stageQuality = FlxG.save.data.stageQuality;
+		if (FlxG.save.data.gameQuality != null) {
+			gameQuality = FlxG.save.data.gameQuality;
 		} else if (FlxG.save.data.lowQuality != null) {
-			stageQuality = (FlxG.save.data.lowQuality ? 'Low' : 'Normal');
+			gameQuality = (FlxG.save.data.lowQuality ? 'Low' : 'Normal');
 		}
 		if (FlxG.save.data.framerate != null) {
 			framerate = FlxG.save.data.framerate;

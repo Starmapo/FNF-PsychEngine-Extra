@@ -181,11 +181,11 @@ class FunkinLua {
 		set('noteOffset', ClientPrefs.noteOffset);
 		set('healthBarAlpha', ClientPrefs.healthBarAlpha);
 		set('noResetButton', ClientPrefs.noReset);
-		set('stageQuality', ClientPrefs.stageQuality);
+		set('gameQuality', ClientPrefs.gameQuality);
 		set('instantRestart', ClientPrefs.instantRestart);
 
 		//FOR COMPATIBILITY REASONS
-		set('lowQuality', ClientPrefs.stageQuality != 'Normal');
+		set('lowQuality', ClientPrefs.gameQuality != 'Normal');
 
 		#if windows
 		set('buildTarget', 'windows');
