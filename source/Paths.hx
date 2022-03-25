@@ -5,6 +5,10 @@ import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import haxe.io.Path;
+import lime.app.Promise;
+import lime.app.Future;
+import lime.utils.AssetLibrary;
+import lime.utils.AssetManifest;
 import lime.utils.Assets;
 import openfl.display.BitmapData;
 import openfl.system.System;
@@ -105,6 +109,70 @@ class Paths
 		#if PRELOAD_ALL
 		OpenFlAssets.cache.clear("songs");
 		#end
+	}
+
+	static public function loadLibraryManifest(id:String = 'songs'):Future<AssetLibrary> {
+		var promise = new Promise<AssetLibrary>();
+
+		var library = Assets.getLibrary(id);
+
+		if (library != null)
+		{
+			return Future.withValue(library);
+		}
+
+		var path = id;
+		var rootPath = null;
+
+		@:privateAccess
+		var libraryPaths = Assets.libraryPaths;
+		if (libraryPaths.exists(id))
+		{
+			path = libraryPaths[id];
+			rootPath = Path.directory(path);
+		}
+		else
+		{
+			if (StringTools.endsWith(path, ".bundle"))
+			{
+				rootPath = path;
+				path += "/library.json";
+			}
+			else
+			{
+				rootPath = Path.directory(path);
+			}
+			@:privateAccess
+			path = Assets.__cacheBreak(path);
+		}
+
+		AssetManifest.loadFromFile(path, rootPath).onComplete(function(manifest)
+		{
+			if (manifest == null)
+			{
+				promise.error('Cannot parse asset manifest for library "$id"');
+				return;
+			}
+
+			var library = AssetLibrary.fromManifest(manifest);
+
+			if (library == null)
+			{
+				promise.error('Cannot open library "$id"');
+			}
+			else
+			{
+				@:privateAccess
+				Assets.libraries.set(id, library);
+				library.onChange.add(Assets.onChange.dispatch);
+				promise.completeWith(Future.withValue(library));
+			}
+		}).onError(function(_)
+		{
+			promise.error('There is no asset library with an ID of "$id"');
+		});
+
+		return promise.future;
 	}
 
 	static public var currentModDirectory:String = '';

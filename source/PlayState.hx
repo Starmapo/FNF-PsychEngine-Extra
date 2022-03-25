@@ -128,7 +128,7 @@ class PlayState extends MusicBeatState
 	public var grpNoteSplashes:FlxTypedGroup<NoteSplash>;
 
 	public var camZooming:Bool = false;
-	public var camBop:Bool = true;
+	public var camBop:Bool = false;
 	private var curSong:String = "";
 
 	public var health:Float = 1;
@@ -177,7 +177,7 @@ class PlayState extends MusicBeatState
 	public var cameraSpeed:Float = 1;
 	public var iconBopSpeed:Int = 1;
 
-	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
+	var dialogue:Array<String> = null;
 	var dialogueJson:DialogueFile = null;
 
 	var halloweenBG:BGSprite;
@@ -2064,7 +2064,9 @@ class PlayState extends MusicBeatState
 							value1: newEventNote[2],
 							value2: newEventNote[3]
 						};
+						trace(event[0], subEvent.strumTime);
 						subEvent.strumTime -= eventNoteEarlyTrigger(subEvent);
+						trace(event[0], subEvent.strumTime);
 						eventNotes.push(subEvent);
 						eventPushed(subEvent);
 					}
@@ -4910,7 +4912,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if (!inEditor) {
-			if (camBop && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curNumeratorBeat % Conductor.numerator == 0)
+			if (camZooming && camBop && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curNumeratorBeat % Conductor.numerator == 0)
 			{
 				FlxG.camera.zoom += 0.015;
 				camHUD.zoom += 0.03;

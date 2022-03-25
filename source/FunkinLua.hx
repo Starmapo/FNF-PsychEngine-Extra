@@ -35,7 +35,7 @@ import Discord;
 using StringTools;
 
 class FunkinLua {
-	#if windows
+	#if (windows || html5)
 	public static var Function_Stop:Dynamic = 1;
 	public static var Function_Continue:Dynamic = 0;
 	#else

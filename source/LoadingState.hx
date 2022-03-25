@@ -1,19 +1,12 @@
 package;
 
-import lime.app.Promise;
-import lime.app.Future;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.util.FlxTimer;
 import flixel.math.FlxMath;
-
 import openfl.utils.Assets;
 import lime.utils.Assets as LimeAssets;
-import lime.utils.AssetLibrary;
-import lime.utils.AssetManifest;
-
-import haxe.io.Path;
 
 class LoadingState extends MusicBeatState
 {
@@ -99,7 +92,7 @@ class LoadingState extends MusicBeatState
 		loadBar.antialiasing = ClientPrefs.globalAntialiasing;
 		add(loadBar);
 		
-		initSongsManifest().onComplete
+		Paths.loadLibraryManifest('songs').onComplete
 		(
 			function (lib)
 			{
@@ -236,72 +229,6 @@ class LoadingState extends MusicBeatState
 		super.destroy();
 		
 		callbacks = null;
-	}
-	
-	static function initSongsManifest()
-	{
-		var id = "songs";
-		var promise = new Promise<AssetLibrary>();
-
-		var library = LimeAssets.getLibrary(id);
-
-		if (library != null)
-		{
-			return Future.withValue(library);
-		}
-
-		var path = id;
-		var rootPath = null;
-
-		@:privateAccess
-		var libraryPaths = LimeAssets.libraryPaths;
-		if (libraryPaths.exists(id))
-		{
-			path = libraryPaths[id];
-			rootPath = Path.directory(path);
-		}
-		else
-		{
-			if (StringTools.endsWith(path, ".bundle"))
-			{
-				rootPath = path;
-				path += "/library.json";
-			}
-			else
-			{
-				rootPath = Path.directory(path);
-			}
-			@:privateAccess
-			path = LimeAssets.__cacheBreak(path);
-		}
-
-		AssetManifest.loadFromFile(path, rootPath).onComplete(function(manifest)
-		{
-			if (manifest == null)
-			{
-				promise.error('Cannot parse asset manifest for library "$id"');
-				return;
-			}
-
-			var library = AssetLibrary.fromManifest(manifest);
-
-			if (library == null)
-			{
-				promise.error('Cannot open library "$id"');
-			}
-			else
-			{
-				@:privateAccess
-				LimeAssets.libraries.set(id, library);
-				library.onChange.add(LimeAssets.onChange.dispatch);
-				promise.completeWith(Future.withValue(library));
-			}
-		}).onError(function(_)
-		{
-			promise.error('There is no asset library with an ID of "$id"');
-		});
-
-		return promise.future;
 	}
 }
 
