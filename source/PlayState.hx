@@ -2064,9 +2064,7 @@ class PlayState extends MusicBeatState
 							value1: newEventNote[2],
 							value2: newEventNote[3]
 						};
-						trace(event[0], subEvent.strumTime);
 						subEvent.strumTime -= eventNoteEarlyTrigger(subEvent);
-						trace(event[0], subEvent.strumTime);
 						eventNotes.push(subEvent);
 						eventPushed(subEvent);
 					}
@@ -2230,7 +2228,7 @@ class PlayState extends MusicBeatState
 	}
 
 	function eventNoteEarlyTrigger(event:EventNote):Float {
-		var returnedValue:Float = callOnLuas('eventEarlyTrigger', [event.event]);
+		var returnedValue:Dynamic = callOnLuas('eventEarlyTrigger', [event.event]);
 		if (returnedValue != 0) {
 			return returnedValue;
 		}
