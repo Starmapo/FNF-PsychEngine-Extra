@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxSubState;
 
 class MusicBeatSubstate extends FlxSubState
@@ -29,6 +30,9 @@ class MusicBeatSubstate extends FlxSubState
 		if (oldStep != curStep && curStep >= 0)
 			stepHit();
 
+		if (!FlxG.state.persistentUpdate && FreeplayState.instPlaying > -1) {
+			FreeplayState.setSongStuff();
+		}
 
 		super.update(elapsed);
 	}

@@ -13,7 +13,7 @@ using StringTools;
 
 class NotesState extends MusicBeatState
 {
-	private static var curSelected:Int = 0;
+	var curSelected:Int = 0;
 	private static var typeSelected:Int = 0;
 	private var grpNumbers:FlxTypedGroup<Alphabet>;
 	private var grpNotes:FlxTypedGroup<FlxSprite>;
@@ -27,7 +27,6 @@ class NotesState extends MusicBeatState
 	var blackBG:FlxSprite;
 	var hsbText:Alphabet;
 
-	private var camGame:FlxCamera;
 	var camFollow:FlxObject;
 	var camFollowPos:FlxObject;
 
@@ -40,16 +39,8 @@ class NotesState extends MusicBeatState
 
 	override function create()
 	{
-		camGame = new FlxCamera();
-		FlxG.cameras.reset(camGame);
-		FlxG.camera.zoom = 0.9;
-		
-		var scr:Float = Math.max(currentData.length - 4, 0) * 0.135 - (0.1 * Math.max(currentData.length - 11, 0));
-
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xFFea71fd;
-		bg.setGraphicSize(Std.int(bg.width * 1.175));
-		bg.updateHitbox();
 		bg.screenCenter();
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		bg.scrollFactor.set();

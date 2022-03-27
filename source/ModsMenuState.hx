@@ -42,7 +42,7 @@ class ModsMenuState extends MusicBeatState
 	var buttonToggle:FlxButton;
 	var buttonsArray:Array<FlxButton> = [];
 
-	var modsList:Array<Dynamic> = [];
+	var modsList:Array<Array<Dynamic>> = [];
 
 	var visibleWhenNoMods:Array<FlxBasic> = [];
 	var visibleWhenHasMods:Array<FlxBasic> = [];
@@ -243,7 +243,7 @@ class ModsMenuState extends MusicBeatState
 		var len:Int = modsList.length;
 		while (i < modsList.length)
 		{
-			var values:Array<Dynamic> = modsList[i];
+			var values = modsList[i];
 			if (!FileSystem.exists(Paths.mods(values[0])))
 			{
 				modsList.remove(modsList[i]);
@@ -347,7 +347,7 @@ class ModsMenuState extends MusicBeatState
 			}
 			else
 			{
-				var lastArray:Array<Dynamic> = modsList[curSelected];
+				var lastArray = modsList[curSelected];
 				modsList[curSelected] = modsList[newPos];
 				modsList[newPos] = lastArray;
 
@@ -396,6 +396,9 @@ class ModsMenuState extends MusicBeatState
 			saveTxt();
 			if (needaReset) {
 				Paths.currentTrackedAssets.clear();
+				#if PRELOAD_ALL
+				FreeplayState.destroyFreeplayVocals();
+				#end
 				TitleState.initialized = false;
 				TitleState.closedState = false;
 				FlxG.sound.music.fadeOut(0.3);

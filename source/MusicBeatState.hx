@@ -1,9 +1,9 @@
 package;
 
 import flixel.FlxG;
-import flixel.addons.ui.FlxUIState;
-import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxState;
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.ui.FlxUIState;
 
 class MusicBeatState extends FlxUIState
 {
@@ -55,6 +55,9 @@ class MusicBeatState extends FlxUIState
 
 		if (FlxG.save.data != null) FlxG.save.data.fullscreen = FlxG.fullscreen;
 
+		if (FreeplayState.instPlaying > -1) {
+			FreeplayState.setSongStuff();
+		}
 		super.update(elapsed);
 	}
 

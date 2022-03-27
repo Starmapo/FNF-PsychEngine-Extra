@@ -119,12 +119,12 @@ class MasterEditorMenu extends MusicBeatState
 					LoadingState.loadAndSwitchState(new SkinEditorState());
 				case 'Dialogue Portrait Editor':
 					PlayState.SONG = null;
-					LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
+					LoadingState.loadAndSwitchState(new DialogueCharacterEditorState());
 				case 'Dialogue Editor':
 					PlayState.SONG = null;
-					LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
+					LoadingState.loadAndSwitchState(new DialogueEditorState());
 				case 'Chart Editor'://felt it would be cool maybe
-					LoadingState.loadAndSwitchState(new ChartingState(true), false);
+					LoadingState.loadAndSwitchState(new ChartingState(true));
 			}
 			FlxG.sound.music.volume = 0;
 			#if PRELOAD_ALL

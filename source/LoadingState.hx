@@ -152,8 +152,11 @@ class LoadingState extends MusicBeatState
 	
 	function onLoad()
 	{
-		if (stopMusic && FlxG.sound.music != null)
-			FlxG.sound.music.stop();
+		if (stopMusic) {
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.stop();
+			FreeplayState.instPlaying = -1;
+		}
 		
 		MusicBeatState.switchState(target);
 	}

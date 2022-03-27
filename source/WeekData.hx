@@ -1,20 +1,21 @@
 package;
 
-#if MODS_ALLOWED
-import sys.io.File;
-import sys.FileSystem;
-#end
-import lime.utils.Assets;
-import openfl.utils.Assets as OpenFlAssets;
 import haxe.Json;
 import haxe.io.Path;
+#if MODS_ALLOWED
+import sys.FileSystem;
+import sys.io.File;
+#else
+import lime.utils.Assets;
+import openfl.utils.Assets as OpenFlAssets;
+#end
 
 using StringTools;
 
 typedef WeekFile =
 {
 	// JSON variables
-	var songs:Array<Dynamic>;
+	var songs:Array<Array<Dynamic>>;
 	var weekCharacters:Array<String>;
 	var weekBackground:String;
 	var weekBefore:String;
@@ -33,7 +34,7 @@ class WeekData {
 	public var folder:String = '';
 	
 	// JSON variables
-	public var songs:Array<Dynamic>;
+	public var songs:Array<Array<Dynamic>>;
 	public var weekCharacters:Array<String>;
 	public var weekBackground:String;
 	public var weekBefore:String;

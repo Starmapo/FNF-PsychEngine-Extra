@@ -37,10 +37,12 @@ class Conductor
 	public static var bpmChangeMap:Array<BPMChangeEvent> = [];
 	public static var signatureChangeMap:Array<SignatureChangeEvent> = [];
 
-	public function new()
-	{
-	}
-
+	/**
+	 * Gives a rating based on how close you were to hitting a note in milliseconds.
+	 *
+	 * @param	diff	Difference from the note's strum time to when you actually hit it.
+	 * @return	Rating of the note ('Sick', 'Good', 'Bad', or 'Shit')
+	 */
 	public static function judgeNote(diff:Float = 0) //STOLEN FROM KADE ENGINE (bbpanzu) - I had to rewrite it later anyway after i added the custom hit windows lmao (Shadow Mario)
 	{
 		//tryna do MS based judgment due to popular demand
@@ -56,7 +58,14 @@ class Conductor
 		}
 		return 'shit';
 	}
-	public static function mapBPMChanges(song:SwagSong, ?mult:Float = 1)
+
+	/**
+	 * Creates a new `bpmChangeMap` and `signatureChangeMap` from the inputted song.
+	 *
+	 * @param	song	Song to take the BPM and time signature changes from.
+	 * @param	mult	Optional multiplier for the BPMs, used for playback rates.
+	 */
+	public static function mapBPMChanges(song:SwagSong, mult:Float = 1)
 	{
 		bpmChangeMap = [];
 		signatureChangeMap = [];
@@ -97,7 +106,13 @@ class Conductor
 		}
 	}
 
-	public static function changeBPM(newBpm:Float, ?mult:Float = 1)
+	/**
+	 * Changes the Conductor's BPM.
+	 *
+	 * @param	newBpm	The BPM to change to.
+	 * @param   mult    Optional multiplier for the BPM, used for playback rates.
+	 */
+	public static function changeBPM(newBpm:Float, mult:Float = 1)
 	{
 		if (newBpm > 0) {
 			bpm = newBpm * mult;
@@ -107,16 +122,31 @@ class Conductor
 		}
 	}
 
+	/**
+	 * Changes the Conductor's time signature.
+	 *
+	 * @param	newNumerator	The numerator (beats per section) to change to.
+	 * @param   newDenominator	The denominator (step length, 4 means 1/4 of a whole note) to change to.
+	 */
 	public static function changeSignature(newNumerator:Int, newDenominator:Int)
 	{
-		numerator = newNumerator;
-		denominator = newDenominator;
+		if (newNumerator > 0 && newDenominator > 0) {
+			numerator = newNumerator;
+			denominator = newDenominator;
 
-		crochet = ((60 / bpm) * 4000) / denominator;
-		stepCrochet = crochet / 4;
+			crochet = ((60 / bpm) * 4000) / denominator;
+			stepCrochet = crochet / 4;
+		}
 	}
 
-	public static function getLastBPM(song:SwagSong, step:Int, ?mult:Float = 1) {
+	/**
+	 * Gets the latest BPM and time signature based on the current step and changes the Conductor values if necessary.
+	 *
+	 * @param	song	Song to take the BPM and time signature changes from.
+	 * @param   step	The current step of the song.
+	 * @param	mult	Optional multiplier for the BPMs, used for playback rates.
+	 */
+	public static function getLastBPM(song:SwagSong, step:Int, mult:Float = 1) {
 		var daBPM:Float = song.bpm * mult;
 		var daNumerator:Int = song.numerator;
 		var daDenominator:Int = song.denominator;
@@ -137,9 +167,16 @@ class Conductor
 			changeSignature(daNumerator, daDenominator);
 	}
 
+	/**
+	 * Gets the current section of a song based on the current step.
+	 *
+	 * @param	song	Song to take the BPM and time signature changes from.
+	 * @param   step	The current step of the song.
+	 * @return	The current section of the song.
+	 */
 	public static function getCurSection(song:SwagSong, step:Int):Int {
 		//every time i try to optimize this it just fucking stops working
-		if (step < 0) {
+		if (step <= 0) {
 			return 0;
 		}
 		var daNumerator:Int = song.numerator;
@@ -160,6 +197,13 @@ class Conductor
 		return FlxMath.maxInt(daPos, 0);
 	}
 
+	/**
+	 * Gets the current beat of a song, starting from the last numerator change. Used for camera bopping
+	 *
+	 * @param	song	Song to take the BPM and time signature changes from.
+	 * @param   beat	The current beat of the song.
+	 * @return	The current beat of the song, starting from the last numerator change.
+	 */
 	public static function getCurNumeratorBeat(song:SwagSong, beat:Int):Int {
 		var lastBeat = 0;
 		var daBeat = 0;

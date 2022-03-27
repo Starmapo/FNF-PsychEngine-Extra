@@ -15,7 +15,7 @@ class ControlsSubState extends MusicBeatSubstate {
 	private static var defaultKey:String = 'Reset to Default Keys';
 	private var bindLength:Int = 0;
 
-	var optionShit:Array<Dynamic> = [
+	var optionShit:Array<Array<String>> = [
 		['NOTES (1K)'],
 		['Center', 'note1_0'],
 		[''],
@@ -309,9 +309,8 @@ class ControlsSubState extends MusicBeatSubstate {
 
 		for (item in grpOptions.members) {
 			item.targetY = bullShit - curSelected;
-			bullShit++;
 
-			if (!unselectableCheck(bullShit-1)) {
+			if (!unselectableCheck(bullShit)) {
 				item.alpha = 0.6;
 				if (item.targetY == 0) {
 					item.alpha = 1;
@@ -332,6 +331,8 @@ class ControlsSubState extends MusicBeatSubstate {
 					}
 				}
 			}
+
+			bullShit++;
 		}
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 	}
@@ -367,7 +368,7 @@ class ControlsSubState extends MusicBeatSubstate {
 	}
 
 	private function addBindTexts(optionText:Alphabet, num:Int) {
-		var keys:Array<Dynamic> = ClientPrefs.keyBinds.get(optionShit[num][1]);
+		var keys = ClientPrefs.keyBinds.get(optionShit[num][1]);
 		var text1 = new AttachedText(InputFormatter.getKeyName(keys[0]), 400, -55);
 		text1.setPosition(optionText.x + 400, optionText.y - 55);
 		text1.sprTracker = optionText;

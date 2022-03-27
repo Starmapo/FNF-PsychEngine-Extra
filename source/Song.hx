@@ -15,7 +15,7 @@ typedef SwagSong =
 {
 	var song:String;
 	var notes:Array<SwagSection>;
-	var events:Array<Dynamic>;
+	var events:Array<Array<Dynamic>>;
 	var bpm:Float;
 	var needsVoices:Bool;
 	var speed:Float;
@@ -64,11 +64,11 @@ class Song
 				var sec:SwagSection = songJson.notes[secNum];
 
 				var i:Int = 0;
-				var notes:Array<Dynamic> = sec.sectionNotes;
+				var notes = sec.sectionNotes;
 				var len:Int = notes.length;
 				while(i < len)
 				{
-					var note:Array<Dynamic> = notes[i];
+					var note = notes[i];
 					if (note[1] < 0)
 					{
 						songJson.events.push([note[0], [[note[2], note[3], note[4]]]]);
@@ -112,11 +112,11 @@ class Song
 			if (sec.playerKeys == null) sec.playerKeys = songJson.playerKeyAmount;
 			if (sec.opponentKeys == null) sec.opponentKeys = songJson.opponentKeyAmount;
 			var i:Int = 0;
-			var notes:Array<Dynamic> = sec.sectionNotes;
+			var notes = sec.sectionNotes;
 			var len:Int = notes.length;
 			while(i < len)
 			{
-				var note:Array<Dynamic> = notes[i];
+				var note = notes[i];
 				if (note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
 				else if (note[3] == null) note[3] = '';
 				if (note[4] == null || note[4].length < 1) note[4] = [0];

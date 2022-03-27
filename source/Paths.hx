@@ -300,14 +300,14 @@ class Paths
 		return file;
 	}
 
-	inline static public function voices(song:String, ?suffix:String = ''):Any
+	inline static public function voices(song:String, ?suffix:String = ''):Sound
 	{
 		var songKey:String = '${song.toLowerCase().replace(' ', '-')}';
 		var voices = returnSound(songKey, 'Voices$suffix', 'songs');
 		return voices;
 	}
 
-	inline static public function inst(song:String, ?suffix:String = ''):Any
+	inline static public function inst(song:String, ?suffix:String = ''):Sound
 	{
 		var songKey:String = '${song.toLowerCase().replace(' ', '-')}';
 		var inst = returnSound(songKey, 'Inst$suffix', 'songs');
@@ -359,7 +359,7 @@ class Paths
 		return false;
 	}
 
-	inline static public function getSparrowAtlas(key:String, ?library:String):FlxAtlasFrames
+	inline static public function getSparrowAtlas(key:String, ?library:String)
 	{
 		#if MODS_ALLOWED
 		var imageLoaded:FlxGraphic = returnGraphic(key);
@@ -389,7 +389,7 @@ class Paths
 		#end
 	}
 
-	inline static public function getTexturePackerAtlas(key:String, ?library:String):FlxAtlasFrames
+	inline static public function getTexturePackerAtlas(key:String, ?library:String)
 	{
 		#if MODS_ALLOWED
 		var imageLoaded:FlxGraphic = returnGraphic(key);

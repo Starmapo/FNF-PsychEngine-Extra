@@ -11,6 +11,7 @@ import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.ui.FlxUI;
 import flixel.addons.ui.FlxUICheckBox;
+import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUITabMenu;
@@ -61,7 +62,7 @@ class ChartingState extends MusicBeatState
 	public var ignoreWarnings = false;
 	var undos = [];
 	var redos = [];
-	var eventStuff:Array<Dynamic> =
+	var eventStuff:Array<Array<String>> =
 	[
 		['', "Nothing. Yep, that's right."],
 		['Hey!', "Plays the \"Hey!\" animation from Bopeebo,\nValue 1: BF = Only Boyfriend, GF = Only Girlfriend,\nSomething else = Both.\nValue 2: Custom animation duration,\nleave it blank for 0.6s"],
@@ -157,7 +158,7 @@ class ChartingState extends MusicBeatState
 
 	private var blockPressWhileTypingOn:Array<FlxUIInputText> = [];
 	private var blockPressWhileTypingOnStepper:Array<FlxUINumericStepper> = [];
-	private var blockPressWhileScrolling:Array<FlxUIDropDownMenuCustom> = [];
+	private var blockPressWhileScrolling:Array<FlxUIDropDownMenu> = [];
 
 	var waveformSprite:FlxSprite;
 	var gridLayer:FlxTypedGroup<FlxSprite>;
@@ -392,7 +393,7 @@ class ChartingState extends MusicBeatState
 	var noteSkinInputText:FlxUIInputText;
 	var noteSkinOpponentInputText:FlxUIInputText;
 	var noteSplashesInputText:FlxUIInputText;
-	var stageDropDown:FlxUIDropDownMenuCustom;
+	var stageDropDown:FlxUIDropDownMenu;
 	function addSongUI():Void
 	{
 		UI_songTitle = new FlxUIInputText(10, 10, 70, _song.song, 8);
@@ -503,7 +504,7 @@ class ChartingState extends MusicBeatState
 		}
 		#end
 
-		var player1DropDown = new FlxUIDropDownMenuCustom(10, stepperSpeed.y + 45, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
+		var player1DropDown = new FlxUIDropDownMenu(10, stepperSpeed.y + 45, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 		{
 			_song.player1 = characters[Std.parseInt(character)];
 			updateHeads();
@@ -511,7 +512,7 @@ class ChartingState extends MusicBeatState
 		player1DropDown.selectedLabel = _song.player1;
 		blockPressWhileScrolling.push(player1DropDown);
 
-		var player3DropDown = new FlxUIDropDownMenuCustom(player1DropDown.x, player1DropDown.y + 40, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
+		var player3DropDown = new FlxUIDropDownMenu(player1DropDown.x, player1DropDown.y + 40, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 		{
 			_song.gfVersion = characters[Std.parseInt(character)];
 			updateHeads();
@@ -520,7 +521,7 @@ class ChartingState extends MusicBeatState
 		if (_song.gfVersion == null) player3DropDown.selectedLabel = 'gf';
 		blockPressWhileScrolling.push(player3DropDown);
 
-		var player2DropDown = new FlxUIDropDownMenuCustom(player1DropDown.x, player3DropDown.y + 40, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
+		var player2DropDown = new FlxUIDropDownMenu(player1DropDown.x, player3DropDown.y + 40, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 		{
 			_song.player2 = characters[Std.parseInt(character)];
 			updateHeads();
@@ -564,7 +565,7 @@ class ChartingState extends MusicBeatState
 
 		if (stages.length < 1) stages.push('stage');
 
-		stageDropDown = new FlxUIDropDownMenuCustom(player1DropDown.x + 140, player1DropDown.y, FlxUIDropDownMenuCustom.makeStrIdLabelArray(stages, true), function(character:String)
+		stageDropDown = new FlxUIDropDownMenu(player1DropDown.x + 140, player1DropDown.y, FlxUIDropDownMenu.makeStrIdLabelArray(stages, true), function(character:String)
 		{
 			_song.stage = stages[Std.parseInt(character)];
 		});
@@ -578,14 +579,14 @@ class ChartingState extends MusicBeatState
 			if (PlayState.storyDifficulty == -1) PlayState.storyDifficulty = 0;
 		}
 		
-		var difficultyDropDown = new FlxUIDropDownMenuCustom(stageDropDown.x, player3DropDown.y, FlxUIDropDownMenuCustom.makeStrIdLabelArray(CoolUtil.difficulties, true), function(difficulty:String)
+		var difficultyDropDown = new FlxUIDropDownMenu(stageDropDown.x, player3DropDown.y, FlxUIDropDownMenu.makeStrIdLabelArray(CoolUtil.difficulties, true), function(difficulty:String)
 		{
 			if (PlayState.storyDifficulty != Std.parseInt(difficulty)) {
 				PlayState.storyDifficulty = Std.parseInt(difficulty);
 				try {
 					PlayState.SONG = Song.loadFromJson(_song.song + CoolUtil.getDifficultyFilePath(), _song.song);
 					MusicBeatState.resetState();
-				} catch (e:Any) {
+				} catch (e) {
 					trace('File ${Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath()} was not found.');
 				}
 			}
@@ -593,7 +594,7 @@ class ChartingState extends MusicBeatState
 		difficultyDropDown.selectedLabel = CoolUtil.difficulties[PlayState.storyDifficulty];
 		blockPressWhileScrolling.push(difficultyDropDown);
 
-		var numeratorDropDown = new FlxUIDropDownMenuCustom(stageDropDown.x + 12, player2DropDown.y, FlxUIDropDownMenuCustom.makeStrIdLabelArray(NUMERATORS, true), function(numerator:String)
+		var numeratorDropDown = new FlxUIDropDownMenu(stageDropDown.x + 12, player2DropDown.y, FlxUIDropDownMenu.makeStrIdLabelArray(NUMERATORS, true), function(numerator:String)
 		{
 			_song.numerator = Std.parseInt(NUMERATORS[Std.parseInt(numerator)]);
 			updateSectionLengths();
@@ -605,7 +606,7 @@ class ChartingState extends MusicBeatState
 		numeratorDropDown.selectedLabel = '${_song.numerator}';
 		blockPressWhileScrolling.push(numeratorDropDown);
 
-		var denominatorDropDown = new FlxUIDropDownMenuCustom(numeratorDropDown.x, numeratorDropDown.y + 20, FlxUIDropDownMenuCustom.makeStrIdLabelArray(DENOMINATORS, true), function(denominator:String)
+		var denominatorDropDown = new FlxUIDropDownMenu(numeratorDropDown.x, numeratorDropDown.y + 20, FlxUIDropDownMenu.makeStrIdLabelArray(DENOMINATORS, true), function(denominator:String)
 		{
 			_song.denominator = Std.parseInt(DENOMINATORS[Std.parseInt(denominator)]);
 			updateSectionLengths();
@@ -708,15 +709,15 @@ class ChartingState extends MusicBeatState
 	var check_changeBPM:FlxUICheckBox;
 	var stepperSectionBPM:FlxUINumericStepper;
 	var check_changeSignature:FlxUICheckBox;
-	var sectionNumeratorDropDown:FlxUIDropDownMenuCustom;
-	var sectionDenominatorDropDown:FlxUIDropDownMenuCustom;
+	var sectionNumeratorDropDown:FlxUIDropDownMenu;
+	var sectionDenominatorDropDown:FlxUIDropDownMenu;
 	var check_changeKeys:FlxUICheckBox;
 	var stepperSectionPlayerKeys:FlxUINumericStepper;
 	var stepperSectionOpponentKeys:FlxUINumericStepper;
 	var check_altAnim:FlxUICheckBox;
 
 	var sectionToCopy:Int = 0;
-	var notesCopied:Array<Dynamic>;
+	var notesCopied:Array<Array<Dynamic>>;
 
 	function addSectionUI():Void
 	{
@@ -750,7 +751,7 @@ class ChartingState extends MusicBeatState
 		check_changeSignature.checked = _song.notes[curSection].changeSignature;
 		check_changeSignature.name = 'check_changeSignature';
 
-		sectionNumeratorDropDown = new FlxUIDropDownMenuCustom(check_changeSignature.x, check_changeSignature.y + 20, FlxUIDropDownMenuCustom.makeStrIdLabelArray(NUMERATORS, true), function(numerator:String)
+		sectionNumeratorDropDown = new FlxUIDropDownMenu(check_changeSignature.x, check_changeSignature.y + 20, FlxUIDropDownMenu.makeStrIdLabelArray(NUMERATORS, true), function(numerator:String)
 		{
 			_song.notes[curSection].numerator = Std.parseInt(NUMERATORS[Std.parseInt(numerator)]);
 			if (_song.notes[curSection].changeSignature) {
@@ -768,7 +769,7 @@ class ChartingState extends MusicBeatState
 		}
 		blockPressWhileScrolling.push(sectionNumeratorDropDown);
 
-		sectionDenominatorDropDown = new FlxUIDropDownMenuCustom(sectionNumeratorDropDown.x, sectionNumeratorDropDown.y + 20, FlxUIDropDownMenuCustom.makeStrIdLabelArray(DENOMINATORS, true), function(denominator:String)
+		sectionDenominatorDropDown = new FlxUIDropDownMenu(sectionNumeratorDropDown.x, sectionNumeratorDropDown.y + 20, FlxUIDropDownMenu.makeStrIdLabelArray(DENOMINATORS, true), function(denominator:String)
 		{
 			_song.notes[curSection].denominator = Std.parseInt(DENOMINATORS[Std.parseInt(denominator)]);
 			if (_song.notes[curSection].changeSignature) {
@@ -810,7 +811,7 @@ class ChartingState extends MusicBeatState
 			sectionToCopy = curSection;
 			for (i in 0..._song.notes[curSection].sectionNotes.length)
 			{
-				var note:Array<Dynamic> = _song.notes[curSection].sectionNotes[i];
+				var note = _song.notes[curSection].sectionNotes[i];
 				notesCopied.push(note);
 			}
 			
@@ -878,7 +879,7 @@ class ChartingState extends MusicBeatState
 			var startThing:Float = sectionStartTime();
 			var endThing:Float = sectionStartTime(1);
 			while(i > -1) {
-				var event:Array<Dynamic> = _song.events[i];
+				var event = _song.events[i];
 				if (event != null && endThing > event[0] && event[0] >= startThing)
 				{
 					_song.events.remove(event);
@@ -893,7 +894,7 @@ class ChartingState extends MusicBeatState
 		{
 			for (i in 0..._song.notes[curSection].sectionNotes.length)
 			{
-				var note:Array<Dynamic> = _song.notes[curSection].sectionNotes[i];
+				var note = _song.notes[curSection].sectionNotes[i];
 				note[1] = Math.floor((note[1] + totalKeys / 2)) % totalKeys;
 				_song.notes[curSection].sectionNotes[i] = note;
 			}
@@ -904,7 +905,7 @@ class ChartingState extends MusicBeatState
 		{
 			for (i in 0..._song.notes[curSection].sectionNotes.length)
 			{
-				var note:Array<Dynamic> = _song.notes[curSection].sectionNotes[i];
+				var note = _song.notes[curSection].sectionNotes[i];
 				if (note[1] >= rightKeys) {
 					note[1] -= rightKeys;
 				} else {
@@ -1030,7 +1031,7 @@ class ChartingState extends MusicBeatState
 
 	var stepperSusLength:FlxUINumericStepper;
 	var strumTimeInputText:FlxUIInputText; //I wanted to use a stepper but we can't scale these as far as i know :(
-	var noteTypeDropDown:FlxUIDropDownMenuCustom;
+	var noteTypeDropDown:FlxUIDropDownMenu;
 	var charactersInputText:FlxUIInputText;
 	var currentType:Int = 0;
 	var currentChars:Array<Int> = [0];
@@ -1083,7 +1084,7 @@ class ChartingState extends MusicBeatState
 			displayNameList[i] = '$i. ${displayNameList[i]}';
 		}
 
-		noteTypeDropDown = new FlxUIDropDownMenuCustom(10, 105, FlxUIDropDownMenuCustom.makeStrIdLabelArray(displayNameList, true), function(character:String)
+		noteTypeDropDown = new FlxUIDropDownMenu(10, 105, FlxUIDropDownMenu.makeStrIdLabelArray(displayNameList, true), function(character:String)
 		{
 			currentType = Std.parseInt(character);
 			if (curSelectedNote != null && curSelectedNote[1] > -1) {
@@ -1109,7 +1110,7 @@ class ChartingState extends MusicBeatState
 		UI_box.addGroup(tab_group_note);
 	}
 
-	var eventDropDown:FlxUIDropDownMenuCustom;
+	var eventDropDown:FlxUIDropDownMenu;
 	var descText:FlxText;
 	var selectedEventText:FlxText;
 	function addEventsUI():Void
@@ -1148,7 +1149,7 @@ class ChartingState extends MusicBeatState
 
 		var text:FlxText = new FlxText(20, 30, 0, "Event:");
 		tab_group_event.add(text);
-		eventDropDown = new FlxUIDropDownMenuCustom(20, 50, FlxUIDropDownMenuCustom.makeStrIdLabelArray(leEvents, true), function(pressed:String) {
+		eventDropDown = new FlxUIDropDownMenu(20, 50, FlxUIDropDownMenu.makeStrIdLabelArray(leEvents, true), function(pressed:String) {
 			var selectedEvent:Int = Std.parseInt(pressed);
 			descText.text = eventStuff[selectedEvent][1];
 				if (curSelectedNote != null &&  eventStuff != null) {
@@ -2948,7 +2949,7 @@ class ChartingState extends MusicBeatState
 		try {
 			CoolUtil.getDifficulties(currentSongName);
 			PlayState.SONG = Song.loadFromJson(song + CoolUtil.getDifficultyFilePath(), song);
-		} catch (e:Any) {
+		} catch (e) {
 			FlxG.log.warn('File ${Paths.formatToSongPath(_song.song) + CoolUtil.getDifficultyFilePath()} was not found.');
 			PlayState.SONG = Song.loadFromJson(song, song);
 		}

@@ -633,27 +633,27 @@ class FunkinLua {
 		//stupid bietch ass functions
 		Lua_helper.add_callback(lua, "addScore", function(value:Int = 0) {
 			PlayState.instance.songScore += value;
-			PlayState.instance.RecalculateRating();
+			PlayState.instance.recalculateRating();
 		});
 		Lua_helper.add_callback(lua, "addMisses", function(value:Int = 0) {
 			PlayState.instance.songMisses += value;
-			PlayState.instance.RecalculateRating();
+			PlayState.instance.recalculateRating();
 		});
 		Lua_helper.add_callback(lua, "addHits", function(value:Int = 0) {
 			PlayState.instance.songHits += value;
-			PlayState.instance.RecalculateRating();
+			PlayState.instance.recalculateRating();
 		});
 		Lua_helper.add_callback(lua, "setScore", function(value:Int = 0) {
 			PlayState.instance.songScore = value;
-			PlayState.instance.RecalculateRating();
+			PlayState.instance.recalculateRating();
 		});
 		Lua_helper.add_callback(lua, "setMisses", function(value:Int = 0) {
 			PlayState.instance.songMisses = value;
-			PlayState.instance.RecalculateRating();
+			PlayState.instance.recalculateRating();
 		});
 		Lua_helper.add_callback(lua, "setHits", function(value:Int = 0) {
 			PlayState.instance.songHits = value;
-			PlayState.instance.RecalculateRating();
+			PlayState.instance.recalculateRating();
 		});
 		Lua_helper.add_callback(lua, "judgeNote", function(strumTime:Float = 0) {
 			return Conductor.judgeNote(Math.abs(strumTime - Conductor.songPosition + ClientPrefs.ratingOffset));

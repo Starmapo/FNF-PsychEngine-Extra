@@ -1,13 +1,15 @@
 package;
 
 import flixel.FlxSprite;
+import flixel.input.keyboard.FlxKey;
 import flixel.tweens.FlxTween;
+import haxe.Json;
 #if MODS_ALLOWED
 import sys.io.File;
 import sys.FileSystem;
-#end
+#else
 import openfl.utils.Assets;
-import haxe.Json;
+#end
 
 using StringTools;
 
@@ -65,6 +67,7 @@ class Character extends FlxSprite
 	public var idleSuffix:String = '';
 	public var danceIdle:Bool = false; //Character use "danceLeft" and "danceRight" instead of "idle"
 	public var danceSpeed:Int = 2;
+	public var keysPressed:Array<FlxKey> = [];
 
 	public var healthIcon:String = 'face';
 	public var animationsArray:Array<AnimArray> = [];
@@ -338,8 +341,7 @@ class Character extends FlxSprite
 			return null;
 		}
 
-		var json:Dynamic = cast Json.parse(rawJson);
-
+		var json = cast Json.parse(rawJson);
 		return json;
 	}
 }
