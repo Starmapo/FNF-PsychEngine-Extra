@@ -784,15 +784,45 @@ class WeekEditorFreeplayState extends MusicBeatState
 			WeekEditorState.loadedWeek = null;
 			return;
 		}
-		
-		if (iconInputText.hasFocus) {
-			FlxG.sound.muteKeys = [];
-			FlxG.sound.volumeDownKeys = [];
-			FlxG.sound.volumeUpKeys = [];
-			if (FlxG.keys.justPressed.ENTER) {
-				iconInputText.hasFocus = false;
+
+		var blockInput:Bool = false;
+		var blockPressWhileTypingOn = [iconInputText];
+		for (inputText in blockPressWhileTypingOn) {
+			if (inputText.hasFocus) {
+				FlxG.sound.muteKeys = [];
+				FlxG.sound.volumeDownKeys = [];
+				FlxG.sound.volumeUpKeys = [];
+				blockInput = true;
+
+				if (FlxG.keys.justPressed.ENTER) {
+					inputText.hasFocus = false;
+				}
+				break;
 			}
-		} else {
+		}
+
+		if (!blockInput) {
+			var blockPressWhileTypingOnStepper = [bgColorStepperR, bgColorStepperG, bgColorStepperB];
+			for (stepper in blockPressWhileTypingOnStepper) {
+				@:privateAccess
+				var leText:Dynamic = stepper.text_field;
+				var leText:FlxUIInputText = leText;
+				if (leText.hasFocus) {
+					FlxG.sound.muteKeys = [];
+					FlxG.sound.volumeDownKeys = [];
+					FlxG.sound.volumeUpKeys = [];
+					blockInput = true;
+
+					if (FlxG.keys.justPressed.ENTER) {
+						leText.hasFocus = false;
+						leText.focusLost();
+					}
+					break;
+				}
+			}
+		}
+		
+		if (!blockInput) {
 			FlxG.sound.muteKeys = TitleState.muteKeys;
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;

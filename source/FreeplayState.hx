@@ -22,6 +22,7 @@ using StringTools;
 class FreeplayState extends MusicBeatState
 {
 	var songs:Array<SongMetadata> = [];
+	var songsOG:Array<SongMetadata> = [];
 
 	private static var curSelected:Int = 0;
 	var curDifficulty:Int = -1;
@@ -75,6 +76,7 @@ class FreeplayState extends MusicBeatState
 				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
 			}
 		}
+		songs = songsOG.copy();
 		WeekData.loadTheFirstEnabledMod();
 
 		if (ClientPrefs.freeplayAlphabetic) {
@@ -171,7 +173,7 @@ class FreeplayState extends MusicBeatState
 
 	public function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int)
 	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter, color));
+		songsOG.push(new SongMetadata(songName, weekNum, songCharacter, color));
 	}
 
 	function weekIsLocked(name:String):Bool {

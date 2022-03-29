@@ -346,6 +346,36 @@ class DialogueEditorState extends MusicBeatState
 		}
 
 		if (!blockInput) {
+			var blockPressWhileTypingOnStepper = [speedStepper];
+			for (stepper in blockPressWhileTypingOnStepper) {
+				@:privateAccess
+				var leText:Dynamic = stepper.text_field;
+				var leText:FlxUIInputText = leText;
+				if (leText.hasFocus) {
+					FlxG.sound.muteKeys = [];
+					FlxG.sound.volumeDownKeys = [];
+					FlxG.sound.volumeUpKeys = [];
+					blockInput = true;
+
+					if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null) { //Copy paste
+						leText.text = ClipboardAdd(leText.text);
+						leText.caretIndex = leText.text.length;
+					}
+					if (FlxG.keys.justPressed.ENTER) {
+						if (leText == lineInputText) {
+							leText.text += '\\n';
+							leText.caretIndex += 2;
+						} else {
+							leText.hasFocus = false;
+							leText.focusLost();
+						}
+					}
+					break;
+				}
+			}
+		}
+
+		if (!blockInput) {
 			FlxG.sound.muteKeys = TitleState.muteKeys;
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;

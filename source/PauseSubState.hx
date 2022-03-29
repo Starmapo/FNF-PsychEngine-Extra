@@ -49,7 +49,7 @@ class PauseSubState extends MusicBeatSubstate
 		if (PlayState.isStoryMode && PlayState.seenCutscene) {
 			menuItemsOG.insert(2, 'Restart Cutscene');
 		}
-		menuItems = menuItemsOG;
+		menuItems = menuItemsOG.copy();
 
 		for (i in 0...CoolUtil.difficulties.length) {
 			if (i != PlayState.storyDifficulty) {
@@ -206,7 +206,7 @@ class PauseSubState extends MusicBeatSubstate
 					return;
 				}
 
-				menuItems = menuItemsOG;
+				menuItems = menuItemsOG.copy();
 				regenMenu();
 			}
 

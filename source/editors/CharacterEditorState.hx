@@ -71,8 +71,11 @@ class CharacterEditorState extends MusicBeatState
 	var cameraFollowPointer:FlxSprite;
 	var healthBarBG:FlxSprite;
 
+	public static var inEditor:Bool = false;
+
 	override function create()
 	{
+		inEditor = true;
 		camEditor = new FlxCamera();
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
@@ -1062,6 +1065,28 @@ class CharacterEditorState extends MusicBeatState
 				return;
 			}
 		}
+		inputTexts = [];
+		var steppers:Array<FlxUINumericStepper> = [singDurationStepper, scaleStepper, positionXStepper, positionYStepper, positionCameraXStepper, positionCameraYStepper, healthColorStepperR, healthColorStepperG, healthColorStepperB, animationNameFramerate];
+		for (stepper in steppers) {
+			@:privateAccess
+			var leText:Dynamic = stepper.text_field;
+			var leText:FlxUIInputText = leText;
+			if (leText.hasFocus) {
+				if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null) { //Copy paste
+					leText.text = ClipboardAdd(leText.text);
+					leText.caretIndex = leText.text.length;
+				}
+				if (FlxG.keys.justPressed.ENTER) {
+					leText.hasFocus = false;
+					leText.focusLost();
+				}
+				FlxG.sound.muteKeys = [];
+				FlxG.sound.volumeDownKeys = [];
+				FlxG.sound.volumeUpKeys = [];
+				super.update(elapsed);
+				return;
+			}
+		}
 		FlxG.sound.muteKeys = TitleState.muteKeys;
 		FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
@@ -1077,6 +1102,7 @@ class CharacterEditorState extends MusicBeatState
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				}
 				FlxG.mouse.visible = false;
+				inEditor = false;
 				return;
 			}
 			
