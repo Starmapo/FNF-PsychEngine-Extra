@@ -370,6 +370,7 @@ class FreeplayState extends MusicBeatState
 				Conductor.songPosition += FlxG.elapsed * 1000;
 			if (Conductor.songPosition > FlxG.sound.music.length / speedPlaying) {
 				Conductor.songPosition = 0;
+				FlxG.sound.music.time = vocals.time = vocalsDad.time = 0;
 			}
 			if (Math.abs(FlxG.sound.music.time / speedPlaying - Conductor.songPosition) > 20
 				|| (PlayState.SONG.needsVoices && ((Math.abs(vocals.time / speedPlaying - Conductor.songPosition) > 20) 
@@ -397,7 +398,7 @@ class FreeplayState extends MusicBeatState
 		vocalsDad.pause();
 
 		FlxG.sound.music.play();
-		if (speedPlaying >= 1) {
+		if (FlxG.sound.music.time > 200) {
 			Conductor.songPosition = FlxG.sound.music.time / speedPlaying;
 		} else {
 			FlxG.sound.music.time = Conductor.songPosition * speedPlaying;
