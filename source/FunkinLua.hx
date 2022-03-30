@@ -96,7 +96,7 @@ class FunkinLua {
 		set('opponentKeyAmount', PlayState.SONG.opponentKeyAmount);
 		set('playerSkin', PlayState.instance.uiSkinMap.get('player').name);
 		set('opponentSkin', PlayState.instance.uiSkinMap.get('opponent').name);
-		set('songLength', FlxG.sound.music.length);
+		set('songLength', FlxG.sound.music.length / PlayState.instance.playbackRate);
 		set('songName', PlayState.SONG.song);
 		set('startedCountdown', false);
 
@@ -104,8 +104,7 @@ class FunkinLua {
 		set('difficulty', PlayState.storyDifficulty);
 		set('difficultyName', CoolUtil.difficulties[PlayState.storyDifficulty]);
 		set('weekRaw', PlayState.storyWeek);
-		var daWeek = WeekData.weeksList[PlayState.storyWeek];
-		set('week', daWeek.substr(daWeek.indexOf(':') + 1));
+		set('week', WeekData.weeksLoaded.get(WeekData.weeksList[PlayState.storyWeek]).fileName);
 		set('seenCutscene', PlayState.seenCutscene);
 
 		// Camera poo

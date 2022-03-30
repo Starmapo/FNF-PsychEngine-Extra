@@ -189,9 +189,11 @@ class FreeplayState extends MusicBeatState
 	var holdTime:Float = 0;
 	override function update(elapsed:Float)
 	{
-		if (FlxG.sound.music.volume < 0.7)
-		{
-			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
+		if (FlxG.sound.music != null) {
+			if (FlxG.sound.music.volume < 0.7)
+			{
+				FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
+			}
 		}
 
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, CoolUtil.boundTo(elapsed * 24, 0, 1)));
@@ -280,7 +282,8 @@ class FreeplayState extends MusicBeatState
 		{
 			if (space)
 			{
-				if (instPlaying != curSelected || speedPlaying != ClientPrefs.getGameplaySetting('songspeed', 1))
+				var curSpeed:Float = ClientPrefs.getGameplaySetting('songspeed', 1);
+				if (instPlaying != curSelected || speedPlaying != curSpeed)
 				{
 					#if PRELOAD_ALL
 					destroyFreeplayVocals();
@@ -289,9 +292,10 @@ class FreeplayState extends MusicBeatState
 					Paths.currentModDirectory = songs[curSelected].folder;
 					var poop:String = Highscore.formatSong(songs[curSelected].songName, curDifficulty, false);
 					PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName);
+					vocals = new FlxSound();
+					vocalsDad = new FlxSound();
 					if (PlayState.SONG.needsVoices) {
-						vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
-						vocalsDad = new FlxSound();
+						vocals.loadEmbedded(Paths.voices(PlayState.SONG.song));
 						foundDadVocals = false;
 						if (Paths.fileExists('${Paths.formatToSongPath(PlayState.SONG.song)}/VoicesDad.${Paths.SOUND_EXT}', MUSIC, false, 'songs'))
 						{
@@ -301,9 +305,6 @@ class FreeplayState extends MusicBeatState
 								vocalsDad.loadEmbedded(file);
 							}
 						}
-					} else {
-						vocals = new FlxSound();
-						vocalsDad = new FlxSound();
 					}
 
 					FlxG.sound.list.add(vocals);
@@ -311,17 +312,15 @@ class FreeplayState extends MusicBeatState
 					FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.7 * ClientPrefs.instVolume, false);
 					vocals.play();
 					vocals.persist = true;
-					vocals.looped = false;
 					vocals.volume = 0.7 * ClientPrefs.voicesVolume;
 					vocalsDad.play();
 					vocalsDad.persist = true;
-					vocalsDad.looped = false;
 					vocalsDad.volume = 0.7 * ClientPrefs.voicesVolume;
-					Conductor.mapBPMChanges(PlayState.SONG, ClientPrefs.getGameplaySetting('songspeed', 1));
-					Conductor.changeBPM(PlayState.SONG.bpm, ClientPrefs.getGameplaySetting('songspeed', 1));
+					Conductor.mapBPMChanges(PlayState.SONG, curSpeed);
+					Conductor.changeBPM(PlayState.SONG.bpm, curSpeed);
 					Conductor.changeSignature(PlayState.SONG.numerator, PlayState.SONG.denominator);
 					instPlaying = curSelected;
-					speedPlaying = ClientPrefs.getGameplaySetting('songspeed', 1);
+					speedPlaying = curSpeed;
 					setSongStuff(false);
 					#end
 				}
@@ -370,20 +369,25 @@ class FreeplayState extends MusicBeatState
 				Conductor.songPosition += FlxG.elapsed * 1000;
 			if (Conductor.songPosition > FlxG.sound.music.length / speedPlaying) {
 				Conductor.songPosition = 0;
-				FlxG.sound.music.time = vocals.time = vocalsDad.time = 0;
+				FlxG.sound.music.play(true);
+				vocals.play(true);
+				vocalsDad.play(true);
 			}
+			
 			if (Math.abs(FlxG.sound.music.time / speedPlaying - Conductor.songPosition) > 20
 				|| (PlayState.SONG.needsVoices && ((Math.abs(vocals.time / speedPlaying - Conductor.songPosition) > 20) 
-				|| (foundDadVocals && Math.abs(vocalsDad.time / speedPlaying - Conductor.songPosition) > 20)))) {
-					resyncVocals();
+				|| (foundDadVocals && Math.abs(vocalsDad.time / speedPlaying - Conductor.songPosition) > 20))))
+			{
+				resyncVocals();
 			}
+
 			#if (cpp && PRELOAD_ALL)
 			@:privateAccess
 			{
 				if (instPlaying > -1 && speedPlaying != 1) {
 					var songAudio = [FlxG.sound.music, vocals, vocalsDad];
 					for (audio in songAudio) {
-						if (audio != null && audio.playing && audio._channel != null && AL.getSourcef(audio._channel.__source.__backend.handle, AL.PITCH) != speedPlaying) {
+						if (audio != null && audio.playing && audio._channel != null && audio._channel.__source != null && audio._channel.__source.__backend != null && audio._channel.__source.__backend.handle != null && AL.getSourcef(audio._channel.__source.__backend.handle, AL.PITCH) != speedPlaying) {
 							AL.sourcef(audio._channel.__source.__backend.handle, AL.PITCH, speedPlaying);
 						}
 					}
@@ -393,21 +397,24 @@ class FreeplayState extends MusicBeatState
 		}
 	}
 
-	static function resyncVocals() {
+	public static function resyncVocals(forcePlay:Bool = false):Void
+	{
+		if (FlxG.sound.music == null || instPlaying < 0) return;
+
 		vocals.pause();
 		vocalsDad.pause();
 
 		FlxG.sound.music.play();
-		if (FlxG.sound.music.time > 200) {
+		if (FlxG.sound.music.time > 500) {
 			Conductor.songPosition = FlxG.sound.music.time / speedPlaying;
 		} else {
 			FlxG.sound.music.time = Conductor.songPosition * speedPlaying;
 		}
-		if (Conductor.songPosition * speedPlaying <= vocals.length) {
+		if (Conductor.songPosition * speedPlaying <= vocals.length || forcePlay) {
 			vocals.time = Conductor.songPosition * speedPlaying;
 			vocals.play();
 		}
-		if (Conductor.songPosition * speedPlaying <= vocalsDad.length) {
+		if (Conductor.songPosition * speedPlaying <= vocalsDad.length || forcePlay) {
 			vocalsDad.time = Conductor.songPosition * speedPlaying;
 			vocalsDad.play();
 		}
@@ -419,7 +426,7 @@ class FreeplayState extends MusicBeatState
 		if (instPlaying > -1) {
 			Conductor.getLastBPM(PlayState.SONG, curStep, speedPlaying);
 
-			if (Conductor.getCurNumeratorBeat(PlayState.SONG, curBeat) % 2 == 0 && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms) {
+			if (ClientPrefs.camZooms && Conductor.getCurNumeratorBeat(PlayState.SONG, curBeat) % 2 == 0 && FlxG.camera.zoom < 1.35) {
 				FlxG.camera.zoom += 0.005;
 			}
 		}

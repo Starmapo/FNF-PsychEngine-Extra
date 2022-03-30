@@ -2569,7 +2569,7 @@ class PlayState extends MusicBeatState
 			if (playbackRate != 1 && !transitioning && FlxG.sound.music != null) {
 				var songAudio = [FlxG.sound.music, vocals, vocalsDad];
 				for (audio in songAudio) {
-					if (audio != null && audio.playing && audio._channel != null && AL.getSourcef(audio._channel.__source.__backend.handle, AL.PITCH) != playbackRate) {
+					if (audio != null && audio.playing && audio._channel != null && audio._channel.__source != null && audio._channel.__source.__backend != null && audio._channel.__source.__backend.handle != null && AL.getSourcef(audio._channel.__source.__backend.handle, AL.PITCH) != playbackRate) {
 						AL.sourcef(audio._channel.__source.__backend.handle, AL.PITCH, playbackRate);
 					}
 				}
@@ -2590,7 +2590,7 @@ class PlayState extends MusicBeatState
 
 		setSongPitch();
 		
-		if (generatedMusic && !startingSong && !endingSong && FlxG.sound.music != null && Conductor.songPosition >= songLength)
+		if (generatedMusic && !startingSong && !endingSong && Conductor.songPosition >= songLength)
 		{
 			finishSong();
 		}
@@ -2621,6 +2621,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 			#end
+
 			if (FlxG.keys.justPressed.NINE)
 			{
 				iconP1.swapOldIcon();
@@ -4147,7 +4148,7 @@ class PlayState extends MusicBeatState
 			if ((inEditor || !playerChar.members[0].stunned) && generatedMusic && !endingSong)
 			{
 				var lastTime:Float = Conductor.songPosition;
-				if (FlxG.sound.music.time > 300) {
+				if (FlxG.sound.music.time > 500) {
 					//more accurate hit time for the ratings?
 					Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 				}
@@ -4630,7 +4631,7 @@ class PlayState extends MusicBeatState
 	}
 
 	function spawnNoteSplashOnNote(note:Note) {
-		if (note != null && ((ClientPrefs.noteSplashes && note.mustPress) || (ClientPrefs.noteSplashesOpponent && !note.mustPress))) {
+		if (note != null && ClientPrefs.noteSplashes) {
 			var strum:StrumNote = playerStrums.members[note.noteData];
 			if (note.isOpponent) strum = opponentStrums.members[note.noteData];
 			if (strum != null) {
@@ -4931,7 +4932,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if (!inEditor) {
-			if (camZooming && camBop && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curNumeratorBeat % Conductor.numerator == 0)
+			if (ClientPrefs.camZooms && camZooming && camBop && FlxG.camera.zoom < 1.35 && curNumeratorBeat % Conductor.numerator == 0)
 			{
 				FlxG.camera.zoom += 0.015;
 				camHUD.zoom += 0.03;
@@ -5039,6 +5040,7 @@ class PlayState extends MusicBeatState
 			resetUnderlay(underlayPlayer, playerStrums);
 			setKeysArray(this.playerKeys);
 			setSkins();
+			setOnLuas('playerKeyAmount', playerKeys);
 			for (i in 0...playerStrums.length) {
 				setOnLuas('defaultPlayerStrumX$i', playerStrums.members[i].x);
 				setOnLuas('defaultPlayerStrumY$i', playerStrums.members[i].y);
@@ -5065,6 +5067,7 @@ class PlayState extends MusicBeatState
 			resetUnderlay(underlayOpponent, opponentStrums);
 			setKeysArray(this.playerKeys);
 			setSkins();
+			setOnLuas('opponentKeys', opponentKeys);
 			for (i in 0...opponentStrums.length) {
 				setOnLuas('defaultOpponentStrumX$i', opponentStrums.members[i].x);
 				setOnLuas('defaultOpponentStrumY$i', opponentStrums.members[i].y);
@@ -5102,6 +5105,7 @@ class PlayState extends MusicBeatState
 			opponentColors = maniaData.colors;
 		}
 		uiSkinMap.set('player', uiSkin);
+		setOnLuas('playerSkin', uiSkin.name);
 		
 		//OPPONENT
 		var uiSkin = UIData.getUIFile(SONG.uiSkinOpponent);
@@ -5132,6 +5136,7 @@ class PlayState extends MusicBeatState
 			opponentColors = maniaData.colors;
 		}
 		uiSkinMap.set('opponent', uiSkin);
+		setOnLuas('opponentSkin', uiSkin.name);
 
 		var imagesToCheck = [
 			'shit',

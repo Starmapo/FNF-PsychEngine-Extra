@@ -31,10 +31,10 @@ typedef OldSkin = {
 }
 
 typedef ManiaArray = {
-    var keys:Int; //key amount to be attached to
-    var noteSize:Float; //note scale
-    var noteSpacing:Float; //spacing between each note
-    var xOffset:Float; //extra offset for the strums
+    var keys:Int; //key amount to be attached to [so you don't need to have every single key amount in a skin]
+    var noteSize:Float; //note scale for this key amount
+    var noteSpacing:Float; //x spacing between each note
+    var xOffset:Float; //extra x offset for the strums
     var colors:Array<String>; //name order for the colors
     var directions:Array<String>; //name order for the strum directions
     var singAnimations:Array<String>; //name order for the sing animations
@@ -78,11 +78,8 @@ class UIData {
     }
 
     public static function checkImageFile(file:String, uiSkin:SkinFile):String {
-        if (Paths.fileExists('images/$file.png', IMAGE)) {
-            return file;
-        }
         var path:String = 'uiskins/${uiSkin.name}/$file';
-		if (!Paths.fileExists('images/$path.png', IMAGE)) {
+		if (!Paths.fileExists('images/$path.png', IMAGE) && !Paths.fileExists('images/$file.png', IMAGE)) {
             if (uiSkin.isPixel && Paths.fileExists('images/uiskins/pixel/$file.png', IMAGE)) {
                 path = 'uiskins/pixel/$file';
             } else {
@@ -93,11 +90,8 @@ class UIData {
     }
 
     public static function checkSkinFile(file:String, uiSkin:SkinFile):SkinFile {
-        if (Paths.fileExists('images/$file.png', IMAGE)) {
-            return uiSkin;
-        }
         var path:String = 'uiskins/${uiSkin.name}/$file';
-		if (!Paths.fileExists('images/$path.png', IMAGE)) {
+		if (!Paths.fileExists('images/$path.png', IMAGE) && !Paths.fileExists('images/$file.png', IMAGE)) {
             if (uiSkin.isPixel && Paths.fileExists('images/uiskins/pixel/$file.png', IMAGE)) {
                 return getUIFile('pixel');
             } else {
