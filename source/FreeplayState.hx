@@ -405,7 +405,7 @@ class FreeplayState extends MusicBeatState
 		vocalsDad.pause();
 
 		FlxG.sound.music.play();
-		if (FlxG.sound.music.time > 500) {
+		if (Conductor.songPosition - FlxG.sound.music.time / speedPlaying < 500) {
 			Conductor.songPosition = FlxG.sound.music.time / speedPlaying;
 		} else {
 			FlxG.sound.music.time = Conductor.songPosition * speedPlaying;

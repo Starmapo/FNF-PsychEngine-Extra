@@ -2545,7 +2545,7 @@ class PlayState extends MusicBeatState
 		vocalsDad.pause();
 
 		FlxG.sound.music.play();
-		if (playbackRate >= 1) { //I HATE FlxG.sound.music.time I HATE FlxG.sound.music.time I HATE FlxG.sound.music.time I HATE
+		if (Conductor.songPosition - FlxG.sound.music.time / playbackRate < 500) { //I HATE FlxG.sound.music.time I HATE FlxG.sound.music.time I HATE FlxG.sound.music.time I HATE
 			Conductor.songPosition = FlxG.sound.music.time / playbackRate;
 		} else {
 			FlxG.sound.music.time = Conductor.songPosition * playbackRate;
