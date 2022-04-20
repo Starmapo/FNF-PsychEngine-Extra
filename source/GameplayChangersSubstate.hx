@@ -8,7 +8,7 @@ import flixel.util.FlxColor;
 
 using StringTools;
 
-class GameplayChangersSubstate extends MusicBeatSubstate
+class GameplayChangersSubState extends MusicBeatSubState
 {
 	private var curOption:GameplayOption = null;
 	private var curSelected:Int = 0;
@@ -39,6 +39,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		}
 		optionsArray.push(option);
 
+		/*
 		#if cpp
 		var option:GameplayOption = new GameplayOption('Playback Rate', 'songspeed', 'float', 1);
 		option.scrollSpeed = 0.2;
@@ -49,6 +50,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		option.displayFormat = '%vX';
 		optionsArray.push(option);
 		#end
+		*/
 
 		var option:GameplayOption = new GameplayOption('Health Gain Multiplier', 'healthgain', 'float', 1);
 		option.scrollSpeed = 2.5;

@@ -11,7 +11,7 @@ import flixel.util.FlxColor;
 
 using StringTools;
 
-class NotesState extends MusicBeatState
+class NotesSubState extends MusicBeatSubState
 {
 	var curSelected:Int = 0;
 	private static var typeSelected:Int = 0;
@@ -39,6 +39,8 @@ class NotesState extends MusicBeatState
 
 	override function create()
 	{
+		resetCameraOnClose = true;
+		
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xFFea71fd;
 		bg.screenCenter();
@@ -185,9 +187,7 @@ class NotesState extends MusicBeatState
 
 		if (controls.BACK || (changingNote && (controls.ACCEPT || FlxG.mouse.justPressed))) {
 			if (!changingNote) {
-				FlxTransitionableState.skipNextTransIn = true;
-				FlxTransitionableState.skipNextTransOut = true;
-				MusicBeatState.switchState(new options.NotesChooseState());
+				close();
 			} else {
 				changeSelection();
 			}

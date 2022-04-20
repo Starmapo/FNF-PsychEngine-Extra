@@ -1,1 +1,1 @@
-Add your stage .json and .lua files here!
+Add your stage .json and script files here!

@@ -479,7 +479,7 @@ class Controls extends FlxActionSet
 	public function bindKeys(control:Control, keys:Array<FlxKey>)
 	{
 		var copyKeys:Array<FlxKey> = keys.copy();
-		for (i in 0...copyKeys.length) {
+		for (i in copyKeys) {
 			if (i == NONE) copyKeys.remove(i);
 		}
 
@@ -493,7 +493,7 @@ class Controls extends FlxActionSet
 	public function unbindKeys(control:Control, keys:Array<FlxKey>)
 	{
 		var copyKeys:Array<FlxKey> = keys.copy();
-		for (i in 0...copyKeys.length) {
+		for (i in copyKeys) {
 			if (i == NONE) copyKeys.remove(i);
 		}
 

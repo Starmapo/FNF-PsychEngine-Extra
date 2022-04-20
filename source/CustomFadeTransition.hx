@@ -8,7 +8,7 @@ import flixel.util.FlxGradient;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
 
-class CustomFadeTransition extends MusicBeatSubstate {
+class CustomFadeTransition extends MusicBeatSubState {
 	public static var finishCallback:Void->Void;
 	private var leTween:FlxTween = null;
 	public static var nextCamera:FlxCamera;

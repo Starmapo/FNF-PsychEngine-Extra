@@ -26,12 +26,10 @@ class OptionsState extends MusicBeatState
 			OptionsState.goToPlayState = goToPlayState;
 	}
 
-	function openSelectedSubstate(label:String) {
+	function openSelectedSubState(label:String) {
 		switch(label) {
 			case 'Note Colors':
-				FlxTransitionableState.skipNextTransIn = true;
-				FlxTransitionableState.skipNextTransOut = true;
-				MusicBeatState.switchState(new options.NotesChooseState());
+				openSubState(new options.NotesChooseSubState());
 			case 'Controls':
 				openSubState(new options.ControlsSubState());
 			case 'Graphics':
@@ -43,9 +41,7 @@ class OptionsState extends MusicBeatState
 			case 'Adjust Delay and Combo':
 				LoadingState.loadAndSwitchState(new options.NoteOffsetState());
 			case 'Save Data':
-				FlxTransitionableState.skipNextTransIn = true;
-				FlxTransitionableState.skipNextTransOut = true;
-				MusicBeatState.switchState(new options.SaveDataState());
+				openSubState(new options.SaveDataSubState());
 		}
 	}
 
@@ -123,7 +119,7 @@ class OptionsState extends MusicBeatState
 		}
 
 		if (controls.ACCEPT || FlxG.mouse.justPressed) {
-			openSelectedSubstate(options[curSelected]);
+			openSelectedSubState(options[curSelected]);
 		}
 	}
 	

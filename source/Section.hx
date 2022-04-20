@@ -8,8 +8,7 @@ typedef SwagSection =
 	var ?gfSection:Bool;
 	var ?bpm:Float;
 	var ?changeBPM:Bool;
-	var ?numerator:Int;
-	var ?denominator:Int;
+	var timeSignature:Array<Int>;
 	var ?changeSignature:Bool;
 	var ?altAnim:Bool;
 	var ?changeKeys:Bool;

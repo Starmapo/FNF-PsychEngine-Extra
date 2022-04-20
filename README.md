@@ -27,11 +27,11 @@ _____________________________________
 
 # New Features
 * Custom key amounts (1K to 13K)
-* Custom time signatures (3/4, 12/8, etc.)
-* Custom UI skins (customize notes, splashes, ratings, countdown, etc.)
+* Custom time signatures (1-99/1-64)
+* Custom UI skins (customize rating sprites, countdown sprites, etc.)
 * Character groups (more than one player, opponent, or GF)
 * Separate voices for the player and opponent (by adding a 'VoicesDad' file)
-* Gameplay Changers: Play opponent's chart, Song playback speed
+* Gameplay Changers: Play opponent's chart
 * Go to options menu from in-game (go right back to game after you're done!)
 * More Lua functions
 

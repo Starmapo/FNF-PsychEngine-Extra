@@ -11,9 +11,16 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		title = 'Gameplay Settings';
 		rpcTitle = 'Gameplay Settings Menu'; //for Discord Rich Presence
 
+		var option:Option = new Option('Controller Mode',
+			'Check this if you want to play with a controller instead of using your keyboard.',
+			'controllerMode',
+			'bool',
+			false);
+		addOption(option);
+
 		//I'd suggest using "Downscroll" as an example for making your own option since it is the simplest here
 		var option:Option = new Option('Downscroll', //Name
-			'If checked, notes go Down instead of Up, simple enough.', //Description
+			'If checked, notes go down instead of up, simple enough.', //Description
 			'downScroll', //Save data variable name
 			'bool', //Variable type
 			false); //Default value
@@ -33,6 +40,13 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			true);
 		addOption(option);
 
+		var option:Option = new Option('"Shit" Counts as Miss',
+			'If checked, getting a "Shit" rating will count as a miss.',
+			'shitMisses',
+			'bool',
+			true);
+		addOption(option);
+
 		var option:Option = new Option('Disable Reset Button',
 			"If checked, pressing Reset won't do anything.",
 			'noReset',
@@ -48,14 +62,14 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Instrumental Volume',
-			'Sets the volume for the song instrumentals.',
+			'Sets the volume for the song instrumentals.\n(Only works if the instrumental and vocals are separate files)',
 			'instVolume',
 			'percent',
 			1);
 		addOption(option);
 
 		var option:Option = new Option('Vocals Volume',
-			'Sets the volume for the song vocals.',
+			'Sets the volume for the song vocals.\n(Only works if the instrumental and vocals are separate files)',
 			'voicesVolume',
 			'percent',
 			1);
@@ -129,7 +143,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Auto Pause',
-			"If checked, the game will be paused when you switch to another window.",
+			"If checked, the game will be paused when it loses focus.",
 			'autoPause',
 			'bool',
 			#if html5

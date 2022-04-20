@@ -11,7 +11,7 @@ class NoteSplash extends FlxSprite
 
 	var daNote:Note = null;
 	var colors:Array<String>;
-	var alphaMult:Float = 0.6;
+	public var alphaMult:Float = 0.6;
 
 	public function new(x:Float = 0, y:Float = 0, ?note:Note = null) {
 		super(x, y);
@@ -27,7 +27,7 @@ class NoteSplash extends FlxSprite
 		antialiasing = ClientPrefs.globalAntialiasing;
 	}
 
-	public function setupNoteSplash(x:Float, y:Float, note:Note = null, texture:String = null, hueColor:Float = 0, satColor:Float = 0, brtColor:Float = 0, keyAmount:Int = 4, ?colors:Array<String>) {
+	public function setupNoteSplash(x:Float = 0, y:Float = 0, note:Note = null, texture:String = null, hueColor:Float = 0, satColor:Float = 0, brtColor:Float = 0, keyAmount:Int = 4, ?colors:Array<String>) {
 		if (note != null) {
 			daNote = note;
 			setGraphicSize(Std.int(note.width * 2.68), Std.int(note.height * 2.77));
@@ -43,7 +43,9 @@ class NoteSplash extends FlxSprite
 			if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) texture = PlayState.SONG.splashSkin;
 		}
 
-		loadAnims(texture);
+		if(textureLoaded != texture) {
+			loadAnims(texture);
+		}
 		colorSwap.hue = hueColor;
 		colorSwap.saturation = satColor;
 		colorSwap.brightness = brtColor;
@@ -52,7 +54,7 @@ class NoteSplash extends FlxSprite
 		if (note != null) {
 			animation.play('note${note.noteData}-$animNum', true);
 		} else {
-			animation.play('note1-$animNum', true);
+			animation.play('note0-1', true);
 		}
 		if (animation.curAnim != null) animation.curAnim.frameRate = 24 + FlxG.random.int(-2, 2);
 		updateHitbox();
@@ -66,39 +68,39 @@ class NoteSplash extends FlxSprite
 
 	function loadAnims(skin:String) {
 		if (daNote == null) {
-			frames = Paths.getSparrowAtlas('uiskins/default/splashes/noteSplashes');
+			frames = Paths.getSparrowAtlas('noteSplashes');
 			animation.addByPrefix("note0-1", "note splash left 1", 24, false);
 		} else {
-			if (PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0 && Paths.fileExists('images/${PlayState.SONG.splashSkin}.png', IMAGE)) { //assume its the old skin system
-				frames = Paths.getSparrowAtlas(skin);
+			var uiSkin = daNote.uiSkin;
+			var blahblah = skin;
+			if (uiSkin.isPixel) {
+				blahblah = 'pixelUI/$skin';
+			}
+			frames = Paths.getSparrowAtlas(blahblah);
+			for (i in 1...3) {
+				animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${colors[daNote.noteData]} ${i}0', 24, false);
+			}
+			if (animation.getByName('note${daNote.noteData}-1') == null) {
 				for (i in 1...3) {
-					animation.addByPrefix("note1-" + i, "note splash blue " + i, 24, false);
-					animation.addByPrefix("note2-" + i, "note splash green " + i, 24, false);
-					animation.addByPrefix("note0-" + i, "note splash purple " + i, 24, false);
-					animation.addByPrefix("note3-" + i, "note splash red " + i, 24, false);
-				}
-			} else {
-				var uiSkin = UIData.checkSkinFile('splashes/$skin', daNote.uiSkin);
-				antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;
-				if (Paths.fileExists('images/$skin.png', IMAGE)) {
-					frames = Paths.getSparrowAtlas(skin);
-				} else {
-					frames = Paths.getSparrowAtlas(UIData.checkImageFile('splashes/$skin', uiSkin));
-				}
-				for (i in 1...3) {
-					animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${colors[daNote.noteData]} ${i}0', 24, false);
+					animation.addByPrefix('note0-$i', 'note splash purple ${i}0', 24, false);
+					animation.addByPrefix('note1-$i', 'note splash blue ${i}0', 24, false);
+					animation.addByPrefix('note2-$i', 'note splash green ${i}0', 24, false);
+					animation.addByPrefix('note3-$i', 'note splash red ${i}0', 24, false);
 				}
 			}
+			antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;
 		}
 	}
 
 	override function update(elapsed:Float) {
-		if (animation.curAnim != null)if (animation.curAnim.finished) kill();
+		if (animation.curAnim != null) if (animation.curAnim.finished) kill();
 
 		if (daNote != null) {
 			setPosition(daNote.x - (daNote.width), daNote.y - (daNote.height));
 			alpha = daNote.alpha * alphaMult;
 			angle = daNote.angle;
+		} else {
+			alpha = alphaMult;
 		}
 
 		super.update(elapsed);

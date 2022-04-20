@@ -49,7 +49,7 @@ class StrumNote extends FlxSprite
 		}
 		if (maniaData == null) {
 			var bad:SkinFile = UIData.getUIFile('');
-			if (uiSkin.isPixel) {
+			if (uiSkin.isPixel && uiSkin.name != 'pixel') {
 				bad = UIData.getUIFile('pixel');
 			}
 			for (i in bad.mania) {
@@ -101,14 +101,41 @@ class StrumNote extends FlxSprite
 		var lastAnim:String = null;
 		if (animation.curAnim != null) lastAnim = animation.curAnim.name;
 
-		if (Paths.fileExists('images/$texture.png', IMAGE)) {
-			frames = Paths.getSparrowAtlas(texture);
-		} else {
-			frames = Paths.getSparrowAtlas(UIData.checkImageFile('notes/$texture', uiSkin));
+		var blahblah = texture;
+		if (uiSkin.isPixel) {
+			blahblah = 'pixelUI/$texture';
 		}
-		animation.addByPrefix('static', 'arrow${directions[noteData]}0');
-		animation.addByPrefix('pressed', '${colors[noteData]} press', 24, false);
-		animation.addByPrefix('confirm', '${colors[noteData]} confirm', 24, false);
+		if (!Paths.fileExists('images/$blahblah.xml', TEXT)) { //assume it is pixel notes
+			loadGraphic(Paths.image(blahblah));
+			width = width / 4;
+			height = height / 5;
+			loadGraphic(Paths.image(blahblah), true, Math.floor(width), Math.floor(height));
+			
+			switch (noteData)
+			{
+				case 0:
+					animation.add('static', [0]);
+					animation.add('pressed', [4, 8], 12, false);
+					animation.add('confirm', [12, 16], 24, false);
+				case 1:
+					animation.add('static', [1]);
+					animation.add('pressed', [5, 9], 12, false);
+					animation.add('confirm', [13, 17], 24, false);
+				case 2:
+					animation.add('static', [2]);
+					animation.add('pressed', [6, 10], 12, false);
+					animation.add('confirm', [14, 18], 12, false);
+				case 3:
+					animation.add('static', [3]);
+					animation.add('pressed', [7, 11], 12, false);
+					animation.add('confirm', [15, 19], 24, false);
+			}
+		} else {
+			frames = Paths.getSparrowAtlas(blahblah);
+			animation.addByPrefix('static', 'arrow${directions[noteData]}0');
+			animation.addByPrefix('pressed', '${colors[noteData]} press', 24, false);
+			animation.addByPrefix('confirm', '${colors[noteData]} confirm', 24, false);
+		}
 
 		antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;
 		setGraphicSize(Std.int((width * noteSize) * uiSkin.scale * uiSkin.noteScale));

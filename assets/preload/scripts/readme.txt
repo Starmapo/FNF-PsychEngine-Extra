@@ -1,0 +1,2 @@
+Add .lua and .hscript scripts here! Make sure to put them in scriptList.txt (separated by line).
+Scripts in this folder will be loaded on all songs, no matter the difficulty, song name, week or anything.

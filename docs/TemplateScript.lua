@@ -66,7 +66,7 @@ end
 
 function onSignatureChange()
 	-- triggered when the song's time signature is changed
-	-- use "numerator" and "denominator" to get the current time signature
+	-- use "signatureNumerator" and "signatureDenominator" to get the current time signature
 end
 
 function onOpenChartEditor()
@@ -82,7 +82,7 @@ function onOpenCharacterEditor()
 end
 
 
--- Substate interactions
+-- SubState interactions
 function onPause()
 	-- Called when you press Pause while not on a cutscene/etc
 	-- return Function_Stop if you want to stop the player from pausing the game

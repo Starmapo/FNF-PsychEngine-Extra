@@ -3,6 +3,8 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
+import lime.app.Application;
+import lime.graphics.Image;
 import openfl.utils.Assets;
 #if MODS_ALLOWED
 import sys.io.File;
@@ -177,5 +179,11 @@ class CoolUtil
 				difficulties = diffs;
 			}
 		}
+	}
+
+	public static function setWindowIcon(image:String = 'iconOG') {
+		Image.loadFromFile(Paths.getPath('images/$image.png', IMAGE)).onComplete(function (img) {
+			Application.current.window.setIcon(img);
+		});
 	}
 }

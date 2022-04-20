@@ -13,7 +13,7 @@ import flixel.util.FlxColor;
 
 using StringTools;
 
-class BaseOptionsMenu extends MusicBeatSubstate
+class BaseOptionsMenu extends MusicBeatSubState
 {
 	private var curOption:Option = null;
 	private var curSelected:Int = 0;

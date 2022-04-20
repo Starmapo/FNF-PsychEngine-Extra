@@ -1,12 +1,13 @@
 package;
 
 import flixel.FlxG;
-import flixel.FlxState;
 import flixel.FlxSprite;
-import flixel.util.FlxTimer;
+import flixel.FlxState;
+import flixel.addons.transition.FlxTransitionableState;
 import flixel.math.FlxMath;
-import openfl.utils.Assets;
+import flixel.util.FlxTimer;
 import lime.utils.Assets as LimeAssets;
+import openfl.utils.Assets;
 
 class LoadingState extends MusicBeatState
 {
@@ -84,30 +85,27 @@ class LoadingState extends MusicBeatState
 		loadBar.antialiasing = ClientPrefs.globalAntialiasing;
 		add(loadBar);
 		
-		Paths.loadLibraryManifest('songs').onComplete
-		(
-			function (lib)
-			{
-				callbacks = new MultiCallback(onLoad);
-				var introComplete = callbacks.add("introComplete");
-				if (PlayState.SONG != null) {
-					checkLoadSong(getSongPath());
-					if (PlayState.SONG.needsVoices) {
-						checkLoadSong(getVocalPath());
-						checkLoadSong(getDadVocalPath());
-					}
+		Paths.loadLibraryManifest('songs').onComplete(function (lib) {
+			callbacks = new MultiCallback(onLoad);
+			var introComplete = callbacks.add("introComplete");
+			if (PlayState.SONG != null) {
+				checkLoadSong(getSongPath());
+				if (PlayState.SONG.needsVoices) {
+					checkLoadSong(getVocalPath());
+					checkLoadSong(getDadVocalPath());
 				}
-				checkLibrary("shared");
-				if (directory != null && directory.length > 0 && directory != 'shared') {
-					checkLibrary(directory);
-				}
-
-				var fadeTime = 0.5;
-				FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
-				new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
 			}
-		);
+			checkLibrary("shared");
+			if (directory != null && directory.length > 0 && directory != 'shared') {
+				checkLibrary(directory);
+			}
 
+			var fadeTime = 0.5;
+			FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
+			new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
+		});
+
+		FlxTransitionableState.skipNextTransOut = true;
 		super.create();
 	}
 	
@@ -173,12 +171,22 @@ class LoadingState extends MusicBeatState
 
 	static function getDadVocalPath()
 	{
-		return 'songs:assets/songs/${Paths.formatToSongPath(PlayState.SONG.song)}/VoicesDad.${Paths.SOUND_EXT}';
+		var path = 'songs:assets/songs/${Paths.formatToSongPath(PlayState.SONG.song)}/VoicesDad.${Paths.SOUND_EXT}';
+		var path2 = 'songs:assets/songs/${Paths.formatToSongPath(PlayState.SONG.song)}/VoicesOpponent.${Paths.SOUND_EXT}';
+		if (Assets.exists(path2)) {
+			path = path2;
+		}
+		return path;
 	}
 	
 	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false)
 	{
 		MusicBeatState.switchState(getNextState(target, stopMusic));
+	}
+
+	inline static public function loadAndResetState(stopMusic = false)
+	{
+		loadAndSwitchState(FlxG.state, stopMusic);
 	}
 	
 	static function getNextState(target:FlxState, stopMusic = false):FlxState

@@ -2,12 +2,18 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSubState;
+import flixel.math.FlxPoint;
+import flixel.util.FlxDestroyUtil;
 
-class MusicBeatSubstate extends FlxSubState
+class MusicBeatSubState extends FlxSubState
 {
+	public var resetCameraOnClose:Bool = false;
+	var lastScroll:FlxPoint = FlxPoint.get();
 	public function new()
 	{
+		lastScroll.copyFrom(FlxG.camera.scroll);
 		super();
+		closeCallback = onClose;
 	}
 
 	private var lastBeat:Float = 0;
@@ -29,10 +35,6 @@ class MusicBeatSubstate extends FlxSubState
 
 		if (oldStep != curStep && curStep >= 0)
 			stepHit();
-
-		if (!FlxG.state.persistentUpdate && FreeplayState.instPlaying > -1) {
-			FreeplayState.setSongStuff();
-		}
 
 		super.update(elapsed);
 	}
@@ -66,5 +68,14 @@ class MusicBeatSubstate extends FlxSubState
 	public function beatHit():Void
 	{
 		//do literally nothing dumbass
+	}
+
+	function onClose() {
+		if (resetCameraOnClose) {
+			FlxG.camera.follow(null);
+			FlxG.camera.scroll.set();
+		}
+
+		lastScroll = FlxDestroyUtil.put(lastScroll);
 	}
 }

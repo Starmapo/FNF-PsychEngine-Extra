@@ -10,11 +10,11 @@ import lime.app.Future;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
 import lime.utils.Assets;
-import openfl.display.BitmapData;
 import openfl.system.System;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
 #if MODS_ALLOWED
+import openfl.display.BitmapData;
 import sys.io.File;
 import sys.FileSystem;
 #end
@@ -104,8 +104,8 @@ class Paths
 
 		// clear all sounds that are cached
 		for (key in currentTrackedSounds.keys()) {
-			if (!localTrackedAssets.contains(key) 
-			&& !dumpExclusions.contains(key) && key != null) {
+			if (key != null && !localTrackedAssets.contains(key) 
+			&& !dumpExclusions.contains(key)) {
 				Assets.cache.clear(key);
 				currentTrackedSounds.remove(key);
 			}
@@ -117,7 +117,7 @@ class Paths
 		#end
 	}
 
-	static public function loadLibraryManifest(id:String = 'songs'):Future<AssetLibrary> {
+	static public function loadLibraryManifest(id:String):Future<AssetLibrary> {
 		var promise = new Promise<AssetLibrary>();
 
 		var library = Assets.getLibrary(id);
@@ -464,6 +464,14 @@ class Paths
 		localTrackedAssets.push(gottenPath);
 		return currentTrackedSounds.get(gottenPath);
 	}
+
+	inline public static function getContent(path:String) {
+		#if sys
+		return File.getContent(path);
+		#else
+		return OpenFlAssets.getText(path);
+		#end
+	}
 	
 	#if MODS_ALLOWED
 	inline static public function mods(key:String = '') {
@@ -483,7 +491,6 @@ class Paths
 	}
 
 	static public function modsVideo(key:String) {
-		#if MODS_ALLOWED
 		for (i in videoExtensions) {
 			var path = modFolders('videos/$key.$i');
 			if (FileSystem.exists(path))
@@ -491,7 +498,6 @@ class Paths
 				return path;
 			}
 		}
-		#end
 		return modFolders('videos/$key.mp4');
 	}
 

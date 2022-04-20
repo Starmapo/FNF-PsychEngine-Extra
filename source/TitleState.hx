@@ -69,6 +69,7 @@ class TitleState extends MusicBeatState
 	{
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
+		Application.current.window.title = "Friday Night Funkin': Psych Engine Extra";
 		
 		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
 		WeekData.loadTheFirstEnabledMod();
@@ -148,6 +149,10 @@ class TitleState extends MusicBeatState
 			StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
 		}
 
+		if (FlxG.save.data.lastPlayed != null) {
+			FreeplayState.lastPlayed = FlxG.save.data.lastPlayed;
+		}
+
 		FlxG.mouse.visible = false;
 		#if FREEPLAY
 		MusicBeatState.switchState(new FreeplayState());
@@ -220,11 +225,8 @@ class TitleState extends MusicBeatState
 
 		swagShader = new ColorSwap();
 		gfDance = new FlxSprite(titleJSON.gfx, titleJSON.gfy);
-		#if TITLE_SCREEN_EASTER_EGG
 		var easterEgg:String = FlxG.save.data.psychDevsEasterEgg;
-		#else
-		var easterEgg:String = '';
-		#end
+		if (easterEgg == null) easterEgg = '';
 		switch(easterEgg.toUpperCase())
 		{
 			#if TITLE_SCREEN_EASTER_EGG

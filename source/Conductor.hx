@@ -19,18 +19,16 @@ typedef SignatureChangeEvent =
 {
 	var stepTime:Int;
 	var songTime:Float;
-	var numerator:Int;
-	var denominator:Int;
+	var timeSignature:Array<Int>;
 }
 
 class Conductor
 {
 	public static var bpm:Float = 100;
-	public static var crochet:Float = ((60 / bpm) * 1000); // beats in milliseconds
+	public static var timeSignature:Array<Int> = [4, 4];
+	public static var crochet:Float = ((60 / bpm) * 4000) / timeSignature[1]; // beats in milliseconds
 	public static var stepCrochet:Float = crochet / 4; // steps in milliseconds
 	public static var songPosition:Float = 0;
-	public static var numerator:Int = 4;
-	public static var denominator:Int = 4;
 
 	public static var safeZoneOffset:Float = (ClientPrefs.safeFrames / 60) * 1000; // is calculated in create(), is safeFrames in milliseconds
 
@@ -71,15 +69,15 @@ class Conductor
 		signatureChangeMap = [];
 
 		var curBPM:Float = song.bpm * mult;
-		var curNumerator:Int = song.numerator;
-		var curDenominator:Int = song.denominator;
+		var curSignature:Array<Int> = song.timeSignature;
 		var totalSteps:Int = 0;
 		var totalPos:Float = 0;
 		for (i in 0...song.notes.length)
 		{
-			if (song.notes[i].changeBPM && song.notes[i].bpm * mult != curBPM && song.notes[i].bpm > 0)
+			var sec = song.notes[i];
+			if (sec.changeBPM && sec.bpm * mult != curBPM && sec.bpm > 0)
 			{
-				curBPM = song.notes[i].bpm * mult;
+				curBPM = sec.bpm * mult;
 				var event:BPMChangeEvent = {
 					stepTime: totalSteps,
 					songTime: totalPos,
@@ -87,22 +85,20 @@ class Conductor
 				};
 				bpmChangeMap.push(event);
 			}
-			if (song.notes[i].changeSignature && (song.notes[i].numerator != curNumerator || song.notes[i].denominator != curDenominator))
+			if (sec.changeSignature && (sec.timeSignature[0] != curSignature[0] || sec.timeSignature[1] != curSignature[1]))
 			{
-				curNumerator = song.notes[i].numerator;
-				curDenominator = song.notes[i].denominator;
+				curSignature = sec.timeSignature;
 				var event:SignatureChangeEvent = {
 					stepTime: totalSteps,
 					songTime: totalPos,
-					numerator: curNumerator,
-					denominator: curDenominator
+					timeSignature: curSignature
 				};
 				signatureChangeMap.push(event);
 			}
 
-			var deltaSteps:Int = song.notes[i].lengthInSteps;
+			var deltaSteps:Int = sec.lengthInSteps;
 			totalSteps += deltaSteps;
-			totalPos += ((((60 / curBPM) * 4000) / curDenominator) / 4) * deltaSteps;
+			totalPos += ((((60 / curBPM) * 4000) / timeSignature[1]) / 4) * deltaSteps;
 		}
 	}
 
@@ -116,9 +112,7 @@ class Conductor
 	{
 		if (newBpm > 0) {
 			bpm = newBpm * mult;
-
-			crochet = ((60 / bpm) * 4000) / denominator;
-			stepCrochet = crochet / 4;
+			updateCrochet();
 		}
 	}
 
@@ -128,15 +122,17 @@ class Conductor
 	 * @param	newNumerator	The numerator (beats per section) to change to.
 	 * @param   newDenominator	The denominator (step length, 4 means 1/4 of a whole note) to change to.
 	 */
-	public static function changeSignature(newNumerator:Int, newDenominator:Int)
+	public static function changeSignature(newSignature:Array<Int>)
 	{
-		if (newNumerator > 0 && newDenominator > 0) {
-			numerator = newNumerator;
-			denominator = newDenominator;
-
-			crochet = ((60 / bpm) * 4000) / denominator;
-			stepCrochet = crochet / 4;
+		if (newSignature[0] > 0 && newSignature[1] > 0) {
+			timeSignature = newSignature.copy();
+			updateCrochet();
 		}
+	}
+
+	static function updateCrochet() {
+		crochet = ((60 / bpm) * 4000) / timeSignature[1];
+		stepCrochet = crochet / 4;
 	}
 
 	/**
@@ -148,8 +144,7 @@ class Conductor
 	 */
 	public static function getLastBPM(song:SwagSong, step:Int, mult:Float = 1) {
 		var daBPM:Float = song.bpm * mult;
-		var daNumerator:Int = song.numerator;
-		var daDenominator:Int = song.denominator;
+		var daSignature:Array<Int> = song.timeSignature;
 		for (i in 0...bpmChangeMap.length) {
 			if (step >= bpmChangeMap[i].stepTime) {
 				daBPM = bpmChangeMap[i].bpm;
@@ -157,14 +152,13 @@ class Conductor
 		}
 		for (i in 0...signatureChangeMap.length) {
 			if (step >= signatureChangeMap[i].stepTime) {
-				daNumerator = signatureChangeMap[i].numerator;
-				daDenominator = signatureChangeMap[i].denominator;
+				daSignature = signatureChangeMap[i].timeSignature;
 			}
 		}
 		if (bpm != daBPM)
 			changeBPM(daBPM);
-		if (numerator != daNumerator || denominator != daDenominator)
-			changeSignature(daNumerator, daDenominator);
+		if (timeSignature[0] != daSignature[0] || timeSignature[1] != daSignature[1])
+			changeSignature(daSignature);
 	}
 
 	/**
@@ -179,13 +173,13 @@ class Conductor
 		if (step <= 0) {
 			return 0;
 		}
-		var daNumerator:Int = song.numerator;
+		var daNumerator:Int = song.timeSignature[0];
 		var daPos:Int = 0;
 		var lastStep:Int = 0;
 		for (i in 0...song.notes.length) {
 			if (song.notes[i] != null) {
 				if (song.notes[i].changeSignature) {
-					daNumerator = song.notes[i].numerator;
+					daNumerator = song.notes[i].timeSignature[0];
 				}
 			}
 			if (lastStep + (daNumerator * 4) >= step) {
@@ -207,11 +201,11 @@ class Conductor
 	public static function getCurNumeratorBeat(song:SwagSong, beat:Int):Int {
 		var lastBeat = 0;
 		var daBeat = 0;
-		var daNumerator = song.numerator;
+		var daNumerator = song.timeSignature[0];
 		for (i in 0...song.notes.length) {
 			if (song.notes[i] != null && beat >= daBeat) {
 				if (song.notes[i].changeSignature) {
-					daNumerator = song.notes[i].numerator;
+					daNumerator = song.notes[i].timeSignature[0];
 					lastBeat = daBeat;
 				}
 				daBeat += daNumerator;

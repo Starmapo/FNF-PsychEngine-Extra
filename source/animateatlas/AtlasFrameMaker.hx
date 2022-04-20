@@ -17,6 +17,7 @@ import sys.FileSystem;
 #end
 
 using StringTools;
+
 class AtlasFrameMaker extends FlxFramesCollection
 {
 	static var framesLoaded:Map<String, FlxFramesCollection> = new Map(); //cache frame collections cause they take a million years to create

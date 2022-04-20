@@ -73,30 +73,25 @@ class FunkinLua {
 		trace('lua file loaded succesfully: $script');
 
 		// Lua shit
-		#if windows
 		set('Function_Stop', Function_Stop);
 		set('Function_Continue', Function_Continue);
-		#else
-		set('Function_Stop', 'Function_Stop');
-		set('Function_Continue', 'Function_Continue');
-		#end
 		set('luaDebugMode', false);
 		set('luaDeprecatedWarnings', true);
 		set('inChartEditor', PlayState.instance.inEditor);
 
 		// Song/Week shit
 		set('curBpm', Conductor.bpm);
-		set('bpm', PlayState.SONG.bpm * PlayState.instance.playbackRate);
-		set('scrollSpeed', PlayState.SONG.speed);
+		set('bpm', Conductor.bpm);
+		set('signatureNumerator', Conductor.timeSignature[0]);
+		set('signatureDenominator', Conductor.timeSignature[1]);
 		set('crochet', Conductor.crochet);
 		set('stepCrochet', Conductor.stepCrochet);
-		set('numerator', Conductor.numerator);
-		set('denominator', Conductor.denominator);
+		set('scrollSpeed', PlayState.SONG.speed);
 		set('playerKeyAmount', PlayState.SONG.playerKeyAmount);
 		set('opponentKeyAmount', PlayState.SONG.opponentKeyAmount);
 		set('playerSkin', PlayState.instance.uiSkinMap.get('player').name);
 		set('opponentSkin', PlayState.instance.uiSkinMap.get('opponent').name);
-		set('songLength', FlxG.sound.music.length / PlayState.instance.playbackRate);
+		set('songLength', 0);
 		set('songName', PlayState.SONG.song);
 		set('startedCountdown', false);
 
@@ -131,6 +126,7 @@ class FunkinLua {
 		set('versionExtra', MainMenuState.psychEngineExtraVersion.trim());
 		
 		set('inGameOver', false);
+		set('curSection', 0);
 		set('mustHitSection', false);
 		set('altAnim', false);
 		set('gfSection', false);
@@ -182,8 +178,6 @@ class FunkinLua {
 		set('noResetButton', ClientPrefs.noReset);
 		set('gameQuality', ClientPrefs.gameQuality);
 		set('instantRestart', ClientPrefs.instantRestart);
-
-		//FOR COMPATIBILITY REASONS
 		set('lowQuality', ClientPrefs.gameQuality != 'Normal');
 
 		#if windows
@@ -248,15 +242,12 @@ class FunkinLua {
 
 			if (doPush)
 			{
-				if (!ignoreAlreadyRunning)
+				for (luaInstance in PlayState.instance.luaArray)
 				{
-					for (luaInstance in PlayState.instance.luaArray)
+					if (luaInstance.scriptName == cervix)
 					{
-						if (luaInstance.scriptName == cervix)
-						{
-							PlayState.instance.luaArray.remove(luaInstance); 
-							return;
-						}
+						PlayState.instance.luaArray.remove(luaInstance); 
+						return;
 					}
 				}
 				return;
@@ -267,6 +258,16 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "clearUnusedMemory", function() {
 			Paths.clearUnusedMemory();
 			return true;
+		});
+
+		Lua_helper.add_callback(lua, "changeWindowTitle", function(title:String = 'Friday Night Funkin\': Psych Engine Extra') {
+			Application.current.window.title = title;
+		});
+		Lua_helper.add_callback(lua, "changeWindowIcon", function(image:String) {
+			CoolUtil.setWindowIcon(image);
+		});
+		Lua_helper.add_callback(lua, "windowAlert", function(message:String = 'Message Here', title:String = 'Alert') {
+			Application.current.window.alert(message, title);
 		});
 
 		Lua_helper.add_callback(lua, "loadGraphic", function(variable:String, image:String) {
@@ -286,14 +287,14 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "getProperty", function(variable:String) {
 			var killMe:Array<String> = variable.split('.');
 			if (killMe.length > 1) {
-				return Reflect.getProperty(getPropertyLoopThingWhatever(killMe), killMe[killMe.length-1]);
+				return Reflect.getProperty(getPropertyLoopThingWhatever(killMe), killMe[killMe.length - 1]);
 			}
 			return Reflect.getProperty(getInstance(), variable);
 		});
 		Lua_helper.add_callback(lua, "setProperty", function(variable:String, value:Dynamic) {
 			var killMe:Array<String> = variable.split('.');
 			if (killMe.length > 1) {
-				return Reflect.setProperty(getPropertyLoopThingWhatever(killMe), killMe[killMe.length-1], value);
+				return Reflect.setProperty(getPropertyLoopThingWhatever(killMe), killMe[killMe.length - 1], value);
 			}
 			return Reflect.setProperty(getInstance(), variable, value);
 		});
@@ -344,10 +345,10 @@ class FunkinLua {
 			var killMe:Array<String> = variable.split('.');
 			if (killMe.length > 1) {
 				var coverMeInPiss:Dynamic = Reflect.getProperty(Type.resolveClass(classVar), killMe[0]);
-				for (i in 1...killMe.length-1) {
+				for (i in 1...killMe.length - 1) {
 					coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
 				}
-				return Reflect.getProperty(coverMeInPiss, killMe[killMe.length-1]);
+				return Reflect.getProperty(coverMeInPiss, killMe[killMe.length - 1]);
 			}
 			return Reflect.getProperty(Type.resolveClass(classVar), variable);
 		});
@@ -355,10 +356,10 @@ class FunkinLua {
 			var killMe:Array<String> = variable.split('.');
 			if (killMe.length > 1) {
 				var coverMeInPiss:Dynamic = Reflect.getProperty(Type.resolveClass(classVar), killMe[0]);
-				for (i in 1...killMe.length-1) {
+				for (i in 1...killMe.length - 1) {
 					coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
 				}
-				return Reflect.setProperty(coverMeInPiss, killMe[killMe.length-1], value);
+				return Reflect.setProperty(coverMeInPiss, killMe[killMe.length - 1], value);
 			}
 			return Reflect.setProperty(Type.resolveClass(classVar), variable, value);
 		});
@@ -415,7 +416,7 @@ class FunkinLua {
 			if (penisExam != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {x: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -428,7 +429,7 @@ class FunkinLua {
 			if (penisExam != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {y: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -441,7 +442,7 @@ class FunkinLua {
 			if (penisExam != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {angle: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -454,7 +455,7 @@ class FunkinLua {
 			if (penisExam != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {alpha: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -467,7 +468,7 @@ class FunkinLua {
 			if (penisExam != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {zoom: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -486,7 +487,7 @@ class FunkinLua {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.color(penisExam, duration, curColor, color, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
 						PlayState.instance.modchartTweens.remove(tag);
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 					}
 				}));
 			} else {
@@ -503,7 +504,7 @@ class FunkinLua {
 			if (testicle != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {x: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -517,7 +518,7 @@ class FunkinLua {
 			if (testicle != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {y: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -531,7 +532,7 @@ class FunkinLua {
 			if (testicle != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {angle: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -545,7 +546,7 @@ class FunkinLua {
 			if (testicle != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {direction: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -591,7 +592,7 @@ class FunkinLua {
 			if (testicle != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {angle: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -605,7 +606,7 @@ class FunkinLua {
 			if (testicle != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {alpha: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -622,7 +623,7 @@ class FunkinLua {
 				if (tmr.finished) {
 					PlayState.instance.modchartTimers.remove(tag);
 				}
-				PlayState.instance.callOnLuas('onTimerCompleted', [tag, tmr.loops, tmr.loopsLeft]);
+				PlayState.instance.callOnScripts('onTimerCompleted', [tag, tmr.loops, tmr.loopsLeft]);
 			}, loops));
 		});
 		Lua_helper.add_callback(lua, "cancelTimer", function(tag:String) {
@@ -786,10 +787,10 @@ class FunkinLua {
 				PlayState.instance.vocalsDad.pause();
 				PlayState.instance.vocalsDad.volume = 0;
 			}
-			LoadingState.loadAndSwitchState(new PlayState());
+			LoadingState.loadAndResetState();
 		});
 		Lua_helper.add_callback(lua, "endSong", function() {
-			PlayState.instance.KillNotes();
+			PlayState.instance.killNotes();
 			PlayState.instance.finishSong(true);
 		});
 		Lua_helper.add_callback(lua, "restartSong", function(skipTransition:Bool) {
@@ -838,6 +839,18 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "getSongPosition", function() {
 			return Conductor.songPosition;
+		});
+		Lua_helper.add_callback(lua, "setSongPosition", function(time:Float = 0) {
+			if(time < Conductor.songPosition)
+			{
+				PlayState.startOnTime = time;
+				PauseSubState.restartSong(true);
+			}
+			else if (time != Conductor.songPosition)
+			{
+				PlayState.instance.clearNotesBefore(time);
+				PlayState.instance.setSongTime(time);
+			}
 		});
 
 		Lua_helper.add_callback(lua, "getCharacterX", function(type:String) {
@@ -1132,7 +1145,7 @@ class FunkinLua {
 					{
 						if (PlayState.instance.isDead)
 						{
-							GameOverSubstate.instance.insert(GameOverSubstate.instance.members.indexOf(GameOverSubstate.instance.boyfriend), shit);
+							GameOverSubState.instance.insert(GameOverSubState.instance.members.indexOf(GameOverSubState.instance.boyfriend), shit);
 						}
 						else
 						{
@@ -1387,7 +1400,7 @@ class FunkinLua {
 				}
 				PlayState.instance.modchartSounds.set(tag, FlxG.sound.play(Paths.sound(sound), volume, false, function() {
 					PlayState.instance.modchartSounds.remove(tag);
-					PlayState.instance.callOnLuas('onSoundFinished', [tag]);
+					PlayState.instance.callOnScripts('onSoundFinished', [tag]);
 				}));
 				return;
 			}
@@ -2118,7 +2131,7 @@ class FunkinLua {
 
 	inline function getInstance()
 	{
-		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
+		return PlayState.instance.isDead ? GameOverSubState.instance : PlayState.instance;
 	}
 
 	static inline var CLEANSE:String = "

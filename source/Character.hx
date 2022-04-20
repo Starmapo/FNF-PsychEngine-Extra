@@ -66,7 +66,7 @@ class Character extends FlxSprite
 	public var singDuration:Float = 4; //Multiplier of how long a character holds the sing pose
 	public var idleSuffix:String = '';
 	public var danceIdle:Bool = false; //Character use "danceLeft" and "danceRight" instead of "idle"
-	public var danceSpeed:Int = 2;
+	public var danceEveryNumBeats:Float = 2;
 	public var keysPressed:Array<FlxKey> = [];
 
 	public var healthIcon:String = 'face';
@@ -214,7 +214,7 @@ class Character extends FlxSprite
 					holdTimer += elapsed;
 				}
 
-				if (holdTimer >= Conductor.stepCrochet * 0.001 * singDuration * (Conductor.denominator / 4)) {
+				if (holdTimer >= Conductor.stepCrochet * 0.001 * singDuration * (Conductor.timeSignature[1] / 4)) {
 					dance();
 					holdTimer = 0;
 				}
@@ -289,18 +289,18 @@ class Character extends FlxSprite
 		danceIdle = (animation.getByName('danceLeft$idleSuffix') != null && animation.getByName('danceRight$idleSuffix') != null);
 		if(settingCharacterUp)
 		{
-			danceSpeed = (danceIdle ? 1 : 2);
+			danceEveryNumBeats = (danceIdle ? 1 : 2);
 			settingCharacterUp = false;
 		}
 		else if(lastDanceIdle != danceIdle)
 		{
-			var calc:Float = danceSpeed;
+			var calc:Float = danceEveryNumBeats;
 			if(danceIdle)
 				calc /= 2;
 			else
 				calc *= 2;
 
-			danceSpeed = Math.round(Math.max(calc, 1));
+			danceEveryNumBeats = Math.round(Math.max(calc, 1));
 		}
 	}
 

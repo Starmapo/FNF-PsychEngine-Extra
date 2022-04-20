@@ -10,7 +10,6 @@ import lime.utils.Assets;
 using StringTools;
 
 typedef SkinFile = {
-    var name:String; //just an internal name to make things easier
 	var mania:Array<ManiaArray>; //data for key amounts
     var scale:Float; //overall scale (added ontop of all other scales)
     var noteScale:Float; //additional note scale
@@ -23,11 +22,8 @@ typedef SkinFile = {
     var noAntialiasing:Bool; //whether to always have antialiasing disabled
     var ?isPixel:Bool; //if this skin is based off the week 6 one
     var introSoundsSuffix:String; //suffix for the countdown sounds
-}
 
-//just for backwards compatibility, ignore this
-typedef OldSkin = {
-    var ?tailYOffset:Float; //was renamed to be more clear as there's no ui editor yet
+    var name:String; //just an internal filename to make things easier
 }
 
 typedef ManiaArray = {
@@ -66,18 +62,13 @@ class UIData {
         daFile = cast Json.parse(rawJson);
         daFile.name = skin;
         
-        var testyFile:OldSkin = cast Json.parse(rawJson);
-        if (daFile.downscrollTailYOffset == null && testyFile.tailYOffset != null) {
-            daFile.downscrollTailYOffset = testyFile.tailYOffset;
-        }
-        if (daFile.isPixel == null) {
-            daFile.isPixel = false;
-        }
-        
         return daFile;
     }
 
     public static function checkImageFile(file:String, uiSkin:SkinFile):String {
+        if (Paths.fileExists('images/$file.png', IMAGE)) {
+            return file;
+        }
         var path:String = 'uiskins/${uiSkin.name}/$file';
 		if (!Paths.fileExists('images/$path.png', IMAGE) && !Paths.fileExists('images/$file.png', IMAGE)) {
             if (uiSkin.isPixel && Paths.fileExists('images/uiskins/pixel/$file.png', IMAGE)) {
@@ -90,6 +81,9 @@ class UIData {
     }
 
     public static function checkSkinFile(file:String, uiSkin:SkinFile):SkinFile {
+        if (Paths.fileExists('images/$file.png', IMAGE)) {
+            return uiSkin;
+        }
         var path:String = 'uiskins/${uiSkin.name}/$file';
 		if (!Paths.fileExists('images/$path.png', IMAGE) && !Paths.fileExists('images/$file.png', IMAGE)) {
             if (uiSkin.isPixel && Paths.fileExists('images/uiskins/pixel/$file.png', IMAGE)) {

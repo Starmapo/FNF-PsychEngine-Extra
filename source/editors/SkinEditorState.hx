@@ -75,7 +75,7 @@ class SkinEditorState extends MusicBeatState {
         strumNotes = new FlxTypedGroup<StrumNote>();
 
         Conductor.changeBPM(100);
-        Conductor.changeSignature(4, 4);
+        Conductor.changeSignature([4, 4]);
 
         reloadNotes(); 
 

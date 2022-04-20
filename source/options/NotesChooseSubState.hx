@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
-class NotesChooseState extends MusicBeatState {
+class NotesChooseSubState extends MusicBeatSubState {
     private static var curSelected:Int = 0;
     var optionShit:Array<String> = [];
 
@@ -51,17 +51,13 @@ class NotesChooseState extends MusicBeatState {
         }
 
         if (controls.BACK) {
-            FlxTransitionableState.skipNextTransIn = true;
-			FlxTransitionableState.skipNextTransOut = true;
-            MusicBeatState.switchState(new options.OptionsState());
+            close();
             FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
         }
 
         if (controls.ACCEPT || FlxG.mouse.justPressed) {
             FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-            FlxTransitionableState.skipNextTransIn = true;
-			FlxTransitionableState.skipNextTransOut = true;
-            MusicBeatState.switchState(new options.NotesState(curSelected + 1));
+            openSubState(new options.NotesSubState(curSelected + 1));
         }
 		super.update(elapsed);
 	}
