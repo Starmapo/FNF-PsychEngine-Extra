@@ -30,6 +30,7 @@ _____________________________________
 * Custom time signatures (1-99/1-64)
 * Custom UI skins (customize rating sprites, countdown sprites, etc.)
 * Character groups (more than one player, opponent, or GF)
+* Hscript compatibility
 * Separate voices for the player and opponent (by adding a 'VoicesDad' file)
 * Gameplay Changers: Play opponent's chart
 * Go to options menu from in-game (go right back to game after you're done!)

@@ -1749,6 +1749,140 @@ class PlayState extends MusicBeatState
 			interp.variables.set('setPropertyFromClass', function(classVar:String, variable:String, value:Dynamic) {
 				Reflect.setProperty(Type.resolveClass(classVar), variable, value);
 			});
+			interp.variables.set("triggerEvent", triggerEventNote);
+			interp.variables.set('startCountdown', startCountdown);
+			interp.variables.set('loadSong', function(name:String = null, ?difficultyNum:Int = -1, ?skipTransition:Bool = false) {
+				if (name == null) name = SONG.song;
+				if (difficultyNum < 0) difficultyNum = storyDifficulty;
+	
+				if (skipTransition)
+				{
+					FlxTransitionableState.skipNextTransIn = true;
+					FlxTransitionableState.skipNextTransOut = true;
+				}
+	
+				if (isStoryMode && !transitioning) {
+					campaignScore += songScore;
+					campaignMisses += songMisses;
+					storyPlaylist.remove(storyPlaylist[0]);
+					storyPlaylist.insert(0, name);
+				}
+	
+				CoolUtil.getDifficulties(name, true);
+				if (difficultyNum >= CoolUtil.difficulties.length) {
+					difficultyNum = CoolUtil.difficulties.length - 1;
+				}
+				var poop = Highscore.formatSong(name, difficultyNum, false);
+				SONG = Song.loadFromJson(poop, name);
+				storyDifficulty = difficultyNum;
+				instance.persistentUpdate = false;
+				cancelMusicFadeTween();
+				FlxG.sound.music.pause();
+				FlxG.sound.music.volume = 0;
+				if(vocals != null)
+				{
+					vocals.pause();
+					vocals.volume = 0;
+				}
+				if(vocalsDad != null)
+				{
+					vocalsDad.pause();
+					vocalsDad.volume = 0;
+				}
+				LoadingState.loadAndResetState();
+			});
+			interp.variables.set("endSong", function() {
+				killNotes();
+				finishSong(true);
+			});
+			interp.variables.set("restartSong", function(skipTransition:Bool = false) {
+				persistentUpdate = false;
+				PauseSubState.restartSong(skipTransition);
+			});
+			interp.variables.set("exitSong", function(skipTransition:Bool = false) {
+				if (skipTransition)
+				{
+					FlxTransitionableState.skipNextTransIn = true;
+					FlxTransitionableState.skipNextTransOut = true;
+				}
+	
+				cancelMusicFadeTween();
+				CustomFadeTransition.nextCamera = camOther;
+				if (FlxTransitionableState.skipNextTransIn)
+					CustomFadeTransition.nextCamera = null;
+	
+				if (isStoryMode)
+					MusicBeatState.switchState(new StoryMenuState());
+				else
+					MusicBeatState.switchState(new FreeplayState());
+	
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				changedDifficulty = false;
+				chartingMode = false;
+				instance.transitioning = true;
+			});
+			interp.variables.set("pauseGame", pauseGame);
+			interp.variables.set('openCredits', function(playMusic:Bool = true) {
+				cancelMusicFadeTween();
+				CustomFadeTransition.nextCamera = camOther;
+				if (FlxTransitionableState.skipNextTransIn)
+					CustomFadeTransition.nextCamera = null;
+
+				CreditsState.skipToCurrentMod = true;
+				MusicBeatState.switchState(new CreditsState());
+
+				FlxG.sound.music.stop();
+				if (playMusic)
+					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				changedDifficulty = false;
+				chartingMode = false;
+				transitioning = true;
+			});
+			interp.variables.set("setSongTime", setSongTime);
+			interp.variables.set("moveCamera", moveCamera);
+			interp.variables.set("setHealthBarColors", function(left:String = '0xFFFF0000', right:String = '0xFF66FF33') {
+				var leftColorNum:Int = Std.parseInt(left);
+				if (!left.startsWith('0x')) leftColorNum = Std.parseInt('0xff$left');
+				var rightColorNum:Int = Std.parseInt(right);
+				if (!right.startsWith('0x')) rightColorNum = Std.parseInt('0xff$right');
+	
+				healthBar.createFilledBar(leftColorNum, rightColorNum);
+				healthBar.updateBar();
+			});
+			interp.variables.set("startDialogue", function(dialogueFile:String, music:String = null) {
+				var path:String = Paths.modsData('${Paths.formatToSongPath(SONG.song)}/$dialogueFile');
+				if (!FileSystem.exists(path)) {
+					path = Paths.json('${Paths.formatToSongPath(SONG.song)}/$dialogueFile');
+				}
+				addTextToDebug('Trying to load dialogue: $path');
+	
+				if (FileSystem.exists(path) || OpenFlAssets.exists(path)) {
+					var shit:DialogueFile = DialogueBoxPsych.parseDialogue(path);
+					if (shit.dialogue.length > 0) {
+						startDialogue(shit, music);
+						addTextToDebug('Successfully loaded dialogue');
+					} else {
+						addTextToDebug('Your dialogue file is badly formatted!');
+					}
+				} else {
+					addTextToDebug('Dialogue file not found');
+					if (endingSong) {
+						endSong();
+					} else {
+						startCountdown();
+					}
+				}
+			});
+			interp.variables.set("startVideo", startVideo);
+			interp.variables.set("setWeekCompleted", function(name:String = '') {
+				if(name.length > 0)
+				{
+					var weekName = WeekData.formatWeek(name);
+					StoryMenuState.weekCompleted.set(weekName, true);
+					FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
+					FlxG.save.flush();
+				}
+			});
 			interp.variables.set('addScript', function(name:String, ?ignoreAlreadyRunning:Bool = false) {
 				var cervix = '$name.hscript';
 				var doPush = false;
@@ -1807,6 +1941,11 @@ class PlayState extends MusicBeatState
 					return;
 				}
 				addTextToDebug("Script doesn't exist!");
+			});
+			interp.variables.set('close', function() {
+				if (!closeHscripts.contains(path)) {
+					closeHscripts.push(path);
+				}
 			});
 			interp.variables.set('debugPrint', function(text:Dynamic) {
 				addTextToDebug('$text');
@@ -1913,6 +2052,8 @@ class PlayState extends MusicBeatState
 		setOnHscripts('camFollow', camFollow);
 		setOnHscripts('camFollowPos', camFollowPos);
 		setOnHscripts('strumLine', strumLine);
+		setOnHscripts('notes', notes);
+		setOnHscripts('unspawnNotes', unspawnNotes);
 	}
 
 	/*
@@ -5641,6 +5782,7 @@ class PlayState extends MusicBeatState
 	}
 
 	public var closeLuas:Array<FunkinLua> = [];
+	public var closeHscripts:Array<String> = [];
 	public function callOnScripts(event:String, args:Array<Dynamic>):Dynamic {
 		var returnVal:Dynamic = FunkinLua.Function_Continue;
 		if (!inEditor) {
@@ -5659,6 +5801,12 @@ class PlayState extends MusicBeatState
 			#end
 
 			#if HSCRIPT_ALLOWED
+			for (i in 0...closeHscripts.length) {
+				var hscript = hscriptMap.get(closeHscripts[i]);
+				hscriptMap.remove(closeHscripts[i]);
+				hscript = null;
+			}
+
 			for (i in hscriptMap.keys()) {
 				var ret:Dynamic = callHscript(i, event, args);
 				if (ret != FunkinLua.Function_Continue) {

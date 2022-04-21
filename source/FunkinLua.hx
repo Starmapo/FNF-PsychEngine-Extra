@@ -538,6 +538,20 @@ class FunkinLua {
 				}));
 			}
 		});
+		Lua_helper.add_callback(lua, "noteTweenAlpha", function(tag:String, note:Int, value:Dynamic, duration:Float, ease:String) {
+			cancelTween(tag);
+			if (note < 0) note = 0;
+			var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
+
+			if (testicle != null) {
+				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {alpha: value}, duration, {ease: getFlxEaseByString(ease),
+					onComplete: function(twn:FlxTween) {
+						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
+						PlayState.instance.modchartTweens.remove(tag);
+					}
+				}));
+			}
+		});
 		Lua_helper.add_callback(lua, "noteTweenDirection", function(tag:String, note:Int, value:Dynamic, duration:Float, ease:String) {
 			cancelTween(tag);
 			if (note < 0) note = 0;
@@ -583,34 +597,6 @@ class FunkinLua {
 					boobs = FlxG.mouse.justReleasedRight;
 			}
 			return boobs;
-		});
-		Lua_helper.add_callback(lua, "noteTweenAngle", function(tag:String, note:Int, value:Dynamic, duration:Float, ease:String) {
-			cancelTween(tag);
-			if (note < 0) note = 0;
-			var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
-
-			if (testicle != null) {
-				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {angle: value}, duration, {ease: getFlxEaseByString(ease),
-					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
-						PlayState.instance.modchartTweens.remove(tag);
-					}
-				}));
-			}
-		});
-		Lua_helper.add_callback(lua, "noteTweenAlpha", function(tag:String, note:Int, value:Dynamic, duration:Float, ease:String) {
-			cancelTween(tag);
-			if (note < 0) note = 0;
-			var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
-
-			if (testicle != null) {
-				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {alpha: value}, duration, {ease: getFlxEaseByString(ease),
-					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnScripts('onTweenCompleted', [tag]);
-						PlayState.instance.modchartTweens.remove(tag);
-					}
-				}));
-			}
 		});
 
 		Lua_helper.add_callback(lua, "cancelTween", function(tag:String) {
@@ -677,7 +663,11 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "roundDecimal", FlxMath.roundDecimal);
 		Lua_helper.add_callback(lua, "boundTo", CoolUtil.boundTo);
 		Lua_helper.add_callback(lua, "dominantColor", function(obj:String) {
-			return CoolUtil.dominantColor(getObjectDirectly(obj));
+			var sprite = getObjectDirectly(obj);
+			if (sprite != null && (sprite is FlxSprite)) {
+				return CoolUtil.dominantColor(sprite);
+			}
+			return 0xff000000;
 		});
 		Lua_helper.add_callback(lua, "getColorFromHex", function(color:String) {
 			if (!color.startsWith('0x')) color = '0xff$color';
@@ -793,11 +783,11 @@ class FunkinLua {
 			PlayState.instance.killNotes();
 			PlayState.instance.finishSong(true);
 		});
-		Lua_helper.add_callback(lua, "restartSong", function(skipTransition:Bool) {
+		Lua_helper.add_callback(lua, "restartSong", function(skipTransition:Bool = false) {
 			PlayState.instance.persistentUpdate = false;
 			PauseSubState.restartSong(skipTransition);
 		});
-		Lua_helper.add_callback(lua, "exitSong", function(skipTransition:Bool) {
+		Lua_helper.add_callback(lua, "exitSong", function(skipTransition:Bool = false) {
 			if (skipTransition)
 			{
 				FlxTransitionableState.skipNextTransIn = true;
@@ -831,6 +821,7 @@ class FunkinLua {
 			CreditsState.skipToCurrentMod = true;
 			MusicBeatState.switchState(new CreditsState());
 
+			FlxG.sound.music.stop();
 			if (playMusic)
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			PlayState.changedDifficulty = false;
@@ -1307,7 +1298,7 @@ class FunkinLua {
 
 			if (spr != null)
 			{
-				if (spr.framePixels != null) spr.framePixels.getPixel32(x, y);
+				if (spr.framePixels != null) return spr.framePixels.getPixel32(x, y);
 				return spr.pixels.getPixel32(x, y);
 			}
 			return 0;
