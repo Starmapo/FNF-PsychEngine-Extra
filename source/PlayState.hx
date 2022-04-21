@@ -1850,13 +1850,17 @@ class PlayState extends MusicBeatState
 				healthBar.updateBar();
 			});
 			interp.variables.set("startDialogue", function(dialogueFile:String, music:String = null) {
+				#if MODS_ALLOWED
 				var path:String = Paths.modsData('${Paths.formatToSongPath(SONG.song)}/$dialogueFile');
 				if (!FileSystem.exists(path)) {
 					path = Paths.json('${Paths.formatToSongPath(SONG.song)}/$dialogueFile');
 				}
+				#else
+				var path:String = Paths.json('${Paths.formatToSongPath(SONG.song)}/$dialogueFile');
+				#end
 				addTextToDebug('Trying to load dialogue: $path');
 	
-				if (FileSystem.exists(path) || OpenFlAssets.exists(path)) {
+				if (#if MODS_ALLOWED FileSystem.exists(path) || #end OpenFlAssets.exists(path)) {
 					var shit:DialogueFile = DialogueBoxPsych.parseDialogue(path);
 					if (shit.dialogue.length > 0) {
 						startDialogue(shit, music);
