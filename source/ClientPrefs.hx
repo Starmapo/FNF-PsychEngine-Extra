@@ -26,7 +26,6 @@ class ClientPrefs {
 	public static var controllerMode:Bool = false;
 	public static var hitsoundVolume:Float = 0;
 	public static var pauseMusic:String = 'Tea Time';
-	public static var freeplayAlphabetic:Bool = false;
 	public static var instVolume:Float = 1;
 	public static var voicesVolume:Float = 1;
 	public static var underlayAlpha:Float = 0;
@@ -225,7 +224,6 @@ class ClientPrefs {
 		FlxG.save.data.noReset = noReset;
 		FlxG.save.data.healthBarAlpha = healthBarAlpha;
 		FlxG.save.data.comboOffset = comboOffset;
-		FlxG.save.data.freeplayAlphabetic = freeplayAlphabetic;
 		FlxG.save.data.instVolume = instVolume;
 		FlxG.save.data.voicesVolume = voicesVolume;
 		FlxG.save.data.underlayAlpha = underlayAlpha;
@@ -350,9 +348,6 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.pauseMusic != null) {
 			pauseMusic = FlxG.save.data.pauseMusic;
-		}
-		if (FlxG.save.data.freeplayAlphabetic != null) {
-			freeplayAlphabetic = FlxG.save.data.freeplayAlphabetic;
 		}
 		if (FlxG.save.data.instVolume != null) {
 			instVolume = FlxG.save.data.instVolume;

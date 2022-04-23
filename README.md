@@ -32,17 +32,20 @@ _____________________________________
 * Character groups (more than one player, opponent, or GF)
 * Hscript compatibility
 * Separate voices for the player and opponent (by adding a 'VoicesDad' file)
-* Gameplay Changers: Play opponent's chart
+* Gameplay Changers: Play opponent's chart, demo mode
 * Go to options menu from in-game (go right back to game after you're done!)
 * More Lua functions
 
 # New Options
 * Note underlays
 * Instant restart after dying
-* Sort Freeplay songs alphabetically
+* Show number of ratings
+* "Crappy" quality option (no stage)
 * Change instrumentals and voices volume
-* Show note splashes for the opponent
 * Toggle autopause when not focused on the game
+* "Shit" counts as a miss
+* Smooth health bar
+* Save Data menu where you can clear your save data
 
 # Minor Touches
 * Camera bump in Freeplay (from @Stilic)

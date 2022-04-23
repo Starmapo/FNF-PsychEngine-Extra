@@ -2049,6 +2049,7 @@ class FunkinLua {
 			}
 
 			var conv:Dynamic = Convert.fromLua(lua, result);
+			Lua.pop(lua, 1);
 			return conv;
 		}
 		#end

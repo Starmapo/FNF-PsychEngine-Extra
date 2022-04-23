@@ -91,13 +91,6 @@ class VisualsUISubState extends BaseOptionsMenu
 			'bool',
 			true);
 		addOption(option);
-
-		var option:Option = new Option('Sort Freeplay Alphabetically',
-			'If checked, songs in the Freeplay menu will be sorted alphabetically.',
-			'freeplayAlphabetic',
-			'bool',
-			false);
-		addOption(option);
 		
 		#if !mobile
 		var option:Option = new Option('FPS & Memory Counter',
