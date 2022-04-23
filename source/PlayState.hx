@@ -1576,8 +1576,12 @@ class PlayState extends MusicBeatState
 		textureMap.set('noteSplashes', true);
 		for (note in unspawnNotes) {
 			if (note.noteSplashTexture != null && note.noteSplashTexture.length > 0 && !note.noteSplashDisabled && !textureMap.exists(note.noteSplashTexture)) {
-				Paths.returnGraphic(note.noteSplashTexture);
-				textureMap.set(note.noteSplashTexture, true);
+				var skin = note.noteSplashTexture;
+				if (note.uiSkin.isPixel && Paths.fileExists('images/pixelUI/$skin.png', IMAGE)) {
+					skin = 'pixelUI/$skin';
+				}
+				Paths.returnGraphic(skin);
+				textureMap.set(skin, true);
 			}
 		}
 		

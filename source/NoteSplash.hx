@@ -73,7 +73,7 @@ class NoteSplash extends FlxSprite
 		} else {
 			var uiSkin = daNote.uiSkin;
 			var blahblah = skin;
-			if (uiSkin.isPixel) {
+			if (uiSkin.isPixel && Paths.fileExists('images/pixelUI/$skin.png', IMAGE)) {
 				blahblah = 'pixelUI/$skin';
 			}
 			frames = Paths.getSparrowAtlas(blahblah);

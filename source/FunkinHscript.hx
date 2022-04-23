@@ -604,6 +604,7 @@ class FlxKeyCustom
 	}
 }
 
+#if sys
 class SysCustom
 {
 	public static function print(v:Dynamic) {
@@ -655,4 +656,5 @@ class SysCustom
 		return Sys.stderr();
 	}
 }
+#end
 #end
