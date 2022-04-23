@@ -12,6 +12,7 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import flixel.util.FlxSave;
 import flixel.system.FlxSound;
@@ -299,7 +300,8 @@ class FunkinLua {
 			return Reflect.setProperty(getInstance(), variable, value);
 		});
 		Lua_helper.add_callback(lua, "getPropertyFromGroup", function(obj:String, index:Int, variable:Dynamic) {
-			if (Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedGroup)) {
+			if (Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedGroup) || Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedSpriteGroup)) {
+				trace(getGroupStuff(Reflect.getProperty(getInstance(), obj).members[index], variable));
 				return getGroupStuff(Reflect.getProperty(getInstance(), obj).members[index], variable);
 			}
 
@@ -314,7 +316,7 @@ class FunkinLua {
 			return null;
 		});
 		Lua_helper.add_callback(lua, "setPropertyFromGroup", function(obj:String, index:Int, variable:Dynamic, value:Dynamic) {
-			if (Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedGroup)) {
+			if (Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedGroup) || Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedSpriteGroup)) {
 				setGroupStuff(Reflect.getProperty(getInstance(), obj).members[index], variable, value);
 				return;
 			}
@@ -329,7 +331,7 @@ class FunkinLua {
 			}
 		});
 		Lua_helper.add_callback(lua, "removeFromGroup", function(obj:String, index:Int, dontDestroy:Bool = false) {
-			if (Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedGroup)) {
+			if (Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedGroup) || Std.isOfType(Reflect.getProperty(getInstance(), obj), FlxTypedSpriteGroup)) {
 				var sex = Reflect.getProperty(getInstance(), obj).members[index];
 				if (!dontDestroy)
 					sex.kill();
@@ -765,6 +767,7 @@ class FunkinLua {
 			PlayState.storyDifficulty = difficultyNum;
 			PlayState.instance.persistentUpdate = false;
 			PlayState.cancelMusicFadeTween();
+			PlayState.deathCounter = 0;
 			FlxG.sound.music.pause();
 			FlxG.sound.music.volume = 0;
 			if(PlayState.instance.vocals != null)
@@ -808,6 +811,7 @@ class FunkinLua {
 			PlayState.changedDifficulty = false;
 			PlayState.chartingMode = false;
 			PlayState.instance.transitioning = true;
+			PlayState.deathCounter = 0;
 		});
 		Lua_helper.add_callback(lua, "pauseGame", function() {
 			PlayState.instance.pauseGame();
@@ -827,6 +831,7 @@ class FunkinLua {
 			PlayState.changedDifficulty = false;
 			PlayState.chartingMode = false;
 			PlayState.instance.transitioning = true;
+			PlayState.deathCounter = 0;
 		});
 		Lua_helper.add_callback(lua, "getSongPosition", function() {
 			return Conductor.songPosition;
@@ -1200,7 +1205,7 @@ class FunkinLua {
 			luaTrace('Couldnt find object: $obj');
 		});
 		Lua_helper.add_callback(lua, "updateHitboxFromGroup", function(group:String, index:Int) {
-			if (Std.isOfType(Reflect.getProperty(getInstance(), group), FlxTypedGroup)) {
+			if (Std.isOfType(Reflect.getProperty(getInstance(), group), FlxTypedGroup) || Std.isOfType(Reflect.getProperty(getInstance(), group), FlxTypedSpriteGroup)) {
 				Reflect.getProperty(getInstance(), group).members[index].updateHitbox();
 				return;
 			}

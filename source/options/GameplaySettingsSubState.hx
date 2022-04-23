@@ -143,7 +143,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Auto Pause',
-			"If checked, the game will be paused when it loses focus.",
+			"If checked, the game will be frozen when it loses focus.",
 			'autoPause',
 			'bool',
 			#if html5
@@ -155,6 +155,14 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		option.onChange = function() {
 			FlxG.autoPause = ClientPrefs.autoPause;
 		}
+		addOption(option);
+
+		var option:Option = new Option('Pause Game When Focus is Lost',
+			"If checked, the pause menu will automatically open when focus is lost while playing a song.",
+			'focusLostPause',
+			'bool',
+			true
+			);
 		addOption(option);
 
 		super();

@@ -85,6 +85,13 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.decimals = 1;
 		addOption(option);
 
+		var option:Option = new Option('Smooth Health Bar',
+			'If checked, the health bar will move smoother.',
+			'smoothHealth',
+			'bool',
+			true);
+		addOption(option);
+
 		var option:Option = new Option('Sort Freeplay Alphabetically',
 			'If checked, songs in the Freeplay menu will be sorted alphabetically.',
 			'freeplayAlphabetic',

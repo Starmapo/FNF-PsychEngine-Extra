@@ -348,6 +348,19 @@ class Alphabet extends FlxSpriteGroup
 		super.update(elapsed);
 	}
 
+	public function instantlySetPosition() {
+		if (isMenuItem)
+		{
+			var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, 1.3);
+			y = (scaledY * yMult) + (FlxG.height * 0.48) + yAdd;
+			if (forceX != Math.NEGATIVE_INFINITY) {
+				x = forceX;
+			} else {
+				x = (targetY * 20) + 90 + xAdd;
+			}
+		}
+	}
+
 	public function killTheTimer() {
 		if (typeTimer != null) {
 			typeTimer.cancel();

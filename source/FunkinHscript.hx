@@ -147,6 +147,7 @@ class FunkinHscript extends InterpEx {
         #if sys
         variables.set('File', File);
         variables.set('FileSystem', FileSystem);
+		variables.set('Sys', SysCustom);
         #end
 
         variables.set('AchievementObject', AchievementObject);
@@ -346,22 +347,22 @@ class FunkinHscript extends InterpEx {
 //cant use an abstract as a value so made one with just the static functions
 class FlxColorCustom
 {
-	public static inline var TRANSPARENT:FlxColor = 0x00000000;
-	public static inline var WHITE:FlxColor = 0xFFFFFFFF;
-	public static inline var GRAY:FlxColor = 0xFF808080;
-	public static inline var BLACK:FlxColor = 0xFF000000;
+	public static inline var TRANSPARENT = 0x00000000;
+	public static inline var WHITE = 0xFFFFFFFF;
+	public static inline var GRAY = 0xFF808080;
+	public static inline var BLACK = 0xFF000000;
 
-	public static inline var GREEN:FlxColor = 0xFF008000;
-	public static inline var LIME:FlxColor = 0xFF00FF00;
-	public static inline var YELLOW:FlxColor = 0xFFFFFF00;
-	public static inline var ORANGE:FlxColor = 0xFFFFA500;
-	public static inline var RED:FlxColor = 0xFFFF0000;
-	public static inline var PURPLE:FlxColor = 0xFF800080;
-	public static inline var BLUE:FlxColor = 0xFF0000FF;
-	public static inline var BROWN:FlxColor = 0xFF8B4513;
-	public static inline var PINK:FlxColor = 0xFFFFC0CB;
-	public static inline var MAGENTA:FlxColor = 0xFFFF00FF;
-	public static inline var CYAN:FlxColor = 0xFF00FFFF;
+	public static inline var GREEN = 0xFF008000;
+	public static inline var LIME = 0xFF00FF00;
+	public static inline var YELLOW = 0xFFFFFF00;
+	public static inline var ORANGE = 0xFFFFA500;
+	public static inline var RED = 0xFFFF0000;
+	public static inline var PURPLE = 0xFF800080;
+	public static inline var BLUE = 0xFF0000FF;
+	public static inline var BROWN = 0xFF8B4513;
+	public static inline var PINK = 0xFFFFC0CB;
+	public static inline var MAGENTA = 0xFFFF00FF;
+	public static inline var CYAN = 0xFF00FFFF;
 
 	/**
 	 * A `Map<String, Int>` whose values are the static colors of `FlxColor`.
@@ -600,6 +601,58 @@ class FlxKeyCustom
 	{
 		s = s.toUpperCase();
 		return fromStringMap.exists(s) ? fromStringMap.get(s) : NONE;
+	}
+}
+
+class SysCustom
+{
+	public static function print(v:Dynamic) {
+		Sys.print(v);
+	}
+	public static function println(v:Dynamic) {
+		Sys.println(v);
+	}
+	public static function args() {
+		return Sys.args();
+	}
+	public static function getEnv(s:String) {
+		return Sys.getEnv(s);
+	}
+	public static function environment() {
+		return Sys.environment();
+	}
+	public static function sleep(seconds:Float) {
+		Sys.sleep(seconds);
+	}
+	public static function getCwd() {
+		return Sys.getCwd();
+	}
+	public static function systemName() {
+		return Sys.systemName();
+	}
+	public static function exit(code:Int) {
+		Sys.exit(code);
+	}
+	public static function time() {
+		return Sys.time();
+	}
+	public static function cpuTime() {
+		return Sys.cpuTime();
+	}
+	public static function programPath() {
+		return Sys.programPath();
+	}
+	public static function getChar(echo:Bool) {
+		return Sys.getChar(echo);
+	}
+	public static function stdin() {
+		return Sys.stdin();
+	}
+	public static function stdout() {
+		return Sys.stdout();
+	}
+	public static function stderr() {
+		return Sys.stderr();
 	}
 }
 #end

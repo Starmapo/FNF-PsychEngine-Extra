@@ -36,7 +36,9 @@ class ClientPrefs {
 	#else
 	public static var autoPause:Bool = false;
 	#end
+	public static var focusLostPause:Bool = true;
 	public static var shitMisses:Bool = true;
+	public static var smoothHealth:Bool = true;
 	public static var gameplaySettings:Map<String, Dynamic> = [
 		'scrollspeed' => 1.0,
 		'scrolltype' => 'multiplicative', 
@@ -55,7 +57,8 @@ class ClientPrefs {
 		'instakill' => false,
 		'practice' => false,
 		'botplay' => false,
-		'opponentplay' => false
+		'opponentplay' => false,
+		'demomode' => false
 	];
 
 	public static var comboOffset:Array<Int> = [0, 0, 0, 0];
@@ -228,7 +231,9 @@ class ClientPrefs {
 		FlxG.save.data.underlayAlpha = underlayAlpha;
 		FlxG.save.data.instantRestart = instantRestart;
 		FlxG.save.data.autoPause = autoPause;
+		FlxG.save.data.focusLostPause = focusLostPause;
 		FlxG.save.data.shitMisses = shitMisses;
+		FlxG.save.data.smoothHealth = smoothHealth;
 		FlxG.save.data.achievementsMap = Achievements.achievementsMap;
 		FlxG.save.data.henchmenDeath = Achievements.henchmenDeath;
 
@@ -365,8 +370,14 @@ class ClientPrefs {
 			autoPause = FlxG.save.data.autoPause;
 			FlxG.autoPause = autoPause;
 		}
+		if (FlxG.save.data.focusLostPause != null) {
+			focusLostPause = FlxG.save.data.focusLostPause;
+		}
 		if (FlxG.save.data.shitMisses != null) {
 			shitMisses = FlxG.save.data.shitMisses;
+		}
+		if (FlxG.save.data.smoothHealth != null) {
+			smoothHealth = FlxG.save.data.smoothHealth;
 		}
 		if (FlxG.save.data.gameplaySettings != null)
 		{

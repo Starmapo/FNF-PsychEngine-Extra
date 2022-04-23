@@ -30,7 +30,7 @@ class CoolUtil
 		if (num >= difficulties.length) num = difficulties.length - 1;
 
 		var fileSuffix:String = difficulties[num];
-		if (fileSuffix.toLowerCase().trim() != defaultDifficulty.toLowerCase())
+		if (fileSuffix != defaultDifficulty)
 		{
 			fileSuffix = '-$fileSuffix';
 		}
@@ -158,7 +158,7 @@ class CoolUtil
 				while (i < len) {
 					if (diffs[i] != null) {
 						var suffix = '-${Paths.formatToSongPath(diffs[i])}';
-						if (Paths.formatToSongPath(diffs[i]) == defaultDifficulty.toLowerCase()) {
+						if (diffs[i] == defaultDifficulty) {
 							suffix = '';
 						}
 						var poop:String = song + suffix;
