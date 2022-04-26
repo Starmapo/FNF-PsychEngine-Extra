@@ -331,20 +331,20 @@ class Note extends FlxSprite
 
 	function loadPixelNoteAnims() {
 		if(isSustainNote) {
-			animation.add('purpleholdend', [PURP_NOTE + 4]);
-			animation.add('greenholdend', [GREEN_NOTE + 4]);
-			animation.add('redholdend', [RED_NOTE + 4]);
-			animation.add('blueholdend', [BLUE_NOTE + 4]);
+			animation.add('${colors[0]}holdend', [PURP_NOTE + 4]);
+			animation.add('${colors[1]}holdend', [BLUE_NOTE + 4]);
+			animation.add('${colors[2]}holdend', [GREEN_NOTE + 4]);
+			animation.add('${colors[3]}holdend', [RED_NOTE + 4]);
 
-			animation.add('purplehold', [PURP_NOTE]);
-			animation.add('greenhold', [GREEN_NOTE]);
-			animation.add('redhold', [RED_NOTE]);
-			animation.add('bluehold', [BLUE_NOTE]);
+			animation.add('${colors[0]}hold', [PURP_NOTE]);
+			animation.add('${colors[1]}hold', [BLUE_NOTE]);
+			animation.add('${colors[2]}hold', [GREEN_NOTE]);
+			animation.add('${colors[3]}hold', [RED_NOTE]);
 		} else {
-			animation.add('greenScroll', [GREEN_NOTE + 4]);
-			animation.add('redScroll', [RED_NOTE + 4]);
-			animation.add('blueScroll', [BLUE_NOTE + 4]);
-			animation.add('purpleScroll', [PURP_NOTE + 4]);
+			animation.add(colors[0], [PURP_NOTE + 4]);
+			animation.add(colors[1], [BLUE_NOTE + 4]);
+			animation.add(colors[2], [GREEN_NOTE + 4]);
+			animation.add(colors[3], [RED_NOTE + 4]);
 		}
 
 		if (isSustainNote) {
