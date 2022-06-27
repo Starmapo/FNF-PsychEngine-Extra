@@ -19,7 +19,7 @@ Modified version of Psych Engine adding more stuff. (see below)
 * srPerez - Made VS Shaggy & original 9K notes
 
 * SqirraRNG - Chart Editor's Sound Waveform base code
-* iFlicky - Delay/Combo Menu Song Composer + Dialogue Sounds
+* iFlicky - Composer + Dialogue Sounds
 * PolybiusProxy - Video Loader Extension
 * Keoiki - Note Splash Animations
 * Smokey - Spritemap Texture Atlas support
@@ -64,8 +64,9 @@ You'll also need to install a couple things that involve Gits. To do this, you n
 1. Download [git-scm](https://git-scm.com/downloads). Works for Windows, Mac, and Linux, just select your build.
 2. Follow instructions to install the application properly.
 3. Run `haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc` to install Discord RPC.
-4. Run `haxelib git linc_luajit https://github.com/AndreiRudenko/linc_luajit` to install LuaJIT. (If you don't want your mod to be able to run .lua scripts, delete the "LUA_ALLOWED" line on Project.xml)
+4. Run `haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit` to install LuaJIT. If you get an error about StatePointer when using Lua, run `haxelib remove linc_luajit` into Command Prompt/PowerShell, then re-install linc_luajit. (If you don't want your mod to be able to run .lua scripts, delete the "LUA_ALLOWED" line on Project.xml)
 5. Run `haxelib git hscript https://github.com/HaxeFoundation/hscript` to install hscript. After that, run `haxelib git hscript-ex https://github.com/ianharrigan/hscript-ex` to install hscript-ex. (If you don't want your mod to be able to run .hscript scripts, delete the "HSCRIPT_ALLOWED" line on Project.xml)
+6. Run `haxelib install hxCodec` to install hxCodec for video support. (If you don't want your mod to have video support, delete the "VIDEOS_ALLOWED" line on Project.xml)
 
 You should have everything ready for compiling the game! Follow the guide below to continue!
 
@@ -80,6 +81,8 @@ Do note that modpacks and Lua scripts are unavailable in HTML5.
 #### Desktop
 To run it from your desktop (Windows, Mac, Linux) it can be a bit more involved.
 
+(NOTE: Mac and Linux have not been tested yet and they are not guaranteed to function)
+
 For Windows, you need to install [Visual Studio Community](https://visualstudio.microsoft.com/downloads/). While installing VSC, don't click on any of the options to install workloads. Instead, go to the individual components tab and choose the following:
 * MSVC v142 - VS 2019 C++ x64/x86 build tools (Latest)
 * Windows 10 SDK (10.0.17763.0)
@@ -93,3 +96,16 @@ For Linux, you only need to open a terminal in the project directory and run `li
 To build for 32-bit, add `-32 -D 32bits` to the `lime test` command:
 
 `lime test windows -32 -D 32bits`
+
+#### Android
+(NOTE: Android support is currently experimental and has not been tested on an actual device yet)
+
+All credit to the [Funkin-android repository](https://github.com/luckydog7/Funkin-android) for the entire tutorial.
+
+1. Download [Android Studio](https://developer.android.com/studio), the [Java Development Kit](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html), and the [Android NDK (r15c)](https://github.com/android/ndk/wiki/Unsupported-Downloads#r15c). Install Android Studio and the JDK, and unzip the Android NDK somewhere in your computer.
+
+2. In Android Studio, go to Settings -> Appearance & Behavior -> System Settings -> Android SDK. Install Android 4.4 (KitKat), Android SDK Build-Tools, and Android SDK Platform-Tools.
+
+3. In the Command Prompt (or the Terminal), run `lime setup android`. Insert the corresponding file paths. Your Android SDK should be located in `C:\Users\*username*\AppData\Local\Android\Sdk`, and your Java JDK in `C:\Program Files\Java\jdk1.8.0_331`.
+
+4. Run `lime build android -debug` (remove "-debug" for official releases) to build the APK. The APK will be located inside your source code directory in `export\(debug or release)\android\bin\app\build\outputs\apk`. If you have a device emulator running in Android Studio, you can instead do `lime test android` to open it in the emulator.

@@ -282,7 +282,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			bgFade.alpha += 0.5 * elapsed;
 			if (bgFade.alpha > 0.5) bgFade.alpha = 0.5;
 
-			if (PlayerSettings.player1.controls.ACCEPT) {
+			if (PlayerSettings.player1.controls.ACCEPT #if mobile || FlxG.mouse.justPressed #end) {
 				if (!daText.finishedText) {
 					if (daText != null) {
 						daText.killTheTimer();

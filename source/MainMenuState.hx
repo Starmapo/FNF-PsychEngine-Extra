@@ -24,8 +24,8 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.5.2h'; //This is also used for Discord RPC
-	public static var psychEngineExtraVersion:String = '0.1-git';
+	public static var psychEngineVersion:String = '0.6.0'; //This is also used for Discord RPC
+	public static var psychEngineExtraVersion:String = '0.1';
 	public static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
@@ -47,8 +47,18 @@ class MainMenuState extends MusicBeatState
 	var camFollowPos:FlxObject;
 	var debugKeys:Array<FlxKey>;
 
+	#if mobile
+	var buttonUP:Button;
+	var buttonDOWN:Button;
+	var buttonENTER:Button;
+	var buttonESC:Button;
+	#end
+
 	override function create()
 	{
+		#if MODS_ALLOWED
+		Paths.pushGlobalMods();
+		#end
 		WeekData.loadTheFirstEnabledMod();
 		
 		#if DISCORD_ALLOWED
@@ -143,6 +153,17 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
+		#if mobile
+		buttonUP = new Button(10, 240, 'UP');
+		add(buttonUP);
+		buttonDOWN = new Button(buttonUP.x, buttonUP.y + buttonUP.height + 10, 'DOWN');
+		add(buttonDOWN);
+		buttonENTER = new Button(904, 574, 'ENTER');
+		add(buttonENTER);
+		buttonESC = new Button(buttonENTER.x + buttonENTER.width + 10, buttonENTER.y, 'ESC');
+		add(buttonESC);
+		#end
+
 		super.create();
 	}
 
@@ -155,12 +176,14 @@ class MainMenuState extends MusicBeatState
 	#end
 
 	var selectedSomethin:Bool = false;
-
+	var holdTime:Float = 0;
 	override function update(elapsed:Float)
 	{
-		if (FlxG.sound.music.volume < 0.8)
+		if (FlxG.sound.music != null && FlxG.sound.music.volume < 0.8)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
+			if(FreeplayState.vocals != null) FreeplayState.vocals.volume += 0.5 * elapsed;
+			if(FreeplayState.vocalsDad != null) FreeplayState.vocalsDad.volume += 0.5 * elapsed;
 		}
 
 		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
@@ -168,26 +191,42 @@ class MainMenuState extends MusicBeatState
 
 		if (!selectedSomethin)
 		{
-			if (controls.UI_UP_P || FlxG.mouse.wheel > 0)
+			if (controls.UI_UP_P || #if mobile buttonUP.justPressed #else FlxG.mouse.wheel > 0 #end)
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				changeItem(-1);
+				holdTime = 0;
 			}
 
-			if (controls.UI_DOWN_P || FlxG.mouse.wheel < 0)
+			if (controls.UI_DOWN_P || #if mobile buttonDOWN.justPressed #else FlxG.mouse.wheel < 0 #end)
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				changeItem(1);
+				holdTime = 0;
 			}
 
-			if (controls.BACK)
+			var down = controls.UI_DOWN #if mobile || buttonDOWN.pressed #end;
+			var up = controls.UI_UP #if mobile || buttonUP.pressed #end;
+			if (down || up)
+			{
+				var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
+				holdTime += elapsed;
+				var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
+
+				if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
+				{
+					changeItem((checkNewHold - checkLastHold) * (up ? -1 : 1));
+				}
+			}
+
+			if (controls.BACK #if mobile || buttonESC.justPressed #end)
 			{
 				selectedSomethin = true;
 				FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 				MusicBeatState.switchState(new TitleState());
 			}
 
-			if (controls.ACCEPT || FlxG.mouse.justPressed)
+			if (controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end)
 			{
 				if (optionShit[curSelected] == 'donate')
 				{

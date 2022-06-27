@@ -373,10 +373,12 @@ class ModsMenuState extends MusicBeatState
 
 		var path:String = 'modsList.txt';
 		File.saveContent(path, fileStr);
+		Paths.pushGlobalMods();
 	}
 
 	var noModsSine:Float = 0;
 	var canExit:Bool = true;
+	var holdTime:Float = 0;
 	override function update(elapsed:Float)
 	{
 		FlxG.mouse.visible = true;//cause reasons. trust me 
@@ -396,12 +398,20 @@ class ModsMenuState extends MusicBeatState
 			saveTxt();
 			if (needaReset) {
 				Paths.currentTrackedAssets.clear();
-				#if PRELOAD_ALL
 				FreeplayState.destroyFreeplayVocals();
-				#end
 				TitleState.initialized = false;
 				TitleState.closedState = false;
 				FlxG.sound.music.fadeOut(0.3);
+				if(FreeplayState.vocals != null)
+				{
+					FreeplayState.vocals.fadeOut(0.3);
+					FreeplayState.vocals = null;
+				}
+				if(FreeplayState.vocalsDad != null)
+				{
+					FreeplayState.vocalsDad.fadeOut(0.3);
+					FreeplayState.vocalsDad = null;
+				}
 				FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
 			} else {
 				MusicBeatState.switchState(new MainMenuState());
@@ -412,11 +422,26 @@ class ModsMenuState extends MusicBeatState
 		{
 			changeSelection(-1);
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+			holdTime = 0;
 		}
 		if (controls.UI_DOWN_P || FlxG.mouse.wheel < 0)
 		{
 			changeSelection(1);
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+			holdTime = 0;
+		}
+		var down = controls.UI_DOWN;
+		var up = controls.UI_UP;
+		if (down || up)
+		{
+			var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
+			holdTime += elapsed;
+			var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
+
+			if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
+			{
+				changeSelection((checkNewHold - checkLastHold) * (up ? -1 : 1));
+			}
 		}
 		updatePosition(elapsed);
 		super.update(elapsed);
@@ -432,27 +457,16 @@ class ModsMenuState extends MusicBeatState
 
 	function changeSelection(change:Int = 0)
 	{
-		if (mods.length < 1)
-		{
-			for (obj in visibleWhenHasMods)
-			{
-				obj.visible = false;
-			}
-			for (obj in visibleWhenNoMods)
-			{
-				obj.visible = true;
-			}
-			return;
-		}
-		
+		var noMods:Bool = (mods.length < 1);
 		for (obj in visibleWhenHasMods)
 		{
-			obj.visible = true;
+			obj.visible = !noMods;
 		}
 		for (obj in visibleWhenNoMods)
 		{
-			obj.visible = false;
+			obj.visible = noMods;
 		}
+		if(noMods) return;
 
 		curSelected += change;
 		if (curSelected < 0)

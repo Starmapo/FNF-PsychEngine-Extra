@@ -57,7 +57,7 @@ class PlayerSettings
 
 			var gamepad = FlxG.gamepads.getByID(1);
 			if (gamepad == null)
-				throw 'Unexpected null gamepad. id:0';
+				throw 'Unexpected null gamepad. id:1';
 
 			player2.controls.addDefaultGamepad(1);
 		}

@@ -54,7 +54,7 @@ class Prompt extends MusicBeatSubState
             panel = new FlxSprite(0, 0);
             panelbg = new FlxSprite(0, 0);
             makeSelectorGraphic(panel, 300, 150, 0xff999999);
-            makeSelectorGraphic(panelbg, 302, 165, 0xff000000);
+            makeSelectorGraphic(panelbg,304,154,0xff000000);
             panel.scrollFactor.set();
             panel.screenCenter();
             panelbg.scrollFactor.set();

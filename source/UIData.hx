@@ -12,13 +12,9 @@ using StringTools;
 typedef SkinFile = {
 	var mania:Array<ManiaArray>; //data for key amounts
     var scale:Float; //overall scale (added ontop of all other scales)
-    var noteScale:Float; //additional note scale
-    var sustainYScale:Float; //additional sustain note height scale
     var countdownScale:Float; //countdown sprites scale
     var ratingScale:Float; //rating and 'combo' sprites scale
     var comboNumScale:Float; //combo numbers scale
-    var sustainXOffset:Float; //sustain note x offset
-    var ?downscrollTailYOffset:Float; //sustain end y offset (for downscroll only)
     var noAntialiasing:Bool; //whether to always have antialiasing disabled
     var ?isPixel:Bool; //if this skin is based off the week 6 one
     var introSoundsSuffix:String; //suffix for the countdown sounds

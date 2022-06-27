@@ -28,6 +28,13 @@ class PauseSubState extends MusicBeatSubState
 	var skipTimeTracker:Alphabet;
 	var curTime:Float = Math.max(0, Conductor.songPosition);
 
+	#if mobile
+	var buttonUP:Button;
+	var buttonDOWN:Button;
+	var buttonENTER:Button;
+	var buttonESC:Button;
+	#end
+
 	public function new(playSound:Bool = true)
 	{
 		super();
@@ -81,7 +88,7 @@ class PauseSubState extends MusicBeatSubState
 		regenMenu(playSound);
 
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
-		levelInfo.text += PlayState.SONG.song;
+		levelInfo.text += PlayState.instance.curSongDisplayName;
 		levelInfo.scrollFactor.set();
 		levelInfo.setFormat(Paths.font("vcr.ttf"), 32);
 		levelInfo.updateHitbox();
@@ -131,29 +138,56 @@ class PauseSubState extends MusicBeatSubState
 		FlxTween.tween(levelDifficulty, {alpha: 1, y: levelDifficulty.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.5});
 		FlxTween.tween(blueballedTxt, {alpha: 1, y: blueballedTxt.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.7});
 
+		#if mobile
+		buttonUP = new Button(10, 240, 'UP');
+		add(buttonUP);
+		buttonDOWN = new Button(buttonUP.x, buttonUP.y + buttonUP.height + 10, 'DOWN');
+		add(buttonDOWN);
+		buttonENTER = new Button(1044, 574, 'ENTER');
+		add(buttonENTER);
+		#end
+
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 	}
 
 	var holdTime:Float = 0;
+	var cantUnpause:Float = 0.1;
 	override function update(elapsed:Float)
 	{
+		cantUnpause -= elapsed;
 		if (pauseMusic.volume < 0.5)
 			pauseMusic.volume += 0.01 * elapsed;
 
 		super.update(elapsed);
 		updateSkipTextStuff();
 
-		var upP = controls.UI_UP_P;
-		var downP = controls.UI_DOWN_P;
-		var accepted = controls.ACCEPT || FlxG.mouse.justPressed;
+		var upP = controls.UI_UP_P || #if mobile buttonUP.justPressed #else FlxG.mouse.wheel > 0 #end;
+		var downP = controls.UI_DOWN_P || #if mobile buttonDOWN.justPressed #else FlxG.mouse.wheel < 0 #end;
+		var accepted = controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end;
 
-		if (upP || FlxG.mouse.wheel > 0)
+		if (upP)
 		{
 			changeSelection(-1);
+			holdTime = 0;
 		}
-		if (downP || FlxG.mouse.wheel < 0)
+		if (downP)
 		{
 			changeSelection(1);
+			holdTime = 0;
+		}
+		
+		var down = controls.UI_DOWN #if mobile || buttonDOWN.pressed #end;
+		var up = controls.UI_UP #if mobile || buttonUP.pressed #end;
+		if (down || up)
+		{
+			var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
+			holdTime += elapsed;
+			var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
+
+			if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
+			{
+				changeSelection((checkNewHold - checkLastHold) * (up ? -1 : 1));
+			}
 		}
 
 		var daSelected:String = menuItems[curSelected];
@@ -187,7 +221,7 @@ class PauseSubState extends MusicBeatSubState
 				}
 		}
 
-		if (accepted)
+		if (accepted && (cantUnpause <= 0 || !ClientPrefs.controllerMode))
 		{
 			if (menuItems == difficultyChoices)
 			{
@@ -214,6 +248,7 @@ class PauseSubState extends MusicBeatSubState
 					close();
 				case 'Change Difficulty':
 					menuItems = difficultyChoices;
+					deleteSkipTimeText();
 					regenMenu();
 				case 'Toggle Practice Mode':
 					PlayState.instance.practiceMode = !PlayState.instance.practiceMode;
@@ -260,18 +295,33 @@ class PauseSubState extends MusicBeatSubState
 				case "Exit to menu":
 					PlayState.deathCounter = 0;
 					PlayState.seenCutscene = false;
+
+					WeekData.loadTheFirstEnabledMod();
 					if (PlayState.isStoryMode) {
 						MusicBeatState.switchState(new StoryMenuState());
 					} else {
 						PlayState.SONG = PlayState.originalSong;
 						MusicBeatState.switchState(new FreeplayState());
 					}
+					PlayState.cancelMusicFadeTween();
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 					PlayState.changedDifficulty = false;
 					PlayState.chartingMode = false;
 					PlayState.startOnTime = 0;
 			}
 		}
+	}
+
+	function deleteSkipTimeText()
+	{
+		if(skipTimeText != null)
+		{
+			skipTimeText.kill();
+			remove(skipTimeText);
+			skipTimeText.destroy();
+		}
+		skipTimeText = null;
+		skipTimeTracker = null;
 	}
 
 	public static function restartSong(noTrans:Bool = false)
@@ -284,13 +334,10 @@ class PauseSubState extends MusicBeatSubState
 
 		if (noTrans)
 		{
+			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
-			FlxG.resetState();
 		}
-		else
-		{
-			MusicBeatState.resetState();
-		}
+		MusicBeatState.resetState();
 	}
 
 	override function destroy()

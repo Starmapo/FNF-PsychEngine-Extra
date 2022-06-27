@@ -8,12 +8,14 @@ import flixel.addons.ui.FlxUIState;
 
 class MusicBeatState extends FlxUIState
 {
-	private var lastBeat:Float = 0;
-	private var lastStep:Float = 0;
+	private var curSection:Int = 0;
+	private var stepsToDo:Int = 0;
 
 	private var curStep:Int = 0;
 	private var curBeat:Int = 0;
 
+	private var curDecStep:Float = 0;
+	private var curDecBeat:Float = 0;
 	private var controls(get, never):Controls;
 
 	inline function get_controls():Controls
@@ -29,20 +31,6 @@ class MusicBeatState extends FlxUIState
 		}
 		FlxTransitionableState.skipNextTransOut = false;
 	}
-	
-	#if (VIDEOS_ALLOWED && desktop)
-	override public function onFocus():Void
-	{
-		FlxVideo.onFocus();
-		super.onFocus();
-	}
-	
-	override public function onFocusLost():Void
-	{
-		FlxVideo.onFocusLost();
-		super.onFocusLost();
-	}
-	#end
 
 	override function update(elapsed:Float)
 	{
@@ -51,37 +39,77 @@ class MusicBeatState extends FlxUIState
 		updateCurStep();
 		updateBeat();
 
-		if (oldStep != curStep && curStep >= 0)
-			stepHit();
+		if (oldStep != curStep)
+		{
+			if(curStep >= 0)
+				stepHit();
+
+			if(PlayState.SONG != null)
+			{
+				if (oldStep < curStep)
+					updateSection();
+				else
+					rollbackSection();
+			}
+		}
 
 		if (FlxG.save.data != null) FlxG.save.data.fullscreen = FlxG.fullscreen;
 		
 		super.update(elapsed);
 	}
 
+	private function updateSection():Void
+	{
+		if (PlayState.SONG.notes[curSection] != null) {
+			if(stepsToDo < 1) stepsToDo = PlayState.SONG.notes[curSection].lengthInSteps;
+			while(curStep >= stepsToDo)
+			{
+				curSection++;
+				if (PlayState.SONG.notes[curSection] != null) {
+					stepsToDo += PlayState.SONG.notes[curSection].lengthInSteps;
+					sectionHit();
+				} else {
+					stepsToDo += PlayState.SONG.timeSignature[0] * 4;
+					sectionHit();
+				}
+			}
+		}
+	}
+
+	private function rollbackSection():Void
+	{
+		if(curStep < 0) return;
+
+		var lastSection:Int = curSection;
+		curSection = 0;
+		stepsToDo = 0;
+		for (i in 0...PlayState.SONG.notes.length)
+		{
+			if (PlayState.SONG.notes[i] != null)
+			{
+				stepsToDo += PlayState.SONG.notes[i].lengthInSteps;
+				if(stepsToDo > curStep) break;
+
+				curSection++;
+			}
+		}
+
+		if(curSection > lastSection) sectionHit();
+	}
+
 	private function updateBeat():Void
 	{
 		curBeat = Math.floor(curStep / 4);
+		curDecBeat = curDecStep / 4;
 	}
 
 	private function updateCurStep():Void
 	{
-		var lastChange:Dynamic = {
-			stepTime: 0,
-			songTime: 0.0
-		}
-		for (i in 0...Conductor.bpmChangeMap.length)
-		{
-			if (Conductor.songPosition >= Conductor.bpmChangeMap[i].songTime)
-				lastChange = Conductor.bpmChangeMap[i];
-		}
-		for (i in 0...Conductor.signatureChangeMap.length)
-		{
-			if (Conductor.songPosition >= Conductor.signatureChangeMap[i].songTime && Conductor.signatureChangeMap[i].songTime > lastChange.songTime)
-				lastChange = Conductor.signatureChangeMap[i];
-		}
+		var lastChange = Conductor.getBPMFromSeconds(Conductor.songPosition);
 
-		curStep = lastChange.stepTime + Math.floor(((Conductor.songPosition - ClientPrefs.noteOffset) - lastChange.songTime) / Conductor.stepCrochet);
+		var shit = ((Conductor.songPosition - ClientPrefs.noteOffset) - lastChange.songTime) / lastChange.stepCrochet;
+		curDecStep = lastChange.stepTime + shit;
+		curStep = lastChange.stepTime + Math.floor(shit);
 	}
 
 	public static function switchState(nextState:FlxState) {
@@ -120,14 +148,25 @@ class MusicBeatState extends FlxUIState
 		return leState;
 	}
 
+	var passedFirstStep:Bool = false;
 	public function stepHit():Void
 	{
 		if (curStep % 4 == 0)
 			beatHit();
+
+		if (curStep >= 0 && !passedFirstStep) {//stupid fix but whatever
+			sectionHit();
+			passedFirstStep = true;
+		}
 	}
 
 	public function beatHit():Void
 	{
-		//do literally nothing dumbass
+		//trace('Beat: ' + curBeat);
+	}
+
+	public function sectionHit():Void
+	{
+		//trace('Section: ' + curSection + ', Beat: ' + curBeat + ', Step: ' + curStep);
 	}
 }

@@ -62,6 +62,7 @@ class GitarooPause extends MusicBeatState
 			}
 			else
 			{
+				WeekData.loadTheFirstEnabledMod();
 				PlayState.changedDifficulty = false;
 				PlayState.seenCutscene = false;
 				PlayState.deathCounter = 0;

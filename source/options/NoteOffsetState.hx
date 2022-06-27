@@ -39,6 +39,14 @@ class NoteOffsetState extends MusicBeatState
 
 	var changeModeText:FlxText;
 
+	#if mobile
+	var buttonLEFT:Button;
+	var buttonRESET:Button;
+	var buttonRIGHT:Button;
+	var buttonENTER:Button;
+	var buttonESC:Button;
+	#end
+
 	override public function create()
 	{
 		// Cameras
@@ -193,6 +201,19 @@ class NoteOffsetState extends MusicBeatState
 		Conductor.changeBPM(128);
 		FlxG.sound.playMusic(Paths.music('offsetSong'), 1, true);
 
+		#if mobile
+		buttonLEFT = new Button(834, 564, 'LEFT');
+		add(buttonLEFT);
+		buttonRESET = new Button(984, buttonLEFT.y, 'RESET');
+		add(buttonRESET);
+		buttonRIGHT = new Button(buttonLEFT.x + 300, buttonLEFT.y, 'RIGHT');
+		add(buttonRIGHT);
+		buttonENTER = new Button(492, 564, 'ENTER');
+		add(buttonENTER);
+		buttonESC = new Button(buttonENTER.x + 136, buttonENTER.y, 'ESC');
+		add(buttonESC);
+		#end
+
 		super.create();
 	}
 
@@ -287,7 +308,7 @@ class NoteOffsetState extends MusicBeatState
 				}
 			}
 
-			if (controls.RESET)
+			if (controls.RESET #if mobile || buttonRESET.justPressed #end)
 			{
 				for (i in 0...ClientPrefs.comboOffset.length)
 				{
@@ -298,25 +319,25 @@ class NoteOffsetState extends MusicBeatState
 		}
 		else
 		{
-			if (controls.UI_LEFT_P)
+			if (controls.UI_LEFT_P #if mobile || buttonLEFT.justPressed #end)
 			{
 				barPercent = CoolUtil.boundTo(ClientPrefs.noteOffset - 1, delayMin, delayMax);
 				updateNoteDelay();
 			}
-			else if (controls.UI_RIGHT_P)
+			else if (controls.UI_RIGHT_P #if mobile || buttonRIGHT.justPressed #end)
 			{
 				barPercent = CoolUtil.boundTo(ClientPrefs.noteOffset + 1, delayMin, delayMax);
 				updateNoteDelay();
 			}
 
 			var mult:Int = 1;
-			if (controls.UI_LEFT || controls.UI_RIGHT)
+			if (controls.UI_LEFT || controls.UI_RIGHT #if mobile || buttonLEFT.pressed || buttonRIGHT.pressed #end)
 			{
 				holdTime += elapsed;
 				if (controls.UI_LEFT) mult = -1;
 			}
 
-			if (controls.UI_LEFT_R || controls.UI_RIGHT_R) holdTime = 0;
+			if (controls.UI_LEFT_R || controls.UI_RIGHT_R #if mobile || buttonLEFT.justReleased || buttonRIGHT.justReleased #end) holdTime = 0;
 
 			if (holdTime > 0.5)
 			{
@@ -325,7 +346,7 @@ class NoteOffsetState extends MusicBeatState
 				updateNoteDelay();
 			}
 
-			if (controls.RESET)
+			if (controls.RESET #if mobile || buttonRESET.justPressed #end)
 			{
 				holdTime = 0;
 				barPercent = 0;
@@ -333,13 +354,13 @@ class NoteOffsetState extends MusicBeatState
 			}
 		}
 
-		if (controls.ACCEPT)
+		if (controls.ACCEPT #if mobile || buttonENTER.justPressed #end)
 		{
 			onComboMenu = !onComboMenu;
 			updateMode();
 		}
 
-		if (controls.BACK)
+		if (controls.BACK #if mobile || buttonESC.justPressed #end)
 		{
 			if (zoomTween != null) zoomTween.cancel();
 			if (beatTween != null) beatTween.cancel();
@@ -464,6 +485,8 @@ class NoteOffsetState extends MusicBeatState
 			changeModeText.text = '< Note/Beat Delay (Press Accept to Switch) >';
 
 		changeModeText.text = changeModeText.text.toUpperCase();
+		#if !mobile
 		FlxG.mouse.visible = onComboMenu;
+		#end
 	}
 }

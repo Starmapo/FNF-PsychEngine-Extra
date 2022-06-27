@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxSubState;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
@@ -44,6 +45,18 @@ class StoryMenuState extends MusicBeatState
 	var rightArrow:FlxSprite;
 
 	var loadedWeeks:Array<WeekData> = [];
+
+	#if mobile
+	var grpButtons:FlxTypedGroup<Button> = new FlxTypedGroup();
+	var buttonUP:Button;
+	var buttonDOWN:Button;
+	var buttonLEFT:Button;
+	var buttonRESET:Button;
+	var buttonRIGHT:Button;
+	var buttonENTER:Button;
+	var buttonESC:Button;
+	var buttonCTRL:Button;
+	#end
 
 	override function create()
 	{
@@ -185,13 +198,50 @@ class StoryMenuState extends MusicBeatState
 		changeWeek();
 		changeDifficulty();
 
+		#if mobile
+		buttonUP = new Button(10, 130, 'UP');
+		buttonDOWN = new Button(buttonUP.x, buttonUP.y + buttonUP.height + 10, 'DOWN');
+		buttonLEFT = new Button(834, 564, 'LEFT');
+		buttonRESET = new Button(984, buttonLEFT.y, 'RESET');
+		buttonRIGHT = new Button(buttonLEFT.x + 300, buttonLEFT.y, 'RIGHT');
+		buttonENTER = new Button(492, 564, 'ENTER');
+		buttonESC = new Button(buttonENTER.x + 136, buttonENTER.y, 'ESC');
+		buttonCTRL = new Button(10,  buttonLEFT.y, 'CTRL');
+
+		grpButtons.add(buttonUP);
+		grpButtons.add(buttonDOWN);
+		grpButtons.add(buttonLEFT);
+		grpButtons.add(buttonRESET);
+		grpButtons.add(buttonRIGHT);
+		grpButtons.add(buttonENTER);
+		grpButtons.add(buttonESC);
+		grpButtons.add(buttonCTRL);
+		add(grpButtons);
+		#end
+
 		super.create();
+	}
+
+	override function openSubState(subState:FlxSubState) {
+		#if mobile
+		if (!persistentUpdate) {
+			for (btn in grpButtons) {
+				btn.visible = false;
+			}
+		}
+		#end
+		super.openSubState(subState);
 	}
 
 	override function closeSubState() {
 		persistentUpdate = true;
 		changeWeek();
 		super.closeSubState();
+		#if mobile
+		for (btn in grpButtons) {
+			btn.visible = true;
+		}
+		#end
 	}
 
 	var holdTime:Float = 0;
@@ -210,8 +260,8 @@ class StoryMenuState extends MusicBeatState
 				if (loadedWeeks.length > 1) {
 					var shiftMult:Int = 1;
 					if (FlxG.keys.pressed.SHIFT) shiftMult = 3;
-					var upP = controls.UI_UP_P;
-					var downP = controls.UI_DOWN_P;
+					var upP = controls.UI_UP_P #if mobile || buttonUP.justPressed #end;
+					var downP = controls.UI_DOWN_P #if mobile || buttonDOWN.justPressed #end;
 					if (upP || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
 					{
 						changeWeek(-shiftMult);
@@ -226,7 +276,9 @@ class StoryMenuState extends MusicBeatState
 						holdTime = 0;
 					}
 
-					if (controls.UI_DOWN || controls.UI_UP)
+					var down = controls.UI_DOWN #if mobile || buttonDOWN.pressed #end;
+					var up = controls.UI_UP #if mobile || buttonUP.pressed #end;
+					if (down || up)
 					{
 						var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
 						holdTime += elapsed;
@@ -234,45 +286,45 @@ class StoryMenuState extends MusicBeatState
 
 						if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
 						{
-							changeWeek((checkNewHold - checkLastHold) * (controls.UI_UP ? -shiftMult : shiftMult));
+							changeWeek((checkNewHold - checkLastHold) * (up ? -shiftMult : shiftMult));
 						}
 					}
 				}
 
-				if (controls.UI_RIGHT)
+				if (controls.UI_RIGHT #if mobile || buttonRIGHT.pressed #end)
 					rightArrow.animation.play('press')
 				else
 					rightArrow.animation.play('idle');
 
-				if (controls.UI_LEFT)
+				if (controls.UI_LEFT #if mobile || buttonLEFT.pressed #end)
 					leftArrow.animation.play('press');
 				else
 					leftArrow.animation.play('idle');
 
-				if (controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
+				if ((controls.UI_RIGHT_P #if mobile || buttonRIGHT.justPressed #end) || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
 					changeDifficulty(1);
-				else if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
+				else if ((controls.UI_LEFT_P #if mobile || buttonLEFT.justPressed #end) || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
 					changeDifficulty(-1);
 
-				if (controls.RESET)
+				if (controls.RESET #if mobile || buttonRESET.justPressed #end)
 				{
 					persistentUpdate = false;
-					openSubState(new ResetScoreSubState('', curDifficulty, '', WeekData.formatWeek(loadedWeeks[curWeek].fileName)));
+					openSubState(new ResetScoreSubState('', curDifficulty, '', WeekData.formatWeek(loadedWeeks[curWeek].fileName), ''));
 				}
-				else if (controls.ACCEPT || FlxG.mouse.justPressed)
+				else if (controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end)
 				{
 					selectWeek();
 				}
 			}
 
-			if (FlxG.keys.justPressed.CONTROL)
+			if (FlxG.keys.justPressed.CONTROL #if mobile || buttonCTRL.justPressed #end)
 			{
 				persistentUpdate = false;
 				openSubState(new GameplayChangersSubState());
 			}
 		}
 
-		if (controls.BACK && !movedBack && !selectedWeek)
+		if ((controls.BACK #if mobile || buttonESC.justPressed #end) && !movedBack && !selectedWeek)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 			movedBack = true;
@@ -322,9 +374,7 @@ class StoryMenuState extends MusicBeatState
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
 				LoadingState.loadAndSwitchState(new PlayState(), true);
-				#if PRELOAD_ALL
 				FreeplayState.destroyFreeplayVocals();
-				#end
 			});
 		} else {
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
@@ -459,7 +509,9 @@ class StoryMenuState extends MusicBeatState
 		var leWeek:WeekData = loadedWeeks[curWeek];
 		var stringThing:Array<String> = [];
 		for (i in 0...leWeek.songs.length) {
-			stringThing.push(leWeek.songs[i][0]);
+			var songName = leWeek.songs[i][0];
+			var meta = Song.getMetaFile(songName);
+			stringThing.push(meta.displayName != null ? meta.displayName : songName);
 		}
 
 		txtTracklist.text = '';

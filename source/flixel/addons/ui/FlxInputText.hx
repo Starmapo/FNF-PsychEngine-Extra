@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import lime.system.Clipboard;
 import flash.errors.Error;
 import flash.events.KeyboardEvent;
 import flash.geom.Rectangle;
@@ -47,6 +48,9 @@ class FlxInputText extends FlxText
 	public static inline var DELETE_ACTION:String = "delete"; // press delete
 	public static inline var ENTER_ACTION:String = "enter"; // press enter
 	public static inline var INPUT_ACTION:String = "input"; // manually edit
+	public static inline var PASTE_ACTION:String = "paste"; // text paste
+	public static inline var COPY_ACTION:String = "copy"; // text copy
+	public static inline var CUT_ACTION:String = "cut"; // text copy
 
 	/**
 	 * This regular expression will filter out (remove) everything that matches.
@@ -347,6 +351,59 @@ class FlxInputText extends FlxText
 
 		if (hasFocus)
 		{
+			//// Crtl/Cmd + C to copy text to the clipboard
+			  // This copies the entire input, because i'm too lazy to do caret selection, and if i did it i whoud probabbly make it a pr in flixel-ui.
+
+			  #if (macos)
+			  if (key == 67 && e.commandKey) {
+			  #else
+			  if (key == 67 && e.ctrlKey) {
+		 	  #end
+				Clipboard.text = text;
+
+				onChange(COPY_ACTION);
+
+				// Stops the function to go further, because it whoud type in a c to the input
+				return;
+			  }
+
+			  //// Crtl/Cmd + V to paste in the clipboard text to the input
+			  #if (macos)
+			  if (key == 86 && e.commandKey) {
+			  #else
+			  if (key == 86 && e.ctrlKey) {
+			  #end
+				var newText:String = filter(Clipboard.text);
+
+				if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) < maxLength)) {
+					text = insertSubstring(text, newText, caretIndex);
+					caretIndex += newText.length;
+					onChange(INPUT_ACTION);
+					onChange(PASTE_ACTION);
+				}
+
+				// Same as before, but prevents typing out a v
+				return;
+			}
+
+			//// Crtl/Cmd + X to cut the text from the input to the clipboard
+			// Again, this copies the entire input text because there is no caret selection.
+			#if (macos)
+			if (key == 88 && e.commandKey) {
+			#else
+			if (key == 88 && e.ctrlKey) {
+			#end
+				Clipboard.text = text;
+				text = '';
+				caretIndex = 0;
+
+				onChange(INPUT_ACTION);
+				onChange(CUT_ACTION);
+
+				// Same as before, but prevents typing out a x
+				return;
+			}
+
 			// Do nothing for Shift, Ctrl, Esc, and flixel console hotkey
 			if (key == 16 || key == 17 || key == 220 || key == 27)
 			{

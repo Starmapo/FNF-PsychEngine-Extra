@@ -18,6 +18,16 @@ class GameplayChangersSubState extends MusicBeatSubState
 	private var checkboxGroup:FlxTypedGroup<CheckboxThingie>;
 	private var grpTexts:FlxTypedGroup<AttachedText>;
 
+	#if mobile
+	var buttonUP:Button;
+	var buttonDOWN:Button;
+	var buttonLEFT:Button;
+	var buttonRESET:Button;
+	var buttonRIGHT:Button;
+	var buttonENTER:Button;
+	var buttonESC:Button;
+	#end
+
 	function getOptions()
 	{
 		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrolltype', 'string', 'multiplicative', ["multiplicative", "constant"]);
@@ -144,6 +154,23 @@ class GameplayChangersSubState extends MusicBeatSubState
 
 		changeSelection();
 		reloadCheckboxes();
+
+		#if mobile
+		buttonUP = new Button(10, 130, 'UP');
+		add(buttonUP);
+		buttonDOWN = new Button(buttonUP.x, buttonUP.y + buttonUP.height + 10, 'DOWN');
+		add(buttonDOWN);
+		buttonLEFT = new Button(834, 564, 'LEFT');
+		add(buttonLEFT);
+		buttonRESET = new Button(984, buttonLEFT.y, 'RESET');
+		add(buttonRESET);
+		buttonRIGHT = new Button(buttonLEFT.x + 300, buttonLEFT.y, 'RIGHT');
+		add(buttonRIGHT);
+		buttonENTER = new Button(492, 564, 'ENTER');
+		add(buttonENTER);
+		buttonESC = new Button(buttonENTER.x + 136, buttonENTER.y, 'ESC');
+		add(buttonESC);
+		#end
 	}
 
 	var nextAccept:Int = 5;
@@ -151,16 +178,32 @@ class GameplayChangersSubState extends MusicBeatSubState
 	var holdValue:Float = 0;
 	override function update(elapsed:Float)
 	{
-		if (controls.UI_UP_P || FlxG.mouse.wheel > 0)
+		if (controls.UI_UP_P || #if mobile buttonUP.justPressed #else FlxG.mouse.wheel > 0 #end)
 		{
 			changeSelection(-1);
+			holdTime = 0;
 		}
-		if (controls.UI_DOWN_P || FlxG.mouse.wheel < 0)
+		if (controls.UI_DOWN_P || #if mobile buttonDOWN.justPressed #else FlxG.mouse.wheel < 0 #end)
 		{
 			changeSelection(1);
+			holdTime = 0;
 		}
 
-		if (controls.BACK) {
+		var down = controls.UI_DOWN #if mobile || buttonDOWN.pressed #end;
+		var up = controls.UI_UP #if mobile || buttonUP.pressed #end;
+		if (down || up)
+		{
+			var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
+			holdTime += elapsed;
+			var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
+
+			if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
+			{
+				changeSelection((checkNewHold - checkLastHold) * (up ? -1 : 1));
+			}
+		}
+
+		if (controls.BACK #if mobile || buttonESC.justPressed #end) {
 			close();
 			ClientPrefs.saveSettings();
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
@@ -176,16 +219,16 @@ class GameplayChangersSubState extends MusicBeatSubState
 
 			if (usesCheckbox)
 			{
-				if (controls.ACCEPT || FlxG.mouse.justPressed)
+				if (controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end)
 				{
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 					curOption.setValue((curOption.getValue() == true) ? false : true);
 					curOption.change();
 					reloadCheckboxes();
 				}
-			} else {
-				if (controls.UI_LEFT || controls.UI_RIGHT || (FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT)) {
-					var pressed = (controls.UI_LEFT_P || controls.UI_RIGHT_P);
+			} else if (!down && !up) {
+				if (controls.UI_LEFT || controls.UI_RIGHT #if mobile || buttonLEFT.pressed || buttonRIGHT.pressed #end || (FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT)) {
+					var pressed = (controls.UI_LEFT_P || controls.UI_RIGHT_P #if mobile || buttonLEFT.pressed || buttonRIGHT.pressed #end );
 					var useWheel = FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT;
 					if (holdTime > 0.5 || pressed || useWheel) {
 						if (pressed || useWheel) {
@@ -194,7 +237,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 								if (useWheel) {
 									add = curOption.changeValue * Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1));
 								} else {
-									add = controls.UI_LEFT ? -curOption.changeValue : curOption.changeValue;
+									add = (controls.UI_LEFT #if mobile || buttonLEFT.pressed #end) ? -curOption.changeValue : curOption.changeValue;
 								}
 							}
 
@@ -219,7 +262,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 								case 'string':
 									var num:Int = curOption.curOption; //lol
 									if (useWheel) num += Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1));
-									else if (controls.UI_LEFT_P) --num;
+									else if (controls.UI_LEFT_P #if mobile || buttonLEFT.justPressed #end) --num;
 									else num++;
 
 									if (num < 0) {
@@ -255,7 +298,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 							curOption.change();
 							FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 						} else if (curOption.type != 'string') {
-							holdValue += curOption.scrollSpeed * elapsed * (controls.UI_LEFT ? -1 : 1);
+							holdValue += curOption.scrollSpeed * elapsed * ((controls.UI_LEFT #if mobile || buttonLEFT.pressed #end) ? -1 : 1);
 							if (holdValue < curOption.minValue) holdValue = curOption.minValue;
 							else if (holdValue > curOption.maxValue) holdValue = curOption.maxValue;
 
@@ -275,12 +318,12 @@ class GameplayChangersSubState extends MusicBeatSubState
 					if (curOption.type != 'string' && !useWheel) {
 						holdTime += elapsed;
 					}
-				} else if (controls.UI_LEFT_R || controls.UI_RIGHT_R) {
+				} else if (controls.UI_LEFT_R || controls.UI_RIGHT_R #if mobile || buttonLEFT.justReleased || buttonRIGHT.justReleased #end) {
 					clearHold();
 				}
 			}
 
-			if (controls.RESET)
+			if (controls.RESET #if mobile || buttonRESET.justPressed #end)
 			{
 				for (i in 0...optionsArray.length)
 				{

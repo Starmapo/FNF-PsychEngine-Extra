@@ -14,13 +14,13 @@ using StringTools;
 class MasterEditorMenu extends MusicBeatState
 {
 	var options:Array<String> = [
-		'Week Editor',
-		'Menu Character Editor',
+		'Character Editor',
+		'Chart Editor',
 		'Dialogue Editor',
 		'Dialogue Portrait Editor',
+		'Menu Character Editor',
 		//'UI Skin Editor',
-		'Character Editor',
-		'Chart Editor'
+		'Week Editor'
 	];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
 	private var directories:Array<String> = [null];
@@ -78,15 +78,31 @@ class MasterEditorMenu extends MusicBeatState
 		super.create();
 	}
 
+	var holdTime:Float = 0;
 	override function update(elapsed:Float)
 	{
 		if (controls.UI_UP_P || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
 		{
 			changeSelection(-1);
+			holdTime = 0;
 		}
 		if (controls.UI_DOWN_P || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
 		{
 			changeSelection(1);
+			holdTime = 0;
+		}
+		var down = controls.UI_DOWN;
+		var up = controls.UI_UP;
+		if (down || up)
+		{
+			var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
+			holdTime += elapsed;
+			var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
+
+			if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
+			{
+				changeSelection((checkNewHold - checkLastHold) * (up ? -1 : 1));
+			}
 		}
 		#if MODS_ALLOWED
 		if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
@@ -124,12 +140,11 @@ class MasterEditorMenu extends MusicBeatState
 					PlayState.SONG = null;
 					LoadingState.loadAndSwitchState(new DialogueEditorState());
 				case 'Chart Editor'://felt it would be cool maybe
+					PlayState.chartingMode = true;
 					LoadingState.loadAndSwitchState(new ChartingState(true));
 			}
 			FlxG.sound.music.volume = 0;
-			#if PRELOAD_ALL
 			FreeplayState.destroyFreeplayVocals();
-			#end
 		}
 		
 		var bullShit:Int = 0;

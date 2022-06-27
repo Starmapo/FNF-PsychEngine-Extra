@@ -587,15 +587,7 @@ class Controls extends FlxActionSet
 		}
 	}
 
-	public function addGamepad(id:Int, ?buttonMap:Map<Control, Array<FlxGamepadInputID>>):Void
-	{
-		gamepadsAdded.push(id);
-		
-		for (control => buttons in buttonMap)
-			inline bindButtons(control, id, buttons);
-	}
-
-	inline function addGamepadLiteral(id:Int, ?buttonMap:Map<Control, Array<FlxGamepadInputID>>):Void
+	inline function addGamepad(id:Int, ?buttonMap:Map<Control, Array<FlxGamepadInputID>>):Void
 	{
 		gamepadsAdded.push(id);
 
@@ -622,7 +614,7 @@ class Controls extends FlxActionSet
 	public function addDefaultGamepad(id):Void
 	{
 		#if !switch
-		addGamepadLiteral(id, [
+		addGamepad(id, [
 			Control.ACCEPT => [A, START],
 			Control.BACK => [B],
 			Control.UI_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
@@ -637,7 +629,7 @@ class Controls extends FlxActionSet
 			Control.RESET => [8]
 		]);
 		#else
-		addGamepadLiteral(id, [
+		addGamepad(id, [
 			//Swap A and B for switch
 			Control.ACCEPT => [B, START],
 			Control.BACK => [A],

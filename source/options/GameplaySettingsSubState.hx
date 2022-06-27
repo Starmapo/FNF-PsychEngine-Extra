@@ -33,6 +33,13 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			false);
 		addOption(option);
 
+		var option:Option = new Option('Opponent Notes',
+			'If unchecked, opponent notes get hidden.',
+			'opponentStrums',
+			'bool',
+			true);
+		addOption(option);
+
 		var option:Option = new Option('Ghost Tapping',
 			"If checked, you won't get misses from pressing keys while there are no notes able to be hit.",
 			'ghostTapping',
@@ -61,20 +68,6 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			false);
 		addOption(option);
 
-		var option:Option = new Option('Instrumental Volume',
-			'Sets the volume for the song instrumentals.\n(Only works if the instrumental and vocals are separate files)',
-			'instVolume',
-			'percent',
-			1);
-		addOption(option);
-
-		var option:Option = new Option('Vocals Volume',
-			'Sets the volume for the song vocals.\n(Only works if the instrumental and vocals are separate files)',
-			'voicesVolume',
-			'percent',
-			1);
-		addOption(option);
-
 		var option:Option = new Option('Hitsound Volume',
 			'A "tick" sound plays when you hit a note.',
 			'hitsoundVolume',
@@ -85,6 +78,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		option.maxValue = 1;
 		option.changeValue = 0.1;
 		option.decimals = 1;
+		option.onChange = onChangeHitsoundVolume;
 		addOption(option);
 
 		var option:Option = new Option('Rating Offset',
@@ -166,5 +160,10 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		super();
+	}
+
+	function onChangeHitsoundVolume()
+	{
+		FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
 	}
 }

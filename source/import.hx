@@ -1,3 +1,3 @@
 import AttachedSprite;
-import Paths;
+import Song;
 import animateatlas.AtlasFrameMaker;

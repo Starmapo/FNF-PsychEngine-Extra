@@ -1,2 +1,0 @@
-Average Blur with 7 radius for the background
-from KrisVDM's Plugin Pack https://www.vandermotten.be/paintdotnet

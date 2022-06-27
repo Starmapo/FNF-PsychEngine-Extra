@@ -431,13 +431,9 @@
 		}
 	],
 	"scale": 1,
-	"noteScale": 1,
-	"sustainYScale": 1,
 	"countdownScale": 1,
 	"ratingScale": 0.7,
 	"comboNumScale": 0.5,
-	"sustainXOffset": 0,
-	"downscrollTailYOffset": -19,
 	"noAntialiasing": false,
 	"isPixel": false,
 	"introSoundsSuffix": ""

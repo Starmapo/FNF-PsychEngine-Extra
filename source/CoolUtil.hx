@@ -24,19 +24,29 @@ class CoolUtil
 
 	public static var difficulties:Array<String> = [];
 
+	inline public static function quantize(f:Float, snap:Float){
+		// changed so this actually works lol
+		var m:Float = Math.fround(f * snap);
+		return (m / snap);
+	}
+
 	public static function getDifficultyFilePath(?num:Int = null)
 	{
 		if (num == null) num = PlayState.storyDifficulty;
 		if (num >= difficulties.length) num = difficulties.length - 1;
 
 		var fileSuffix:String = difficulties[num];
-		if (fileSuffix != defaultDifficulty)
-		{
-			fileSuffix = '-$fileSuffix';
-		}
-		else
-		{
+		if (fileSuffix == null) {
 			fileSuffix = '';
+		} else {
+			if (fileSuffix != defaultDifficulty)
+			{
+				fileSuffix = '-$fileSuffix';
+			}
+			else
+			{
+				fileSuffix = '';
+			}
 		}
 		return Paths.formatToSongPath(fileSuffix);
 	}
@@ -69,6 +79,19 @@ class CoolUtil
 		return daList;
 	}
 
+	public static function listFromString(string:String):Array<String>
+	{
+		var daList:Array<String> = [];
+		daList = string.trim().split('\n');
+
+		for (i in 0...daList.length)
+		{
+			daList[i] = daList[i].trim();
+		}
+
+		return daList;
+	}
+	
 	public static function dominantColor(sprite:FlxSprite):Int {
 		var countByColor:Map<Int, Int> = [];
 		for (col in 0...sprite.frameWidth) {
@@ -107,11 +130,11 @@ class CoolUtil
 
 	//uhhhh does this even work at all? i'm starting to doubt
 	public static function precacheSound(sound:String, ?library:String = null):Void {
-		Paths.returnSound('sounds', sound, library);
+		Paths.sound(sound, library);
 	}
 
 	public static function precacheMusic(sound:String, ?library:String = null):Void {
-		Paths.returnSound('music', sound, library);
+		Paths.music(sound, library);
 	}
 
 	public static function browserLoad(site:String) {
@@ -126,6 +149,10 @@ class CoolUtil
 		song = Paths.formatToSongPath(song);
 		difficulties = defaultDifficulties.copy();
 		var diffStr:String = WeekData.getCurrentWeek().difficulties;
+		if (!PlayState.isStoryMode) {
+			var meta = Song.getMetaFile(song);
+			if (meta.freeplayDifficulties != null && meta.freeplayDifficulties.length > 0) diffStr = meta.freeplayDifficulties;
+		}
 		if (diffStr == null || diffStr.length == 0) diffStr = 'Easy,Normal,Hard';
 		diffStr = diffStr.trim(); //Fuck you HTML5
 

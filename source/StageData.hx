@@ -7,7 +7,6 @@ import sys.FileSystem;
 import openfl.utils.Assets;
 #end
 import haxe.Json;
-import Song;
 
 using StringTools;
 
@@ -50,6 +49,8 @@ class StageData {
 					stage = 'school';
 				case 'thorns':
 					stage = 'schoolEvil';
+				case 'ugh' | 'guns' | 'stress':
+					stage = 'tank';
 				default:
 					stage = 'stage';
 			}

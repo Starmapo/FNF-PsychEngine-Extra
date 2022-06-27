@@ -62,7 +62,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Note Underlay Transparency',
-			'How visible the note backgrounds should be.',
+			'How visible the background behind the notes should be.',
 			'underlayAlpha',
 			'percent',
 			0);
@@ -71,6 +71,20 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.maxValue = 1;
 		option.changeValue = 0.1;
 		option.decimals = 1;
+		addOption(option);
+
+		var option:Option = new Option('Full Underlay',
+			"If checked, the note underlay will fill up the whole screen instead of just the notes. Works better for modcharts.",
+			'underlayFull',
+			'bool',
+			false);
+		addOption(option);
+
+		var option:Option = new Option('Keybind Reminders',
+			'If checked, shows your note keybinds when starting a song.',
+			'keybindReminders',
+			'bool',
+			true);
 		addOption(option);
 
 		var option:Option = new Option('Health Bar Transparency',
@@ -92,7 +106,6 @@ class VisualsUISubState extends BaseOptionsMenu
 			true);
 		addOption(option);
 		
-		#if !mobile
 		var option:Option = new Option('FPS & Memory Counter',
 			'If unchecked, hides the FPS & memory counter.',
 			'showFPS',
@@ -100,7 +113,6 @@ class VisualsUISubState extends BaseOptionsMenu
 			true);
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
-		#end
 
 		var option:Option = new Option('Pause Screen Song:',
 			"What song do you prefer for the Pause Screen?",
@@ -131,11 +143,9 @@ class VisualsUISubState extends BaseOptionsMenu
 		super.destroy();
 	}
 
-	#if !mobile
 	function onChangeFPSCounter()
 	{
 		if (Main.fpsVar != null)
 			Main.fpsVar.visible = ClientPrefs.showFPS;
 	}
-	#end
 }

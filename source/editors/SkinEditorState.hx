@@ -109,8 +109,6 @@ class SkinEditorState extends MusicBeatState {
     var UI_skinName:FlxUIInputText;
     var check_noAntialiasing:FlxUICheckBox;
     var scaleStepper:FlxUINumericStepper;
-    var noteScaleStepper:FlxUINumericStepper;
-    var sustainYScaleStepper:FlxUINumericStepper;
     function addSkinUI() {
         var tab_group = new FlxUI(null, UI_box);
 		tab_group.name = "Skin";
@@ -139,21 +137,11 @@ class SkinEditorState extends MusicBeatState {
         scaleStepper = new FlxUINumericStepper(check_noAntialiasing.x + check_noAntialiasing.width, check_noAntialiasing.y, 0.1, 1, 0.01, 100, 2);
         blockPressWhileTypingOnStepper.push(scaleStepper);
 
-        noteScaleStepper = new FlxUINumericStepper(scaleStepper.x + scaleStepper.width, check_noAntialiasing.y, 0.1, 1, 0.01, 100, 2);
-        blockPressWhileTypingOnStepper.push(noteScaleStepper);
-
-        sustainYScaleStepper = new FlxUINumericStepper(noteScaleStepper.x + noteScaleStepper.width, check_noAntialiasing.y, 0.1, 1, 0.01, 100, 2);
-        blockPressWhileTypingOnStepper.push(sustainYScaleStepper);
-
         tab_group.add(UI_skinName);
         tab_group.add(reloadSkin);
         tab_group.add(check_noAntialiasing);
         tab_group.add(scaleStepper);
-        tab_group.add(noteScaleStepper);
-        tab_group.add(sustainYScaleStepper);
         tab_group.add(new FlxText(scaleStepper.x, scaleStepper.y - 15, 0, 'Overall Scale:'));
-        tab_group.add(new FlxText(noteScaleStepper.x, noteScaleStepper.y - 15, 0, 'Note Scale:'));
-        tab_group.add(new FlxText(sustainYScaleStepper.x - 15, sustainYScaleStepper.y - 15, 0, 'Sustain Y Scale:'));
         UI_box.addGroup(tab_group);
     }
 
@@ -253,6 +241,7 @@ class SkinEditorState extends MusicBeatState {
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
             if (FlxG.keys.justPressed.ESCAPE) {
+                WeekData.loadTheFirstEnabledMod();
                 MusicBeatState.switchState(new editors.MasterEditorMenu());
                 FlxG.sound.playMusic(Paths.music('freakyMenu'));
                 FlxG.mouse.visible = false;
@@ -286,12 +275,6 @@ class SkinEditorState extends MusicBeatState {
 			if (sender == scaleStepper) {
 				uiSkin.scale = sender.value;
                 reloadNotes();
-			} else if (sender == noteScaleStepper) {
-				uiSkin.noteScale = sender.value;
-                reloadNotes();
-			} else if (sender == sustainYScaleStepper) {
-				uiSkin.sustainYScale = sender.value;
-                reloadNotes();
 			}
 		}
 	}
@@ -299,8 +282,6 @@ class SkinEditorState extends MusicBeatState {
     function loadFromSkin() {
         check_noAntialiasing.checked = uiSkin.noAntialiasing;
         scaleStepper.value = uiSkin.scale;
-        noteScaleStepper.value = uiSkin.noteScale;
-        sustainYScaleStepper.value = uiSkin.sustainYScale;
         reloadNotes();
     }
 }

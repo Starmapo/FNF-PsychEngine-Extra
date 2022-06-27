@@ -38,36 +38,8 @@ class LoadingState extends MusicBeatState
 	var loadBar:FlxSprite;
 	override function create()
 	{
-		var curStage = 'funkay';
-		if (PlayState.SONG != null && PlayState.SONG.stage != null && PlayState.SONG.stage.length > 0)
-			curStage = PlayState.SONG.stage;
-		else if (PlayState.SONG != null) {
-			switch (Paths.formatToSongPath(PlayState.SONG.song)) {
-				case 'tutorial' | 'bopeebo' | 'fresh' | 'dadbattle' | 'dad-battle':
-					curStage = 'stage';
-				case 'spookeez' | 'south' | 'monster':
-					curStage = 'spooky';
-				case 'pico' | 'blammed' | 'philly' | 'philly-nice':
-					curStage = 'philly';
-				case 'milf' | 'satin-panties' | 'high':
-					curStage = 'limo';
-				case 'cocoa' | 'eggnog':
-					curStage = 'mall';
-				case 'winter-horrorland':
-					curStage = 'mallEvil';
-				case 'senpai' | 'roses':
-					curStage = 'school';
-				case 'thorns':
-					curStage = 'schoolEvil';
-			}
-		}
-		var imagePath = Paths.image('preloaders/funkay');
-		var imageSuffix = (PlayState.isStoryMode ? '-story' : '');
-		if (Assets.exists(Paths.getPath('images/preloaders/${curStage + imageSuffix}.png', IMAGE))) {
-			imagePath = Paths.image('preloaders/${curStage + imageSuffix}');
-		} else if (Assets.exists(Paths.getPath('images/preloaders/$curStage.png', IMAGE))) {
-			imagePath = Paths.image('preloaders/$curStage');
-		}
+		var imagePath = Paths.image('funkay');
+		
 		var bg:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d);
 		add(bg);
 		funkay = new FlxSprite(0, 0).loadGraphic(imagePath);
@@ -88,13 +60,13 @@ class LoadingState extends MusicBeatState
 		Paths.loadLibraryManifest('songs').onComplete(function (lib) {
 			callbacks = new MultiCallback(onLoad);
 			var introComplete = callbacks.add("introComplete");
-			if (PlayState.SONG != null) {
+			/*if (PlayState.SONG != null) {
 				checkLoadSong(getSongPath());
 				if (PlayState.SONG.needsVoices) {
 					checkLoadSong(getVocalPath());
 					checkLoadSong(getDadVocalPath());
 				}
-			}
+			}*/
 			checkLibrary("shared");
 			if (directory != null && directory.length > 0 && directory != 'shared') {
 				checkLibrary(directory);
@@ -203,7 +175,7 @@ class LoadingState extends MusicBeatState
 		#if NO_PRELOAD_ALL
 		var loaded:Bool = false;
 		if (PlayState.SONG != null) {
-			loaded = isSoundLoaded(getSongPath()) && (!PlayState.SONG.needsVoices || (isSoundLoaded(getVocalPath()) && isSoundLoaded(getDadVocalPath()))) && isLibraryLoaded("shared") && isLibraryLoaded(directory);
+			loaded = /*isSoundLoaded(getSongPath()) && (!PlayState.SONG.needsVoices || (isSoundLoaded(getVocalPath()) && isSoundLoaded(getDadVocalPath()))) && */isLibraryLoaded("shared") && isLibraryLoaded(directory);
 		}
 		
 		if (!loaded)

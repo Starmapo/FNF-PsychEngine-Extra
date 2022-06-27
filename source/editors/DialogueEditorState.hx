@@ -19,7 +19,6 @@ import openfl.events.IOErrorEvent;
 import flash.net.FileFilter;
 import haxe.Json;
 import DialogueBoxPsych;
-import lime.system.Clipboard;
 #if MODS_ALLOWED
 import sys.io.File;
 #end
@@ -217,7 +216,7 @@ class DialogueEditorState extends MusicBeatState
 		character.playAnim(); //Plays random animation
 		characterAnimSpeed();
 
-		if (character.animation.curAnim != null) {
+		if(character.animation.curAnim != null && character.jsonFile.animations != null) {
 			animText.text = 'Animation: ${character.jsonFile.animations[curAnim].anim} (${curAnim + 1} / ${character.jsonFile.animations.length}) - Press W or S to scroll';
 		} else {
 			animText.text = 'ERROR! NO ANIMATIONS FOUND';
@@ -255,7 +254,7 @@ class DialogueEditorState extends MusicBeatState
 		// Updating Discord Rich Presence
 		var rpcText:String = lineInputText.text;
 		if (rpcText == null || rpcText.length < 1) rpcText = '(Empty)';
-		if (rpcText.length < 3) rpcText += '  '; //Fixes a bug on RPC that triggers an error when the text is too short
+		if (rpcText.length < 3) rpcText += '   '; //Fixes a bug on RPC that triggers an error when the text is too short
 		DiscordClient.changePresence("Dialogue Editor", rpcText);
 		#end
 	}
@@ -328,11 +327,6 @@ class DialogueEditorState extends MusicBeatState
 				FlxG.sound.volumeUpKeys = [];
 				blockInput = true;
 
-				if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null) { //Copy paste
-					inputText.text = ClipboardAdd(inputText.text);
-					inputText.caretIndex = inputText.text.length;
-					getEvent(FlxUIInputText.CHANGE_EVENT, inputText, null, []);
-				}
 				if (FlxG.keys.justPressed.ENTER) {
 					if (inputText == lineInputText) {
 						inputText.text += '\\n';
@@ -357,10 +351,6 @@ class DialogueEditorState extends MusicBeatState
 					FlxG.sound.volumeUpKeys = [];
 					blockInput = true;
 
-					if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null) { //Copy paste
-						leText.text = ClipboardAdd(leText.text);
-						leText.caretIndex = leText.text.length;
-					}
 					if (FlxG.keys.justPressed.ENTER) {
 						if (leText == lineInputText) {
 							leText.text += '\\n';
@@ -383,6 +373,7 @@ class DialogueEditorState extends MusicBeatState
 				reloadText(speedStepper.value);
 			}
 			if (FlxG.keys.justPressed.ESCAPE) {
+				WeekData.loadTheFirstEnabledMod();
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'), 1);
 				transitioning = true;
@@ -469,16 +460,6 @@ class DialogueEditorState extends MusicBeatState
 			else if (rate > 48) rate = 48;
 			character.animation.curAnim.frameRate = rate;
 		}
-	}
-
-	function ClipboardAdd(prefix:String = ''):String {
-		if (prefix.toLowerCase().endsWith('v')) //probably copy paste attempt
-		{
-			prefix = prefix.substring(0, prefix.length-1);
-		}
-
-		var text:String = prefix + Clipboard.text.replace('\n', '');
-		return text;
 	}
 
 	var _file:FileReference = null;

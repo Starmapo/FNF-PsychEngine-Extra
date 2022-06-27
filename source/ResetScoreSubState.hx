@@ -16,17 +16,26 @@ class ResetScoreSubState extends MusicBeatSubState
 	var song:String;
 	var difficulty:Int;
 	var week:String;
+	var displayName:String;
+
+	#if mobile
+	var buttonLEFT:Button;
+	var buttonRIGHT:Button;
+	var buttonENTER:Button;
+	var buttonESC:Button;
+	#end
 
 	// Week '' = Freeplay
-	public function new(song:String, difficulty:Int, character:String, week:String = '')
+	public function new(song:String, difficulty:Int, character:String, week:String = '', displayName:String)
 	{
 		this.song = song;
 		this.difficulty = difficulty;
 		this.week = week;
+		this.displayName = displayName;
 
 		super();
 
-		var name:String = song;
+		var name:String = displayName;
 		if (week.length > 0) {
 			name = WeekData.weeksLoaded.get(week).weekName;
 		}
@@ -67,6 +76,17 @@ class ResetScoreSubState extends MusicBeatSubState
 		noText.x += 200;
 		add(noText);
 		updateOptions();
+
+		#if mobile
+		buttonENTER = new Button(573, 564, 'ENTER');
+		add(buttonENTER);
+		buttonLEFT = new Button(buttonENTER.x - buttonENTER.width - 10, buttonENTER.y, 'LEFT');
+		add(buttonLEFT);
+		buttonRIGHT = new Button(buttonENTER.x + buttonENTER.width + 10, buttonENTER.y, 'RIGHT');
+		add(buttonRIGHT);
+		buttonESC = new Button(10, buttonENTER.y, 'ESC');
+		add(buttonESC);
+		#end
 	}
 
 	override function update(elapsed:Float)
@@ -80,15 +100,15 @@ class ResetScoreSubState extends MusicBeatSubState
 		}
 		if (week.length < 1) icon.alpha += elapsed * 2.5;
 
-		if (controls.UI_LEFT_P || controls.UI_RIGHT_P || FlxG.mouse.wheel != 0) {
+		if (controls.UI_LEFT_P || controls.UI_RIGHT_P || #if mobile buttonLEFT.justPressed || buttonRIGHT.justPressed #else FlxG.mouse.wheel != 0 #end) {
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			onYes = !onYes;
 			updateOptions();
 		}
-		if (controls.BACK) {
+		if (controls.BACK #if mobile || buttonESC.justPressed #end) {
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 			close();
-		} else if (controls.ACCEPT || FlxG.mouse.justPressed) {
+		} else if (controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end) {
 			if (onYes) {
 				if (week.length < 1) {
 					Highscore.resetSong(song, difficulty);
@@ -111,6 +131,6 @@ class ResetScoreSubState extends MusicBeatSubState
 		yesText.scale.set(scales[confirmInt], scales[confirmInt]);
 		noText.alpha = alphas[1 - confirmInt];
 		noText.scale.set(scales[1 - confirmInt], scales[1 - confirmInt]);
-		if (week.length < 1) icon.animation.curAnim.curFrame = confirmInt;
+		if (week.length < 1) icon.animation.play(onYes ? 'winning' : 'losing');
 	}
 }

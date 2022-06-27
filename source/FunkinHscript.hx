@@ -1,3 +1,11 @@
+#if HSCRIPT_ALLOWED
+#if LUA_ALLOWED
+import FunkinLua;
+#end
+import PhillyGlow;
+#if VIDEOS_ALLOWED
+import vlc.MP4Handler;
+#end
 import flixel.system.macros.FlxMacroUtil;
 import flixel.math.FlxAngle;
 import Achievements.AchievementObject;
@@ -50,7 +58,6 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.system.FlxSound;
 import flixel.math.FlxRect;
-#if HSCRIPT_ALLOWED
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
@@ -77,8 +84,12 @@ import hscript.InterpEx;
 using StringTools;
 
 class FunkinHscript extends InterpEx {
-    public function new() {
+	public var scriptName:String = '';
+	public var closed:Bool = false;
+
+    public function new(path:String) {
         super();
+		scriptName = path.split('/')[path.split('/').length - 1];
         //CLASSES
         //THIS IS PROBABLY MORE THAN ANYONE EVER NEEDS AND YOU CAN IMPORT CLASSES MANUALLY ANYWAYS BUT WHATEVER
         variables.set('AL', AL);
@@ -173,16 +184,10 @@ class FunkinHscript extends InterpEx {
         variables.set('CustomFadeTransition', CustomFadeTransition);
         variables.set('DialogueBox', DialogueBox);
         variables.set('DialogueBoxPsych', DialogueBoxPsych);
-        #if DISCORD_ALLOWED
-        variables.set('DiscordClient', DiscordClient);
-        #end
-        #if VIDEOS_ALLOWED
-        variables.set('FlxVideo', FlxVideo);
-        #end
         variables.set('FreeplayState', FreeplayState);
         variables.set('FunkinHscript', FunkinHscript);
         variables.set('FunkinLua', FunkinLua);
-        variables.set('GameOverSubState', GameOverSubState);
+        variables.set('GameOverSubstate', GameOverSubstate);
         variables.set('HealthIcon', HealthIcon);
         variables.set('Highscore', Highscore);
         variables.set('InputFormatter', InputFormatter);
@@ -195,17 +200,32 @@ class FunkinHscript extends InterpEx {
         variables.set('OptionsState', OptionsState);
         variables.set('Paths', Paths);
         variables.set('PauseSubState', PauseSubState);
+		variables.set('PhillyGlowParticle', PhillyGlowParticle);
+		variables.set('PhillyGlowGradient', PhillyGlowGradient);
         variables.set('PlayState', PlayState);
         variables.set('Prompt', Prompt);
         variables.set('Song', Song);
         variables.set('StageData', StageData);
         variables.set('StoryMenuState', StoryMenuState);
         variables.set('StrumNote', StrumNote);
+		variables.set('TankmenBG', TankmenBG);
         variables.set('TitleState', TitleState);
         variables.set('WeekData', WeekData);
         variables.set('WiggleEffect', WiggleEffect);
-
+		#if DISCORD_ALLOWED
+        variables.set('DiscordClient', DiscordClient);
+        #end
+		#if LUA_ALLOWED
+		variables.set('DebugLuaText', DebugLuaText);
+		variables.set('ModchartSprite', ModchartSprite);
+		variables.set('ModchartText', ModchartText);
+		#end
+        #if VIDEOS_ALLOWED
+        variables.set('MP4Handler', MP4Handler);
+        #end
+		
         //VARIABLES
+		variables.set('Function_StopHscript', FunkinLua.Function_StopLua);
         variables.set('Function_Stop', FunkinLua.Function_Stop);
 		variables.set('Function_Continue', FunkinLua.Function_Continue);
 		variables.set('inChartEditor', PlayState.instance.inEditor);
@@ -241,6 +261,8 @@ class FunkinHscript extends InterpEx {
 		// PlayState cringe ass nae nae bullcrap
 		variables.set('curBeat', 0);
 		variables.set('curNumeratorBeat', 0);
+		variables.set('curDecBeat', 0);
+		variables.set('curDecStep', 0);
 		variables.set('curStep', 0);
 
 		variables.set('score', 0);
@@ -308,6 +330,8 @@ class FunkinHscript extends InterpEx {
 		variables.set('instantRestart', ClientPrefs.instantRestart);
 		variables.set('lowQuality', ClientPrefs.gameQuality != 'Normal');
 
+		variables.set("scriptName", scriptName);
+
 		#if windows
 		variables.set('buildTarget', 'windows');
 		#elseif linux
@@ -340,7 +364,7 @@ class FunkinHscript extends InterpEx {
 
     inline function getInstance()
 	{
-		return PlayState.instance.isDead ? GameOverSubState.instance : PlayState.instance;
+		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
 	}
 }
 

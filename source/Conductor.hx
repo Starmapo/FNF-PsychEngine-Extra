@@ -1,6 +1,5 @@
 package;
 
-import Song.SwagSong;
 import flixel.math.FlxMath;
 
 /**
@@ -13,13 +12,8 @@ typedef BPMChangeEvent =
 	var stepTime:Int;
 	var songTime:Float;
 	var bpm:Float;
-}
-
-typedef SignatureChangeEvent =
-{
-	var stepTime:Int;
-	var songTime:Float;
 	var timeSignature:Array<Int>;
+	@:optional var stepCrochet:Float;
 }
 
 class Conductor
@@ -27,34 +21,92 @@ class Conductor
 	public static var bpm:Float = 100;
 	public static var timeSignature:Array<Int> = [4, 4];
 	public static var crochet:Float = ((60 / bpm) * 4000) / timeSignature[1]; // beats in milliseconds
+	public static var normalizedCrochet(get, never):Float;
 	public static var stepCrochet:Float = crochet / 4; // steps in milliseconds
 	public static var songPosition:Float = 0;
 
 	public static var safeZoneOffset:Float = (ClientPrefs.safeFrames / 60) * 1000; // is calculated in create(), is safeFrames in milliseconds
 
 	public static var bpmChangeMap:Array<BPMChangeEvent> = [];
-	public static var signatureChangeMap:Array<SignatureChangeEvent> = [];
 
-	/**
-	 * Gives a rating based on how close you were to hitting a note in milliseconds.
-	 *
-	 * @param	diff	Difference from the note's strum time to when you actually hit it.
-	 * @return	Rating of the note ('Sick', 'Good', 'Bad', or 'Shit')
-	 */
-	public static function judgeNote(diff:Float = 0) //STOLEN FROM KADE ENGINE (bbpanzu) - I had to rewrite it later anyway after i added the custom hit windows lmao (Shadow Mario)
+	public static function get_normalizedCrochet():Float {
+		return crochet * (timeSignature[1] / 4);
+	}
+
+	public static function judgeNote(note:Note, diff:Float=0):Rating // die
 	{
-		//tryna do MS based judgment due to popular demand
-		var timingWindows:Array<Int> = [ClientPrefs.sickWindow, ClientPrefs.goodWindow, ClientPrefs.badWindow];
-		var windowNames:Array<String> = ['sick', 'good', 'bad'];
-
-		for(i in 0...timingWindows.length) // based on 4 timing windows, will break with anything else
+		var data:Array<Rating> = PlayState.instance.ratingsData; //shortening cuz fuck u
+		for(i in 0...data.length-1) //skips last window (Shit)
 		{
-			if (diff <= timingWindows[FlxMath.minInt(i, timingWindows.length - 1)])
+			if (diff <= data[i].hitWindow)
 			{
-				return windowNames[i];
+				return data[i];
 			}
 		}
-		return 'shit';
+		return data[data.length - 1];
+	}
+
+	public static function getCrotchetAtTime(time:Float){
+		var lastChange = getBPMFromSeconds(time);
+		return lastChange.stepCrochet * 4;
+	}
+
+	public static function getBPMFromSeconds(time:Float){
+		var lastChange:BPMChangeEvent = {
+			stepTime: 0,
+			songTime: 0,
+			bpm: bpm,
+			timeSignature: timeSignature,
+			stepCrochet: stepCrochet
+		}
+		for (i in 0...Conductor.bpmChangeMap.length)
+		{
+			if (time >= Conductor.bpmChangeMap[i].songTime)
+				lastChange = Conductor.bpmChangeMap[i];
+		}
+
+		return lastChange;
+	}
+
+	public static function getBPMFromStep(step:Float){
+		var lastChange:BPMChangeEvent = {
+			stepTime: 0,
+			songTime: 0,
+			bpm: bpm,
+			timeSignature: timeSignature,
+			stepCrochet: stepCrochet
+		}
+		for (i in 0...Conductor.bpmChangeMap.length)
+		{
+			if (Conductor.bpmChangeMap[i].stepTime<=step)
+				lastChange = Conductor.bpmChangeMap[i];
+		}
+
+		return lastChange;
+	}
+
+	public static function beatToSeconds(beat:Float): Float{
+		var step = beat * 4;
+		var lastChange = getBPMFromStep(step);
+		return lastChange.songTime + ((step - lastChange.stepTime) / (lastChange.bpm / 60)/lastChange.timeSignature[1]) * 1000; // TODO: make less shit and take BPM into account PROPERLY
+	}
+
+	public static function getStep(time:Float){
+		var lastChange = getBPMFromSeconds(time);
+		return lastChange.stepTime + (time - lastChange.songTime) / lastChange.stepCrochet;
+	}
+
+	public static function getStepRounded(time:Float){
+		var lastChange = getBPMFromSeconds(time);
+		return lastChange.stepTime + Math.floor(time - lastChange.songTime) / lastChange.stepCrochet;
+	}
+
+	public static function getBeat(time:Float){
+		return getStep(time)/4;
+	}
+
+	public static function getBeatRounded(time:Float):Int{
+		return Math.floor(getStepRounded(time)/4);
 	}
 
 	/**
@@ -66,40 +118,44 @@ class Conductor
 	public static function mapBPMChanges(song:SwagSong, mult:Float = 1)
 	{
 		bpmChangeMap = [];
-		signatureChangeMap = [];
 
 		var curBPM:Float = song.bpm * mult;
-		var curSignature:Array<Int> = song.timeSignature;
+		var curSignature:Array<Int> = song.timeSignature.copy();
 		var totalSteps:Int = 0;
 		var totalPos:Float = 0;
 		for (i in 0...song.notes.length)
 		{
 			var sec = song.notes[i];
-			if (sec.changeBPM && sec.bpm * mult != curBPM && sec.bpm > 0)
+			var doPush = false;
+			if (sec.changeBPM)
 			{
 				curBPM = sec.bpm * mult;
+				doPush = true;
+			}
+			if (sec.changeSignature)
+			{
+				curSignature = sec.timeSignature.copy();
+				doPush = true;
+			}
+			if (doPush) {
 				var event:BPMChangeEvent = {
 					stepTime: totalSteps,
 					songTime: totalPos,
-					bpm: curBPM
+					bpm: curBPM,
+					timeSignature: curSignature,
+					stepCrochet: calculateCrochet(curBPM, curSignature[1])/4
 				};
 				bpmChangeMap.push(event);
-			}
-			if (sec.changeSignature && (sec.timeSignature[0] != curSignature[0] || sec.timeSignature[1] != curSignature[1]))
-			{
-				curSignature = sec.timeSignature;
-				var event:SignatureChangeEvent = {
-					stepTime: totalSteps,
-					songTime: totalPos,
-					timeSignature: curSignature
-				};
-				signatureChangeMap.push(event);
 			}
 
 			var deltaSteps:Int = sec.lengthInSteps;
 			totalSteps += deltaSteps;
-			totalPos += ((((60 / curBPM) * 4000) / timeSignature[1]) / 4) * deltaSteps;
+			totalPos += calculateCrochet(curBPM, curSignature[1])/4 * deltaSteps;
 		}
+	}
+
+	inline public static function calculateCrochet(bpm:Float, denominator:Int){
+		return ((60 / bpm) * 4000) / denominator;
 	}
 
 	/**
@@ -131,7 +187,7 @@ class Conductor
 	}
 
 	static function updateCrochet() {
-		crochet = ((60 / bpm) * 4000) / timeSignature[1];
+		crochet = calculateCrochet(bpm, timeSignature[1]);
 		stepCrochet = crochet / 4;
 	}
 
@@ -147,18 +203,12 @@ class Conductor
 		var daSignature:Array<Int> = song.timeSignature;
 		for (i in 0...bpmChangeMap.length) {
 			if (step >= bpmChangeMap[i].stepTime) {
-				daBPM = bpmChangeMap[i].bpm;
+				daBPM = bpmChangeMap[i].bpm * mult;
+				daSignature = bpmChangeMap[i].timeSignature;
 			}
 		}
-		for (i in 0...signatureChangeMap.length) {
-			if (step >= signatureChangeMap[i].stepTime) {
-				daSignature = signatureChangeMap[i].timeSignature;
-			}
-		}
-		if (bpm != daBPM)
-			changeBPM(daBPM);
-		if (timeSignature[0] != daSignature[0] || timeSignature[1] != daSignature[1])
-			changeSignature(daSignature);
+		changeBPM(daBPM);
+		changeSignature(daSignature);
 	}
 
 	/**
@@ -212,5 +262,34 @@ class Conductor
 			}
 		}
 		return beat - lastBeat;
+	}
+}
+
+class Rating
+{
+	public var name:String = '';
+	public var image:String = '';
+	public var counter:String = '';
+	public var hitWindow:Null<Int> = 0; //ms
+	public var ratingMod:Float = 1;
+	public var score:Int = 350;
+	public var noteSplash:Bool = true;
+	public var causesMiss = false;
+
+	public function new(name:String)
+	{
+		this.name = name;
+		this.image = name;
+		this.counter = name + 's';
+		this.hitWindow = Reflect.field(ClientPrefs, name + 'Window');
+		if(hitWindow == null)
+		{
+			hitWindow = 0;
+		}
+	}
+
+	public function increase(blah:Int = 1)
+	{
+		Reflect.setField(PlayState.instance, counter, Reflect.field(PlayState.instance, counter) + blah);
 	}
 }

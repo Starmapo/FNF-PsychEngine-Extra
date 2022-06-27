@@ -9,6 +9,7 @@ import flixel.graphics.frames.FlxFrame;
 import flixel.graphics.frames.FlxFramesCollection;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.util.FlxColor;
 import haxe.Json;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
@@ -38,7 +39,7 @@ class AtlasFrameMaker extends FlxFramesCollection
 
 		if (Paths.fileExists('images/$key/spritemap1.json', TEXT))
 		{
-			PlayState.instance.addTextToDebug('$key: Only Spritemaps made with Adobe Animate 2018 are supported');
+			if (PlayState.instance != null) PlayState.instance.addTextToDebug('$key: Only Spritemaps made with Adobe Animate 2018 are supported', FlxColor.RED);
 			trace('$key: Only Spritemaps made with Adobe Animate 2018 are supported');
 			return null;
 		}
