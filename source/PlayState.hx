@@ -116,9 +116,9 @@ class PlayState extends MusicBeatState
 	public var vocalsDad:FlxSound;
 	var foundDadVocals:Bool = false;
 
-	public var dad:Character = null;
-	public var gf:Character = null;
-	public var boyfriend:Character = null;
+	public var dad(get, never):Character;
+	public var gf(get, never):Character;
+	public var boyfriend(get, never):Character;
 	var playerChar(get, never):FlxTypedSpriteGroup<Character>;
 	var opponentChar(get, never):FlxTypedSpriteGroup<Character>;
 
@@ -334,6 +334,18 @@ class PlayState extends MusicBeatState
 	var buttonPAUSE:Button;
 	var buttonRESET:Button;
 	#end
+
+	function get_boyfriend():Character {
+		return boyfriendGroup.members[0];
+	}
+
+	function get_dad():Character {
+		return dadGroup.members[0];
+	}
+
+	function get_gf():Character {
+		return gfGroup.members[0];
+	}
 
 	function get_playerChar():FlxTypedSpriteGroup<Character> {
 		return opponentChart ? dadGroup : boyfriendGroup;
@@ -1068,7 +1080,6 @@ class PlayState extends MusicBeatState
 					addCharacter(gfVersion, 0, false, false, gfGroup, 0, 0, 0.95, 0.95);
 					checkPicoSpeaker(gfGroup.members[0]);
 				}
-				gf = gfGroup.members[0];
 				for (i in gfGroup) {
 					startCharacterScripts(i.curCharacter);
 					
@@ -1084,7 +1095,6 @@ class PlayState extends MusicBeatState
 				dadGroupFile = null;
 				addCharacter(SONG.player2, 0, false, opponentChart, dadGroup);
 			}
-			dad = dadGroup.members[0];
 			for (i in dadGroup) {
 				startCharacterScripts(i.curCharacter);
 			}
@@ -1098,7 +1108,6 @@ class PlayState extends MusicBeatState
 				bfGroupFile = null;
 				addCharacter(SONG.player1, 0, true, !opponentChart, boyfriendGroup);
 			}
-			boyfriend = boyfriendGroup.members[0];
 			for (i in boyfriendGroup) {
 				startCharacterScripts(i.curCharacter);
 			}
@@ -1147,15 +1156,14 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = -5000;
 
 		var imagesToCheck = [
-			'shit',
-			'bad',
-			'good',
-			'sick',
 			'combo',
 			'ready',
 			'set',
 			'go'
 		];
+		for (i in ratingsData) {
+			imagesToCheck.push(i.image);
+		}
 		for (i in 0...10) {
 			imagesToCheck.push('num$i');
 		} 
@@ -2508,13 +2516,13 @@ class PlayState extends MusicBeatState
 		}
 
 		FlxG.sound.music.stop();
-		video = new MP4Handler();
+		video = new MP4Handler(); //note: not actually limited to mp4s
 		video.playVideo(filepath);
 		video.finishCallback = function()
 		{
 			startAndEnd();
 			remove(blackShit);
-			blackShit.destroy(); //saves up memory i think
+			blackShit.destroy();
 			camHUD.visible = lastVisible;
 			video = null;
 			return;
@@ -4932,7 +4940,6 @@ class PlayState extends MusicBeatState
 							boyfriendGroup.remove(boyfriendGroup.members[index], true);
 							boyfriendGroup.insert(index, boyfriendMap.get(value2));
 							boyfriendGroup.members[index].alpha = lastAlpha;
-							boyfriend = boyfriendGroup.members[0];
 							if (boyfriendGroup.members.length == 1) {
 								iconP1.changeIcon(boyfriend.healthIcon);
 							}
@@ -4963,7 +4970,6 @@ class PlayState extends MusicBeatState
 								}
 							}
 							dadGroup.members[index].alpha = lastAlpha;
-							dad = dadGroup.members[0];
 							if (dadGroup.members.length == 1) {
 								iconP2.changeIcon(dad.healthIcon);
 							}
@@ -4985,7 +4991,6 @@ class PlayState extends MusicBeatState
 								gfGroup.remove(gfGroup.members[index], true);
 								gfGroup.insert(index, gfMap.get(value2));
 								gfGroup.members[index].alpha = lastAlpha;
-								gf = gfGroup.members[0];
 								setOnScripts('gfName', gf.curCharacter);
 								setOnHscripts('gf', gf);
 							}
@@ -5426,9 +5431,9 @@ class PlayState extends MusicBeatState
 
 		insert(members.indexOf(strumLineNotes), rating);
 
-		rating.setGraphicSize(Std.int(rating.width * uiSkinMap.get(daRating.image).scale * uiSkinMap.get(daRating.name).ratingScale));
+		rating.setGraphicSize(Std.int(rating.width * uiSkinMap.get(daRating.image).scale * uiSkinMap.get(daRating.image).ratingScale));
 		comboSpr.setGraphicSize(Std.int(comboSpr.width * uiSkinMap.get('combo').scale * uiSkinMap.get('combo').ratingScale));
-		rating.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get(daRating.name).noAntialiasing;
+		rating.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get(daRating.image).noAntialiasing;
 		comboSpr.antialiasing = ClientPrefs.globalAntialiasing && !uiSkinMap.get('combo').noAntialiasing;
 
 		comboSpr.updateHitbox();
