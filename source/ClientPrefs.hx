@@ -27,6 +27,7 @@ class ClientPrefs {
 	public static var controllerMode:Bool = false;
 	public static var hitsoundVolume:Float = 0;
 	public static var pauseMusic:String = 'Tea Time';
+	public static var checkForUpdates:Bool = true;
 	public static var underlayAlpha:Float = 0;
 	public static var underlayFull:Bool = false;
 	public static var instantRestart:Bool = false;
@@ -245,6 +246,7 @@ class ClientPrefs {
 		FlxG.save.data.controllerMode = controllerMode;
 		FlxG.save.data.hitsoundVolume = hitsoundVolume;
 		FlxG.save.data.pauseMusic = pauseMusic;
+		FlxG.save.data.checkForUpdates = checkForUpdates;
 		FlxG.save.data.gameplaySettings = gameplaySettings;
 	
 		FlxG.save.flush();
@@ -354,6 +356,10 @@ class ClientPrefs {
 		if(FlxG.save.data.pauseMusic != null) {
 			pauseMusic = FlxG.save.data.pauseMusic;
 		}
+		if (FlxG.save.data.checkForUpdates != null)
+		{
+			checkForUpdates = FlxG.save.data.checkForUpdates;
+		}	
 		if (FlxG.save.data.underlayAlpha != null) {
 			underlayAlpha = FlxG.save.data.underlayAlpha;
 		}

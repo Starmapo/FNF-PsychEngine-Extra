@@ -84,7 +84,7 @@ class InputFormatter {
 			default:
 				var label:String = '$key';
 				if (label.toLowerCase() == 'null') return '---';
-				return '${label.charAt(0).toUpperCase() + label.substr(1).toLowerCase()}';
+				return label.charAt(0).toUpperCase() + label.substr(1).toLowerCase();
 		}
 	}
 }

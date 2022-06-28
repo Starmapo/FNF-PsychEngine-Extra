@@ -268,6 +268,7 @@ class Conductor
 class Rating
 {
 	public var name:String = '';
+	public var displayName:String = 'Sick!!';
 	public var image:String = '';
 	public var counter:String = '';
 	public var hitWindow:Null<Int> = 0; //ms

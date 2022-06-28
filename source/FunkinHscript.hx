@@ -86,6 +86,7 @@ using StringTools;
 class FunkinHscript extends InterpEx {
 	public var scriptName:String = '';
 	public var closed:Bool = false;
+	public var lastCalledFunction:String = '';
 
     public function new(path:String) {
         super();

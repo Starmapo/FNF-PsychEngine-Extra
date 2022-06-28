@@ -81,9 +81,26 @@ class TitleState extends MusicBeatState
 		#end
 		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
 		WeekData.loadTheFirstEnabledMod();
+
+		FlxG.game.focusLostFramerate = 60;
+		FlxG.sound.muteKeys = muteKeys;
+		FlxG.sound.volumeDownKeys = volumeDownKeys;
+		FlxG.sound.volumeUpKeys = volumeUpKeys;
+		FlxG.keys.preventDefaultKeys = [TAB];
+
+		PlayerSettings.init();
+
+		curWacky = FlxG.random.getObject(getIntroTextShit());
+
+		swagShader = new ColorSwap();
+		super.create();
+
+		FlxG.save.bind('funkin', 'extra');
+
+		ClientPrefs.loadPrefs();
 		
 		#if CHECK_FOR_UPDATES
-		if (!closedState) {
+		if (ClientPrefs.checkForUpdates && !closedState) {
 			trace('checking for update');
 			var http = new Http("https://raw.githubusercontent.com/Starmapo/FNF-PsychEngine-Extra/main/gitVersion.txt");
 			
@@ -105,23 +122,6 @@ class TitleState extends MusicBeatState
 			http.request();
 		}
 		#end
-
-		FlxG.game.focusLostFramerate = 60;
-		FlxG.sound.muteKeys = muteKeys;
-		FlxG.sound.volumeDownKeys = volumeDownKeys;
-		FlxG.sound.volumeUpKeys = volumeUpKeys;
-		FlxG.keys.preventDefaultKeys = [TAB];
-
-		PlayerSettings.init();
-
-		curWacky = FlxG.random.getObject(getIntroTextShit());
-
-		swagShader = new ColorSwap();
-		super.create();
-
-		FlxG.save.bind('funkin', 'extra');
-
-		ClientPrefs.loadPrefs();
 
 		Highscore.load();
 
