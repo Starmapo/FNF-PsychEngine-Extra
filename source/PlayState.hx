@@ -1236,7 +1236,7 @@ class PlayState extends MusicBeatState
 			hideInDemoMode.push(timeBar);
 			add(timeBar);
 			add(timeTxt);
-			if (songTxt != null) add(songTxt);
+			if (showSongText) add(songTxt);
 			timeBarBG.sprTracker = timeBar;
 		} else {
 			updateTime = false;
@@ -1539,7 +1539,7 @@ class PlayState extends MusicBeatState
 			timeBar.cameras = [camHUD];
 			timeBarBG.cameras = [camHUD];
 			timeTxt.cameras = [camHUD];
-			if (songTxt != null) songTxt.cameras = [camHUD];
+			if (showSongText) songTxt.cameras = [camHUD];
 			doof.cameras = [camHUD];
 		}
 
@@ -3329,7 +3329,7 @@ class PlayState extends MusicBeatState
 		songLength = FlxG.sound.music.length / playbackRate;
 		if (!inEditor) {
 			FlxTween.tween(timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
-			if (songTxt != null) {
+			if (showSongText) {
 				FlxTween.tween(songTxt, {alpha: 1}, 0.5, {ease: FlxEase.circOut, onComplete: function(twn:FlxTween) {
 					FlxTween.tween(songTxt, {alpha: 0}, 0.5, {ease: FlxEase.circOut, startDelay: 3});
 					FlxTween.tween(timeTxt, {alpha: 1}, 0.5, {ease: FlxEase.circOut, startDelay: 3});
@@ -5193,7 +5193,7 @@ class PlayState extends MusicBeatState
 		timeBarBG.visible = false;
 		timeBar.visible = false;
 		timeTxt.visible = false;
-		if (songTxt != null) songTxt.visible = false;
+		if (showSongText) songTxt.visible = false;
 		canPause = false;
 		endingSong = true;
 		camZooming = false;
