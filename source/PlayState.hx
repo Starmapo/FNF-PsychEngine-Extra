@@ -3259,6 +3259,34 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	public function updateScore(miss:Bool = false)
+	{
+		if (ClientPrefs.showRatings) {
+			scoreTxt.text = 'Score: ' + songScore + ' | Rating: ' + ratingName;
+		} else {
+			scoreTxt.text = 'Score: ' + songScore + ' | Fails: ' + songMisses + ' | Rating: ' + ratingName;
+		}
+		if(ratingName != '?')
+			scoreTxt.text += ' (' + Highscore.floorDecimal(ratingPercent * 100, 2) + '%)' + ' - ' + ratingFC;
+
+		if (inEditor)
+			scoreTxt.text = 'Hits: $songHits';
+
+		if(ClientPrefs.scoreZoom && !miss && !cpuControlled)
+		{
+			if(scoreTxtTween != null) {
+				scoreTxtTween.cancel();
+			}
+			scoreTxt.scale.x = 1.075;
+			scoreTxt.scale.y = 1.075;
+			scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
+				onComplete: function(twn:FlxTween) {
+					scoreTxtTween = null;
+				}
+			});
+		}
+	}
+
 	public function setSongTime(time:Float)
 	{
 		if(time < 0) time = 0;
@@ -4463,18 +4491,10 @@ class PlayState extends MusicBeatState
 			});
 		}
 		if (!inEditor) checkEventNote();
-
-		if (ClientPrefs.showRatings) {
-			scoreTxt.text = 'Score: ' + songScore + ' | Rating: ' + ratingName;
-		} else {
-			scoreTxt.text = 'Score: ' + songScore + ' | Fails: ' + songMisses + ' | Rating: ' + ratingName;
-		}
-		if(ratingName != '?')
-			scoreTxt.text += ' (' + Highscore.floorDecimal(ratingPercent * 100, 2) + '%)' + ' - ' + ratingFC;
 		
 		for (i in 0...ratingTxtGroup.members.length) {
 			var rating = ratingTxtGroup.members[i];
-			if (i < ratingsData.length - 1) {
+			if (i < ratingsData.length) {
 				rating.text = '${ratingsData[i].displayName}: ${Reflect.field(this, ratingsData[i].counter)}';
 			} else {
 				rating.text = 'Fails: $songMisses';
@@ -5400,23 +5420,10 @@ class PlayState extends MusicBeatState
 			if (!practiceMode && !cpuControlled) {
 				songScore += score;
 				if(!note.ratingDisabled) {
+					songHits++;
 					totalPlayed++;
 					recalculateRating();
 					doRatingTween(ratingNum);
-				}
-
-				if (ClientPrefs.scoreZoom)
-				{
-					if (scoreTxtTween != null) {
-						scoreTxtTween.cancel();
-					}
-					scoreTxt.scale.x = 1.075;
-					scoreTxt.scale.y = 1.075;
-					scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
-						onComplete: function(twn:FlxTween) {
-							scoreTxtTween = null;
-						}
-					});
 				}
 			}
 		} else {
@@ -5790,8 +5797,8 @@ class PlayState extends MusicBeatState
 			}
 		});
 		combo = 0;
-
 		health -= daNote.missHealth * healthLoss;
+
 		if (instakillOnMiss)
 		{
 			if (opponentChart && foundDadVocals)
@@ -5809,7 +5816,7 @@ class PlayState extends MusicBeatState
 		if (!practiceMode) songScore -= 10;
 		
 		totalPlayed++;
-		recalculateRating();
+		recalculateRating(true);
 		doRatingTween(ratingTxtGroup.members.length - 1);
 
 		if (!inEditor) {
@@ -5839,6 +5846,7 @@ class PlayState extends MusicBeatState
 		if (inEditor || !playerChar.members[0].stunned)
 		{
 			health -= 0.05 * healthLoss;
+
 			if (instakillOnMiss)
 			{
 				if (opponentChart && foundDadVocals)
@@ -5863,7 +5871,7 @@ class PlayState extends MusicBeatState
 				songMisses++;
 			}
 			totalPlayed++;
-			recalculateRating();
+			recalculateRating(true);
 			doRatingTween(ratingTxtGroup.members.length - 1);
 
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
@@ -6019,7 +6027,6 @@ class PlayState extends MusicBeatState
 				combo += 1;
 				if (combo > 9999) combo = 9999;
 				popUpScore(note);
-				songHits++;
 			}
 			else
 			{
@@ -6763,10 +6770,15 @@ class PlayState extends MusicBeatState
 	public var ratingName:String = '?';
 	public var ratingPercent:Float;
 	public var ratingFC:String;
-	public function recalculateRating() {
+	public function recalculateRating(badHit:Bool = false) {
 		setOnScripts('score', songScore);
 		setOnScripts('misses', songMisses);
 		setOnScripts('hits', songHits);
+
+		if (badHit)
+			updateScore(true); // miss notes shouldn't make the scoretxt bounce -Ghost
+		else
+			updateScore(false);
 
 		var ret:Dynamic = callOnScripts('onRecalculateRating', [], false);
 		if (ret != FunkinLua.Function_Stop)

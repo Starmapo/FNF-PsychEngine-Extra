@@ -91,8 +91,7 @@ class CreditsState extends MusicBeatState
 
 		var pisspoop:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
 			['Psych Engine Extra'],
-			['Starmapo',			'star',				'Main Programmer/Artist',												'https://github.com/Starmapo',										'FFDE46'],
-			['KadeDev',				'kade',				'Kade Engine Creator\n(some code is from there)\n[NON-AFFILIATED]',		'https://twitter.com/kade0912',										'4F6441'],
+			['KadeDev',				'kade',				'Kade Engine Creator\n(some code is from there)\n[NON-AFFILIATED]',		'https://twitter.com/kade0912',										'64A250'],
 			['Leather128',			'leather',			'Leather Engine Creator\n(some code is from there)\n[NON-AFFILIATED]',	'https://www.youtube.com/channel/UCbCtO-ghipZessWaOBx8u1g',			'01A1FF'],
 			['srPerez',				'perez',			'Original 6K+ designs\n[NON-AFFILIATED]',								'https://twitter.com/NewSrPerez',									'FBCA20'],
 			['GitHub Contributors',	'github',			'Pull Requests to Psych Engine\n[NON-AFFILIATED]',						'https://github.com/ShadowMario/FNF-PsychEngine/pulls',				'546782'],

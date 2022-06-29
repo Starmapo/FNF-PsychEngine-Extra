@@ -15,7 +15,6 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import flixel.util.FlxSave;
-import flixel.system.FlxAssets.FlxShader;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -64,7 +63,6 @@ class FunkinLua {
 		LuaL.openlibs(lua);
 		Lua.init_callbacks(lua);
 
-		//LuaL.dostring(lua, CLEANSE);
 		try{
 			var result:Dynamic = LuaL.dofile(lua, script);
 			var resultStr:String = Lua.tostring(lua, result);
@@ -2976,15 +2974,6 @@ class FunkinLua {
 	{
 		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
 	}
-
-	static inline var CLEANSE:String = "
-	os.execute, os.getenv, os.rename, os.remove, os.tmpname = nil, nil, nil, nil, nil
-	io, load, loadfile, loadstring, dofile = nil, nil, nil, nil, nil
-	require, module, package = nil, nil, nil
-	newproxy = nil
-	gcinfo = nil
-	jit = nil
-	"; // superpowers04/cyn-8/DragShot
 }
 
 class ModchartSprite extends FlxSprite
