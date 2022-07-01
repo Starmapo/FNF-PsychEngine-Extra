@@ -5385,17 +5385,13 @@ class PlayState extends MusicBeatState
 
 		//tryna do MS based judgment due to popular demand
 		var daRating:Rating = Conductor.judgeNote(note, noteDiff);
-		var ratingNum = 0;
-		for (i in 0...ratingsData.length) {
-			if (ratingsData[i].name == daRating.name) {
-				ratingNum = i;
-			}
-		}
+		var ratingNum = ratingsData.indexOf(daRating);
 
 		totalNotesHit += daRating.ratingMod;
 		note.ratingMod = daRating.ratingMod;
 		if(!note.ratingDisabled) daRating.increase();
 		note.rating = daRating.name;
+		score = daRating.score;
 
 		if(daRating.noteSplash && !note.noteSplashDisabled)
 		{
