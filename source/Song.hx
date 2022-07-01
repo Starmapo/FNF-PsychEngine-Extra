@@ -154,6 +154,10 @@ class Song
 			#end
 		}
 
+		if (rawJson == null) {
+			return null;
+		}
+
 		while (!rawJson.endsWith("}"))
 		{
 			rawJson = rawJson.substr(0, rawJson.length - 1);
@@ -161,7 +165,7 @@ class Song
 		}
 
 		var songJson:Dynamic = parseJSONshit(rawJson);
-		if (formattedSong != 'events') StageData.loadDirectory(songJson);
+		if (formattedSong != 'events' && formattedSong != 'picospeaker') StageData.loadDirectory(songJson);
 		onLoadJson(songJson);
 		return songJson;
 	}

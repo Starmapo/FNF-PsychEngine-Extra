@@ -314,13 +314,16 @@ class Character extends FlxSprite
 	function loadMappedAnims():Void
 	{
 		if (PlayState.instance != null) {
-			var noteData:Array<SwagSection> = Song.loadFromJson('picospeaker', Paths.formatToSongPath(PlayState.SONG.song)).notes;
-			for (section in noteData) {
-				for (songNotes in section.sectionNotes) {
-					animationNotes.push(songNotes);
+			var song = Song.loadFromJson('picospeaker', Paths.formatToSongPath(PlayState.SONG.song));
+			if (song != null) {
+				var noteData:Array<SwagSection> = song.notes;
+				for (section in noteData) {
+					for (songNotes in section.sectionNotes) {
+						animationNotes.push(songNotes);
+					}
 				}
+				animationNotes.sort(sortAnims);
 			}
-			animationNotes.sort(sortAnims);
 		}
 	}
 

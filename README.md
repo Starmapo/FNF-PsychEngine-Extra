@@ -34,9 +34,9 @@ _____________________________________
 * Custom time signatures (1-100/1-64)
 * Hscript compatibility
 * Custom UI skins (custom rating sprites, countdown sprites, etc.)
-* Character groups (more than one player, opponent, or GF)
-* Separate voices for the player and opponent (by adding a 'VoicesOpponent' or 'VoicesDad' file)
-* Gameplay Changers: Play as the opponent, demo mode (showcase gameplay)
+* Character groups (more than one Boyfriend, opponent, or Girlfriend)
+* Separate voices for the player and the opponent (by adding a 'VoicesOpponent' or 'VoicesDad' file)
+* Gameplay Changers: Play as the opponent, change song (not chart, SONG) speed, demo mode (showcase gameplay)
 * Go to options menu from the pause menu (and go right back to game after you're done!)
 
 # New Options
