@@ -37,6 +37,9 @@ import Discord;
 import hscript.Parser;
 import hscript.Interp;
 #end
+#if cpp
+import lime.media.openal.AL;
+#end
 
 using StringTools;
 
@@ -1264,6 +1267,10 @@ class FunkinLua {
 				MusicBeatState.switchState(new FreeplayState());
 
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			#if cpp
+			@:privateAccess
+			AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, 1);
+			#end
 			PlayState.changedDifficulty = false;
 			PlayState.chartingMode = false;
 			PlayState.instance.transitioning = true;
@@ -1284,8 +1291,13 @@ class FunkinLua {
 			MusicBeatState.switchState(new CreditsState());
 
 			FlxG.sound.music.stop();
-			if (playMusic)
+			if (playMusic) {
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				#if cpp
+				@:privateAccess
+				AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, 1);
+				#end
+			}
 			PlayState.changedDifficulty = false;
 			PlayState.chartingMode = false;
 			PlayState.instance.transitioning = true;
@@ -1293,15 +1305,15 @@ class FunkinLua {
 			return true;
 		});
 		Lua_helper.add_callback(lua, "getSongPosition", function() {
-			return Conductor.songPosition;
+			return Conductor.songPosition / PlayState.instance.playbackRate;
 		});
 		Lua_helper.add_callback(lua, "setSongPosition", function(time:Float = 0) {
-			if(time < Conductor.songPosition)
+			if(time < Conductor.songPosition / PlayState.instance.playbackRate)
 			{
 				PlayState.startOnTime = time;
 				PauseSubState.restartSong(true);
 			}
-			else if (time != Conductor.songPosition)
+			else if (time != Conductor.songPosition / PlayState.instance.playbackRate)
 			{
 				PlayState.instance.clearNotesBefore(time);
 				PlayState.instance.setSongTime(time);

@@ -49,7 +49,6 @@ class GameplayChangersSubState extends MusicBeatSubState
 		}
 		optionsArray.push(option);
 
-		/*
 		#if cpp
 		var option:GameplayOption = new GameplayOption('Playback Rate', 'songspeed', 'float', 1);
 		option.scrollSpeed = 0.2;
@@ -60,7 +59,6 @@ class GameplayChangersSubState extends MusicBeatSubState
 		option.displayFormat = '%vX';
 		optionsArray.push(option);
 		#end
-		*/
 
 		var option:GameplayOption = new GameplayOption('Health Gain Multiplier', 'healthgain', 'float', 1);
 		option.scrollSpeed = 2.5;

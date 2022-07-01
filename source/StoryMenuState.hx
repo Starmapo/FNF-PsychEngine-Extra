@@ -510,8 +510,7 @@ class StoryMenuState extends MusicBeatState
 		var stringThing:Array<String> = [];
 		for (i in 0...leWeek.songs.length) {
 			var songName = leWeek.songs[i][0];
-			var meta = Song.getMetaFile(songName);
-			stringThing.push(meta.displayName != null ? meta.displayName : songName);
+			stringThing.push(Song.getDisplayName(songName));
 		}
 
 		txtTracklist.text = '';

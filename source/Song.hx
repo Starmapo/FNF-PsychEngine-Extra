@@ -271,4 +271,9 @@ class Song
 		if (json.iconHiddenUntilPlayed == null) json.iconHiddenUntilPlayed = true;
 		return json;
 	}
+
+	public static function getDisplayName(song:String) {
+		var meta = Song.getMetaFile(song);
+		return meta.displayName != null ? meta.displayName : song;
+	}
 }

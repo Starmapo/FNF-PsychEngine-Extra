@@ -251,7 +251,6 @@ class FreeplayState extends MusicBeatState
 	}
 
 	public static var instPlaying:Int = -1;
-	static var speedPlaying:Float = 1;
 	public static var vocals:FlxSound = null;
 	public static var vocalsDad:FlxSound = null;
 	private static var foundDadVocals = false;
@@ -269,7 +268,7 @@ class FreeplayState extends MusicBeatState
 			}
 
 			if (instPlaying > -1) {
-				Conductor.songPosition = FlxG.sound.music.time / speedPlaying;
+				Conductor.songPosition = FlxG.sound.music.time;
 			}
 		}
 
@@ -384,8 +383,7 @@ class FreeplayState extends MusicBeatState
 			{
 				if (space)
 				{
-					//var curSpeed:Float = ClientPrefs.getGameplaySetting('songspeed', 1);
-					if (instPlaying != curSelected/* || speedPlaying != curSpeed*/)
+					if (instPlaying != curSelected)
 					{
 						destroyFreeplayVocals();
 						FlxG.sound.music.volume = 0;
@@ -420,7 +418,6 @@ class FreeplayState extends MusicBeatState
 						Conductor.changeBPM(PlayState.SONG.bpm);
 						Conductor.changeSignature(PlayState.SONG.timeSignature);
 						instPlaying = curSelected;
-						//speedPlaying = curSpeed;
 					}
 				}
 				else if (accepted && !showSearch)
@@ -490,7 +487,7 @@ class FreeplayState extends MusicBeatState
 		super.sectionHit();
 
 		if (instPlaying > -1) {
-			Conductor.getLastBPM(PlayState.SONG, curStep, speedPlaying);
+			Conductor.getLastBPM(PlayState.SONG, curStep);
 
 			if (ClientPrefs.camZooms && FlxG.camera.zoom < 1.35) {
 				FlxG.camera.zoom += 0.005;
@@ -510,7 +507,6 @@ class FreeplayState extends MusicBeatState
 		}
 		vocalsDad = null;
 		instPlaying = -1;
-		speedPlaying = 1;
 	}
 
 	function changeDiff(change:Int = 0)

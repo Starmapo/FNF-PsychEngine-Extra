@@ -24,6 +24,7 @@ class Conductor
 	public static var normalizedCrochet(get, never):Float;
 	public static var stepCrochet:Float = crochet / 4; // steps in milliseconds
 	public static var songPosition:Float = 0;
+	public static var playbackRate:Float = 1;
 
 	public static var safeZoneOffset:Float = (ClientPrefs.safeFrames / 60) * 1000; // is calculated in create(), is safeFrames in milliseconds
 
@@ -33,12 +34,12 @@ class Conductor
 		return crochet * (timeSignature[1] / 4);
 	}
 
-	public static function judgeNote(note:Note, diff:Float=0):Rating // die
+	public static function judgeNote(note:Note, diff:Float = 0):Rating // die
 	{
 		var data:Array<Rating> = PlayState.instance.ratingsData; //shortening cuz fuck u
-		for(i in 0...data.length-1) //skips last window (Shit)
+		for(i in 0...data.length - 1) //skips last window (Shit)
 		{
-			if (diff <= data[i].hitWindow)
+			if (diff <= data[i].hitWindow * PlayState.instance.playbackRate)
 			{
 				return data[i];
 			}
@@ -78,7 +79,7 @@ class Conductor
 		}
 		for (i in 0...Conductor.bpmChangeMap.length)
 		{
-			if (Conductor.bpmChangeMap[i].stepTime<=step)
+			if (Conductor.bpmChangeMap[i].stepTime <= step)
 				lastChange = Conductor.bpmChangeMap[i];
 		}
 
@@ -98,7 +99,7 @@ class Conductor
 
 	public static function getStepRounded(time:Float){
 		var lastChange = getBPMFromSeconds(time);
-		return lastChange.stepTime + Math.floor(time - lastChange.songTime) / lastChange.stepCrochet;
+		return Math.floor(lastChange.stepTime + (time - lastChange.songTime) / lastChange.stepCrochet);
 	}
 
 	public static function getBeat(time:Float){
@@ -113,13 +114,12 @@ class Conductor
 	 * Creates a new `bpmChangeMap` and `signatureChangeMap` from the inputted song.
 	 *
 	 * @param	song	Song to take the BPM and time signature changes from.
-	 * @param	mult	Optional multiplier for the BPMs, used for playback rates.
 	 */
-	public static function mapBPMChanges(song:SwagSong, mult:Float = 1)
+	public static function mapBPMChanges(song:SwagSong)
 	{
 		bpmChangeMap = [];
 
-		var curBPM:Float = song.bpm * mult;
+		var curBPM:Float = song.bpm;
 		var curSignature:Array<Int> = song.timeSignature.copy();
 		var totalSteps:Int = 0;
 		var totalPos:Float = 0;
@@ -129,7 +129,7 @@ class Conductor
 			var doPush = false;
 			if (sec.changeBPM)
 			{
-				curBPM = sec.bpm * mult;
+				curBPM = sec.bpm;
 				doPush = true;
 			}
 			if (sec.changeSignature)
@@ -162,12 +162,11 @@ class Conductor
 	 * Changes the Conductor's BPM.
 	 *
 	 * @param	newBpm	The BPM to change to.
-	 * @param   mult    Optional multiplier for the BPM, used for playback rates.
 	 */
-	public static function changeBPM(newBpm:Float, mult:Float = 1)
+	public static function changeBPM(newBpm:Float)
 	{
 		if (newBpm > 0) {
-			bpm = newBpm * mult;
+			bpm = newBpm;
 			updateCrochet();
 		}
 	}
@@ -196,49 +195,18 @@ class Conductor
 	 *
 	 * @param	song	Song to take the BPM and time signature changes from.
 	 * @param   step	The current step of the song.
-	 * @param	mult	Optional multiplier for the BPMs, used for playback rates.
 	 */
-	public static function getLastBPM(song:SwagSong, step:Int, mult:Float = 1) {
-		var daBPM:Float = song.bpm * mult;
+	public static function getLastBPM(song:SwagSong, step:Int) {
+		var daBPM:Float = song.bpm;
 		var daSignature:Array<Int> = song.timeSignature;
 		for (i in 0...bpmChangeMap.length) {
 			if (step >= bpmChangeMap[i].stepTime) {
-				daBPM = bpmChangeMap[i].bpm * mult;
+				daBPM = bpmChangeMap[i].bpm;
 				daSignature = bpmChangeMap[i].timeSignature;
 			}
 		}
 		changeBPM(daBPM);
 		changeSignature(daSignature);
-	}
-
-	/**
-	 * Gets the current section of a song based on the current step.
-	 *
-	 * @param	song	Song to take the BPM and time signature changes from.
-	 * @param   step	The current step of the song.
-	 * @return	The current section of the song.
-	 */
-	public static function getCurSection(song:SwagSong, step:Int):Int {
-		//every time i try to optimize this it just fucking stops working
-		if (step <= 0) {
-			return 0;
-		}
-		var daNumerator:Int = song.timeSignature[0];
-		var daPos:Int = 0;
-		var lastStep:Int = 0;
-		for (i in 0...song.notes.length) {
-			if (song.notes[i] != null) {
-				if (song.notes[i].changeSignature) {
-					daNumerator = song.notes[i].timeSignature[0];
-				}
-			}
-			if (lastStep + (daNumerator * 4) >= step) {
-				return FlxMath.maxInt(daPos + Math.floor((step - lastStep) / (daNumerator * 4)), 0);
-			}
-			lastStep += daNumerator * 4;
-			daPos++;
-		}
-		return FlxMath.maxInt(daPos, 0);
 	}
 
 	/**
