@@ -3,47 +3,49 @@
 ![Psych Engine Extra](https://user-images.githubusercontent.com/85134252/153526241-9f265b56-ffd1-4452-bb61-c7500471a910.png)
 
 # Friday Night Funkin' - Psych Engine Extra
-Modified version of Psych Engine adding more stuff. (see below)
+Modified version of Psych Engine adding more stuff, most notably higher key amounts, time signatures, and Hscript support.
 
 ## Credits:
-* Starmapo - Psych Engine Extra Coding and Arts
+* Starmapo - Programmer and Artist
 
-* Shadow Mario - Coding
-* RiverOaken - Arts and Animations
-* shubs - Assistant Coder
-* bbpanzu - Former Coder
+## Special Thanks:
+* KadeDev & GitHub Contributors - Made Kade Engine (some code and ideas are from there)
+* Leather128 & GitHub Contributors - Made Leather Engine (some code and ideas are from there)
+* srPerez - Made VS Shaggy & the original 6K+ notes
 
-### Special Thanks
-* KadeDev & GitHub Contributors - Made Kade Engine (some code is from there)
-* Leather128 & GitHub Contributors - Made Leather Engine (some code is from there)
-* srPerez - Made VS Shaggy & original 9K notes
+## Psych Engine Credits:
+* Shadow Mario - Programmer
+* RiverOaken - Artist
+* Yoshubs - Assistant Programmer
 
-* SqirraRNG - Chart Editor's Sound Waveform base code
-* iFlicky - Composer + Dialogue Sounds
-* PolybiusProxy - Video Loader Extension
+### Psych Engine Special Thanks:
+* bbpanzu - Ex-Programmer
+* SqirraRNG - Crash Handler and Base code for Chart Editor's Waveform
+* KadeDev - Fixed some cool stuff on Chart Editor and other PRs
+* iFlicky - Composer of Psync and Tea Time, also made the Dialogue Sounds
+* PolybiusProxy - Video Loader Library (hxCodec)
 * Keoiki - Note Splash Animations
-* Smokey - Spritemap Texture Atlas support
+* Smokey - Sprite Atlas Support
+* Nebula the Zorua - LUA JIT Fork and some Lua reworks
 _____________________________________
 
 # New Features
-* Custom key amounts (1K to 13K)
-* Custom time signatures (1-99/1-64)
-* Custom UI skins (customize rating sprites, countdown sprites, etc.)
-* Character groups (more than one player, opponent, or GF)
+* Custom key amounts (currently 1K to 13K)
+* Custom time signatures (1-100/1-64)
 * Hscript compatibility
-* Separate voices for the player and opponent (by adding a 'VoicesDad' file)
-* Gameplay Changers: Play opponent's chart, demo mode
-* Go to options menu from in-game (go right back to game after you're done!)
-* More Lua functions
+* Custom UI skins (custom rating sprites, countdown sprites, etc.)
+* Character groups (more than one player, opponent, or GF)
+* Separate voices for the player and opponent (by adding a 'VoicesOpponent' or 'VoicesDad' file)
+* Gameplay Changers: Play as the opponent, demo mode (showcase gameplay)
+* Go to options menu from the pause menu (and go right back to game after you're done!)
 
 # New Options
 * Note underlays
 * Instant restart after dying
-* Show number of ratings
+* Show number of ratings (sicks, goods, etc.)
 * "Crappy" quality option (no stage)
-* Change instrumentals and voices volume
 * Toggle autopause when not focused on the game
-* "Shit" counts as a miss
+* "Shit" counting as a miss
 * Smooth health bar
 * Save Data menu where you can clear your save data
 

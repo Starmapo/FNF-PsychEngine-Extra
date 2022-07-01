@@ -213,7 +213,7 @@ class Character extends FlxSprite
 			switch(curCharacter)
 			{
 				case 'pico-speaker':
-					if(animationNotes.length > 0 && Conductor.songPosition > animationNotes[0][0])
+					if(animationNotes.length > 0 && Conductor.songPosition >= animationNotes[0][0])
 					{
 						var noteData:Int = 1;
 						if(animationNotes[0][1] > 2) noteData = 3;
@@ -319,7 +319,6 @@ class Character extends FlxSprite
 				animationNotes.push(songNotes);
 			}
 		}
-		TankmenBG.animationNotes = animationNotes;
 		animationNotes.sort(sortAnims);
 	}
 

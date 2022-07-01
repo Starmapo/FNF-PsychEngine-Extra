@@ -79,7 +79,6 @@ class PlayState extends MusicBeatState
 	public var modchartSounds:Map<String, FlxSound> = new Map();
 	public var modchartTexts:Map<String, ModchartText> = new Map();
 	public var modchartSaves:Map<String, FlxSave> = new Map();
-	public var modchartObjects:Map<String, FlxSprite> = new Map<String, FlxSprite>();
 
 	//event variables
 	private var isCameraOnForcedPos:Bool = false;
@@ -1067,12 +1066,12 @@ class PlayState extends MusicBeatState
 						firstTank.strumTime = 10;
 						tankmanRun.add(firstTank);
 	
-						for (i in 0...TankmenBG.animationNotes.length)
+						for (i in 0...char.animationNotes.length)
 						{
 							if(FlxG.random.bool(16)) {
 								var tankBih = tankmanRun.recycle(TankmenBG);
-								tankBih.strumTime = TankmenBG.animationNotes[i][0];
-								tankBih.resetShit(500, 200 + FlxG.random.int(50, 100), TankmenBG.animationNotes[i][1] < 2);
+								tankBih.strumTime = char.animationNotes[i][0];
+								tankBih.resetShit(500, 200 + FlxG.random.int(50, 100), char.animationNotes[i][1] < 2);
 								tankmanRun.add(tankBih);
 							}
 						}
@@ -2297,17 +2296,17 @@ class PlayState extends MusicBeatState
 			interp.variables.set('onGameOverConfirm', function(retry) {});
 			interp.variables.set('onNextDialogue', function(line) {});
 			interp.variables.set('onSkipDialogue', function(line) {});
-			interp.variables.set('goodNoteHit', function(index, direction, noteType, isSustainNote, id, characters) {});
-			interp.variables.set('opponentNoteHit', function(index, direction, noteType, isSustainNote, id, characters) {});
+			interp.variables.set('goodNoteHit', function(index, direction, noteType, isSustainNote, characters) {});
+			interp.variables.set('opponentNoteHit', function(index, direction, noteType, isSustainNote, characters) {});
 			interp.variables.set('noteMissPress', function(direction) {});
-			interp.variables.set('noteMiss', function(index, direction, noteType, isSustainNote, id, characters) {});
+			interp.variables.set('noteMiss', function(index, direction, noteType, isSustainNote, characters) {});
 			interp.variables.set('onMoveCamera', function(focus) {});
 			interp.variables.set('onEvent', function(name, value1, value2) {});
 			interp.variables.set('eventPushed', function(name, strumTime, value1, value2) {});
 			interp.variables.set('eventEarlyTrigger', function(name) {});
 			interp.variables.set('onTweenCompleted', function(tag) {});
 			interp.variables.set('onTimerCompleted', function(tag, loops, loopsLeft) {});
-			interp.variables.set('onSpawnNote', function(index, direction, noteType, isSustainNote, id, characters) {});
+			interp.variables.set('onSpawnNote', function(index, direction, noteType, isSustainNote, characters) {});
 			interp.variables.set('onGhostTap', function(direction) {});
 
 			interp.execute(program);
@@ -2488,7 +2487,6 @@ class PlayState extends MusicBeatState
 	}
 
 	public function getLuaObject(tag:String, text:Bool = true):FlxSprite {
-		if(modchartObjects.exists(tag)) return modchartObjects.get(tag);
 		if(modchartSprites.exists(tag)) return modchartSprites.get(tag);
 		if(text && modchartTexts.exists(tag)) return modchartTexts.get(tag);
 		return null;
@@ -3229,7 +3227,6 @@ class PlayState extends MusicBeatState
 				daNote.visible = false;
 				daNote.ignoreNote = true;
 
-				if(modchartObjects.exists('note${daNote.ID}'))modchartObjects.remove('note${daNote.ID}');
 				daNote.kill();
 				unspawnNotes.remove(daNote);
 				daNote.destroy();
@@ -3250,7 +3247,6 @@ class PlayState extends MusicBeatState
 				daNote.visible = false;
 				daNote.ignoreNote = true;
 
-				if(modchartObjects.exists('note${daNote.ID}'))modchartObjects.remove('note${daNote.ID}');
 				daNote.kill();
 				notes.remove(daNote, true);
 				daNote.destroy();
@@ -3513,9 +3509,6 @@ class PlayState extends MusicBeatState
 				swagNote.scrollFactor.set();
 				unspawnNotes.push(swagNote);
 
-				swagNote.ID = unspawnNotes.length;
-				modchartObjects.set('note${swagNote.ID}', swagNote);
-
 				var susLength:Float = swagNote.sustainLength / curStepCrochet;
 				var floorSus:Int = Math.floor(susLength);
 				if (floorSus > 0) {
@@ -3531,8 +3524,6 @@ class PlayState extends MusicBeatState
 						sustainNote.characters = songNotes[4];
 						if (songNotes[4] == null) sustainNote.characters = [0];
 						sustainNote.noteType = swagNote.noteType;
-						sustainNote.ID = unspawnNotes.length;
-						modchartObjects.set('note${sustainNote.ID}', sustainNote);
 						sustainNote.scrollFactor.set();
 						swagNote.tail.push(sustainNote);
 						sustainNote.parent = swagNote;
@@ -3724,7 +3715,6 @@ class PlayState extends MusicBeatState
 
 			if (player == 1)
 			{
-				modchartObjects.set("playerStrum" + i, babyArrow);
 				if (ClientPrefs.middleScroll && opponentChart)
 				{
 					babyArrow.x = STRUM_X_MIDDLESCROLL + 310;
@@ -3735,7 +3725,6 @@ class PlayState extends MusicBeatState
 			}
 			else
 			{
-				modchartObjects.set("opponentStrum" + i, babyArrow);
 				if (ClientPrefs.middleScroll && !opponentChart)
 				{
 					babyArrow.x += 310;
@@ -4333,7 +4322,7 @@ class PlayState extends MusicBeatState
 				var dunceNote:Note = unspawnNotes[0];
 				notes.insert(0, dunceNote);
 				dunceNote.spawned = true;
-				callOnScripts('onSpawnNote', [notes.members.indexOf(dunceNote), dunceNote.noteData, dunceNote.noteType, dunceNote.isSustainNote, dunceNote.ID, dunceNote.characters]);
+				callOnScripts('onSpawnNote', [notes.members.indexOf(dunceNote), dunceNote.noteData, dunceNote.noteType, dunceNote.isSustainNote, dunceNote.characters]);
 
 				var index:Int = unspawnNotes.indexOf(dunceNote);
 				unspawnNotes.splice(index, 1);
@@ -4482,7 +4471,6 @@ class PlayState extends MusicBeatState
 						daNote.active = false;
 						daNote.visible = false;
 
-						if(modchartObjects.exists('note${daNote.ID}'))modchartObjects.remove('note${daNote.ID}');
 						daNote.kill();
 						notes.remove(daNote, true);
 						daNote.destroy();
@@ -5366,7 +5354,6 @@ class PlayState extends MusicBeatState
 			daNote.active = false;
 			daNote.visible = false;
 
-			if(modchartObjects.exists('note${daNote.ID}'))modchartObjects.remove('note${daNote.ID}');
 			daNote.kill();
 			notes.remove(daNote, true);
 			daNote.destroy();
@@ -5591,7 +5578,6 @@ class PlayState extends MusicBeatState
 						{
 							for (doubleNote in pressNotes) {
 								if (Math.abs(doubleNote.strumTime - epicNote.strumTime) < 1) {
-									if(modchartObjects.exists('note${doubleNote.ID}'))modchartObjects.remove('note${doubleNote.ID}');
 									doubleNote.kill();
 									notes.remove(doubleNote, true);
 									doubleNote.destroy();
@@ -5790,7 +5776,6 @@ class PlayState extends MusicBeatState
 		//Dupe note remove
 		notes.forEachAlive(function(note:Note) {
 			if (daNote != note && daNote.mustPress && daNote.noteData == note.noteData && daNote.isSustainNote == note.isSustainNote && Math.abs(daNote.strumTime - note.strumTime) < 1) {
-				if(modchartObjects.exists('note${note.ID}'))modchartObjects.remove('note${note.ID}');
 				note.kill();
 				notes.remove(note, true);
 				note.destroy();
@@ -5836,7 +5821,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		callOnScripts('noteMiss', [notes.members.indexOf(daNote), daNote.noteData, daNote.noteType, daNote.isSustainNote, daNote.ID, daNote.characters]);
+		callOnScripts('noteMiss', [notes.members.indexOf(daNote), daNote.noteData, daNote.noteType, daNote.isSustainNote, daNote.characters]);
 	}
 
 	function noteMissPress(direction:Int = 1):Void //You pressed a key when there was no notes to press for this key
@@ -5949,12 +5934,11 @@ class PlayState extends MusicBeatState
 			spawnNoteSplashOnNote(note);
 		}
 
-		callOnScripts('opponentNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.ID, note.characters]);
+		callOnScripts('opponentNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
 
 		var strumGroup = opponentChart ? playerStrums : opponentStrums;
 		if (strumGroup.members[note.noteData].direction != 90 || !note.isSustainNote)
 		{
-			if(modchartObjects.exists('note${note.ID}'))modchartObjects.remove('note${note.ID}');
 			note.kill();
 			notes.remove(note, true);
 			note.destroy();
@@ -6014,7 +5998,6 @@ class PlayState extends MusicBeatState
 				note.wasGoodHit = true;
 				if (strumGroup.members[note.noteData].direction != 90 || !note.isSustainNote)
 				{
-					if(modchartObjects.exists('note${note.ID}'))modchartObjects.remove('note${note.ID}');
 					note.kill();
 					notes.remove(note, true);
 					note.destroy();
@@ -6090,11 +6073,10 @@ class PlayState extends MusicBeatState
 			else
 				vocals.volume = 1;
 
-			callOnScripts('goodNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.ID, note.characters]);
+			callOnScripts('goodNoteHit', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote, note.characters]);
 
 			if (strumGroup.members[note.noteData].direction != 90 || !note.isSustainNote)
 			{
-				if(modchartObjects.exists('note${note.ID}'))modchartObjects.remove('note${note.ID}');
 				note.kill();
 				notes.remove(note, true);
 				note.destroy();

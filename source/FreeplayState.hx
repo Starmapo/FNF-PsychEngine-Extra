@@ -72,7 +72,6 @@ class FreeplayState extends MusicBeatState
 
 	override function create()
 	{
-		Paths.clearStoredMemory();
 		AtlasFrameMaker.clearCache();
 		
 		persistentUpdate = true;
