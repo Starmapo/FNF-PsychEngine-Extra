@@ -1201,6 +1201,7 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "loadSong", function(name:String = null, ?difficultyNum:Int = -1, ?skipTransition:Bool = false) {
 			if (name == null) name = PlayState.SONG.song;
 			if (difficultyNum < 0) difficultyNum = PlayState.storyDifficulty;
+			FlxG.timeScale = 1;
 
 			if (skipTransition)
 			{
@@ -1255,6 +1256,7 @@ class FunkinLua {
 				FlxTransitionableState.skipNextTransIn = true;
 				FlxTransitionableState.skipNextTransOut = true;
 			}
+			FlxG.timeScale = 1;
 
 			WeekData.loadTheFirstEnabledMod();
 			PlayState.cancelMusicFadeTween();
@@ -1282,6 +1284,7 @@ class FunkinLua {
 			PlayState.instance.openPauseMenu();
 		});
 		Lua_helper.add_callback(lua, "openCredits", function(playMusic:Bool = true) {
+			FlxG.timeScale = 1;
 			WeekData.loadTheFirstEnabledMod();
 			PlayState.cancelMusicFadeTween();
 			CustomFadeTransition.nextCamera = PlayState.instance.camOther;

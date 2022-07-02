@@ -1990,6 +1990,7 @@ class PlayState extends MusicBeatState
 			interp.variables.set('loadSong', function(name:String = null, ?difficultyNum:Int = -1, ?skipTransition:Bool = false) {
 				if (name == null) name = SONG.song;
 				if (difficultyNum < 0) difficultyNum = storyDifficulty;
+				FlxG.timeScale = 1;
 	
 				if (skipTransition)
 				{
@@ -5279,6 +5280,7 @@ class PlayState extends MusicBeatState
 				}
 				else
 				{
+					FlxG.timeScale = 1;
 					var difficulty:String = CoolUtil.getDifficultyFilePath();
 
 					trace('LOADING NEXT SONG');
