@@ -3258,12 +3258,12 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.time = time;
 		FlxG.sound.music.play();
 
-		if (time * playbackRate <= vocals.length)
+		if (time <= vocals.length)
 		{
 			vocals.time = time;
 		}
 		vocals.play();
-		if (time * playbackRate <= vocalsDad.length)
+		if (time <= vocalsDad.length)
 		{
 			vocalsDad.time = time;
 		}
