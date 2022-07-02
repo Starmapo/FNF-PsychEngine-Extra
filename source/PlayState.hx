@@ -5195,7 +5195,7 @@ class PlayState extends MusicBeatState
 				return;
 			}
 		}
-		
+
 		timeBarBG.visible = false;
 		timeBar.visible = false;
 		timeTxt.visible = false;
@@ -5209,6 +5209,8 @@ class PlayState extends MusicBeatState
 
 		deathCounter = 0;
 		seenCutscene = false;
+
+		FlxG.timeScale = 1;
 
 		#if ACHIEVEMENTS_ALLOWED
 		if (achievementObj != null) {
@@ -5251,7 +5253,6 @@ class PlayState extends MusicBeatState
 
 				if (storyPlaylist.length <= 0)
 				{
-					FlxG.timeScale = 1;
 					WeekData.loadTheFirstEnabledMod();
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 					#if cpp
@@ -5280,7 +5281,6 @@ class PlayState extends MusicBeatState
 				}
 				else
 				{
-					FlxG.timeScale = 1;
 					var difficulty:String = CoolUtil.getDifficultyFilePath();
 
 					trace('LOADING NEXT SONG');
@@ -5321,7 +5321,6 @@ class PlayState extends MusicBeatState
 			else
 			{
 				trace('WENT BACK TO FREEPLAY??');
-				FlxG.timeScale = 1;
 				WeekData.loadTheFirstEnabledMod();
 				cancelMusicFadeTween();
 				if (FlxTransitionableState.skipNextTransIn) {
