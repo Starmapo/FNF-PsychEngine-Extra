@@ -39,7 +39,7 @@ class Conductor
 		var data:Array<Rating> = PlayState.instance.ratingsData; //shortening cuz fuck u
 		for(i in 0...data.length - 1) //skips last window (Shit)
 		{
-			if (diff <= data[i].hitWindow * PlayState.instance.playbackRate)
+			if (diff <= data[i].hitWindow * playbackRate)
 			{
 				return data[i];
 			}

@@ -1309,15 +1309,15 @@ class FunkinLua {
 			return true;
 		});
 		Lua_helper.add_callback(lua, "getSongPosition", function() {
-			return Conductor.songPosition / PlayState.instance.playbackRate;
+			return Conductor.songPosition;
 		});
 		Lua_helper.add_callback(lua, "setSongPosition", function(time:Float = 0) {
-			if(time < Conductor.songPosition / PlayState.instance.playbackRate)
+			if(time < Conductor.songPosition)
 			{
 				PlayState.startOnTime = time;
 				PauseSubState.restartSong(true);
 			}
-			else if (time != Conductor.songPosition / PlayState.instance.playbackRate)
+			else if (time != Conductor.songPosition)
 			{
 				PlayState.instance.clearNotesBefore(time);
 				PlayState.instance.setSongTime(time);

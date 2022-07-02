@@ -3884,7 +3884,7 @@ class PlayState extends MusicBeatState
 			#if DISCORD_ALLOWED
 			if (startTimer != null && startTimer.finished)
 			{
-				DiscordClient.changePresence(detailsText, '$curSongDisplayName ($storyDifficultyText)', iconP2.getCharacter(), true, songLength / playbackRate - Conductor.songPosition / playbackRate - ClientPrefs.noteOffset);
+				DiscordClient.changePresence(detailsText, '$curSongDisplayName ($storyDifficultyText)', iconP2.getCharacter(), true, (songLength - Conductor.songPosition) / playbackRate - ClientPrefs.noteOffset);
 			}
 			else
 			{
@@ -3908,7 +3908,7 @@ class PlayState extends MusicBeatState
 			if (!inEditor) {
 				if (Conductor.songPosition > 0.0)
 				{
-					DiscordClient.changePresence(detailsText, '$curSongDisplayName ($storyDifficultyText)', iconP2.getCharacter(), true, songLength / playbackRate - Conductor.songPosition / playbackRate - ClientPrefs.noteOffset);
+					DiscordClient.changePresence(detailsText, '$curSongDisplayName ($storyDifficultyText)', iconP2.getCharacter(), true, (songLength - Conductor.songPosition) / playbackRate - ClientPrefs.noteOffset);
 				}
 				else
 				{
@@ -4273,12 +4273,12 @@ class PlayState extends MusicBeatState
 			if (!paused && !inEditor)
 			{
 				if (updateTime) {
-					var curTime:Float = Conductor.songPosition / playbackRate - ClientPrefs.noteOffset;
-					if (curTime < 0) curTime = 0;
-					songPercent = (curTime / (songLength / playbackRate));
+					var curTime:Float = Conductor.songPosition - ClientPrefs.noteOffset;
+					if(curTime < 0) curTime = 0;
+					songPercent = (curTime / songLength) / playbackRate;
 
-					var songCalc:Float = (songLength / playbackRate - curTime);
-					if (ClientPrefs.timeBarType == 'Time Elapsed') songCalc = curTime;
+					var songCalc:Float = (songLength - curTime) / playbackRate;
+					if(ClientPrefs.timeBarType == 'Time Elapsed') songCalc = curTime / playbackRate;
 
 					var secondsTotal:Int = Math.floor(songCalc / 1000);
 					if (secondsTotal < 0) secondsTotal = 0;
