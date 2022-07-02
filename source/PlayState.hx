@@ -4521,7 +4521,8 @@ class PlayState extends MusicBeatState
 		if (!endingSong && !startingSong) {
 			if (FlxG.keys.justPressed.ONE && !inEditor) {
 				killNotes();
-				onSongComplete();
+				if (FlxG.sound.music.onComplete != null) FlxG.sound.music.onComplete();
+				else onSongComplete();
 			}
 			if (FlxG.keys.justPressed.TWO) { //Go 10 seconds into the future :O
 				setSongTime(Conductor.songPosition + 10000 * playbackRate);
