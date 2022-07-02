@@ -51,8 +51,8 @@ class GameplayChangersSubState extends MusicBeatSubState
 
 		#if cpp
 		var option:GameplayOption = new GameplayOption('Playback Rate', 'songspeed', 'float', 1);
-		option.scrollSpeed = 0.2;
-		option.minValue = 0.5;
+		option.scrollSpeed = 0.5;
+		option.minValue = 1;
 		option.maxValue = 2.5;
 		option.decimals = 2;
 		option.changeValue = 0.01;

@@ -293,6 +293,7 @@ class FunkinHscript extends InterpEx {
 		variables.set('practice', PlayState.instance.practiceMode);
 		variables.set('opponentPlay', PlayState.instance.opponentChart);
 		variables.set('playbackRate', PlayState.instance.playbackRate);
+		variables.set('demoMode', PlayState.instance.demoMode);
 
 		for (i in 0...Note.MAX_KEYS) {
 			variables.set('defaultPlayerStrumX$i', 0);

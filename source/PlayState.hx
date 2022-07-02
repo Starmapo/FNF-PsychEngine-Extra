@@ -2724,7 +2724,7 @@ class PlayState extends MusicBeatState
 			case 'ugh':
 				cutsceneHandler.endTime = 12;
 				cutsceneHandler.music = 'DISTORTO';
-				precacheList.set('DISTORTO', 'music');
+				precacheList.set('wellWellWell', 'sound');
 				precacheList.set('killYou', 'sound');
 				precacheList.set('bfBeep', 'sound');
 
@@ -2773,7 +2773,7 @@ class PlayState extends MusicBeatState
 				cutsceneHandler.music = 'DISTORTO';
 				tankman.x += 40;
 				tankman.y += 10;
-				precacheList.set('DISTORTO', 'music');
+				precacheList.set('tankSong2', 'sound');
 
 				var tightBars:FlxSound = new FlxSound().loadEmbedded(Paths.sound('tankSong2'));
 				FlxG.sound.list.add(tightBars);
@@ -2811,11 +2811,9 @@ class PlayState extends MusicBeatState
 				{
 					spr.y += 100;
 				});
+				precacheList.set('stressCutscene', 'sound');
 
 				tankman2.frames = Paths.getSparrowAtlas('cutscenes/stress2');
-				tankman2.animation.addByPrefix('lookWhoItIs', 'TANK TALK 3', 24, false);
-				tankman2.animation.play('lookWhoItIs', true);
-				tankman2.animation.pause();
 				addBehindDad(tankman2);
 
 				if (ClientPrefs.gameQuality == 'Normal')
@@ -2885,9 +2883,6 @@ class PlayState extends MusicBeatState
 					FlxTween.tween(FlxG.camera, {zoom: 0.9 * 1.2 * 1.2}, 2.25, {ease: FlxEase.quadInOut});
 
 					gfDance.visible = false;
-					gfDance.kill();
-					remove(gfDance);
-					gfDance.destroy();
 					gfCutscene.alpha = 1;
 					gfCutscene.animation.play('dieBitch', true);
 					gfCutscene.animation.finishCallback = function(name:String)
@@ -2900,18 +2895,11 @@ class PlayState extends MusicBeatState
 						else
 						{
 							gfCutscene.visible = false;
-							gfCutscene.animation.finishCallback = null;
-							gfCutscene.kill();
-							remove(gfCutscene);
-							gfCutscene.destroy();
 							picoCutscene.alpha = 1;
 							picoCutscene.animation.play('anim', true);
 
-							boyfriendCutscene.visible = false;
-							boyfriendCutscene.kill();
-							remove(boyfriendCutscene);
-							boyfriendCutscene.destroy();
 							boyfriendGroup.alpha = 1;
+							boyfriendCutscene.visible = false;
 							boyfriend.playAnim('bfCatch', true);
 							boyfriend.animation.finishCallback = function(name:String)
 							{
@@ -2925,12 +2913,10 @@ class PlayState extends MusicBeatState
 							picoCutscene.animation.finishCallback = function(name:String)
 							{
 								picoCutscene.visible = false;
-								picoCutscene.animation.finishCallback = null;
-								picoCutscene.kill();
-								remove(picoCutscene);
-								picoCutscene.destroy();
 								gfGroup.alpha = 1;
+								picoCutscene.animation.finishCallback = null;
 							};
+							gfCutscene.animation.finishCallback = null;
 						}
 					};
 				});
@@ -2942,12 +2928,10 @@ class PlayState extends MusicBeatState
 
 				cutsceneHandler.timer(19.5, function()
 				{
-					tankman.visible = false;
-					tankman.kill();
-					remove(tankman);
-					tankman.destroy();
+					tankman2.animation.addByPrefix('lookWhoItIs', 'TANK TALK 3', 24, false);
 					tankman2.animation.play('lookWhoItIs', true);
 					tankman2.alpha = 1;
+					tankman.visible = false;
 				});
 
 				cutsceneHandler.timer(20, function()
@@ -3329,7 +3313,7 @@ class PlayState extends MusicBeatState
 		}
 
 		// Song duration in a float, useful for the time left feature
-		songLength = FlxG.sound.music.length / playbackRate;
+		songLength = FlxG.sound.music.length;
 		if (!inEditor) {
 			FlxTween.tween(timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 			if (showSongText) {
@@ -3343,7 +3327,7 @@ class PlayState extends MusicBeatState
 		
 			#if DISCORD_ALLOWED
 			// Updating Discord Rich Presence (with Time Left)
-			DiscordClient.changePresence(detailsText, '$curSongDisplayName ($storyDifficultyText)', iconP2.getCharacter(), true, songLength);
+			DiscordClient.changePresence(detailsText, '$curSongDisplayName ($storyDifficultyText)', iconP2.getCharacter(), true, songLength / playbackRate);
 			#end
 		}
 		setOnScripts('songLength', songLength);
@@ -3902,7 +3886,7 @@ class PlayState extends MusicBeatState
 			#if DISCORD_ALLOWED
 			if (startTimer != null && startTimer.finished)
 			{
-				DiscordClient.changePresence(detailsText, '$curSongDisplayName ($storyDifficultyText)', iconP2.getCharacter(), true, songLength - Conductor.songPosition / playbackRate - ClientPrefs.noteOffset);
+				DiscordClient.changePresence(detailsText, '$curSongDisplayName ($storyDifficultyText)', iconP2.getCharacter(), true, songLength / playbackRate - Conductor.songPosition / playbackRate - ClientPrefs.noteOffset);
 			}
 			else
 			{
@@ -3926,7 +3910,7 @@ class PlayState extends MusicBeatState
 			if (!inEditor) {
 				if (Conductor.songPosition > 0.0)
 				{
-					DiscordClient.changePresence(detailsText, '$curSongDisplayName ($storyDifficultyText)', iconP2.getCharacter(), true, songLength - Conductor.songPosition / playbackRate - ClientPrefs.noteOffset);
+					DiscordClient.changePresence(detailsText, '$curSongDisplayName ($storyDifficultyText)', iconP2.getCharacter(), true, songLength / playbackRate - Conductor.songPosition / playbackRate - ClientPrefs.noteOffset);
 				}
 				else
 				{
@@ -3983,7 +3967,7 @@ class PlayState extends MusicBeatState
 
 	function setSongPitch() {
 		#if cpp
-		if (playbackRate != 1 && !endingSong && !transitioning) {
+		if (playbackRate != 1 && !startingSong && !endingSong && !transitioning) {
 			@:privateAccess
 			{
 				var audio = [FlxG.sound.music, vocals, vocalsDad];
@@ -4013,7 +3997,7 @@ class PlayState extends MusicBeatState
 				setSongPitch();
 			}
 			
-			if (playbackRate != 1 && generatedMusic && startedCountdown && canPause && !endingSong && !transitioning && FlxG.sound.music != null && FlxG.sound.music.length - Conductor.songPosition <= 20)
+			if (playbackRate != 1 && generatedMusic && startedCountdown && !endingSong && !transitioning && FlxG.sound.music != null && FlxG.sound.music.length - Conductor.songPosition <= 20)
 			{
 				Conductor.songPosition = FlxG.sound.music.length;
 				onSongComplete();
@@ -4293,9 +4277,9 @@ class PlayState extends MusicBeatState
 				if (updateTime) {
 					var curTime:Float = Conductor.songPosition / playbackRate - ClientPrefs.noteOffset;
 					if (curTime < 0) curTime = 0;
-					songPercent = (curTime / songLength);
+					songPercent = (curTime / (songLength / playbackRate));
 
-					var songCalc:Float = (songLength - curTime);
+					var songCalc:Float = (songLength / playbackRate - curTime);
 					if (ClientPrefs.timeBarType == 'Time Elapsed') songCalc = curTime;
 
 					var secondsTotal:Int = Math.floor(songCalc / 1000);
@@ -4537,7 +4521,7 @@ class PlayState extends MusicBeatState
 		if (!endingSong && !startingSong) {
 			if (FlxG.keys.justPressed.ONE && !inEditor) {
 				killNotes();
-				FlxG.sound.music.onComplete();
+				onSongComplete();
 			}
 			if (FlxG.keys.justPressed.TWO) { //Go 10 seconds into the future :O
 				setSongTime(Conductor.songPosition + 10000 * playbackRate);

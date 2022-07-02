@@ -92,7 +92,6 @@ class FunkinLua {
 		set('Function_Continue', Function_Continue);
 		set('luaDebugMode', false);
 		set('luaDeprecatedWarnings', true);
-		set('inChartEditor', PlayState.instance.inEditor);
 
 		// Song/Week shit
 		set('curBpm', Conductor.bpm);
@@ -110,6 +109,7 @@ class FunkinLua {
 		set('songName', PlayState.SONG.song);
 		set('songDisplayName', PlayState.instance.curSongDisplayName);
 		set('startedCountdown', false);
+		set('inChartEditor', PlayState.instance.inEditor);
 
 		set('isStoryMode', PlayState.isStoryMode);
 		set('difficulty', PlayState.storyDifficulty);
@@ -160,6 +160,7 @@ class FunkinLua {
 		set('practice', PlayState.instance.practiceMode);
 		set('opponentPlay', PlayState.instance.opponentChart);
 		set('playbackRate', PlayState.instance.playbackRate);
+		set('demoMode', PlayState.instance.demoMode);
 
 		for (i in 0...Note.MAX_KEYS) {
 			set('defaultPlayerStrumX$i', 0);
