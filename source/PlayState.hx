@@ -2977,10 +2977,10 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
-		FlxG.timeScale = playbackRate;
 		inCutscene = false;
 		var ret:Dynamic = callOnScripts('onStartCountdown', [], false);
 		if (ret != FunkinLua.Function_Stop) {
+			FlxG.timeScale = playbackRate;
 			if (skipCountdown || startOnTime > 0) skipArrowStartTween = true;
 
 			generateStaticArrows(0, dadKeys);
