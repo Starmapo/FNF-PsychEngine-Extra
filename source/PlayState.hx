@@ -2705,7 +2705,7 @@ class PlayState extends MusicBeatState
 
 		cutsceneHandler.finishCallback = function()
 		{
-			var timeForStuff:Float = Conductor.crochet / 1000 * 4.5;
+			var timeForStuff:Float = Conductor.normalizedCrochet / 1000 * 4.5;
 			FlxG.sound.music.fadeOut(timeForStuff);
 			FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, timeForStuff, {ease: FlxEase.quadInOut});
 			moveCamera(true);
@@ -2724,7 +2724,6 @@ class PlayState extends MusicBeatState
 			case 'ugh':
 				cutsceneHandler.endTime = 12;
 				cutsceneHandler.music = 'DISTORTO';
-				precacheList.set('wellWellWell', 'sound');
 				precacheList.set('killYou', 'sound');
 				precacheList.set('bfBeep', 'sound');
 
@@ -2773,7 +2772,6 @@ class PlayState extends MusicBeatState
 				cutsceneHandler.music = 'DISTORTO';
 				tankman.x += 40;
 				tankman.y += 10;
-				precacheList.set('tankSong2', 'sound');
 
 				var tightBars:FlxSound = new FlxSound().loadEmbedded(Paths.sound('tankSong2'));
 				FlxG.sound.list.add(tightBars);
@@ -2811,7 +2809,6 @@ class PlayState extends MusicBeatState
 				{
 					spr.y += 100;
 				});
-				precacheList.set('stressCutscene', 'sound');
 
 				tankman2.frames = Paths.getSparrowAtlas('cutscenes/stress2');
 				addBehindDad(tankman2);
