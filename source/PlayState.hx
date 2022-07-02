@@ -4275,7 +4275,7 @@ class PlayState extends MusicBeatState
 				if (updateTime) {
 					var curTime:Float = Conductor.songPosition - ClientPrefs.noteOffset;
 					if(curTime < 0) curTime = 0;
-					songPercent = (curTime / songLength) / playbackRate;
+					songPercent = (curTime / songLength);
 
 					var songCalc:Float = (songLength - curTime) / playbackRate;
 					if(ClientPrefs.timeBarType == 'Time Elapsed') songCalc = curTime / playbackRate;
