@@ -2018,6 +2018,7 @@ class FunkinLua {
 			#end
 		});
 		
+		/*
 		Lua_helper.add_callback(lua, "changeNoteSkin", function(index:Int = 0, name:String = 'default') {
 			if (PlayState.instance.notes.members[index] != null) {
 				PlayState.instance.notes.members[index].uiSkin = UIData.getUIFile(name);
@@ -2033,9 +2034,16 @@ class FunkinLua {
 				PlayState.instance.strumLineNotes.members[index].uiSkin = UIData.getUIFile(name);
 			}
 		});
+		*/
 		
 		Lua_helper.add_callback(lua, "playMusic", function(sound:String, volume:Float = 1, loop:Bool = false) {
-			FlxG.sound.playMusic(Paths.music(sound), volume, loop);
+			var musicFile = Paths.music(sound);
+			if (musicFile != null) {
+				FlxG.sound.playMusic(musicFile, volume, loop);
+				return true;
+			}
+			luaTrace('Couldn\'t find music file: $sound', false, false, FlxColor.RED);
+			return false;
 		});
 		Lua_helper.add_callback(lua, "playSound", function(sound:String, volume:Float = 1, ?tag:String = null) {
 			if (tag != null && tag.length > 0) {
@@ -2043,13 +2051,22 @@ class FunkinLua {
 				if (PlayState.instance.modchartSounds.exists(tag)) {
 					PlayState.instance.modchartSounds.get(tag).stop();
 				}
-				PlayState.instance.modchartSounds.set(tag, FlxG.sound.play(Paths.sound(sound), volume, false, function() {
-					PlayState.instance.modchartSounds.remove(tag);
-					PlayState.instance.callOnScripts('onSoundFinished', [tag]);
-				}));
-				return;
+				var soundFile = Paths.sound(sound);
+				if (soundFile != null) {
+					PlayState.instance.modchartSounds.set(tag, FlxG.sound.play(soundFile, volume, false, function() {
+						PlayState.instance.modchartSounds.remove(tag);
+						PlayState.instance.callOnScripts('onSoundFinished', [tag]);
+					}));
+					return true;
+				}
 			}
-			FlxG.sound.play(Paths.sound(sound), volume);
+			var soundFile = Paths.sound(sound);
+			if (soundFile != null) {
+				FlxG.sound.play(soundFile, volume);
+				return true;
+			}
+			luaTrace('Couldn\'t find sound file: $sound', false, false, FlxColor.RED);
+			return false;
 		});
 		Lua_helper.add_callback(lua, "stopSound", function(tag:String) {
 			if (tag != null && tag.length > 1 && PlayState.instance.modchartSounds.exists(tag)) {
