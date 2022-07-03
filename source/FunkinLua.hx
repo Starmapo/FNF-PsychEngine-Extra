@@ -99,6 +99,7 @@ class FunkinLua {
 		set('signatureNumerator', Conductor.timeSignature[0]);
 		set('signatureDenominator', Conductor.timeSignature[1]);
 		set('crochet', Conductor.crochet);
+		set('normalizedCrochet', Conductor.normalizedCrochet);
 		set('stepCrochet', Conductor.stepCrochet);
 		set('scrollSpeed', PlayState.SONG.speed);
 		set('playerKeyAmount', PlayState.SONG.playerKeyAmount);
@@ -2019,9 +2020,9 @@ class FunkinLua {
 		*/
 		
 		Lua_helper.add_callback(lua, "playMusic", function(sound:String, volume:Float = 1, loop:Bool = false) {
-			var musicFile = Paths.music(sound);
-			if (musicFile != null) {
-				FlxG.sound.playMusic(musicFile, volume, loop);
+			var soundFile = Paths.music(sound);
+			if (soundFile != null) {
+				FlxG.sound.playMusic(soundFile, volume, loop);
 				return true;
 			}
 			luaTrace('Couldn\'t find music file: $sound', false, false, FlxColor.RED);

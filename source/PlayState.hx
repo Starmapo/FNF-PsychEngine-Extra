@@ -372,7 +372,7 @@ class PlayState extends MusicBeatState
 		if (inEditor) {
 			this.startPos = startPos;
 			Conductor.songPosition = startPos;
-			timerToStart = Conductor.crochet;
+			timerToStart = Conductor.normalizedCrochet;
 		}
 		super();
 	}
@@ -2302,6 +2302,7 @@ class PlayState extends MusicBeatState
 				'onSkipCutscene',
 				'onBPMChange',
 				'onSignatureChange',
+				'onKeyChange',
 				'onOpenChartEditor',
 				'onOpenCharacterEditor',
 				'onPause',
@@ -6493,6 +6494,7 @@ class PlayState extends MusicBeatState
 				Conductor.changeBPM(songSection.bpm);
 				setOnScripts('curBpm', Conductor.bpm);
 				setOnScripts('crochet', Conductor.crochet);
+				setOnScripts('normalizedCrochet', Conductor.normalizedCrochet);
 				setOnScripts('stepCrochet', Conductor.stepCrochet);
 				callOnScripts('onBPMChange', []);
 			}
@@ -6502,12 +6504,14 @@ class PlayState extends MusicBeatState
 				setOnScripts('signatureNumerator', Conductor.timeSignature[0]);
 				setOnScripts('signatureDenominator', Conductor.timeSignature[1]);
 				setOnScripts('crochet', Conductor.crochet);
+				setOnScripts('normalizedCrochet', Conductor.normalizedCrochet);
 				setOnScripts('stepCrochet', Conductor.stepCrochet);
 				callOnScripts('onSignatureChange', []);
 			}
 			if (songSection.changeKeys)
 			{
 				switchKeys(songSection.playerKeys, songSection.opponentKeys);
+				callOnScripts('onKeyChange', []);
 			}
 			setOnScripts('mustHitSection', songSection.mustHitSection);
 			setOnScripts('altAnim', songSection.altAnim);
@@ -6545,7 +6549,7 @@ class PlayState extends MusicBeatState
 			#if !mobile
 			if (!opponentChart) showKeybindReminders();
 			#end
-			setOnScripts('playerKeyAmount', playerKeys);
+			setOnScripts('playerKeyAmount', bfKeys);
 			for (i in 0...playerStrums.length) {
 				setOnScripts('defaultPlayerStrumX$i', playerStrums.members[i].x);
 				setOnScripts('defaultPlayerStrumY$i', playerStrums.members[i].y);
@@ -6578,7 +6582,7 @@ class PlayState extends MusicBeatState
 			#if !mobile
 			if (opponentChart) showKeybindReminders();
 			#end
-			setOnScripts('opponentKeys', opponentKeys);
+			setOnScripts('opponentKeyAmount', dadKeys);
 			for (i in 0...opponentStrums.length) {
 				setOnScripts('defaultOpponentStrumX$i', opponentStrums.members[i].x);
 				setOnScripts('defaultOpponentStrumY$i', opponentStrums.members[i].y);

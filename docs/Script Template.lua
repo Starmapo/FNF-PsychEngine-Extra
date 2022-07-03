@@ -68,6 +68,11 @@ function onSignatureChange()
 	-- use "signatureNumerator" and "signatureDenominator" to get the current time signature
 end
 
+function onKeyChange()
+	-- triggered when the song's key amounts are changed
+	-- use "playerKeyAmount" and "opponentKeyAmount" to get the current key amounts
+end
+
 function onOpenChartEditor()
 	-- Called when you press the chart editor debug key
 	-- return Function_Stop if you want to stop the player from opening the chart editor
