@@ -659,10 +659,8 @@ class FunkinLua {
 			var killMe:Array<String> = variable.split('.');
 			if (killMe.length > 1) {
 				setVarInArray(getPropertyLoopThingWhatever(killMe), killMe[killMe.length-1], value);
-				return true;
 			}
 			setVarInArray(getInstance(), variable, value);
-			return true;
 		});
 		Lua_helper.add_callback(lua, "getPropertyFromGroup", function(obj:String, index:Int, variable:Dynamic) {
 			@:privateAccess
@@ -739,10 +737,8 @@ class FunkinLua {
 					coverMeInPiss = getVarInArray(coverMeInPiss, killMe[i]);
 				}
 				setVarInArray(coverMeInPiss, killMe[killMe.length-1], value);
-				return true;
 			}
 			setVarInArray(Type.resolveClass(classVar), variable, value);
-			return true;
 		});
 
 		//shitass stuff for epic coders like me B)  *image of obama giving himself a medal*
@@ -1153,12 +1149,10 @@ class FunkinLua {
 			var value1:String = arg1;
 			var value2:String = arg2;
 			PlayState.instance.triggerEventNote(name, value1, value2);
-			return true;
 		});
 
 		Lua_helper.add_callback(lua, "startCountdown", function() {
 			PlayState.instance.startCountdown();
-			return true;
 		});
 
 		Lua_helper.add_callback(lua, "runHaxeCode", function(codeToRun:String) {
@@ -1243,12 +1237,10 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "endSong", function() {
 			PlayState.instance.killNotes();
 			PlayState.instance.finishSong(true);
-			return true;
 		});
 		Lua_helper.add_callback(lua, "restartSong", function(skipTransition:Bool = false) {
 			PlayState.instance.persistentUpdate = false;
 			PauseSubState.restartSong(skipTransition);
-			return true;
 		});
 		Lua_helper.add_callback(lua, "exitSong", function(skipTransition:Bool = false) {
 			if (skipTransition)
@@ -1278,7 +1270,6 @@ class FunkinLua {
 			PlayState.chartingMode = false;
 			PlayState.instance.transitioning = true;
 			PlayState.deathCounter = 0;
-			return true;
 		});
 		Lua_helper.add_callback(lua, "openPauseMenu", function() {
 			PlayState.instance.openPauseMenu();
@@ -1306,7 +1297,6 @@ class FunkinLua {
 			PlayState.chartingMode = false;
 			PlayState.instance.transitioning = true;
 			PlayState.deathCounter = 0;
-			return true;
 		});
 		Lua_helper.add_callback(lua, "getSongPosition", function() {
 			return Conductor.songPosition;
@@ -1842,14 +1832,6 @@ class FunkinLua {
 		});
 
 		Lua_helper.add_callback(lua, "setObjectCamera", function(obj:String, camera:String = '') {
-			/*if (PlayState.instance.modchartSprites.exists(obj)) {
-				PlayState.instance.modchartSprites.get(obj).cameras = [cameraFromString(camera)];
-				return true;
-			}
-			else if (PlayState.instance.modchartTexts.exists(obj)) {
-				PlayState.instance.modchartTexts.get(obj).cameras = [cameraFromString(camera)];
-				return true;
-			}*/
 			var real = PlayState.instance.getLuaObject(obj);
 			if(real!=null){
 				real.cameras = [cameraFromString(camera)];
@@ -2629,7 +2611,7 @@ class FunkinLua {
 	}
 	#end
 
-	public static function setVarInArray(instance:Dynamic, variable:String, value:Dynamic):Any
+	public static function setVarInArray(instance:Dynamic, variable:String, value:Dynamic)
 	{
 		var shit:Array<String> = variable.split('[');
 		if(shit.length > 1)
@@ -2643,7 +2625,6 @@ class FunkinLua {
 				else //Anything else
 					blah = blah[leNum];
 			}
-			return blah;
 		}
 		//fixes for html5
 		switch(Type.typeof(Reflect.getProperty(instance, variable))){
@@ -2668,7 +2649,6 @@ class FunkinLua {
 			default:
 				Reflect.setProperty(instance, variable, value);
 		}
-		return true;
 	}
 	public static function getVarInArray(instance:Dynamic, variable:String):Any
 	{
@@ -2918,7 +2898,7 @@ class FunkinLua {
 			{
 				var conv:Dynamic = Convert.fromLua(lua, result);
 				Lua.pop(lua, 1);
-				if(conv == null) conv = Function_Continue;
+				if(conv == null || conv == true || conv == false) conv = Function_Continue;
 				return conv;
 			}
 			return Function_Continue;
