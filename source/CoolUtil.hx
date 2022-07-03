@@ -60,7 +60,7 @@ class CoolUtil
 		return Math.max(min, Math.min(max, value));
 	}
 
-	public static function coolTextFile(path:String):Array<String>
+	public static function coolTextFile(path:String)
 	{
 		var daList:Array<String> = [];
 		#if MODS_ALLOWED
@@ -79,17 +79,28 @@ class CoolUtil
 		return daList;
 	}
 
-	public static function listFromString(string:String):Array<String>
+	public static function coolArrayTextFile(path:String)
 	{
 		var daList:Array<String> = [];
-		daList = string.trim().split('\n');
+		var daArray:Array<Array<String>> = [];
+		#if MODS_ALLOWED
+		if (FileSystem.exists(path)) daList = File.getContent(path).trim().split('\n');
+		else if (Assets.exists(path))
+		#else
+		if (Assets.exists(path))
+		#end
+			daList = Assets.getText(path).trim().split('\n');
 
 		for (i in 0...daList.length)
 		{
 			daList[i] = daList[i].trim();
 		}
 
-		return daList;
+		for (i in daList) {
+			daArray.push(i.split(' '));
+		}
+
+		return daArray;
 	}
 	
 	public static function dominantColor(sprite:FlxSprite):Int {

@@ -19,7 +19,6 @@ class MasterEditorMenu extends MusicBeatState
 		'Dialogue Editor',
 		'Dialogue Portrait Editor',
 		'Menu Character Editor',
-		//'UI Skin Editor',
 		'Week Editor'
 	];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
@@ -130,9 +129,6 @@ class MasterEditorMenu extends MusicBeatState
 					MusicBeatState.switchState(new WeekEditorState());
 				case 'Menu Character Editor':
 					MusicBeatState.switchState(new MenuCharacterEditorState());
-				case 'UI Skin Editor':
-					PlayState.SONG = null;
-					LoadingState.loadAndSwitchState(new SkinEditorState());
 				case 'Dialogue Portrait Editor':
 					PlayState.SONG = null;
 					LoadingState.loadAndSwitchState(new DialogueCharacterEditorState());

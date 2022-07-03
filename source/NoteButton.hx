@@ -1,7 +1,5 @@
 import flixel.ui.FlxButton;
-import UIData.ManiaArray;
 import flixel.FlxG;
-import flixel.FlxSprite;
 
 /*
 
@@ -10,14 +8,16 @@ import flixel.FlxSprite;
 */
 
 class NoteButton extends FlxButton {
-    public function new(x:Float = 0, y:Float = 0, noteData:Int = 0, maniaData:ManiaArray) {
+    public function new(x:Float = 0, y:Float = 0, noteData:Int = 0, keyAmount:Int = 4) {
         super(x, y);
         var tex = 'noteButtons';
-        frames = Paths.getSparrowAtlas(tex);
-        animation.addByPrefix('idle', maniaData.colors[noteData], 0, false);
+        var image = SkinData.getNoteFile(tex, 'buttons', ClientPrefs.noteSkin);
+        frames = Paths.getSparrowAtlas(image);
+        var colors = CoolUtil.coolArrayTextFile(Paths.txt('note_colors'))[keyAmount-1];
+        animation.addByPrefix('idle', colors[noteData], 0, false);
         animation.play('idle');
         antialiasing = ClientPrefs.globalAntialiasing;
-        setGraphicSize(Std.int(FlxG.width / maniaData.keys), Std.int(FlxG.height * (3/4)));
+        setGraphicSize(Std.int(FlxG.width / keyAmount), Std.int(FlxG.height * (3/4)));
         updateHitbox();
         alpha = 0.5;
         label = null;

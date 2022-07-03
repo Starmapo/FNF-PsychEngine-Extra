@@ -2,7 +2,6 @@ package;
 
 import flixel.FlxSprite;
 import editors.ChartingState;
-import UIData;
 
 using StringTools;
 
@@ -103,8 +102,6 @@ class Note extends FlxSprite
 	public var xOff:Float = 54;
 	public var noteSize:Float = DEFAULT_NOTE_SIZE;
 
-	public var uiSkin(default, set):SkinFile = null;
-
 	private function set_multSpeed(value:Float):Float {
 		resizeByRatio(value / multSpeed);
 		multSpeed = value;
@@ -168,53 +165,23 @@ class Note extends FlxSprite
 		return value;
 	}
 
-	private function set_uiSkin(value:SkinFile):SkinFile {
-		uiSkin = value;
-
-		var maniaData:ManiaArray = null;
-		for (i in uiSkin.mania) {
-			if (i.keys == keyAmount) {
-				maniaData = i;
-				break;
-			}
-		}
-		if (maniaData == null) {
-			var bad:SkinFile = UIData.getUIFile('');
-			if (uiSkin.isPixel && uiSkin.name != 'pixel') {
-				bad = UIData.getUIFile('pixel');
-			}
-			maniaData = bad.mania[keyAmount - 1];
-		}
-
-		colors = maniaData.colors;
-		swagWidth = maniaData.noteSpacing;
-		xOff = maniaData.xOffset;
-		noteSize = maniaData.noteSize;
-
-		if (texture != null) {
-			reloadNote('', texture);
-		}
-
-		return value;
-	}
-
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?keyAmount:Int = 4, ?uiSkin:SkinFile = null, ?stepCrochet:Float = 150)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?keyAmount:Int = 4, ?stepCrochet:Float = 150)
 	{
 		super();
 
 		if (prevNote == null)
 			prevNote = this;
 
-		if (uiSkin == null) {
-			uiSkin = UIData.getUIFile('');
-		}
-
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
 		this.inEditor = inEditor;
 		this.keyAmount = keyAmount;
-		this.uiSkin = uiSkin;
 		this.stepCrochet = stepCrochet;
+
+		swagWidth = Std.parseFloat(CoolUtil.coolTextFile(Paths.txt('note_spacings'))[keyAmount-1]);
+		colors = CoolUtil.coolArrayTextFile(Paths.txt('note_colors'))[keyAmount-1];
+		xOff = Std.parseFloat(CoolUtil.coolTextFile(Paths.txt('note_offsets'))[keyAmount-1]);
+		noteSize = Std.parseFloat(CoolUtil.coolTextFile(Paths.txt('note_sizes'))[keyAmount-1]);
 
 		x += (ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + xOff;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
@@ -260,13 +227,13 @@ class Note extends FlxSprite
 				if (PlayState.instance != null) {
 					prevNote.scale.y *= PlayState.instance.songSpeed;
 				}
-				if(prevNote.uiSkin.isPixel) {
+				if(PlayState.isPixelStage) {
 					prevNote.scale.y *= 1.19;
 					prevNote.scale.y *= (6 / height); //Auto adjust note size
 				}
 				prevNote.updateHitbox();
 			}
-			if(uiSkin.isPixel) {
+			if(PlayState.isPixelStage) {
 				scale.y *= PlayState.daPixelZoom;
 				updateHitbox();
 			}
@@ -297,23 +264,23 @@ class Note extends FlxSprite
 		}
 
 		var arraySkin:Array<String> = skin.split('/');
-		if (uiSkin.isPixel) arraySkin.unshift('pixelUI');
 		arraySkin[arraySkin.length - 1] = prefix + arraySkin[arraySkin.length - 1] + suffix;
 
 		var lastScaleY:Float = scale.y;
-		var blahblah:String = arraySkin.join('/');
-		if (!Paths.fileExists('images/$blahblah.xml', TEXT)) { //assume it is pixel notes
+		var folder = PlayState.isPixelStage ? 'notes_pixel' : 'notes_base';
+		var image = SkinData.getNoteFile(arraySkin.join('/'), folder, ClientPrefs.noteSkin);
+		if (!Paths.fileExists('images/$image.xml', TEXT)) { //assume it is pixel notes
 			if (isSustainNote) {
-				loadGraphic(Paths.image(blahblah + 'ENDS'));
+				loadGraphic(Paths.image(image + 'ENDS'));
 				width = width / 4;
 				height = height / 2;
 				originalHeightForCalcs = height;
-				loadGraphic(Paths.image(blahblah + 'ENDS'), true, Math.floor(width), Math.floor(height));
+				loadGraphic(Paths.image(image + 'ENDS'), true, Math.floor(width), Math.floor(height));
 			} else {
-				loadGraphic(Paths.image(blahblah));
+				loadGraphic(Paths.image(image));
 				width = width / 4;
 				height = height / 5;
-				loadGraphic(Paths.image(blahblah), true, Math.floor(width), Math.floor(height));
+				loadGraphic(Paths.image(image), true, Math.floor(width), Math.floor(height));
 			}
 			if (isSustainNote) {
 				setGraphicSize(Std.int((width * (noteSize / DEFAULT_NOTE_SIZE)) * PlayState.daPixelZoom), Std.int(height * PlayState.daPixelZoom));
@@ -328,10 +295,10 @@ class Note extends FlxSprite
 				offsetX -= lastNoteOffsetXForPixelAutoAdjusting;
 			}
 		} else {
-			frames = Paths.getSparrowAtlas(blahblah);
+			frames = Paths.getSparrowAtlas(image);
 			loadNoteAnims();
 		}
-		antialiasing = ClientPrefs.globalAntialiasing && !uiSkin.noAntialiasing;
+		antialiasing = ClientPrefs.globalAntialiasing && !PlayState.isPixelStage;
 		if (isSustainNote) {
 			scale.y = lastScaleY;
 		}
@@ -376,7 +343,7 @@ class Note extends FlxSprite
 			}
 		}
 
-		if (uiSkin.isPixel) {
+		if (PlayState.isPixelStage) {
 			if (isSustainNote) {
 				setGraphicSize(Std.int((width * (noteSize / DEFAULT_NOTE_SIZE)) * PlayState.daPixelZoom), Std.int(height * PlayState.daPixelZoom));
 			} else {

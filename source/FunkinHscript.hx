@@ -239,8 +239,7 @@ class FunkinHscript extends InterpEx {
 		variables.set('scrollSpeed', PlayState.SONG.speed);
 		variables.set('playerKeyAmount', PlayState.SONG.playerKeyAmount);
 		variables.set('opponentKeyAmount', PlayState.SONG.opponentKeyAmount);
-		variables.set('playerSkin', PlayState.instance.uiSkinMap.get('player').name);
-		variables.set('opponentSkin', PlayState.instance.uiSkinMap.get('opponent').name);
+		variables.set('uiSkinFolder', PlayState.instance.uiSkinFolder);
 		variables.set('songLength', 0);
 		variables.set('songName', PlayState.SONG.song);
 		variables.set('startedCountdown', false);
@@ -331,6 +330,8 @@ class FunkinHscript extends InterpEx {
 		variables.set('gameQuality', ClientPrefs.gameQuality);
 		variables.set('instantRestart', ClientPrefs.instantRestart);
 		variables.set('lowQuality', ClientPrefs.gameQuality != 'Normal');
+		variables.set('noteSkin', ClientPrefs.noteSkin);
+		variables.set('uiSkin', ClientPrefs.uiSkin);
 
 		variables.set("scriptName", scriptName);
 

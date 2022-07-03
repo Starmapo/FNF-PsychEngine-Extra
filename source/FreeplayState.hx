@@ -414,6 +414,7 @@ class FreeplayState extends MusicBeatState
 						vocalsDad.play();
 						vocalsDad.persist = true;
 						vocalsDad.volume = 0.7;
+						vocals.time = vocalsDad.time = FlxG.sound.music.time;
 						Conductor.mapBPMChanges(PlayState.SONG);
 						Conductor.changeBPM(PlayState.SONG.bpm);
 						Conductor.changeSignature(PlayState.SONG.timeSignature);

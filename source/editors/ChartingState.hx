@@ -30,7 +30,6 @@ import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.FileReference;
 import openfl.utils.Assets as OpenFlAssets;
-import UIData;
 #if desktop
 import flash.geom.Rectangle;
 import haxe.io.Bytes;
@@ -196,8 +195,6 @@ class ChartingState extends MusicBeatState
 	var rightKeys:Int = 4;
 	var totalKeys:Int = 8;
 
-	public var uiSkinMap:Map<String, SkinFile> = new Map();
-
 	var autosaveTimer:FlxTimer;
 
 	var fromMasterMenu = false;
@@ -240,7 +237,7 @@ class ChartingState extends MusicBeatState
 
 		updateKeys();
 
-		setSkins();
+		setUISkin();
 
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
@@ -394,7 +391,7 @@ class ChartingState extends MusicBeatState
 		updateGrid();
 
 		autosaveTimer = new FlxTimer().start(60, function(tmr:FlxTimer) {
-			trace('60 seconds pass, autosaving');
+			trace('60 seconds passed, autosaving');
 			autosaveSong();
 		}, 0);
 		super.create();
@@ -643,7 +640,7 @@ class ChartingState extends MusicBeatState
 			_song.splashSkin = noteSplashesInputText.text;
 			_song.uiSkin = uiSkinInputText.text;
 			PlayState.SONG = _song;
-			setSkins();
+			setUISkin();
 			updateGrid();
 			makeStrumNotes();
 		});
@@ -2945,7 +2942,7 @@ class ChartingState extends MusicBeatState
 		var keys = usedLeftKeys;
 		if (i[1] >= usedLeftKeys) keys = usedRightKeys;
 
-		var note:Note = new Note(daStrumTime, trueData, null, null, true, keys, _song.notes[sectionUsed].mustHitSection == (i[1] >= usedLeftKeys) ? uiSkinMap.get('opponent') : uiSkinMap.get('player'));
+		var note:Note = new Note(daStrumTime, trueData, null, null, true, keys);
 		if (daSus != null) { //Common note
 			if (!Std.isOfType(i[3], String)) //Convert old note type to new note type format
 			{
@@ -3219,9 +3216,9 @@ class ChartingState extends MusicBeatState
 		for (i in 0...totalKeys) {
 			var note:StrumNote;
 			if (i >= leftKeys) {
-				note = new StrumNote(GRID_SIZE * (i + 1), strumLine.y, i - leftKeys, 0, rightKeys, _song.notes[curSec].mustHitSection == (i >= leftKeys) ? uiSkinMap.get('opponent') : uiSkinMap.get('player'));
+				note = new StrumNote(GRID_SIZE * (i + 1), strumLine.y, i - leftKeys, 0, rightKeys);
 			} else {
-				note = new StrumNote(GRID_SIZE * (i + 1), strumLine.y, i, 0, leftKeys, _song.notes[curSec].mustHitSection == (i >= leftKeys) ? uiSkinMap.get('opponent') : uiSkinMap.get('player'));
+				note = new StrumNote(GRID_SIZE * (i + 1), strumLine.y, i, 0, leftKeys);
 			}
 			note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 			note.updateHitbox();
@@ -3260,13 +3257,12 @@ class ChartingState extends MusicBeatState
 		totalKeys = leftKeys + rightKeys;
 	}
 
-	function setSkins():Void {
-		var uiSkin = UIData.getUIFile(_song.uiSkin);
-		if (uiSkin == null) {
-			uiSkin = UIData.getUIFile('');
+	var uiSkinFolder:String = 'base';
+	function setUISkin():Void {
+		uiSkinFolder = PlayState.isPixelStage ? 'pixel' : 'base';
+		if (_song.uiSkin != null && _song.uiSkin.length > 0 && _song.uiSkin != 'base' && _song.uiSkin != 'pixel') {
+			uiSkinFolder = _song.uiSkin;
 		}
-		uiSkinMap.set('player', uiSkin);
-		uiSkinMap.set('opponent', uiSkin);
 	}
 
 	function resyncVocals(?play:Bool = false):Void {

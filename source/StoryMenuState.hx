@@ -1,5 +1,6 @@
 package;
 
+import FreeplayState.SongMetadata;
 import flixel.FlxSubState;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
@@ -376,6 +377,17 @@ class StoryMenuState extends MusicBeatState
 				LoadingState.loadAndSwitchState(new PlayState(), true);
 				FreeplayState.destroyFreeplayVocals();
 			});
+
+			var metadata = new SongMetadata(PlayState.storyPlaylist[0], PlayState.storyWeek, 'face', 0);
+			for (i in FreeplayState.lastPlayed) {
+				if (i.songName == metadata.songName && i.folder == metadata.folder) {
+					FreeplayState.lastPlayed.remove(i);
+					break;
+				}
+			}
+			FreeplayState.lastPlayed.unshift(metadata);
+			FlxG.save.data.lastPlayed = FreeplayState.lastPlayed;
+			FlxG.save.flush();
 		} else {
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 		}

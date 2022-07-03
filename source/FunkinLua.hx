@@ -104,8 +104,7 @@ class FunkinLua {
 		set('scrollSpeed', PlayState.SONG.speed);
 		set('playerKeyAmount', PlayState.SONG.playerKeyAmount);
 		set('opponentKeyAmount', PlayState.SONG.opponentKeyAmount);
-		set('playerSkin', PlayState.instance.uiSkinMap.get('player').name);
-		set('opponentSkin', PlayState.instance.uiSkinMap.get('opponent').name);
+		set('uiSkinFolder', PlayState.instance.uiSkinFolder);
 		set('songLength', 0);
 		set('songName', PlayState.SONG.song);
 		set('songDisplayName', PlayState.instance.curSongDisplayName);
@@ -199,6 +198,8 @@ class FunkinLua {
 		set('gameQuality', ClientPrefs.gameQuality);
 		set('instantRestart', ClientPrefs.instantRestart);
 		set('lowQuality', ClientPrefs.gameQuality != 'Normal');
+		set('noteSkin', ClientPrefs.noteSkin);
+		set('uiSkin', ClientPrefs.uiSkin);
 
 		set('scriptName', scriptName);
 
@@ -660,8 +661,10 @@ class FunkinLua {
 			var killMe:Array<String> = variable.split('.');
 			if (killMe.length > 1) {
 				setVarInArray(getPropertyLoopThingWhatever(killMe), killMe[killMe.length-1], value);
+				return true;
 			}
 			setVarInArray(getInstance(), variable, value);
+			return true;
 		});
 		Lua_helper.add_callback(lua, "getPropertyFromGroup", function(obj:String, index:Int, variable:Dynamic) {
 			@:privateAccess
@@ -738,8 +741,10 @@ class FunkinLua {
 					coverMeInPiss = getVarInArray(coverMeInPiss, killMe[i]);
 				}
 				setVarInArray(coverMeInPiss, killMe[killMe.length-1], value);
+				return true;
 			}
 			setVarInArray(Type.resolveClass(classVar), variable, value);
+			return true;
 		});
 
 		//shitass stuff for epic coders like me B)  *image of obama giving himself a medal*
@@ -1150,47 +1155,12 @@ class FunkinLua {
 			var value1:String = arg1;
 			var value2:String = arg2;
 			PlayState.instance.triggerEventNote(name, value1, value2);
+			return true;
 		});
 
 		Lua_helper.add_callback(lua, "startCountdown", function() {
 			PlayState.instance.startCountdown();
-		});
-
-		Lua_helper.add_callback(lua, "runHaxeCode", function(codeToRun:String) {
-			#if hscript
-			initHaxeInterp();
-
-			try {
-				var myFunction:Dynamic = haxeInterp.expr(new Parser().parseString(codeToRun));
-				myFunction();
-			}
-			catch (e:Dynamic) {
-				switch(e)
-				{
-					case 'Null Function Pointer', 'SReturn':
-						//nothing
-					default:
-						luaTrace(scriptName + ":" + lastCalledFunction + " - " + e, false, false, FlxColor.RED);
-				}
-			}
-			#end
-		});
-
-		Lua_helper.add_callback(lua, "addHaxeLibrary", function(libName:String, ?libPackage:String = '') {
-			#if hscript
-			initHaxeInterp();
-
-			try {
-				var str:String = '';
-				if(libPackage.length > 0)
-					str = libPackage + '.';
-
-				haxeInterp.variables.set(libName, Type.resolveClass(str + libName));
-			}
-			catch (e:Dynamic) {
-				luaTrace(scriptName + ":" + lastCalledFunction + " - " + e, false, false, FlxColor.RED);
-			}
-			#end
+			return true;
 		});
 		
 		Lua_helper.add_callback(lua, "loadSong", function(name:String = null, ?difficultyNum:Int = -1, ?skipTransition:Bool = false) {
@@ -1238,10 +1208,12 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "endSong", function() {
 			PlayState.instance.killNotes();
 			PlayState.instance.finishSong(true);
+			return true;
 		});
 		Lua_helper.add_callback(lua, "restartSong", function(skipTransition:Bool = false) {
 			PlayState.instance.persistentUpdate = false;
 			PauseSubState.restartSong(skipTransition);
+			return true;
 		});
 		Lua_helper.add_callback(lua, "exitSong", function(skipTransition:Bool = false) {
 			if (skipTransition)
@@ -1271,6 +1243,7 @@ class FunkinLua {
 			PlayState.chartingMode = false;
 			PlayState.instance.transitioning = true;
 			PlayState.deathCounter = 0;
+			return true;
 		});
 		Lua_helper.add_callback(lua, "openPauseMenu", function() {
 			PlayState.instance.openPauseMenu();
@@ -1313,6 +1286,42 @@ class FunkinLua {
 				PlayState.instance.clearNotesBefore(time);
 				PlayState.instance.setSongTime(time);
 			}
+		});
+
+		Lua_helper.add_callback(lua, "runHaxeCode", function(codeToRun:String) {
+			#if hscript
+			initHaxeInterp();
+
+			try {
+				var myFunction:Dynamic = haxeInterp.expr(new Parser().parseString(codeToRun));
+				myFunction();
+			}
+			catch (e:Dynamic) {
+				switch(e)
+				{
+					case 'Null Function Pointer', 'SReturn':
+						//nothing
+					default:
+						luaTrace(scriptName + ":" + lastCalledFunction + " - " + e, false, false, FlxColor.RED);
+				}
+			}
+			#end
+		});
+		Lua_helper.add_callback(lua, "addHaxeLibrary", function(libName:String, ?libPackage:String = '') {
+			#if hscript
+			initHaxeInterp();
+
+			try {
+				var str:String = '';
+				if(libPackage.length > 0)
+					str = libPackage + '.';
+
+				haxeInterp.variables.set(libName, Type.resolveClass(str + libName));
+			}
+			catch (e:Dynamic) {
+				luaTrace(scriptName + ":" + lastCalledFunction + " - " + e, false, false, FlxColor.RED);
+			}
+			#end
 		});
 
 		Lua_helper.add_callback(lua, "getCharacterX", function(type:String) {
@@ -2001,24 +2010,6 @@ class FunkinLua {
 			#end
 		});
 		
-		/*
-		Lua_helper.add_callback(lua, "changeNoteSkin", function(index:Int = 0, name:String = 'default') {
-			if (PlayState.instance.notes.members[index] != null) {
-				PlayState.instance.notes.members[index].uiSkin = UIData.getUIFile(name);
-			}
-		});
-		Lua_helper.add_callback(lua, "changeUnspawnNoteSkin", function(index:Int = 0, name:String = 'default') {
-			if (PlayState.instance.unspawnNotes[index] != null) {
-				PlayState.instance.unspawnNotes[index].uiSkin = UIData.getUIFile(name);
-			}
-		});
-		Lua_helper.add_callback(lua, "changeStrumNoteSkin", function(index:Int = 0, name:String = 'default') {
-			if (PlayState.instance.strumLineNotes != null && PlayState.instance.strumLineNotes.members[index] != null) {
-				PlayState.instance.strumLineNotes.members[index].uiSkin = UIData.getUIFile(name);
-			}
-		});
-		*/
-		
 		Lua_helper.add_callback(lua, "playMusic", function(sound:String, volume:Float = 1, loop:Bool = false) {
 			var soundFile = Paths.music(sound);
 			if (soundFile != null) {
@@ -2612,7 +2603,7 @@ class FunkinLua {
 	}
 	#end
 
-	public static function setVarInArray(instance:Dynamic, variable:String, value:Dynamic)
+	public static function setVarInArray(instance:Dynamic, variable:String, value:Dynamic):Any
 	{
 		var shit:Array<String> = variable.split('[');
 		if(shit.length > 1)
@@ -2626,7 +2617,9 @@ class FunkinLua {
 				else //Anything else
 					blah = blah[leNum];
 			}
+			return blah;
 		}
+		
 		//fixes for html5
 		switch(Type.typeof(Reflect.getProperty(instance, variable))){
 			case ValueType.TInt:
@@ -2650,6 +2643,7 @@ class FunkinLua {
 			default:
 				Reflect.setProperty(instance, variable, value);
 		}
+		return true;
 	}
 	public static function getVarInArray(instance:Dynamic, variable:String):Any
 	{
@@ -2899,7 +2893,7 @@ class FunkinLua {
 			{
 				var conv:Dynamic = Convert.fromLua(lua, result);
 				Lua.pop(lua, 1);
-				if(conv == null || conv == true || conv == false) conv = Function_Continue;
+				if(conv == null) conv = Function_Continue;
 				return conv;
 			}
 			return Function_Continue;

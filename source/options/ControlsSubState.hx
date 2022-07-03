@@ -417,9 +417,9 @@ class NoteBindingSubState extends MusicBeatSubState {
 		}
 		add(strumGroup);
 
-		text1 = new Alphabet(0, 450);
+		text1 = new Alphabet(0, 450, '', true);
 		add(text1);
-		text2 = new Alphabet(0, 550);
+		text2 = new Alphabet(0, 550, '', true);
 		text2.alpha = 0.6;
 		add(text2);
 
