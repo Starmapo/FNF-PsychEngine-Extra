@@ -227,13 +227,13 @@ class Note extends FlxSprite
 				if (PlayState.instance != null) {
 					prevNote.scale.y *= PlayState.instance.songSpeed;
 				}
-				if(PlayState.isPixelStage) {
+				if(PlayState.SONG.skinModifier.endsWith('pixel')) {
 					prevNote.scale.y *= 1.19;
 					prevNote.scale.y *= (6 / height); //Auto adjust note size
 				}
 				prevNote.updateHitbox();
 			}
-			if(PlayState.isPixelStage) {
+			if(PlayState.SONG.skinModifier.endsWith('pixel')) {
 				scale.y *= PlayState.daPixelZoom;
 				updateHitbox();
 			}
@@ -265,13 +265,9 @@ class Note extends FlxSprite
 
 		var arraySkin:Array<String> = skin.split('/');
 		arraySkin[arraySkin.length - 1] = prefix + arraySkin[arraySkin.length - 1] + suffix;
-
+		
 		var lastScaleY:Float = scale.y;
-		var folder = PlayState.isPixelStage ? 'pixel' : 'base';
-		if (PlayState.SONG.uiSkin != null && PlayState.SONG.uiSkin.length > 0 && PlayState.SONG.uiSkin != 'default' && PlayState.SONG.uiSkin != 'base' && PlayState.SONG.uiSkin != 'pixel') {
-			folder = PlayState.SONG.uiSkin;
-		}
-		var image = SkinData.getNoteFile(arraySkin.join('/'), folder, ClientPrefs.noteSkin);
+		var image = SkinData.getNoteFile(arraySkin.join('/'), PlayState.SONG.skinModifier, ClientPrefs.noteSkin);
 		if (!Paths.fileExists('images/$image.xml', TEXT)) { //assume it is pixel notes
 			if (isSustainNote) {
 				loadGraphic(Paths.image(image + 'ENDS'));
@@ -301,7 +297,7 @@ class Note extends FlxSprite
 			frames = Paths.getSparrowAtlas(image);
 			loadNoteAnims();
 		}
-		antialiasing = ClientPrefs.globalAntialiasing && !PlayState.isPixelStage;
+		antialiasing = ClientPrefs.globalAntialiasing && !PlayState.SONG.skinModifier.endsWith('pixel');
 		if (isSustainNote) {
 			scale.y = lastScaleY;
 		}
@@ -346,7 +342,7 @@ class Note extends FlxSprite
 			}
 		}
 
-		if (PlayState.isPixelStage) {
+		if (PlayState.SONG.skinModifier.endsWith('pixel')) {
 			if (isSustainNote) {
 				setGraphicSize(Std.int((width * (noteSize / DEFAULT_NOTE_SIZE)) * PlayState.daPixelZoom), Std.int(height * PlayState.daPixelZoom));
 			} else {

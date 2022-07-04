@@ -3,6 +3,8 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 
+using StringTools;
+
 class NoteSplash extends FlxSprite
 {
 	public var colorSwap:ColorSwap = null;
@@ -69,11 +71,7 @@ class NoteSplash extends FlxSprite
 			frames = Paths.getSparrowAtlas('noteskins/default/base/noteSplashes');
 			animation.addByPrefix("note0-1", "note splash left 1", 24, false);
 		} else {
-			var folder = PlayState.isPixelStage ? 'pixel' : 'base';
-			if (PlayState.SONG.uiSkin != null && PlayState.SONG.uiSkin.length > 0 && PlayState.SONG.uiSkin != 'default' && PlayState.SONG.uiSkin != 'base' && PlayState.SONG.uiSkin != 'pixel') {
-				folder = PlayState.SONG.uiSkin;
-			}
-			var image = SkinData.getNoteFile(skin, folder, ClientPrefs.noteSkin);
+			var image = SkinData.getNoteFile(skin, PlayState.SONG.skinModifier, ClientPrefs.noteSkin);
 			frames = Paths.getSparrowAtlas(image);
 			for (i in 1...3) {
 				animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${colors[daNote.noteData]} ${i}0', 24, false);
@@ -86,7 +84,7 @@ class NoteSplash extends FlxSprite
 					animation.addByPrefix('note3-$i', 'note splash red ${i}0', 24, false);
 				}
 			}
-			antialiasing = ClientPrefs.globalAntialiasing && !PlayState.isPixelStage;
+			antialiasing = ClientPrefs.globalAntialiasing && !PlayState.SONG.skinModifier.endsWith('pixel');
 		}
 	}
 

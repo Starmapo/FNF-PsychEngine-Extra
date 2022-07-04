@@ -11,11 +11,7 @@ class NoteButton extends FlxButton {
     public function new(x:Float = 0, y:Float = 0, noteData:Int = 0, keyAmount:Int = 4) {
         super(x, y);
         var tex = 'noteButtons';
-        var folder = PlayState.isPixelStage ? 'pixel' : 'base';
-		if (PlayState.SONG.uiSkin != null && PlayState.SONG.uiSkin.length > 0 && PlayState.SONG.uiSkin != 'default' && PlayState.SONG.uiSkin != 'base' && PlayState.SONG.uiSkin != 'pixel') {
-			folder = PlayState.SONG.uiSkin;
-		}
-        var image = SkinData.getNoteFile(tex, folder, ClientPrefs.noteSkin);
+        var image = SkinData.getNoteFile(tex, PlayState.SONG.skinModifier, ClientPrefs.noteSkin);
         frames = Paths.getSparrowAtlas(image);
         var colors = CoolUtil.coolArrayTextFile(Paths.txt('note_colors'))[keyAmount-1];
         animation.addByPrefix('idle', colors[noteData], 0, false);

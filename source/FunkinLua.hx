@@ -104,7 +104,7 @@ class FunkinLua {
 		set('scrollSpeed', PlayState.SONG.speed);
 		set('playerKeyAmount', PlayState.SONG.playerKeyAmount);
 		set('opponentKeyAmount', PlayState.SONG.opponentKeyAmount);
-		set('uiSkinFolder', PlayState.instance.uiSkinFolder);
+		set('skinModifier', PlayState.SONG.skinModifier);
 		set('songLength', 0);
 		set('songName', PlayState.SONG.song);
 		set('songDisplayName', PlayState.instance.curSongDisplayName);

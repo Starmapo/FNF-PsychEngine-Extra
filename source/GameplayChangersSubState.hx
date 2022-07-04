@@ -1,5 +1,6 @@
 package;
 
+import flixel.text.FlxText;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -18,6 +19,9 @@ class GameplayChangersSubState extends MusicBeatSubState
 	private var checkboxGroup:FlxTypedGroup<CheckboxThingie>;
 	private var grpTexts:FlxTypedGroup<AttachedText>;
 
+	private var descBox:FlxSprite;
+	private var descText:FlxText;
+
 	#if mobile
 	var buttonUP:Button;
 	var buttonDOWN:Button;
@@ -30,27 +34,42 @@ class GameplayChangersSubState extends MusicBeatSubState
 
 	function getOptions()
 	{
-		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrolltype', 'string', 'multiplicative', ["multiplicative", "constant"]);
+		var goption:GameplayOption = new GameplayOption('Scroll Type',
+			'How should the scroll speed be affected?',
+			'scrolltype',
+			'string',
+			'multiplicative',
+			["multiplicative", "constant"]);
 		optionsArray.push(goption);
 
-		var option:GameplayOption = new GameplayOption('Scroll Speed', 'scrollspeed', 'float', 1);
+		var option:GameplayOption = new GameplayOption('Scroll Speed',
+			'',
+			'scrollspeed',
+			'float',
+			1);
 		option.scrollSpeed = 1.5;
 		option.minValue = 0.5;
 		option.changeValue = 0.1;
 		if (goption.getValue() != "constant")
 		{
+			option.description = "Multiplies the chart's scroll speed.";
 			option.displayFormat = '%vX';
 			option.maxValue = 3;
 		}
 		else
 		{
+			option.description = 'Forces a single scroll speed for every chart.';
 			option.displayFormat = "%v";
 			option.maxValue = 6;
 		}
 		optionsArray.push(option);
 
 		#if cpp
-		var option:GameplayOption = new GameplayOption('Playback Rate', 'songspeed', 'float', 1);
+		var option:GameplayOption = new GameplayOption('Playback Rate',
+			"Changes the song's playback rate, making it go faster.",
+			'songspeed',
+			'float',
+			1);
 		option.scrollSpeed = 0.5;
 		option.minValue = 1;
 		option.maxValue = 2.5;
@@ -60,7 +79,11 @@ class GameplayChangersSubState extends MusicBeatSubState
 		optionsArray.push(option);
 		#end
 
-		var option:GameplayOption = new GameplayOption('Health Gain Multiplier', 'healthgain', 'float', 1);
+		var option:GameplayOption = new GameplayOption('Health Gain Multiplier',
+			"Multiplies the health gained from hitting notes.",
+			'healthgain',
+			'float',
+			1);
 		option.scrollSpeed = 2.5;
 		option.minValue = 0;
 		option.maxValue = 5;
@@ -68,7 +91,11 @@ class GameplayChangersSubState extends MusicBeatSubState
 		option.displayFormat = '%vX';
 		optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Health Loss Multiplier', 'healthloss', 'float', 1);
+		var option:GameplayOption = new GameplayOption('Health Loss Multiplier',
+			"Multiplies the health lost from missing notes or hitting hurt notes.",
+			'healthloss',
+			'float',
+			1);
 		option.scrollSpeed = 2.5;
 		option.minValue = 0.5;
 		option.maxValue = 5;
@@ -76,19 +103,39 @@ class GameplayChangersSubState extends MusicBeatSubState
 		option.displayFormat = '%vX';
 		optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Play as Opponent', 'opponentplay', 'bool', false);
+		var option:GameplayOption = new GameplayOption('Play as Opponent',
+			"Self-explanatory! Does not save your score.",
+			'opponentplay',
+			'bool',
+			false);
 		optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Instakill on Miss', 'instakill', 'bool', false);
+		var option:GameplayOption = new GameplayOption('Instakill on Miss',
+			"Instantly die if you miss a note or hit a hurt note.",
+			'instakill',
+			'bool',
+			false);
 		optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Practice Mode', 'practice', 'bool', false);
+		var option:GameplayOption = new GameplayOption('Practice Mode',
+			"Prevents you from dying. Does not save your score.",
+			'practice',
+			'bool',
+			false);
 		optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Botplay', 'botplay', 'bool', false);
+		var option:GameplayOption = new GameplayOption('Botplay',
+			"Let the game play by itself!",
+			'botplay',
+			'bool',
+			false);
 		optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Demo Mode', 'demomode', 'bool', false);
+		var option:GameplayOption = new GameplayOption('Demo Mode',
+			"Hides most HUD elements so you can showcase the song. Botplay is activated.",
+			'demomode',
+			'bool',
+			false);
 		optionsArray.push(option);
 	}
 
@@ -120,6 +167,16 @@ class GameplayChangersSubState extends MusicBeatSubState
 
 		checkboxGroup = new FlxTypedGroup<CheckboxThingie>();
 		add(checkboxGroup);
+
+		descBox = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
+		descBox.alpha = 0.6;
+		add(descBox);
+
+		descText = new FlxText(50, 600, 1180, "", 32);
+		descText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		descText.scrollFactor.set();
+		descText.borderSize = 2.4;
+		add(descText);
 		
 		getOptions();
 
@@ -279,11 +336,13 @@ class GameplayChangersSubState extends MusicBeatSubState
 										{
 											if (curOption.getValue() == "constant")
 											{
+												oOption.description = 'Forces a single scroll speed for every chart.';
 												oOption.displayFormat = "%v";
 												oOption.maxValue = 6;
 											}
 											else
 											{
+												oOption.description = "Multiplies the chart's scroll speed.";
 												oOption.displayFormat = "%vX";
 												oOption.maxValue = 3;
 												if (oOption.getValue() > 3) oOption.setValue(3);
@@ -383,6 +442,10 @@ class GameplayChangersSubState extends MusicBeatSubState
 		if (curSelected >= optionsArray.length)
 			curSelected = 0;
 
+		descText.text = optionsArray[curSelected].description;
+		descText.screenCenter(Y);
+		descText.y += 270;
+
 		var bullShit:Int = 0;
 
 		for (item in grpOptions.members) {
@@ -400,6 +463,11 @@ class GameplayChangersSubState extends MusicBeatSubState
 				text.alpha = 1;
 			}
 		}
+
+		descBox.setPosition(descText.x - 10, descText.y - 10);
+		descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 25));
+		descBox.updateHitbox();
+
 		curOption = optionsArray[curSelected]; //shorter lol
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 	}
@@ -435,11 +503,13 @@ class GameplayOption
 	public var decimals:Int = 1; //Only used in float/percent type
 
 	public var displayFormat:String = '%v'; //How String/Float/Percent/Int values are shown, %v = Current value, %d = Default value
+	public var description:String = '';
 	public var name:String = 'Unknown';
 
-	public function new(name:String, variable:String, type:String = 'bool', defaultValue:Dynamic = 'null variable value', ?options:Array<String> = null)
+	public function new(name:String, description:String = '', variable:String, type:String = 'bool', defaultValue:Dynamic = 'null variable value', ?options:Array<String> = null)
 	{
 		this.name = name;
+		this.description = description;
 		this.variable = variable;
 		this.type = type;
 		this.defaultValue = defaultValue;

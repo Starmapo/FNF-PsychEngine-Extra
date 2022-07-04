@@ -240,7 +240,7 @@ class FunkinHscript extends InterpEx {
 		variables.set('scrollSpeed', PlayState.SONG.speed);
 		variables.set('playerKeyAmount', PlayState.SONG.playerKeyAmount);
 		variables.set('opponentKeyAmount', PlayState.SONG.opponentKeyAmount);
-		variables.set('uiSkinFolder', PlayState.instance.uiSkinFolder);
+		variables.set('skinModifier', PlayState.SONG.skinModifier);
 		variables.set('songLength', 0);
 		variables.set('songName', PlayState.SONG.song);
 		variables.set('startedCountdown', false);

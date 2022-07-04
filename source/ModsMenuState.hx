@@ -601,10 +601,10 @@ class ModMetadata
 	public function new(folder:String)
 	{
 		this.folder = folder;
-		this.name = folder;
-		this.description = "No description provided.";
-		this.color = ModsMenuState.defaultColor;
-		this.restart = false;
+		name = folder;
+		description = "No description provided.";
+		color = ModsMenuState.defaultColor;
+		restart = false;
 		
 		//Try loading json
 		var stuff:PackFile = null;
@@ -615,17 +615,25 @@ class ModMetadata
 		if (stuff != null) {	
 			if (stuff.name != null && stuff.name.length > 0)
 			{
-				this.name = stuff.name;
+				name = stuff.name;
 			}
 			if (stuff.description != null && stuff.description.length > 0)
 			{
-				this.description = stuff.description;
+				description = stuff.description;
+			}
+			if(name == 'Name')
+			{
+				name = folder;
+			}
+			if(description == 'Description')
+			{
+				description = "No description provided.";
 			}
 			if (stuff.colors != null && stuff.colors.length > 2)
 			{
-				this.color = FlxColor.fromRGB(stuff.colors[0], stuff.colors[1], stuff.colors[2]);
+				color = FlxColor.fromRGB(stuff.colors[0], stuff.colors[1], stuff.colors[2]);
 			}
-			this.restart = stuff.restart;
+			restart = stuff.restart;
 		}
 	}
 }

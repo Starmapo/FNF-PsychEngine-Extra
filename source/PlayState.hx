@@ -314,7 +314,6 @@ class PlayState extends MusicBeatState
 	public var playerKeys(get, never):Int;
 	public var opponentKeys(get, never):Int;
 
-	public var uiSkinFolder:String = 'base';
 	var playerColors:Array<String> = [];
 	var opponentColors:Array<String> = [];
 
@@ -439,7 +438,7 @@ class PlayState extends MusicBeatState
 		}
 		
 		if (SONG == null)
-			SONG = Song.loadFromJson('tutorial', 'tutorial');
+			SONG = Song.loadFromJson('test', 'test');
 
 		originalSong = Reflect.copy(SONG);
 
@@ -583,8 +582,6 @@ class PlayState extends MusicBeatState
 			girlfriendCameraOffset = stageData.camera_girlfriend;
 			if(girlfriendCameraOffset == null)
 				girlfriendCameraOffset = [0, 0];
-
-			setUISkin();
 
 			boyfriendGroup = new FlxTypedSpriteGroup(BF_X, BF_Y);
 			dadGroup = new FlxTypedSpriteGroup(DAD_X, DAD_Y);
@@ -920,7 +917,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			if(isPixelStage) {
+			if(SONG.skinModifier.endsWith('pixel')) {
 				introSoundsSuffix = '-pixel';
 			}
 
@@ -1166,6 +1163,7 @@ class PlayState extends MusicBeatState
 
 		Conductor.songPosition = -5000;
 
+		//PRECACHING UI IMAGES
 		var imagesToCheck = [
 			'combo',
 			'ready',
@@ -1712,7 +1710,7 @@ class PlayState extends MusicBeatState
 		textureMap.set('noteskins/default/base/noteSplashes', true);
 		for (note in unspawnNotes) {
 			if (note.noteSplashTexture != null && note.noteSplashTexture.length > 0 && !note.noteSplashDisabled && !textureMap.exists(note.noteSplashTexture)) {
-				var skin = SkinData.getNoteFile(note.noteSplashTexture, uiSkinFolder, ClientPrefs.noteSkin);
+				var skin = SkinData.getNoteFile(note.noteSplashTexture, SONG.skinModifier, ClientPrefs.noteSkin);
 				precacheList.set(skin, 'image');
 				textureMap.set(skin, true);
 			}
@@ -1865,9 +1863,6 @@ class PlayState extends MusicBeatState
 					addTextToDebug(interp.scriptName + ":" + interp.lastCalledFunction + " - " + e, FlxColor.RED);
 				}
 			});
-			interp.variables.set('add', add);
-			interp.variables.set('insert', insert);
-			interp.variables.set('remove', remove);
 			interp.variables.set('addBehindChars', function(obj:FlxBasic) {
 				var index = members.indexOf(gfGroup);
 				if (members.indexOf(dadGroup) < index) {
@@ -1915,8 +1910,6 @@ class PlayState extends MusicBeatState
 					insert(pos, obj);
 				}
 			});
-			interp.variables.set('openSubState', openSubState);
-			interp.variables.set('closeSubState', closeSubState);
 			interp.variables.set('getProperty', function(variable:String) {
 				return Reflect.getProperty(this, variable);
 			});
@@ -1929,8 +1922,6 @@ class PlayState extends MusicBeatState
 			interp.variables.set('setPropertyFromClass', function(classVar:String, variable:String, value:Dynamic) {
 				Reflect.setProperty(Type.resolveClass(classVar), variable, value);
 			});
-			interp.variables.set("triggerEvent", triggerEventNote);
-			interp.variables.set('startCountdown', startCountdown);
 			interp.variables.set('loadSong', function(name:String = null, ?difficultyNum:Int = -1, ?skipTransition:Bool = false) {
 				if (name == null) name = SONG.song;
 				if (difficultyNum < 0) difficultyNum = storyDifficulty;
@@ -2010,7 +2001,6 @@ class PlayState extends MusicBeatState
 				instance.transitioning = true;
 				deathCounter = 0;
 			});
-			interp.variables.set("openPauseMenu", openPauseMenu);
 			interp.variables.set('openCredits', function(playMusic:Bool = true) {
 				FlxG.timeScale = 1;
 				WeekData.loadTheFirstEnabledMod();
@@ -2035,8 +2025,6 @@ class PlayState extends MusicBeatState
 				transitioning = true;
 				deathCounter = 0;
 			});
-			interp.variables.set("setSongTime", setSongTime);
-			interp.variables.set("moveCamera", moveCamera);
 			interp.variables.set("setHealthBarColors", function(left:String = '0xFFFF0000', right:String = '0xFF66FF33') {
 				var leftColorNum:Int = Std.parseInt(left);
 				if (!left.startsWith('0x')) leftColorNum = Std.parseInt('0xff$left');
@@ -2070,7 +2058,6 @@ class PlayState extends MusicBeatState
 					startAndEnd();
 				}
 			});
-			interp.variables.set("startVideo", startVideo);
 			interp.variables.set("setWeekCompleted", function(name:String = '') {
 				if(name.length > 0)
 				{
@@ -2084,88 +2071,6 @@ class PlayState extends MusicBeatState
 				interp.closed = true;
 				return interp.closed;
 			});
-			//yea just have basically every function :) (you can also call the wanted function on `instance` like `instance.startCountdown();`)
-			interp.variables.set("addTextToDebug", addTextToDebug);
-			interp.variables.set("reloadHealthBarColors", reloadHealthBarColors);
-			interp.variables.set("addCharacterToList", addCharacterToList);
-			interp.variables.set("addHscript", addHscript);
-			interp.variables.set("callHscript", callHscript);
-			interp.variables.set("postSetHscript", postSetHscript);
-			interp.variables.set("setOnHscripts", setOnHscripts);
-			interp.variables.set("startCharacterScripts", startCharacterScripts);
-			interp.variables.set("getLuaObject", getLuaObject);
-			interp.variables.set("startCharacterPos", startCharacterPos);
-			interp.variables.set("addCharacter", addCharacter);
-			interp.variables.set("startAndEnd", startAndEnd);
-			interp.variables.set("schoolIntro", schoolIntro);
-			interp.variables.set("tankIntro", tankIntro);
-			interp.variables.set("addBehindGF", addBehindGF);
-			interp.variables.set("addBehindBF", addBehindBF);
-			interp.variables.set("addBehindDad", addBehindDad);
-			interp.variables.set("clearNotesBefore", clearNotesBefore);
-			interp.variables.set("startNextDialogue", startNextDialogue);
-			interp.variables.set("skipDialogue", skipDialogue);
-			interp.variables.set("startSong", startSong);
-			interp.variables.set("generateSong", generateSong);
-			interp.variables.set("eventPushed", eventPushed);
-			interp.variables.set("eventNoteEarlyTrigger", eventNoteEarlyTrigger);
-			interp.variables.set("sortByShit", sortByShit);
-			interp.variables.set("sortByTime", sortByTime);
-			interp.variables.set("generateStaticArrows", generateStaticArrows);
-			interp.variables.set("showKeybindReminders", showKeybindReminders);
-			interp.variables.set("resetUnderlay", resetUnderlay);
-			interp.variables.set("setKeysArray", setKeysArray);
-			interp.variables.set("resyncVocals", resyncVocals);
-			interp.variables.set("setSongPitch", setSongPitch);
-			interp.variables.set("openChartEditor", openChartEditor);
-			interp.variables.set("doDeathCheck", doDeathCheck);
-			interp.variables.set("checkEventNote", checkEventNote);
-			interp.variables.set("controlJustPressed", controlJustPressed);
-			interp.variables.set("controlPressed", controlPressed);
-			interp.variables.set("controlReleased", controlReleased);
-			interp.variables.set("moveCameraSection", moveCameraSection);
-			interp.variables.set("tweenCamIn", tweenCamIn);
-			interp.variables.set("snapCamFollowToPos", snapCamFollowToPos);
-			interp.variables.set("onSongComplete", onSongComplete);
-			interp.variables.set("finishSong", finishSong);
-			interp.variables.set("killNotes", killNotes);
-			interp.variables.set("popUpScore", popUpScore);
-			interp.variables.set("doRatingTween", doRatingTween);
-			interp.variables.set("onKeyRelease", onKeyRelease);
-			interp.variables.set("sortHitNotes", sortHitNotes);
-			interp.variables.set("doRatingTween", doRatingTween);
-			interp.variables.set("getKeyFromEvent", getKeyFromEvent);
-			interp.variables.set("keyShit", keyShit);
-			interp.variables.set("noteMiss", noteMiss);
-			interp.variables.set("noteMissPress", noteMissPress);
-			interp.variables.set("opponentNoteHit", opponentNoteHit);
-			interp.variables.set("goodNoteHit", goodNoteHit);
-			interp.variables.set("spawnNoteSplashOnNote", spawnNoteSplashOnNote);
-			interp.variables.set("spawnNoteSplash", spawnNoteSplash);
-			interp.variables.set("resetFastCar", resetFastCar);
-			interp.variables.set("fastCarDrive", fastCarDrive);
-			interp.variables.set("trainStart", trainStart);
-			interp.variables.set("updateTrainPos", updateTrainPos);
-			interp.variables.set("trainReset", trainReset);
-			interp.variables.set("lightningStrikeShit", lightningStrikeShit);
-			interp.variables.set("killHenchmen", killHenchmen);
-			interp.variables.set("resetLimoKill", resetLimoKill);
-			interp.variables.set("moveTank", moveTank);
-			interp.variables.set("cancelMusicFadeTween", cancelMusicFadeTween);
-			interp.variables.set("stepHit", stepHit);
-			interp.variables.set("beatHit", beatHit);
-			interp.variables.set("sectionHit", sectionHit);
-			interp.variables.set("switchKeys", switchKeys);
-			interp.variables.set("setUISkin", setUISkin);
-			interp.variables.set("callOnScripts", callOnScripts);
-			interp.variables.set("setOnScripts", setOnScripts);
-			interp.variables.set("strumPlayAnim", strumPlayAnim);
-			interp.variables.set("recalculateRating", recalculateRating);
-			#if ACHIEVEMENTS_ALLOWED
-			interp.variables.set("startAchievement", startAchievement);
-			interp.variables.set("achievementEnd", achievementEnd);
-			interp.variables.set("checkForAchievement", checkForAchievement);
-			#end
 			interp.variables.set('addScript', function(name:String, ?ignoreAlreadyRunning:Bool = false) {
 				var cervix = '$name.hscript';
 				var doPush = false;
@@ -3004,11 +2909,11 @@ class PlayState extends MusicBeatState
 						countdownReady.scrollFactor.set();
 						countdownReady.updateHitbox();
 
-						if (isPixelStage)
+						if (SONG.skinModifier.endsWith('pixel'))
 							countdownReady.setGraphicSize(Std.int(countdownReady.width * daPixelZoom));
 
 						countdownReady.screenCenter();
-						countdownReady.antialiasing = ClientPrefs.globalAntialiasing && !isPixelStage;
+						countdownReady.antialiasing = ClientPrefs.globalAntialiasing && !SONG.skinModifier.endsWith('pixel');
 						insert(members.indexOf(notes), countdownReady);
 						FlxTween.tween(countdownReady, {alpha: 0}, Conductor.normalizedCrochet / 1000, {
 							ease: FlxEase.cubeInOut,
@@ -3024,11 +2929,11 @@ class PlayState extends MusicBeatState
 						if (!inEditor) countdownSet.cameras = [camHUD];
 						countdownSet.scrollFactor.set();
 
-						if (isPixelStage)
+						if (SONG.skinModifier.endsWith('pixel'))
 							countdownSet.setGraphicSize(Std.int(countdownSet.width * daPixelZoom));
 
 						countdownSet.screenCenter();
-						countdownSet.antialiasing = ClientPrefs.globalAntialiasing && !isPixelStage;
+						countdownSet.antialiasing = ClientPrefs.globalAntialiasing && !SONG.skinModifier.endsWith('pixel');
 						insert(members.indexOf(notes), countdownSet);
 						FlxTween.tween(countdownSet, {alpha: 0}, Conductor.normalizedCrochet / 1000, {
 							ease: FlxEase.cubeInOut,
@@ -3044,13 +2949,13 @@ class PlayState extends MusicBeatState
 						if (!inEditor) countdownGo.cameras = [camHUD];
 						countdownGo.scrollFactor.set();
 
-						if (isPixelStage)
+						if (SONG.skinModifier.endsWith('pixel'))
 							countdownGo.setGraphicSize(Std.int(countdownGo.width * daPixelZoom));
 
 						countdownGo.updateHitbox();
 
 						countdownGo.screenCenter();
-						countdownGo.antialiasing = ClientPrefs.globalAntialiasing && !isPixelStage;
+						countdownGo.antialiasing = ClientPrefs.globalAntialiasing && !SONG.skinModifier.endsWith('pixel');
 						insert(members.indexOf(notes), countdownGo);
 						FlxTween.tween(countdownGo, {alpha: 0}, Conductor.normalizedCrochet / 1000, {
 							ease: FlxEase.cubeInOut,
@@ -3865,11 +3770,11 @@ class PlayState extends MusicBeatState
 	{
 		if (FlxG.sound.music == null || vocals == null || startingSong || endingSong || endingTimer != null) return;
 
-		if (playbackRate != 1) FlxG.sound.music.pause();
+		if (playbackRate < 1) FlxG.sound.music.pause();
 		vocals.pause();
 		vocalsDad.pause();
 
-		if (playbackRate == 1) {
+		if (playbackRate >= 1) {
 			FlxG.sound.music.play();
 			Conductor.songPosition = FlxG.sound.music.time;
 		} else {
@@ -4335,7 +4240,7 @@ class PlayState extends MusicBeatState
 							if (daNote.animation.curAnim.name.endsWith('end')) {
 								daNote.y += 10.5 * (daNote.stepCrochet * 4 / 400) * 1.5 * noteSpeed + (46 * (noteSpeed - 1));
 								daNote.y -= 46 * (1 - (daNote.stepCrochet * 4 / 600)) * noteSpeed;
-								if(isPixelStage) {
+								if(SONG.skinModifier.endsWith('pixel')) {
 									daNote.y += 8 + (6 - daNote.originalHeightForCalcs) * daPixelZoom;
 								} else {
 									daNote.y -= 19;
@@ -5402,7 +5307,7 @@ class PlayState extends MusicBeatState
 
 		insert(members.indexOf(strumLineNotes), rating);
 
-		if (!isPixelStage)
+		if (!SONG.skinModifier.endsWith('pixel'))
 		{
 			rating.setGraphicSize(Std.int(rating.width * 0.7));
 			rating.antialiasing = ClientPrefs.globalAntialiasing;
@@ -5444,7 +5349,7 @@ class PlayState extends MusicBeatState
 			numScore.x += ClientPrefs.comboOffset[2];
 			numScore.y -= ClientPrefs.comboOffset[3];
 
-			if (!isPixelStage)
+			if (!SONG.skinModifier.endsWith('pixel'))
 			{
 				numScore.antialiasing = ClientPrefs.globalAntialiasing;
 				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
@@ -6369,7 +6274,7 @@ class PlayState extends MusicBeatState
 				var chars = [boyfriendGroup, dadGroup, gfGroup];
 				for (group in chars) {
 					for (char in group) {
-						if (char.danceEveryNumBeats > 0 && curBeat % Math.round(char.danceEveryNumBeats) == 0 && !char.stunned && char.animation.curAnim != null && !char.animation.curAnim.name.startsWith("sing") && !char.specialAnim)
+						if (char.danceEveryNumBeats > 0 && curNumeratorBeat % (Math.round(char.danceEveryNumBeats * (Conductor.timeSignature[1] / 4))) == 0 && !char.stunned && char.animation.curAnim != null && !char.animation.curAnim.name.startsWith("sing"))
 						{
 							char.dance();
 						}
@@ -6568,16 +6473,8 @@ class PlayState extends MusicBeatState
 	}
 	#end
 
-	function setUISkin():Void {
-		uiSkinFolder = isPixelStage ? 'pixel' : 'base';
-		if (SONG.uiSkin != null && SONG.uiSkin.length > 0 && SONG.uiSkin != 'default' && SONG.uiSkin != 'base' && SONG.uiSkin != 'pixel') {
-			uiSkinFolder = SONG.uiSkin;
-		}
-		setOnScripts('uiSkinFolder', uiSkinFolder);
-	}
-
 	function getUIFile(file:String) {
-		return SkinData.getUIFile(file, uiSkinFolder, ClientPrefs.uiSkin);
+		return SkinData.getUIFile(file, SONG.skinModifier, ClientPrefs.uiSkin);
 	}
 
 	public function callOnScripts(event:String, args:Array<Dynamic>, ignoreStops = true, ?exclusions:Array<String> = null):Dynamic {

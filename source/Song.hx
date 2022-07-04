@@ -29,7 +29,7 @@ typedef SwagSong =
 
 	var arrowSkin:String;
 	var splashSkin:String;
-	var uiSkin:String;
+	var skinModifier:String;
 
 	var validScore:Bool;
 }
@@ -60,6 +60,8 @@ class Song
 {
 	private static function onLoadJson(songJson:Dynamic) // Convert old charts to newest format
 	{
+		var curSong:String = Paths.formatToSongPath(songJson.song);
+		
 		if (songJson.events == null)
 		{
 			songJson.events = [];
@@ -93,9 +95,13 @@ class Song
 		{
 			songJson.timeSignature = [4, 4];
 		}
-		if (songJson.uiSkin == null)
-		{
-			songJson.uiSkin = '';
+		if (songJson.skinModifier == null || songJson.skinModifier.length < 1) {
+			switch (curSong) {
+				case 'senpai' | 'roses' | 'thorns':
+					songJson.skinModifier = 'pixel'; //set to week 6 skin
+				default:
+					songJson.skinModifier = 'base'; //set to default
+			}
 		}
 		
 		for (secNum in 0...songJson.notes.length) {
@@ -117,9 +123,8 @@ class Song
 			var len:Int = notes.length;
 			while(i < len)
 			{
-				//i dont even know if this does anything
 				var note = notes[i];
-				while (note.length < 4) {
+				while (note.length < 5) {
 					note.push(null);
 				}
 				if (note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
@@ -183,9 +188,9 @@ class Song
 				swagShit.gfVersion = tempSong.gf;
 			}
 		}
-		if (swagShit.uiSkin == null) {
+		if (swagShit.skinModifier == null) {
 			if (tempSong.ui_Skin != null) {
-				swagShit.uiSkin = tempSong.ui_Skin;
+				swagShit.skinModifier = tempSong.ui_Skin;
 			}
 		}
 		if (swagShit.playerKeyAmount == null) {

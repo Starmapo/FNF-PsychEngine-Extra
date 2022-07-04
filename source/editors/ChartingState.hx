@@ -218,7 +218,7 @@ class ChartingState extends MusicBeatState
 				events: [],
 				bpm: 150.0,
 				needsVoices: true,
-				uiSkin: '',
+				skinModifier: '',
 				player1: 'bf',
 				player2: 'dad',
 				gfVersion: 'gf',
@@ -236,8 +236,6 @@ class ChartingState extends MusicBeatState
 		}
 
 		updateKeys();
-
-		setUISkin();
 
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
@@ -405,7 +403,7 @@ class ChartingState extends MusicBeatState
 	var UI_songTitle:FlxUIInputText;
 	var noteSkinInputText:FlxUIInputText;
 	var noteSplashesInputText:FlxUIInputText;
-	var uiSkinInputText:FlxUIInputText;
+	var skinModifierInputText:FlxUIInputText;
 	var stageDropDown:FlxUIDropDownMenu;
 	function addSongUI():Void
 	{
@@ -630,17 +628,16 @@ class ChartingState extends MusicBeatState
 		noteSplashesInputText = new FlxUIInputText(noteSkinInputText.x, noteSkinInputText.y + 35, 75, _song.splashSkin, 8);
 		blockPressWhileTypingOn.push(noteSplashesInputText);
 
-		var skin = _song.uiSkin;
+		var skin = _song.skinModifier;
 		if (skin == null) skin = '';
-		uiSkinInputText = new FlxUIInputText(noteSkinInputText.x + 150, noteSkinInputText.y, 75, skin, 8);
-		blockPressWhileTypingOn.push(uiSkinInputText);
+		skinModifierInputText = new FlxUIInputText(noteSkinInputText.x + 150, noteSkinInputText.y, 75, skin, 8);
+		blockPressWhileTypingOn.push(skinModifierInputText);
 
-		var reloadNotesButton:FlxButton = new FlxButton(uiSkinInputText.x - 5, uiSkinInputText.y + 35, 'Change Notes', function() {
+		var reloadNotesButton:FlxButton = new FlxButton(skinModifierInputText.x - 5, skinModifierInputText.y + 35, 'Change Notes', function() {
 			_song.arrowSkin = noteSkinInputText.text;
 			_song.splashSkin = noteSplashesInputText.text;
-			_song.uiSkin = uiSkinInputText.text;
+			_song.skinModifier = skinModifierInputText.text;
 			PlayState.SONG = _song;
-			setUISkin();
 			updateGrid();
 			makeStrumNotes();
 		});
@@ -688,7 +685,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(reloadNotesButton);
 		tab_group_song.add(noteSkinInputText);
 		tab_group_song.add(noteSplashesInputText);
-		tab_group_song.add(uiSkinInputText);
+		tab_group_song.add(skinModifierInputText);
 		tab_group_song.add(new FlxText(stepperBPM.x, stepperBPM.y - 15, 0, 'Song BPM:'));
 		tab_group_song.add(new FlxText(stepperSpeed.x, stepperSpeed.y - 15, 0, 'Song Speed:'));
 		tab_group_song.add(new FlxText(stepperPlayerKeys.x, stepperPlayerKeys.y - 15, 0, 'Player Key Amount:'));
@@ -701,7 +698,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(new FlxText(stepperNumerator.x, stepperNumerator.y - 15, 0, 'Time Signature:'));
 		tab_group_song.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'Note Texture:'));
 		tab_group_song.add(new FlxText(noteSplashesInputText.x, noteSplashesInputText.y - 15, 0, 'Note Splashes Texture:'));
-		tab_group_song.add(new FlxText(uiSkinInputText.x, uiSkinInputText.y - 15, 0, 'UI Skin:'));
+		tab_group_song.add(new FlxText(skinModifierInputText.x, skinModifierInputText.y - 15, 0, 'Skin Modifier:'));
 		tab_group_song.add(player2DropDown);
 		tab_group_song.add(gfVersionDropDown);
 		tab_group_song.add(player1DropDown);
@@ -3255,14 +3252,6 @@ class ChartingState extends MusicBeatState
 		leftKeys = (_song.notes[curSec].mustHitSection ? curPlayer : curOpponent);
 		rightKeys = (!_song.notes[curSec].mustHitSection ? curPlayer : curOpponent);
 		totalKeys = leftKeys + rightKeys;
-	}
-
-	var uiSkinFolder:String = 'base';
-	function setUISkin():Void {
-		uiSkinFolder = PlayState.isPixelStage ? 'pixel' : 'base';
-		if (_song.uiSkin != null && _song.uiSkin.length > 0 && _song.uiSkin != 'base' && _song.uiSkin != 'pixel') {
-			uiSkinFolder = _song.uiSkin;
-		}
 	}
 
 	function resyncVocals(?play:Bool = false):Void {

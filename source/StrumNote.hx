@@ -60,11 +60,7 @@ class StrumNote extends FlxSprite
 		var lastAnim:String = null;
 		if (animation.curAnim != null) lastAnim = animation.curAnim.name;
 
-		var folder = PlayState.isPixelStage ? 'pixel' : 'base';
-		if (PlayState.SONG.uiSkin != null && PlayState.SONG.uiSkin.length > 0 && PlayState.SONG.uiSkin != 'default' && PlayState.SONG.uiSkin != 'base' && PlayState.SONG.uiSkin != 'pixel') {
-			folder = PlayState.SONG.uiSkin;
-		}
-		var image = SkinData.getNoteFile(texture, folder, ClientPrefs.noteSkin);
+		var image = SkinData.getNoteFile(texture, PlayState.SONG.skinModifier, ClientPrefs.noteSkin);
 		if (!Paths.fileExists('images/$image.xml', TEXT)) { //assume it is pixel notes
 			loadGraphic(Paths.image(image));
 			width = width / 4;
@@ -97,14 +93,14 @@ class StrumNote extends FlxSprite
 			animation.addByPrefix('static', 'arrow${directions[noteData].toUpperCase()}0');
 			animation.addByPrefix('pressed', '${colors[noteData]} press', 24, false);
 			animation.addByPrefix('confirm', '${colors[noteData]} confirm', 24, false);
-			if (PlayState.isPixelStage) {
+			if (PlayState.SONG.skinModifier.endsWith('pixel')) {
 				setGraphicSize(Std.int((width * (noteSize / Note.DEFAULT_NOTE_SIZE)) * PlayState.daPixelZoom));
 			} else {
 				setGraphicSize(Std.int(width * noteSize));
 			}
 		}
 		updateHitbox();
-		antialiasing = ClientPrefs.globalAntialiasing && !PlayState.isPixelStage;
+		antialiasing = ClientPrefs.globalAntialiasing && !PlayState.SONG.skinModifier.endsWith('pixel');
 
 		if (lastAnim != null)
 		{
@@ -129,7 +125,7 @@ class StrumNote extends FlxSprite
 				resetAnim = 0;
 			}
 		}
-		if (animation.curAnim != null && animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
+		if (animation.curAnim != null && animation.curAnim.name == 'confirm' && !PlayState.SONG.skinModifier.endsWith('pixel')) {
 			centerOrigin();
 		}
 
@@ -149,7 +145,7 @@ class StrumNote extends FlxSprite
 			colorSwap.saturation = ClientPrefs.arrowHSV[keyAmount - 1][noteData][1] / 100;
 			colorSwap.brightness = ClientPrefs.arrowHSV[keyAmount - 1][noteData][2] / 100;
 
-			if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
+			if(animation.curAnim.name == 'confirm' && !PlayState.SONG.skinModifier.endsWith('pixel')) {
 				centerOrigin();
 			}
 		}
