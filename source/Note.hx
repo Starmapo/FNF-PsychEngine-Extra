@@ -267,7 +267,10 @@ class Note extends FlxSprite
 		arraySkin[arraySkin.length - 1] = prefix + arraySkin[arraySkin.length - 1] + suffix;
 
 		var lastScaleY:Float = scale.y;
-		var folder = PlayState.isPixelStage ? 'notes_pixel' : 'notes_base';
+		var folder = PlayState.isPixelStage ? 'pixel' : 'base';
+		if (PlayState.SONG.uiSkin != null && PlayState.SONG.uiSkin.length > 0 && PlayState.SONG.uiSkin != 'default' && PlayState.SONG.uiSkin != 'base' && PlayState.SONG.uiSkin != 'pixel') {
+			folder = PlayState.SONG.uiSkin;
+		}
 		var image = SkinData.getNoteFile(arraySkin.join('/'), folder, ClientPrefs.noteSkin);
 		if (!Paths.fileExists('images/$image.xml', TEXT)) { //assume it is pixel notes
 			if (isSustainNote) {

@@ -66,10 +66,14 @@ class NoteSplash extends FlxSprite
 
 	function loadAnims(skin:String) {
 		if (daNote == null) {
-			frames = Paths.getSparrowAtlas('noteskins/default/splashes/noteSplashes');
+			frames = Paths.getSparrowAtlas('noteskins/default/base/noteSplashes');
 			animation.addByPrefix("note0-1", "note splash left 1", 24, false);
 		} else {
-			var image = SkinData.getNoteFile(skin, 'splashes', ClientPrefs.noteSkin);
+			var folder = PlayState.isPixelStage ? 'pixel' : 'base';
+			if (PlayState.SONG.uiSkin != null && PlayState.SONG.uiSkin.length > 0 && PlayState.SONG.uiSkin != 'default' && PlayState.SONG.uiSkin != 'base' && PlayState.SONG.uiSkin != 'pixel') {
+				folder = PlayState.SONG.uiSkin;
+			}
+			var image = SkinData.getNoteFile(skin, folder, ClientPrefs.noteSkin);
 			frames = Paths.getSparrowAtlas(image);
 			for (i in 1...3) {
 				animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${colors[daNote.noteData]} ${i}0', 24, false);

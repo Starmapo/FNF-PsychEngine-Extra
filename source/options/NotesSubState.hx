@@ -202,7 +202,7 @@ class NotesSubState extends MusicBeatSubState
 			}
 
 			var note:FlxSprite = new FlxSprite(posX, yPos);
-			note.frames = Paths.getSparrowAtlas('noteskins/default/notes_base/NOTE_assets');
+			note.frames = Paths.getSparrowAtlas('noteskins/default/base/NOTE_assets');
 			var animations:Array<String> = CoolUtil.coolArrayTextFile(Paths.txt('note_colors'))[keyAmount-1];
 			note.animation.addByPrefix('idle', '${animations[i]}0');
 			note.animation.play('idle');

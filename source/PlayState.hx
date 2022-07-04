@@ -482,8 +482,6 @@ class PlayState extends MusicBeatState
 		dadKeys = SONG.opponentKeyAmount;
 		setKeysArray(playerKeys);
 
-		setUISkin();
-
 		Conductor.mapBPMChanges(SONG);
 
 		if (storyDifficulty > CoolUtil.difficulties.length - 1) {
@@ -585,6 +583,8 @@ class PlayState extends MusicBeatState
 			girlfriendCameraOffset = stageData.camera_girlfriend;
 			if(girlfriendCameraOffset == null)
 				girlfriendCameraOffset = [0, 0];
+
+			setUISkin();
 
 			boyfriendGroup = new FlxTypedSpriteGroup(BF_X, BF_Y);
 			dadGroup = new FlxTypedSpriteGroup(DAD_X, DAD_Y);
@@ -1708,11 +1708,11 @@ class PlayState extends MusicBeatState
 
 		//cache note splashes
 		var textureMap:Map<String, Bool> = new Map();
-		precacheList.set('noteskins/default/splashes/noteSplashes', 'image');
-		textureMap.set('noteskins/default/splashes/noteSplashes', true);
+		precacheList.set('noteskins/default/base/noteSplashes', 'image');
+		textureMap.set('noteskins/default/base/noteSplashes', true);
 		for (note in unspawnNotes) {
 			if (note.noteSplashTexture != null && note.noteSplashTexture.length > 0 && !note.noteSplashDisabled && !textureMap.exists(note.noteSplashTexture)) {
-				var skin = SkinData.getNoteFile(note.noteSplashTexture, 'splashes', ClientPrefs.noteSkin);
+				var skin = SkinData.getNoteFile(note.noteSplashTexture, uiSkinFolder, ClientPrefs.noteSkin);
 				precacheList.set(skin, 'image');
 				textureMap.set(skin, true);
 			}
@@ -6570,7 +6570,7 @@ class PlayState extends MusicBeatState
 
 	function setUISkin():Void {
 		uiSkinFolder = isPixelStage ? 'pixel' : 'base';
-		if (SONG.uiSkin != null && SONG.uiSkin.length > 0) {
+		if (SONG.uiSkin != null && SONG.uiSkin.length > 0 && SONG.uiSkin != 'default' && SONG.uiSkin != 'base' && SONG.uiSkin != 'pixel') {
 			uiSkinFolder = SONG.uiSkin;
 		}
 		setOnScripts('uiSkinFolder', uiSkinFolder);

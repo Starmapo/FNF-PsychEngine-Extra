@@ -205,6 +205,7 @@ class FunkinHscript extends InterpEx {
 		variables.set('PhillyGlowGradient', PhillyGlowGradient);
         variables.set('PlayState', PlayState);
         variables.set('Prompt', Prompt);
+		variables.set('SkinData', SkinData);
         variables.set('Song', Song);
         variables.set('StageData', StageData);
         variables.set('StoryMenuState', StoryMenuState);
