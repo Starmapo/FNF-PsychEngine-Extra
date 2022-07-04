@@ -1234,7 +1234,7 @@ class FunkinLua {
 			else
 				MusicBeatState.switchState(new FreeplayState());
 
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			CoolUtil.playMenuMusic();
 			#if cpp
 			@:privateAccess
 			AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, 1);
@@ -1261,7 +1261,7 @@ class FunkinLua {
 
 			FlxG.sound.music.stop();
 			if (playMusic) {
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				CoolUtil.playMenuMusic();
 				#if cpp
 				@:privateAccess
 				AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, 1);

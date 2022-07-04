@@ -1089,7 +1089,7 @@ class CharacterEditorState extends MusicBeatState
 				} else {
 					WeekData.loadTheFirstEnabledMod();
 					MusicBeatState.switchState(new editors.MasterEditorMenu());
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+					CoolUtil.playMenuMusic();
 				}
 				FlxG.mouse.visible = false;
 				return;

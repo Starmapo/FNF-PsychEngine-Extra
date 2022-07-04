@@ -1991,7 +1991,7 @@ class PlayState extends MusicBeatState
 				else
 					MusicBeatState.switchState(new FreeplayState());
 	
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				CoolUtil.playMenuMusic();
 				#if cpp
 				@:privateAccess
 				AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, 1);
@@ -2014,7 +2014,7 @@ class PlayState extends MusicBeatState
 
 				FlxG.sound.music.stop();
 				if (playMusic) {
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+					CoolUtil.playMenuMusic();
 					#if cpp
 					@:privateAccess
 					AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, 1);
@@ -5102,7 +5102,7 @@ class PlayState extends MusicBeatState
 				if (storyPlaylist.length <= 0)
 				{
 					WeekData.loadTheFirstEnabledMod();
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+					CoolUtil.playMenuMusic();
 					#if cpp
 					@:privateAccess
 					AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, 1);
@@ -5114,7 +5114,7 @@ class PlayState extends MusicBeatState
 					}
 					MusicBeatState.switchState(new StoryMenuState());
 
-					if (!practiceMode && !cpuControlled) {
+					if (SONG.validScore) {
 						StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
 
 						if (SONG.validScore)
@@ -5187,7 +5187,7 @@ class PlayState extends MusicBeatState
 				}
 				SONG = originalSong;
 				MusicBeatState.switchState(new FreeplayState());
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				CoolUtil.playMenuMusic();
 				#if cpp
 				@:privateAccess
 				AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, 1);

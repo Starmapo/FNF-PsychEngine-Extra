@@ -224,4 +224,8 @@ class CoolUtil
 			Application.current.window.setIcon(img);
 		});
 	}
+
+	public static function playMenuMusic(volume:Float = 1) {
+		FlxG.sound.playMusic(Paths.music('freakyMenu'), volume);
+	}
 }

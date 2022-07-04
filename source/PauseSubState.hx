@@ -291,7 +291,7 @@ class PauseSubState extends MusicBeatSubState
 					PlayState.instance.scoreTxt.visible = !ClientPrefs.hideHud && !PlayState.instance.cpuControlled;
 				case "Options":
 					MusicBeatState.switchState(new options.OptionsState(true));
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+					CoolUtil.playMenuMusic();
 				case "Exit to menu":
 					PlayState.deathCounter = 0;
 					PlayState.seenCutscene = false;
@@ -304,7 +304,7 @@ class PauseSubState extends MusicBeatSubState
 						MusicBeatState.switchState(new FreeplayState());
 					}
 					PlayState.cancelMusicFadeTween();
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+					CoolUtil.playMenuMusic();
 					PlayState.changedDifficulty = false;
 					PlayState.chartingMode = false;
 					PlayState.startOnTime = 0;

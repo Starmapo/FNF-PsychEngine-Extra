@@ -1988,7 +1988,7 @@ class ChartingState extends MusicBeatState
 						MusicBeatState.switchState(new FreeplayState());
 					}
 				}
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				CoolUtil.playMenuMusic();
 				FlxG.mouse.visible = false;
 				return;
 			}

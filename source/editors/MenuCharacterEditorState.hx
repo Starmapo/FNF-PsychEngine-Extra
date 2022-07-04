@@ -313,7 +313,7 @@ class MenuCharacterEditorState extends MusicBeatState
 			if (FlxG.keys.justPressed.ESCAPE) {
 				WeekData.loadTheFirstEnabledMod();
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				CoolUtil.playMenuMusic();
 			}
 
 			var shiftMult:Int = 1;
