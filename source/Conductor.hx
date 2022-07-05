@@ -23,6 +23,7 @@ class Conductor
 	public static var crochet:Float = ((60 / bpm) * 4000) / timeSignature[1]; // beats in milliseconds
 	public static var normalizedCrochet(get, never):Float;
 	public static var stepCrochet:Float = crochet / 4; // steps in milliseconds
+	public static var normalizedStepCrochet(get, never):Float;
 	public static var songPosition:Float = 0;
 	public static var playbackRate:Float = 1;
 
@@ -32,6 +33,10 @@ class Conductor
 
 	public static function get_normalizedCrochet():Float {
 		return crochet * (timeSignature[1] / 4);
+	}
+
+	public static function get_normalizedStepCrochet():Float {
+		return stepCrochet * (timeSignature[1] / 4);
 	}
 
 	public static function judgeNote(note:Note, diff:Float = 0):Rating // die

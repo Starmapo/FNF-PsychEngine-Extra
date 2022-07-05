@@ -2349,7 +2349,9 @@ class PlayState extends MusicBeatState
 		return char;
 	}
 
+	#if VIDEOS_ALLOWED
 	public var video:MP4Handler;
+	#end
 	public function startVideo(name:String):Void {
 		#if VIDEOS_ALLOWED
 		inCutscene = true;
@@ -3217,10 +3219,6 @@ class PlayState extends MusicBeatState
 			i.destroy();
 		}
 		unspawnNotes = [];
-
-		var noteData:Array<SwagSection> = SONG.notes;
-
-		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 		
 		if (Paths.fileExists('data/$curSong/events.json', TEXT)) {
 			var eventsData:Array<Dynamic> = Song.loadFromJson('events', curSong).events;
@@ -3241,6 +3239,10 @@ class PlayState extends MusicBeatState
 				}
 			}
 		}
+
+		var noteData:Array<SwagSection> = SONG.notes;
+
+		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 
 		var curStepCrochet = Conductor.stepCrochet;
 		var curBPM = Conductor.bpm;
@@ -3304,6 +3306,7 @@ class PlayState extends MusicBeatState
 				swagNote.gfNote = (section.gfSection && (songNotes[1] < rightKeys));
 				swagNote.characters = songNotes[4];
 				if (songNotes[4] == null) swagNote.characters = [0];
+				swagNote.bpm = curBPM;
 				swagNote.noteType = songNotes[3];
 				swagNote.scrollFactor.set();
 				unspawnNotes.push(swagNote);
@@ -3322,6 +3325,7 @@ class PlayState extends MusicBeatState
 						sustainNote.gfNote = swagNote.gfNote;
 						sustainNote.characters = songNotes[4];
 						if (songNotes[4] == null) sustainNote.characters = [0];
+						sustainNote.bpm = curBPM;
 						sustainNote.noteType = swagNote.noteType;
 						sustainNote.scrollFactor.set();
 						swagNote.tail.push(sustainNote);
@@ -4172,7 +4176,7 @@ class PlayState extends MusicBeatState
 
 				if (!inEditor) {
 					for (char in playerChar) {
-						if (!FlxG.keys.anyPressed(char.keysPressed) && char.holdTimer > Conductor.stepCrochet * 0.0011 * char.singDuration * (Conductor.timeSignature[1] / 4) && char.animation.curAnim != null && char.animation.curAnim.name.startsWith('sing') && !char.animation.curAnim.name.endsWith('miss')) {
+						if (!FlxG.keys.anyPressed(char.keysPressed) && char.holdTimer > Conductor.normalizedStepCrochet * 0.0011 * char.singDuration && char.animation.curAnim != null && char.animation.curAnim.name.startsWith('sing') && !char.animation.curAnim.name.endsWith('miss')) {
 							char.dance();
 						}
 					}
@@ -4248,7 +4252,7 @@ class PlayState extends MusicBeatState
 							}
 							
 							daNote.y += (strumHeight / 2) - (60.5 * (noteSpeed - 1));
-							daNote.y += 27.5 * ((Conductor.bpm / 100) - 1) * (noteSpeed - 1);
+							daNote.y += 27.5 * ((daNote.bpm / 100) - 1) * (noteSpeed - 1);
 						}
 					}
 
@@ -5077,6 +5081,12 @@ class PlayState extends MusicBeatState
 		
 		var ret:Dynamic = callOnScripts('onEndSong', [], false);
 		if (ret != FunkinLua.Function_Stop && !transitioning) {
+			if (chartingMode)
+			{
+				openChartEditor();
+				return;
+			}
+			
 			if (SONG.validScore)
 			{
 				#if HIGHSCORE_ALLOWED
@@ -5084,12 +5094,6 @@ class PlayState extends MusicBeatState
 				if (Math.isNaN(percent)) percent = 0;
 				Highscore.saveScore(curSong, songScore, storyDifficulty, percent);
 				#end
-			}
-
-			if (chartingMode)
-			{
-				openChartEditor();
-				return;
 			}
 
 			if (isStoryMode)
@@ -5115,13 +5119,9 @@ class PlayState extends MusicBeatState
 					MusicBeatState.switchState(new StoryMenuState());
 
 					if (SONG.validScore) {
+						Highscore.saveWeekScore(WeekData.getWeekFileName(), campaignScore, storyDifficulty);
+
 						StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
-
-						if (SONG.validScore)
-						{
-							Highscore.saveWeekScore(WeekData.getWeekFileName(), campaignScore, storyDifficulty);
-						}
-
 						FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
 						FlxG.save.flush();
 					}

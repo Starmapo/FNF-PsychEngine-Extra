@@ -45,9 +45,9 @@
 	<classpath name="source" />
 	
 	<!-- PSYCH ENGINE CUSTOMIZATION -->
-	<define name="MODS_ALLOWED" if="desktop" />
+	<define name="MODS_ALLOWED" if="desktop debug" />
 	<define name="LUA_ALLOWED" if="desktop" />
-	<define name="HSCRIPT_ALLOWED" unless="mobile"/> <!-- :( -->
+	<define name="HSCRIPT_ALLOWED" unless="mobile"/>
 	<define name="DISCORD_ALLOWED" if="desktop" />
 	<define name="ACHIEVEMENTS_ALLOWED" />
 	<define name="VIDEOS_ALLOWED" if="web || windows" unless="32bits"/>

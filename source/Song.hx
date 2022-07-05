@@ -100,7 +100,7 @@ class Song
 				case 'senpai' | 'roses' | 'thorns':
 					songJson.skinModifier = 'pixel'; //set to week 6 skin
 				default:
-					songJson.skinModifier = 'base'; //set to default
+					songJson.skinModifier = ''; //set to default
 			}
 		}
 		

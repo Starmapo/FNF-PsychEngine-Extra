@@ -38,6 +38,7 @@ class Note extends FlxSprite
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
 	public var stepCrochet:Float = 150;
+	public var bpm:Float = 100;
 
 	public var noteType(default, set):String = null;
 
