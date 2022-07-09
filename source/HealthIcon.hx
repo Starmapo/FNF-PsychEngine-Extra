@@ -1,11 +1,6 @@
 package;
 
-import openfl.utils.Assets;
 import haxe.Json;
-#if MODS_ALLOWED
-import sys.FileSystem;
-import sys.io.File;
-#end
 import flixel.FlxSprite;
 
 using StringTools;
@@ -52,13 +47,13 @@ class HealthIcon extends FlxSprite
 		if (this.char != char) {
 			iconJson = getFile(char);
 			var name:String = 'icons/$char';
-			if (!Paths.fileExists('images/$name.png', IMAGE)) {
+			if (!Paths.exists('images/$name.png', IMAGE)) {
 				name = 'icons/icon-$char'; //Older versions of psych engine's support
 			}
-			if (!Paths.fileExists('images/$name.png', IMAGE)) {
+			if (!Paths.exists('images/$name.png', IMAGE)) {
 				name = 'icons/icon-face'; //Prevents crash from missing icon
 			}
-			if (Paths.fileExists('images/$name.xml', TEXT)) {
+			if (Paths.exists('images/$name.xml', TEXT)) {
 				frames = Paths.getSparrowAtlas(name);
 				animation.addByPrefix('normal', 'normal', iconJson.fps, iconJson.fps > 0, isPlayer);
 				animation.addByPrefix('losing', 'losing', iconJson.fps, iconJson.fps > 0, isPlayer);
@@ -78,7 +73,7 @@ class HealthIcon extends FlxSprite
 				animation.play('normal');
 			}
 			iconOffsets[0] = (width - 150) / 2;
-			iconOffsets[1] = (width - 150) / 2;
+			iconOffsets[1] = (height - 150) / 2;
 			updateHitbox();
 			this.char = char;
 			if (char != 'bf-old') originalChar = char;
@@ -102,27 +97,13 @@ class HealthIcon extends FlxSprite
 
 	public static function getFile(name:String):IconFile {
 		var characterPath:String = 'images/icons/$name.json';
-		#if MODS_ALLOWED
-		var path:String = Paths.modFolders(characterPath);
-		if (!FileSystem.exists(path)) {
-			path = Paths.getPreloadPath(characterPath);
-		}
-
-		if (!FileSystem.exists(path))
-		#else
 		var path:String = Paths.getPreloadPath(characterPath);
-		if (!Assets.exists(path))
-		#end
+		if (!Paths.exists(path, TEXT))
 		{
 			path = Paths.getPreloadPath('images/icons/bf.json'); //If a character couldn't be found, change them to BF just to prevent a crash
 		}
 
-		#if MODS_ALLOWED
-		var rawJson = File.getContent(path);
-		#else
-		var rawJson = Assets.getText(path);
-		#end
-
+		var rawJson = Paths.getContent(path);
 		if (rawJson == null) {
 			return null;
 		}

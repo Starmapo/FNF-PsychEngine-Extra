@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
 import haxe.Json;
-#if MODS_ALLOWED
+#if sys
 import sys.FileSystem;
 import sys.io.File;
 #end
@@ -70,7 +70,7 @@ class DialogueCharacter extends FlxSprite
 
 		reloadCharacterJson(character);
 		var imagePath = 'dialogue/${jsonFile.image}';
-		if (Paths.fileExists('images/$imagePath/Animation.json', TEXT)) {
+		if (Paths.exists('images/$imagePath/Animation.json', TEXT)) {
 			frames = AtlasFrameMaker.construct(imagePath);
 		} else {
 			frames = Paths.getSparrowAtlas(imagePath);
@@ -84,21 +84,11 @@ class DialogueCharacter extends FlxSprite
 		var characterPath:String = 'images/dialogue/$character.json';
 		var rawJson = null;
 
-		#if MODS_ALLOWED
-		var path:String = Paths.modFolders(characterPath);
-		if (!FileSystem.exists(path)) {
-			path = Paths.getPreloadPath(characterPath);
-		}
-
-		if (!FileSystem.exists(path)) {
+		var path:String = Paths.getPreloadPath(characterPath);
+		if (!Paths.exists(path, TEXT)) {
 			path = Paths.getPreloadPath('images/dialogue/$DEFAULT_CHARACTER.json');
 		}
-		rawJson = File.getContent(path);
-
-		#else
-		var path:String = Paths.getPreloadPath(characterPath);
-		rawJson = Assets.getText(path);
-		#end
+		rawJson = Paths.getContent(path);
 		
 		jsonFile = cast Json.parse(rawJson);
 		if (jsonFile.no_antialiasing == null) jsonFile.no_antialiasing = false;
@@ -282,7 +272,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			bgFade.alpha += 0.5 * elapsed;
 			if (bgFade.alpha > 0.5) bgFade.alpha = 0.5;
 
-			if (PlayerSettings.player1.controls.ACCEPT #if mobile || FlxG.mouse.justPressed #end) {
+			if (PlayerSettings.player1.controls.ACCEPT) {
 				if (!daText.finishedText) {
 					if (daText != null) {
 						daText.killTheTimer();
@@ -505,13 +495,11 @@ class DialogueBoxPsych extends FlxSpriteGroup
 	}
 
 	public static function parseDialogue(path:String):DialogueFile {
-		#if MODS_ALLOWED
-		if (FileSystem.exists(path))
+		if (Paths.exists(path, TEXT))
 		{
-			return cast Json.parse(File.getContent(path));
+			return cast Json.parse(Paths.getContent(path));
 		}
-		#end
-		return cast Json.parse(Assets.getText(path));
+		return null;
 	}
 
 	public static function updateBoxOffsets(box:FlxSprite) { //Had to make it static because of the editors

@@ -5,11 +5,6 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import lime.app.Application;
 import lime.graphics.Image;
-import openfl.utils.Assets;
-#if MODS_ALLOWED
-import sys.io.File;
-import sys.FileSystem;
-#end
 
 using StringTools;
 
@@ -63,13 +58,8 @@ class CoolUtil
 	public static function coolTextFile(path:String)
 	{
 		var daList:Array<String> = [];
-		#if MODS_ALLOWED
-		if (FileSystem.exists(path)) daList = File.getContent(path).trim().split('\n');
-		else if (Assets.exists(path))
-		#else
-		if (Assets.exists(path))
-		#end
-			daList = Assets.getText(path).trim().split('\n');
+		if (Paths.exists(path, TEXT))
+			daList = Paths.getContent(path).trim().split('\n');
 
 		for (i in 0...daList.length)
 		{
@@ -83,13 +73,8 @@ class CoolUtil
 	{
 		var daList:Array<String> = [];
 		var daArray:Array<Array<String>> = [];
-		#if MODS_ALLOWED
-		if (FileSystem.exists(path)) daList = File.getContent(path).trim().split('\n');
-		else if (Assets.exists(path))
-		#else
-		if (Assets.exists(path))
-		#end
-			daList = Assets.getText(path).trim().split('\n');
+		if (Paths.exists(path, TEXT))
+			daList = Paths.getContent(path).trim().split('\n');
 
 		for (i in 0...daList.length)
 		{
@@ -200,7 +185,7 @@ class CoolUtil
 							suffix = '';
 						}
 						var poop:String = song + suffix;
-						if (!Paths.fileExists('data/$song/$poop.json', TEXT)) {
+						if (!Paths.exists('data/$song/$poop.json', TEXT)) {
 							diffs.remove(diffs[i]);
 						} else {
 							i++;
@@ -227,5 +212,17 @@ class CoolUtil
 
 	public static function playMenuMusic(volume:Float = 1) {
 		FlxG.sound.playMusic(Paths.music('freakyMenu'), volume);
+	}
+
+	public static function sortAlphabetically(a:String, b:String):Int {
+		var val1 = a.toUpperCase();
+		var val2 = b.toUpperCase();
+		if (val1 < val2) {
+		  return -1;
+		} else if (val1 > val2) {
+		  return 1;
+		} else {
+		  return 0;
+		}
 	}
 }

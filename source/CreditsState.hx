@@ -11,10 +11,6 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-#if MODS_ALLOWED
-import sys.FileSystem;
-import sys.io.File;
-#end
 
 using StringTools;
 
@@ -37,15 +33,6 @@ class CreditsState extends MusicBeatState
 	var warningText:FlxText;
 	var warningBG:FlxSprite;
 
-	public static var skipToCurrentMod = false;
-
-	#if mobile
-	var buttonUP:Button;
-	var buttonDOWN:Button;
-	var buttonENTER:Button;
-	var buttonESC:Button;
-	#end
-
 	override function create()
 	{
 		#if DISCORD_ALLOWED
@@ -61,37 +48,8 @@ class CreditsState extends MusicBeatState
 		grpOptions = new FlxTypedGroup<Alphabet>();
 		add(grpOptions);
 
-		#if MODS_ALLOWED
-		var path:String = 'modsList.txt';
-		if(FileSystem.exists(path))
-		{
-			var leMods:Array<String> = CoolUtil.coolTextFile(path);
-			for (i in 0...leMods.length)
-			{
-				if(leMods[i].length > 0) {
-					var modSplit:Array<String> = leMods[i].split('|');
-					if(!Paths.ignoreModFolders.contains(modSplit[0].toLowerCase()) && !modsAdded.contains(modSplit[0]))
-					{
-						if(modSplit[1] == '1')
-							pushModCreditsToList(modSplit[0]);
-						else
-							modsAdded.push(modSplit[0]);
-					}
-				}
-			}
-		}
-
-		var arrayOfFolders:Array<String> = Paths.getModDirectories();
-		arrayOfFolders.push('');
-		for (folder in arrayOfFolders)
-		{
-			pushModCreditsToList(folder);
-		}
-		#end
-
 		var pisspoop:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
 			['Psych Engine Extra'],
-			['KadeDev',				'kade',				'Kade Engine Creator\n(some code is from there)\n[NON-AFFILIATED]',		'https://twitter.com/kade0912',										'64A250'],
 			['Leather128',			'leather',			'Leather Engine Creator\n(some code is from there)\n[NON-AFFILIATED]',	'https://www.youtube.com/channel/UCbCtO-ghipZessWaOBx8u1g',			'01A1FF'],
 			['srPerez',				'perez',			'Original 6K+ designs\n[NON-AFFILIATED]',								'https://twitter.com/NewSrPerez',									'FBCA20'],
 			['GitHub Contributors',	'github',			'Pull Requests to Psych Engine\n[NON-AFFILIATED]',						'https://github.com/ShadowMario/FNF-PsychEngine/pulls',				'546782'],
@@ -124,7 +82,6 @@ class CreditsState extends MusicBeatState
 			creditsStuff.push(i);
 		}
 	
-		var lastMod:String = Paths.currentModDirectory;
 		var skipped = false;
 		for (i in 0...creditsStuff.length)
 		{
@@ -141,15 +98,6 @@ class CreditsState extends MusicBeatState
 			grpOptions.add(optionText);
 
 			if (isSelectable) {
-				if (creditsStuff[i][5] != null)
-				{
-					Paths.currentModDirectory = creditsStuff[i][5];
-				}
-
-				if (skipToCurrentMod && Paths.currentModDirectory == lastMod && !skipped) {
-					curSelected = i;
-					skipped = true;
-				}
 				if (curSelected == -1) {
 					curSelected = i;
 				}
@@ -161,10 +109,8 @@ class CreditsState extends MusicBeatState
 				// using a FlxGroup is too much fuss!
 				iconArray.push(icon);
 				add(icon);
-				Paths.currentModDirectory = '';
 			}
 		}
-		skipToCurrentMod = false;
 
 		descBox = new AttachedSprite().makeGraphic(1, 1, FlxColor.BLACK);
 		descBox.xAdd = -10;
@@ -196,17 +142,6 @@ class CreditsState extends MusicBeatState
 		intendedColor = bg.color;
 		changeSelection();
 
-		#if mobile
-		buttonUP = new Button(10, 240, 'UP');
-		add(buttonUP);
-		buttonDOWN = new Button(buttonUP.x, buttonUP.y + buttonUP.height + 10, 'DOWN');
-		add(buttonDOWN);
-		buttonENTER = new Button(904, 574, 'ENTER');
-		add(buttonENTER);
-		buttonESC = new Button(buttonENTER.x + buttonENTER.width + 10, buttonENTER.y, 'ESC');
-		add(buttonESC);
-		#end
-
 		super.create();
 	}
 
@@ -224,8 +159,8 @@ class CreditsState extends MusicBeatState
 				var shiftMult:Int = 1;
 				if (FlxG.keys.pressed.SHIFT) shiftMult = 3;
 
-				var upP = controls.UI_UP_P || #if mobile buttonUP.justPressed #else FlxG.mouse.wheel > 0 #end;
-				var downP = controls.UI_DOWN_P || #if mobile buttonDOWN.justPressed #else FlxG.mouse.wheel < 0 #end;
+				var upP = controls.UI_UP_P || FlxG.mouse.wheel > 0;
+				var downP = controls.UI_DOWN_P || FlxG.mouse.wheel < 0;
 
 				if (upP)
 				{
@@ -238,7 +173,7 @@ class CreditsState extends MusicBeatState
 					holdTime = 0;
 				}
 
-				if(controls.UI_DOWN || controls.UI_UP #if mobile || buttonDOWN.pressed || buttonUP.pressed #end)
+				if(controls.UI_DOWN || controls.UI_UP)
 				{
 					var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
 					holdTime += elapsed;
@@ -246,16 +181,16 @@ class CreditsState extends MusicBeatState
 
 					if(holdTime > 0.5 && checkNewHold - checkLastHold > 0)
 					{
-						changeSelection((checkNewHold - checkLastHold) * ((controls.UI_UP #if mobile || buttonUP.pressed #end) ? -shiftMult : shiftMult));
+						changeSelection((checkNewHold - checkLastHold) * ((controls.UI_UP) ? -shiftMult : shiftMult));
 					}
 				}
 
-				if ((controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end) && creditsStuff[curSelected][3] != null && creditsStuff[curSelected][3].length > 4) {
+				if ((controls.ACCEPT || FlxG.mouse.justPressed) && creditsStuff[curSelected][3] != null && creditsStuff[curSelected][3].length > 4) {
 					warningText.text = 'WARNING!!!\nYOU ARE ABOUT TO GO TO: \n${creditsStuff[curSelected][3]}\nARE YOU ABSOLUTELY SURE YOU WANT TO GO TO THIS URL? \n(ACCEPT - Yes, BACK - No)';
 					warningText.screenCenter();
 					warningText.visible = true;
 				}
-				if (controls.BACK #if mobile || buttonESC.justPressed #end)
+				if (controls.BACK)
 				{
 					if (colorTween != null) {
 						colorTween.cancel();
@@ -265,11 +200,11 @@ class CreditsState extends MusicBeatState
 					quitting = true;
 				}
 			} else {
-				if (controls.ACCEPT #if mobile || buttonENTER.justPressed #end) {
+				if (controls.ACCEPT) {
 					CoolUtil.browserLoad(creditsStuff[curSelected][3]);
 					warningText.visible = false;
 				}
-				else if (controls.BACK #if mobile || buttonESC.justPressed #end) {
+				else if (controls.BACK) {
 					warningText.visible = false;
 				}
 			}
@@ -348,31 +283,6 @@ class CreditsState extends MusicBeatState
 		descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 25));
 		descBox.updateHitbox();
 	}
-
-	#if MODS_ALLOWED
-	private var modsAdded:Array<String> = [];
-	function pushModCreditsToList(folder:String)
-	{
-		if(modsAdded.contains(folder)) return;
-
-		var creditsFile:String = null;
-		if(folder != null && folder.trim().length > 0) creditsFile = Paths.mods(folder + '/data/credits.txt');
-		else creditsFile = Paths.mods('data/credits.txt');
-
-		if (FileSystem.exists(creditsFile))
-		{
-			var firstarray:Array<String> = File.getContent(creditsFile).split('\n');
-			for(i in firstarray)
-			{
-				var arr:Array<String> = i.replace('\\n', '\n').split("::");
-				if(arr.length >= 5) arr.push(folder);
-				creditsStuff.push(arr);
-			}
-			creditsStuff.push(['']);
-		}
-		modsAdded.push(folder);
-	}
-	#end
 
 	function getCurrentBGColor() {
 		var bgColor:String = creditsStuff[curSelected][4];

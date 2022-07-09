@@ -68,9 +68,9 @@ function onSignatureChange()
 	-- use "signatureNumerator" and "signatureDenominator" to get the current time signature
 end
 
-function onKeyChange()
+function onKeyChange(strumID, keyAmount)
 	-- triggered when the song's key amounts are changed
-	-- use "playerKeyAmount" and "opponentKeyAmount" to get the current key amounts
+	-- use "boyfriendKeyAmount" and "dadKeyAmount" to get the current key amounts
 end
 
 function onOpenChartEditor()
@@ -120,17 +120,15 @@ end
 
 
 -- Note miss/hit
-function goodNoteHit(id, direction, noteType, isSustainNote, characters)
-	-- Function called when the player hits a note (after note hit calculations)
+function onNoteHit(id, direction, noteType, isSustainNote, characters, strumID, isPlayer)
+	-- Function called when a note is hit (can be by player or opponent)
 	-- id: The note member id, you can get whatever variable you want from this note, example: "getPropertyFromGroup('notes', id, 'strumTime')"
 	-- noteData: 0 = Left, 1 = Down, 2 = Up, 3 = Right
 	-- noteType: The note type string/tag
 	-- isSustainNote: If it's a hold note, can be either true or false
 	-- characters: The characters that sing the note, by group index
-end
-
-function opponentNoteHit(id, direction, noteType, isSustainNote, characters)
-	-- Works the same as goodNoteHit, but for the opponent's notes being hit
+	-- strumID: The indeex of the note's strumline in the 'strumLineNotes' group
+	-- isPlayer: If the note was hit by the player
 end
 
 function noteMissPress(direction)

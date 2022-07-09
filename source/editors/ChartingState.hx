@@ -37,8 +37,6 @@ import haxe.io.Bytes;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
-#end
-#if (MODS_ALLOWED || LUA_ALLOWED)
 import haxe.io.Path;
 #end
 
@@ -101,7 +99,7 @@ class ChartingState extends MusicBeatState
 	var camPos:FlxObject;
 	var strumLine:FlxSprite;
 	var quant:AttachedSprite;
-	var strumLineNotes:FlxTypedGroup<StrumNote>;
+	var strumLineNotes:FlxTypedGroup<StrumNote>; //TOO LAZY TO CHANGE THIS TO A STRUMLINE GROUP LOL
 	var curSong:String = 'Test';
 	var amountSteps:Int = 0;
 	var bullshitUI:FlxGroup;
@@ -224,8 +222,8 @@ class ChartingState extends MusicBeatState
 				gfVersion: 'gf',
 				speed: 1,
 				stage: 'stage',
-				playerKeyAmount: 4,
-				opponentKeyAmount: 4,
+				boyfriendKeyAmount: 4,
+				dadKeyAmount: 4,
 				timeSignature: [4, 4],
 				validScore: false,
 				arrowSkin: null,
@@ -452,7 +450,7 @@ class ChartingState extends MusicBeatState
 		{
 			var songName:String = Paths.formatToSongPath(_song.song);
 			var file:String = Paths.json('${songName}/events');
-			if (Paths.fileExists('data/$songName/events.json', TEXT))
+			if (Paths.exists('data/$songName/events.json', TEXT))
 			{
 				clearEvents();
 				var events:SwagSong = Song.loadFromJson('events', songName);
@@ -476,31 +474,24 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.name = 'song_speed';
 		blockPressWhileTypingOnStepper.push(stepperSpeed);
 
-		var stepperPlayerKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBPM.x + 80, stepperBPM.y, 1, 4, 1, Note.MAX_KEYS);
-		stepperPlayerKeys.value = _song.playerKeyAmount;
-		stepperPlayerKeys.name = 'song_playerKeys';
-		blockPressWhileTypingOnStepper.push(stepperPlayerKeys);
+		var stepperBoyfriendKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBPM.x + 80, stepperBPM.y, 1, 4, 1, Note.MAX_KEYS);
+		stepperBoyfriendKeys.value = _song.boyfriendKeyAmount;
+		stepperBoyfriendKeys.name = 'song_boyfriendKeys';
+		blockPressWhileTypingOnStepper.push(stepperBoyfriendKeys);
 
-		var stepperOpponentKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperPlayerKeys.x, stepperPlayerKeys.y + stepperPlayerKeys.height + 15, 1, 4, 1, Note.MAX_KEYS);
-		stepperOpponentKeys.value = _song.opponentKeyAmount;
-		stepperOpponentKeys.name = 'song_opponentKeys';
-		blockPressWhileTypingOnStepper.push(stepperOpponentKeys);
+		var stepperDadKeys:FlxUINumericStepper = new FlxUINumericStepper(stepperBoyfriendKeys.x, stepperBoyfriendKeys.y + stepperBoyfriendKeys.height + 15, 1, 4, 1, Note.MAX_KEYS);
+		stepperDadKeys.value = _song.dadKeyAmount;
+		stepperDadKeys.name = 'song_dadKeys';
+		blockPressWhileTypingOnStepper.push(stepperDadKeys);
 
-		#if MODS_ALLOWED
-		var directories:Array<String> = [Paths.mods('characters/'), Paths.mods('${Paths.currentModDirectory}/characters/'), Paths.getPreloadPath('characters/')];
-		for(mod in Paths.getGlobalMods())
-			directories.push(Paths.mods(mod + '/characters/'));
-		#else
 		var directories:Array<String> = [Paths.getPreloadPath('characters/')];
-		#end
-
 		var tempMap:Map<String, Bool> = new Map();
 		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
 		for (i in 0...characters.length) {
 			tempMap.set(characters[i], true);
 		}
 
-		#if MODS_ALLOWED
+		#if sys
 		for (i in 0...directories.length) {
 			var directory:String = directories[i];
 			if (FileSystem.exists(directory)) {
@@ -543,14 +534,7 @@ class ChartingState extends MusicBeatState
 		player2DropDown.selectedLabel = _song.player2;
 		blockPressWhileScrolling.push(player2DropDown);
 
-		#if MODS_ALLOWED
-		var directories:Array<String> = [Paths.mods('stages/'), Paths.mods('${Paths.currentModDirectory}/stages/'), Paths.getPreloadPath('stages/')];
-		for(mod in Paths.getGlobalMods())
-			directories.push(Paths.mods(mod + '/stages/'));
-		#else
 		var directories:Array<String> = [Paths.getPreloadPath('stages/')];
-		#end
-
 		tempMap.clear();
 		var stageFile:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		var stages:Array<String> = [];
@@ -561,7 +545,7 @@ class ChartingState extends MusicBeatState
 			}
 			tempMap.set(stageToCheck, true);
 		}
-		#if MODS_ALLOWED
+		#if sys
 		for (i in 0...directories.length) {
 			var directory:String = directories[i];
 			if (FileSystem.exists(directory)) {
@@ -680,16 +664,16 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(loadEventJson);
 		tab_group_song.add(stepperBPM);
 		tab_group_song.add(stepperSpeed);
-		tab_group_song.add(stepperPlayerKeys);
-		tab_group_song.add(stepperOpponentKeys);
+		tab_group_song.add(stepperBoyfriendKeys);
+		tab_group_song.add(stepperDadKeys);
 		tab_group_song.add(reloadNotesButton);
 		tab_group_song.add(noteSkinInputText);
 		tab_group_song.add(noteSplashesInputText);
 		tab_group_song.add(skinModifierInputText);
 		tab_group_song.add(new FlxText(stepperBPM.x, stepperBPM.y - 15, 0, 'Song BPM:'));
 		tab_group_song.add(new FlxText(stepperSpeed.x, stepperSpeed.y - 15, 0, 'Song Speed:'));
-		tab_group_song.add(new FlxText(stepperPlayerKeys.x, stepperPlayerKeys.y - 15, 0, 'Player Key Amount:'));
-		tab_group_song.add(new FlxText(stepperOpponentKeys.x, stepperOpponentKeys.y - 15, 0, 'Opponent Key Amount:'));
+		tab_group_song.add(new FlxText(stepperBoyfriendKeys.x, stepperBoyfriendKeys.y - 15, 0, 'Boyfriend Key Amount:'));
+		tab_group_song.add(new FlxText(stepperDadKeys.x, stepperDadKeys.y - 15, 0, 'Opponent Key Amount:'));
 		tab_group_song.add(new FlxText(player2DropDown.x, player2DropDown.y - 15, 0, 'Opponent:'));
 		tab_group_song.add(new FlxText(gfVersionDropDown.x, gfVersionDropDown.y - 15, 0, 'Girlfriend:'));
 		tab_group_song.add(new FlxText(player1DropDown.x, player1DropDown.y - 15, 0, 'Boyfriend:'));
@@ -720,8 +704,8 @@ class ChartingState extends MusicBeatState
 	var stepperSectionNumerator:FlxUINumericStepper;
 	var stepperSectionDenominator:FlxUINumericStepper;
 	var check_changeKeys:FlxUICheckBox;
-	var stepperSectionPlayerKeys:FlxUINumericStepper;
-	var stepperSectionOpponentKeys:FlxUINumericStepper;
+	var stepperSectionBoyfriendKeys:FlxUINumericStepper;
+	var stepperSectionDadKeys:FlxUINumericStepper;
 	var check_altAnim:FlxUICheckBox;
 
 	var sectionToCopy:Int = 0;
@@ -777,19 +761,19 @@ class ChartingState extends MusicBeatState
 		check_changeKeys.checked = _song.notes[curSec].changeKeys;
 		check_changeKeys.name = 'check_changeKeys';
 
-		stepperSectionPlayerKeys = new FlxUINumericStepper(check_changeKeys.x, check_changeKeys.y + 20, 1, _song.playerKeyAmount, 1, Note.MAX_KEYS);
+		stepperSectionBoyfriendKeys = new FlxUINumericStepper(check_changeKeys.x, check_changeKeys.y + 20, 1, _song.boyfriendKeyAmount, 1, Note.MAX_KEYS);
 		if (check_changeKeys.checked) {
-			stepperSectionPlayerKeys.value = _song.notes[curSec].playerKeys;
+			stepperSectionBoyfriendKeys.value = _song.notes[curSec].boyfriendKeyAmount;
 		}
-		stepperSectionPlayerKeys.name = 'section_playerKeys';
-		blockPressWhileTypingOnStepper.push(stepperSectionPlayerKeys);
+		stepperSectionBoyfriendKeys.name = 'section_boyfriendKeys';
+		blockPressWhileTypingOnStepper.push(stepperSectionBoyfriendKeys);
 
-		stepperSectionOpponentKeys = new FlxUINumericStepper(stepperSectionPlayerKeys.x, stepperSectionPlayerKeys.y + 20, 1, _song.opponentKeyAmount, 1, Note.MAX_KEYS);
+		stepperSectionDadKeys = new FlxUINumericStepper(stepperSectionBoyfriendKeys.x, stepperSectionBoyfriendKeys.y + 20, 1, _song.dadKeyAmount, 1, Note.MAX_KEYS);
 		if (check_changeKeys.checked) {
-			stepperSectionOpponentKeys.value = _song.notes[curSec].opponentKeys;
+			stepperSectionDadKeys.value = _song.notes[curSec].dadKeyAmount;
 		}
-		stepperSectionOpponentKeys.name = 'section_opponentKeys';
-		blockPressWhileTypingOnStepper.push(stepperSectionOpponentKeys);
+		stepperSectionDadKeys.name = 'section_dadKeys';
+		blockPressWhileTypingOnStepper.push(stepperSectionDadKeys);
 
 		var check_eventsSec:FlxUICheckBox = null;
 		var check_notesSec:FlxUICheckBox = null;
@@ -1028,8 +1012,8 @@ class ChartingState extends MusicBeatState
 		tab_group_section.add(duetButton);
 		tab_group_section.add(mirrorButton);
 		tab_group_section.add(check_changeKeys);
-		tab_group_section.add(stepperSectionPlayerKeys);
-		tab_group_section.add(stepperSectionOpponentKeys);
+		tab_group_section.add(stepperSectionBoyfriendKeys);
+		tab_group_section.add(stepperSectionDadKeys);
 		tab_group_section.add(check_changeSignature);
 		tab_group_section.add(stepperSectionDenominator);
 		tab_group_section.add(stepperSectionNumerator);
@@ -1067,15 +1051,8 @@ class ChartingState extends MusicBeatState
 			key++;
 		}
 
-		#if LUA_ALLOWED
-		var directories:Array<String> = [];
-
-		#if MODS_ALLOWED
-		directories.push(Paths.mods('custom_notetypes/'));
-		directories.push(Paths.mods(Paths.currentModDirectory + '/custom_notetypes/'));
-		for(mod in Paths.getGlobalMods())
-			directories.push(Paths.mods(mod + '/custom_notetypes/'));
-		#end
+		#if (LUA_ALLOWED && sys)
+		var directories:Array<String> = [Paths.getPreloadPath('custom_notetypes/')];
 
 		for (i in 0...directories.length) {
 			var directory:String =  directories[i];
@@ -1134,16 +1111,9 @@ class ChartingState extends MusicBeatState
 		var tab_group_event = new FlxUI(null, UI_box);
 		tab_group_event.name = 'Events';
 
-		#if LUA_ALLOWED
+		#if (LUA_ALLOWED && sys)
 		var eventPushedMap:Map<String, Bool> = new Map();
-		var directories:Array<String> = [];
-
-		#if MODS_ALLOWED
-		directories.push(Paths.mods('custom_events/'));
-		directories.push(Paths.mods(Paths.currentModDirectory + '/custom_events/'));
-		for(mod in Paths.getGlobalMods())
-			directories.push(Paths.mods(mod + '/custom_events/'));
-		#end
+		var directories:Array<String> = [Paths.getPreloadPath('custom_events/')];
 
 		for (i in 0...directories.length) {
 			var directory:String =  directories[i];
@@ -1717,17 +1687,17 @@ class ChartingState extends MusicBeatState
 					reloadGridLayer();
 				}
 			}
-			else if (wname == 'section_playerKeys')
+			else if (wname == 'section_boyfriendKeys')
 			{
-				_song.notes[curSec].playerKeys = Std.int(nums.value);
+				_song.notes[curSec].boyfriendKeyAmount = Std.int(nums.value);
 				if (_song.notes[curSec].changeKeys) {
 					updateKeys();
 					reloadGridLayer();
 				}
 			}
-			else if (wname == 'section_opponentKeys')
+			else if (wname == 'section_dadKeys')
 			{
-				_song.notes[curSec].opponentKeys = Std.int(nums.value);
+				_song.notes[curSec].dadKeyAmount = Std.int(nums.value);
 				if (_song.notes[curSec].changeKeys) {
 					updateKeys();
 					reloadGridLayer();
@@ -1745,15 +1715,15 @@ class ChartingState extends MusicBeatState
 			{
 				vocalsDad.volume = nums.value;
 			}
-			else if (wname == 'song_playerKeys')
+			else if (wname == 'song_boyfriendKeys')
 			{
-				_song.playerKeyAmount = Std.int(nums.value);
+				_song.boyfriendKeyAmount = Std.int(nums.value);
 				updateKeys();
 				reloadGridLayer();
 			}
-			else if (wname == 'song_opponentKeys')
+			else if (wname == 'song_dadKeys')
 			{
-				_song.opponentKeyAmount = Std.int(nums.value);
+				_song.dadKeyAmount = Std.int(nums.value);
 				updateKeys();
 				reloadGridLayer();
 			}
@@ -1977,7 +1947,6 @@ class ChartingState extends MusicBeatState
 			}
 			
 			if (FlxG.keys.justPressed.BACKSPACE) {
-				WeekData.loadTheFirstEnabledMod();
 				PlayState.chartingMode = false;
 				if (fromMasterMenu) {
 					MusicBeatState.switchState(new editors.MasterEditorMenu());
@@ -2304,64 +2273,6 @@ class ChartingState extends MusicBeatState
 		zoomTxt.text = 'Zoom: ' + zoomThing;
 		reloadGridLayer();
 	}
-
-	/*
-	function loadAudioBuffer() {
-		if (audioBuffers[0] != null) {
-			audioBuffers[0].dispose();
-		}
-		audioBuffers[0] = null;
-		#if MODS_ALLOWED
-		if (FileSystem.exists(Paths.modFolders('songs/$currentSongName/Inst.${Paths.SOUND_EXT}'))) {
-			audioBuffers[0] = AudioBuffer.fromFile(Paths.modFolders('songs/$currentSongName/Inst.${Paths.SOUND_EXT}'));
-		}
-		else { #end
-			var leVocals:String = Paths.getPath('$currentSongName/Inst.${Paths.SOUND_EXT}', SOUND, 'songs');
-			if (OpenFlAssets.exists(leVocals)) { //Vanilla inst
-				audioBuffers[0] = AudioBuffer.fromFile('./${leVocals.substr(6)}');
-			}
-		#if MODS_ALLOWED
-		}
-		#end
-
-		if (audioBuffers[1] != null) {
-			audioBuffers[1].dispose();
-		}
-		audioBuffers[1] = null;
-		#if MODS_ALLOWED
-		if (FileSystem.exists(Paths.modFolders('songs/$currentSongName/Voices.${Paths.SOUND_EXT}'))) {
-			audioBuffers[1] = AudioBuffer.fromFile(Paths.modFolders('songs/$currentSongName/Voices.${Paths.SOUND_EXT}'));
-		} else { #end
-			var leVocals:String = Paths.getPath('$currentSongName/Voices.${Paths.SOUND_EXT}', SOUND, 'songs');
-			if (OpenFlAssets.exists(leVocals)) { //Vanilla voices
-				audioBuffers[1] = AudioBuffer.fromFile('./${leVocals.substr(6)}');
-			}
-		#if MODS_ALLOWED
-		}
-		#end
-
-		if (audioBuffers[2] != null) {
-			audioBuffers[2].dispose();
-		}
-		audioBuffers[2] = null;
-		var fileName = 'VoicesDad';
-		if (Paths.fileExists('$currentSongName/VoicesOpponent.${Paths.SOUND_EXT}', MUSIC, false, 'songs'))
-		{
-			fileName = 'VoicesOpponent';
-		}
-		#if MODS_ALLOWED
-		if (FileSystem.exists(Paths.modFolders('songs/$currentSongName/$fileName.${Paths.SOUND_EXT}'))) {
-			audioBuffers[2] = AudioBuffer.fromFile(Paths.modFolders('songs/$currentSongName/$fileName.${Paths.SOUND_EXT}'));
-		} else { #end
-			var leVocals:String = Paths.getPath('$currentSongName/$fileName.${Paths.SOUND_EXT}', SOUND, 'songs');
-			if (OpenFlAssets.exists(leVocals)) { //Vanilla voices
-				audioBuffers[2] = AudioBuffer.fromFile('./${leVocals.substr(6)}');
-			}
-		#if MODS_ALLOWED
-		}
-		#end
-	}
-	*/
 
 	var lastSecBeats:Float = 0;
 	var lastSecBeatsNext:Float = 0;
@@ -2757,8 +2668,8 @@ class ChartingState extends MusicBeatState
 		stepperSectionNumerator.value = sec.timeSignature[0];
 		stepperSectionDenominator.value = sec.timeSignature[1];
 		check_changeKeys.checked = sec.changeKeys;
-		stepperSectionPlayerKeys.value = sec.playerKeys;
-		stepperSectionOpponentKeys.value = sec.opponentKeys;
+		stepperSectionBoyfriendKeys.value = sec.boyfriendKeyAmount;
+		stepperSectionDadKeys.value = sec.dadKeyAmount;
 
 		updateHeads();
 	}
@@ -2922,8 +2833,8 @@ class ChartingState extends MusicBeatState
 		var usedRightKeys = rightKeys;
 		if (isNextSection) {
 			if (_song.notes[sectionUsed].changeKeys) {
-				usedLeftKeys = (_song.notes[sectionUsed].mustHitSection ? _song.notes[sectionUsed].playerKeys : _song.notes[sectionUsed].opponentKeys);
-				usedRightKeys = (!_song.notes[sectionUsed].mustHitSection ? _song.notes[sectionUsed].playerKeys : _song.notes[sectionUsed].opponentKeys);
+				usedLeftKeys = (_song.notes[sectionUsed].mustHitSection ? _song.notes[sectionUsed].boyfriendKeyAmount : _song.notes[sectionUsed].dadKeyAmount);
+				usedRightKeys = (!_song.notes[sectionUsed].mustHitSection ? _song.notes[sectionUsed].boyfriendKeyAmount : _song.notes[sectionUsed].dadKeyAmount);
 			} else {
 				usedLeftKeys = (_song.notes[sectionUsed].mustHitSection == _song.notes[curSec].mustHitSection ? leftKeys : rightKeys);
 				usedRightKeys = (_song.notes[sectionUsed].mustHitSection == _song.notes[curSec].mustHitSection ? rightKeys : leftKeys);
@@ -3030,8 +2941,8 @@ class ChartingState extends MusicBeatState
 			sectionNotes: [],
 			altAnim: false,
 			changeKeys: false,
-			playerKeys: _song.playerKeyAmount,
-			opponentKeys: _song.opponentKeyAmount
+			boyfriendKeyAmount: _song.boyfriendKeyAmount,
+			dadKeyAmount: _song.dadKeyAmount
 		};
 
 		_song.notes.push(sec);
@@ -3213,9 +3124,9 @@ class ChartingState extends MusicBeatState
 		for (i in 0...totalKeys) {
 			var note:StrumNote;
 			if (i >= leftKeys) {
-				note = new StrumNote(GRID_SIZE * (i + 1), strumLine.y, i - leftKeys, 0, rightKeys);
+				note = new StrumNote(GRID_SIZE * (i + 1), strumLine.y, i - leftKeys, rightKeys);
 			} else {
-				note = new StrumNote(GRID_SIZE * (i + 1), strumLine.y, i, 0, leftKeys);
+				note = new StrumNote(GRID_SIZE * (i + 1), strumLine.y, i, leftKeys);
 			}
 			note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 			note.updateHitbox();
@@ -3241,12 +3152,12 @@ class ChartingState extends MusicBeatState
 	}
 
 	function updateKeys():Void {
-		var curPlayer = _song.playerKeyAmount;
-		var curOpponent = _song.opponentKeyAmount;
+		var curPlayer = _song.boyfriendKeyAmount;
+		var curOpponent = _song.dadKeyAmount;
 		for (i in 0...curSec + 1) {
 			if (_song.notes[i] != null && _song.notes[i].changeKeys) {
-				curPlayer = _song.notes[i].playerKeys;
-				curOpponent = _song.notes[i].opponentKeys;
+				curPlayer = _song.notes[i].boyfriendKeyAmount;
+				curOpponent = _song.notes[i].dadKeyAmount;
 			}
 		}
 		leftKeys = (_song.notes[curSec].mustHitSection ? curPlayer : curOpponent);
@@ -3294,7 +3205,7 @@ class ChartingState extends MusicBeatState
 
 	private function saveLevel()
 	{
-		_song.events.sort(sortByTime);
+		if(_song.events != null && _song.events.length > 1) _song.events.sort(sortByTime);
 		var json = {
 			"song": _song
 		};
@@ -3318,7 +3229,7 @@ class ChartingState extends MusicBeatState
 
 	private function saveEvents()
 	{
-		_song.events.sort(sortByTime);
+		if(_song.events != null && _song.events.length > 1) _song.events.sort(sortByTime);
 		var eventsSong:Dynamic = {
 			events: _song.events
 		};

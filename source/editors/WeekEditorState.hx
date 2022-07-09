@@ -22,7 +22,7 @@ import openfl.events.IOErrorEvent;
 import flash.net.FileFilter;
 import lime.system.Clipboard;
 import haxe.Json;
-#if MODS_ALLOWED
+#if sys
 import sys.io.File;
 import sys.FileSystem;
 #end
@@ -327,7 +327,7 @@ class WeekEditorState extends MusicBeatState
 
 		var isMissing:Bool = true;
 		if (assetName != null && assetName.length > 0) {
-			if (Paths.fileExists('images/menubackgrounds/menu_$assetName.png', IMAGE)) {
+			if (Paths.exists('images/menubackgrounds/menu_$assetName.png', IMAGE)) {
 				bgSprite.loadGraphic(Paths.image('menubackgrounds/menu_$assetName'));
 				isMissing = false;
 			}
@@ -345,7 +345,7 @@ class WeekEditorState extends MusicBeatState
 		
 		var isMissing:Bool = true;
 		if (assetName != null && assetName.length > 0) {
-			if (Paths.fileExists('images/storymenu/$assetName.png', IMAGE)) {
+			if (Paths.exists('images/storymenu/$assetName.png', IMAGE)) {
 				weekThing.loadGraphic(Paths.image('storymenu/$assetName'));
 				isMissing = false;
 			}
@@ -440,7 +440,6 @@ class WeekEditorState extends MusicBeatState
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 			if (FlxG.keys.justPressed.ESCAPE) {
-				WeekData.loadTheFirstEnabledMod();
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
 				CoolUtil.playMenuMusic();
 			}
@@ -475,7 +474,7 @@ class WeekEditorState extends MusicBeatState
 		_file.removeEventListener(Event.CANCEL, onLoadCancel);
 		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
 
-		#if MODS_ALLOWED
+		#if sys
 		var fullPath:String = null;
 		@:privateAccess
 		if (_file.__path != null) fullPath = _file.__path;
@@ -829,7 +828,6 @@ class WeekEditorFreeplayState extends MusicBeatState
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 			if (FlxG.keys.justPressed.ESCAPE) {
-				WeekData.loadTheFirstEnabledMod();
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
 				CoolUtil.playMenuMusic();
 			}

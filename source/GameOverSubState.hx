@@ -26,11 +26,6 @@ class GameOverSubstate extends MusicBeatSubState
 
 	public static var instance:GameOverSubstate;
 
-	#if mobile
-	var buttonENTER:Button;
-	var buttonESC:Button;
-	#end
-
 	public static function resetVariables() {
 		characterName = 'bf-dead';
 		deathSoundName = 'fnf_loss_sfx';
@@ -75,13 +70,6 @@ class GameOverSubstate extends MusicBeatSubState
 		camFollowPos = new FlxObject(0, 0, 1, 1);
 		camFollowPos.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), FlxG.camera.scroll.y + (FlxG.camera.height / 2));
 		add(camFollowPos);
-
-		#if mobile
-		buttonENTER = new Button(492, 564, 'ENTER');
-		add(buttonENTER);
-		buttonESC = new Button(buttonENTER.x + 136, buttonENTER.y, 'ESC');
-		add(buttonESC);
-		#end
 	}
 
 	var isFollowingAlready:Bool = false;
@@ -95,19 +83,18 @@ class GameOverSubstate extends MusicBeatSubState
 			camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
 		}
 
-		if (controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end)
+		if (controls.ACCEPT || FlxG.mouse.justPressed)
 		{
 			endBullshit();
 		}
 
-		if (controls.BACK #if mobile || buttonESC.justPressed #end)
+		if (controls.BACK)
 		{
 			FlxG.sound.music.stop();
 			PlayState.deathCounter = 0;
 			PlayState.seenCutscene = false;
 			PlayState.chartingMode = false;
 
-			WeekData.loadTheFirstEnabledMod();
 			if (PlayState.isStoryMode)
 				MusicBeatState.switchState(new StoryMenuState());
 			else
@@ -117,7 +104,7 @@ class GameOverSubstate extends MusicBeatSubState
 			PlayState.instance.callOnScripts('onGameOverConfirm', [false]);
 		}
 
-		if (boyfriend.animation.curAnim.name == 'firstDeath')
+		if (boyfriend.animation.curAnim != null && boyfriend.animation.curAnim.name == 'firstDeath')
 		{
 			if (boyfriend.animation.curAnim.curFrame >= 12 && !isFollowingAlready)
 			{

@@ -11,3 +11,8 @@ left down up right left2 right2 left down up right
 left down up right left2 center right2 left down up right
 left down up right left2 down2 up2 right2 left down up right
 left down up right left2 down2 center up2 right2 left down up right
+left down up right left2 down2 right2 left2 up2 right2 left down up right
+left down up right left2 down2 right2 center left2 up2 right2 left down up right
+left down up right left2 down2 up2 right2 left2 down2 up2 right2 left down up right
+left down up right left2 down2 up2 right2 center left2 down2 up2 right2 left down up right
+left down up right left2 down2 up2 right2 center star left2 down2 up2 right2 left down up right

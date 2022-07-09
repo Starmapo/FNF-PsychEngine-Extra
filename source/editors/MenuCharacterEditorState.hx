@@ -20,7 +20,7 @@ import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import flash.net.FileFilter;
 import haxe.Json;
-#if MODS_ALLOWED
+#if sys
 import sys.io.File;
 #end
 
@@ -179,7 +179,6 @@ class MenuCharacterEditorState extends MusicBeatState
 		};
 
 		var reloadImageButton:FlxButton = new FlxButton(140, confirmInputText.y + 30, "Reload Char", function() {
-			AtlasFrameMaker.clearCache();
 			reloadSelectedCharacter();
 		});
 		
@@ -231,7 +230,7 @@ class MenuCharacterEditorState extends MusicBeatState
 
 		char.alpha = 1;
 		var imagePath = 'menucharacters/${characterFile.image}';
-		if (Paths.fileExists('images/$imagePath/Animation.json', TEXT)) {
+		if (Paths.exists('images/$imagePath/Animation.json', TEXT)) {
 			char.frames = AtlasFrameMaker.construct(imagePath);
 		} else {
 			char.frames = Paths.getSparrowAtlas(imagePath);
@@ -311,7 +310,6 @@ class MenuCharacterEditorState extends MusicBeatState
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 			if (FlxG.keys.justPressed.ESCAPE) {
-				WeekData.loadTheFirstEnabledMod();
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
 				CoolUtil.playMenuMusic();
 			}
@@ -371,7 +369,7 @@ class MenuCharacterEditorState extends MusicBeatState
 		_file.removeEventListener(Event.CANCEL, onLoadCancel);
 		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
 
-		#if MODS_ALLOWED
+		#if sys
 		var fullPath:String = null;
 		@:privateAccess
 		if (_file.__path != null) fullPath = _file.__path;
@@ -382,7 +380,6 @@ class MenuCharacterEditorState extends MusicBeatState
 				var loadedChar:MenuCharacterFile = cast Json.parse(rawJson);
 				if (loadedChar.idle_anim != null && loadedChar.confirm_anim != null) //Make sure it's really a character
 				{
-					AtlasFrameMaker.clearCache();
 					var cutName:String = _file.name.substr(0, _file.name.length - 5);
 					trace('Successfully loaded file: $cutName');
 					characterFile = loadedChar;

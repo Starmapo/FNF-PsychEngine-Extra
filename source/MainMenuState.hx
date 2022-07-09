@@ -35,7 +35,7 @@ class MainMenuState extends MusicBeatState
 	var optionShit:Array<String> = [
 		'story_mode',
 		'freeplay',
-		#if MODS_ALLOWED 'mods', #end
+		#if sys 'pvp', #end
 		#if ACHIEVEMENTS_ALLOWED 'awards', #end
 		'credits',
 		#if !switch 'donate', #end
@@ -47,20 +47,8 @@ class MainMenuState extends MusicBeatState
 	var camFollowPos:FlxObject;
 	var debugKeys:Array<FlxKey>;
 
-	#if mobile
-	var buttonUP:Button;
-	var buttonDOWN:Button;
-	var buttonENTER:Button;
-	var buttonESC:Button;
-	#end
-
 	override function create()
-	{
-		#if MODS_ALLOWED
-		Paths.pushGlobalMods();
-		#end
-		WeekData.loadTheFirstEnabledMod();
-		
+	{	
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
@@ -153,17 +141,6 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
-		#if mobile
-		buttonUP = new Button(10, 240, 'UP');
-		add(buttonUP);
-		buttonDOWN = new Button(buttonUP.x, buttonUP.y + buttonUP.height + 10, 'DOWN');
-		add(buttonDOWN);
-		buttonENTER = new Button(904, 574, 'ENTER');
-		add(buttonENTER);
-		buttonESC = new Button(buttonENTER.x + buttonENTER.width + 10, buttonENTER.y, 'ESC');
-		add(buttonESC);
-		#end
-
 		super.create();
 	}
 
@@ -191,22 +168,22 @@ class MainMenuState extends MusicBeatState
 
 		if (!selectedSomethin)
 		{
-			if (controls.UI_UP_P || #if mobile buttonUP.justPressed #else FlxG.mouse.wheel > 0 #end)
+			if (controls.UI_UP_P || FlxG.mouse.wheel > 0)
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				changeItem(-1);
 				holdTime = 0;
 			}
 
-			if (controls.UI_DOWN_P || #if mobile buttonDOWN.justPressed #else FlxG.mouse.wheel < 0 #end)
+			if (controls.UI_DOWN_P || FlxG.mouse.wheel < 0)
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				changeItem(1);
 				holdTime = 0;
 			}
 
-			var down = controls.UI_DOWN #if mobile || buttonDOWN.pressed #end;
-			var up = controls.UI_UP #if mobile || buttonUP.pressed #end;
+			var down = controls.UI_DOWN;
+			var up = controls.UI_UP;
 			if (down || up)
 			{
 				var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
@@ -219,14 +196,14 @@ class MainMenuState extends MusicBeatState
 				}
 			}
 
-			if (controls.BACK #if mobile || buttonESC.justPressed #end)
+			if (controls.BACK)
 			{
 				selectedSomethin = true;
 				FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 				MusicBeatState.switchState(new TitleState());
 			}
 
-			if (controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end)
+			if (controls.ACCEPT || FlxG.mouse.justPressed)
 			{
 				if (optionShit[curSelected] == 'donate')
 				{
@@ -259,13 +236,13 @@ class MainMenuState extends MusicBeatState
 
 								switch (daChoice)
 								{
-									case 'story_mode':
+									default:
 										MusicBeatState.switchState(new StoryMenuState());
 									case 'freeplay':
 										MusicBeatState.switchState(new FreeplayState());
-									#if MODS_ALLOWED
-									case 'mods':
-										MusicBeatState.switchState(new ModsMenuState());
+									#if sys
+									case 'pvp':
+										MusicBeatState.switchState(new pvp.PvPCharacterState());
 									#end
 									case 'awards':
 										MusicBeatState.switchState(new AchievementsMenuState());

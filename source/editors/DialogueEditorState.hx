@@ -19,7 +19,7 @@ import openfl.events.IOErrorEvent;
 import flash.net.FileFilter;
 import haxe.Json;
 import DialogueBoxPsych;
-#if MODS_ALLOWED
+#if sys
 import sys.io.File;
 #end
 
@@ -191,7 +191,7 @@ class DialogueEditorState extends MusicBeatState
 
 	function reloadCharacter() {
 		var imagePath = 'dialogue/${character.jsonFile.image}';
-		if (Paths.fileExists('images/$imagePath/Animation.json', TEXT)) {
+		if (Paths.exists('images/$imagePath/Animation.json', TEXT)) {
 			character.frames = AtlasFrameMaker.construct(imagePath);
 		} else {
 			character.frames = Paths.getSparrowAtlas(imagePath);
@@ -373,7 +373,6 @@ class DialogueEditorState extends MusicBeatState
 				reloadText(speedStepper.value);
 			}
 			if (FlxG.keys.justPressed.ESCAPE) {
-				WeekData.loadTheFirstEnabledMod();
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
 				CoolUtil.playMenuMusic();
 				transitioning = true;
@@ -478,7 +477,7 @@ class DialogueEditorState extends MusicBeatState
 		_file.removeEventListener(Event.CANCEL, onLoadCancel);
 		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
 
-		#if MODS_ALLOWED
+		#if sys
 		var fullPath:String = null;
 		@:privateAccess
 		if (_file.__path != null) fullPath = _file.__path;

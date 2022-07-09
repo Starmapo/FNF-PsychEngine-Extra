@@ -1,12 +1,10 @@
 package;
 
+import Note.EventNote;
+import flixel.FlxG;
+import StrumNote.KeyChangeEvent;
+import StrumNote.StrumLine;
 import haxe.Json;
-#if MODS_ALLOWED
-import sys.io.File;
-import sys.FileSystem;
-#else
-import lime.utils.Assets;
-#end
 
 using StringTools;
 
@@ -19,8 +17,8 @@ typedef SwagSong =
 	var timeSignature:Array<Int>;
 	var needsVoices:Bool;
 	var speed:Float;
-	var ?playerKeyAmount:Int;
-	var ?opponentKeyAmount:Int;
+	var ?boyfriendKeyAmount:Int;
+	var ?dadKeyAmount:Int;
 
 	var player1:String;
 	var player2:String;
@@ -46,8 +44,8 @@ typedef SwagSection =
 	var ?changeSignature:Bool;
 	var ?altAnim:Bool;
 	var ?changeKeys:Bool;
-	var ?playerKeys:Int;
-	var ?opponentKeys:Int;
+	var ?boyfriendKeyAmount:Int;
+	var ?dadKeyAmount:Int;
 }
 
 typedef MetaFile = {
@@ -86,10 +84,10 @@ class Song
 			}
 		}
 
-		if (songJson.playerKeyAmount == null)
+		if (songJson.boyfriendKeyAmount == null)
 		{
-			songJson.playerKeyAmount = 4;
-			songJson.opponentKeyAmount = 4;
+			songJson.boyfriendKeyAmount = 4;
+			songJson.dadKeyAmount = 4;
 		}
 		if (songJson.timeSignature == null)
 		{
@@ -116,8 +114,8 @@ class Song
 			if (sec.changeSignature == null) sec.changeSignature = false;
 			if (sec.altAnim == null) sec.altAnim = false;
 			if (sec.changeKeys == null) sec.changeKeys = false;
-			if (sec.playerKeys == null) sec.playerKeys = songJson.playerKeyAmount;
-			if (sec.opponentKeys == null) sec.opponentKeys = songJson.opponentKeyAmount;
+			if (sec.boyfriendKeyAmount == null) sec.boyfriendKeyAmount = songJson.boyfriendKeyAmount;
+			if (sec.dadKeyAmount == null) sec.dadKeyAmount = songJson.dadKeyAmount;
 			var i:Int = 0;
 			var notes = sec.sectionNotes;
 			var len:Int = notes.length;
@@ -144,20 +142,8 @@ class Song
 		
 		var formattedFolder:String = Paths.formatToSongPath(folder);
 		var formattedSong:String = Paths.formatToSongPath(jsonInput);
-		#if MODS_ALLOWED
-		var moddyFile:String = Paths.modsData('$formattedFolder/$formattedSong');
-		if (FileSystem.exists(moddyFile)) {
-			rawJson = File.getContent(moddyFile).trim();
-		}
-		#end
 
-		if (rawJson == null) {
-			#if MODS_ALLOWED
-			rawJson = File.getContent(Paths.json('$formattedFolder/$formattedSong')).trim();
-			#else
-			rawJson = Assets.getText(Paths.json('$formattedFolder/$formattedSong')).trim();
-			#end
-		}
+		rawJson = Paths.getContent(Paths.json('$formattedFolder/$formattedSong')).trim();
 
 		if (rawJson == null) {
 			return null;
@@ -188,31 +174,32 @@ class Song
 				swagShit.gfVersion = tempSong.gf;
 			}
 		}
-		if (swagShit.skinModifier == null) {
-			if (tempSong.ui_Skin != null) {
-				swagShit.skinModifier = tempSong.ui_Skin;
+		if (swagShit.boyfriendKeyAmount == null) {
+			if (tempSong.playerKeyAmount != null) {
+				swagShit.boyfriendKeyAmount = tempSong.playerKeyAmount;
 			}
-		}
-		if (swagShit.playerKeyAmount == null) {
+			if (tempSong.opponentKeyAmount != null) {
+				swagShit.dadKeyAmount = tempSong.opponentKeyAmount;
+			}
 			if (tempSong.mania != null) {
 				switch (tempSong.mania) {
 					case 1:
-						swagShit.playerKeyAmount = 6;
+						swagShit.boyfriendKeyAmount = 6;
 					case 2:
-						swagShit.playerKeyAmount = 7;
+						swagShit.boyfriendKeyAmount = 7;
 					case 3:
-						swagShit.playerKeyAmount = 9;
+						swagShit.boyfriendKeyAmount = 9;
 					default:
-						swagShit.playerKeyAmount = 4;
+						swagShit.boyfriendKeyAmount = 4;
 				}
-				swagShit.opponentKeyAmount = swagShit.playerKeyAmount;
+				swagShit.dadKeyAmount = swagShit.boyfriendKeyAmount;
 			}
 			if (tempSong.keyCount != null) {
-				swagShit.playerKeyAmount = tempSong.keyCount;
-				swagShit.opponentKeyAmount = tempSong.keyCount;
+				swagShit.boyfriendKeyAmount = tempSong.keyCount;
+				swagShit.dadKeyAmount = tempSong.keyCount;
 			}
 			if (tempSong.playerKeyCount != null) {
-				swagShit.playerKeyAmount = tempSong.playerKeyCount;
+				swagShit.boyfriendKeyAmount = tempSong.playerKeyCount;
 			}
 		}
 		if (swagShit.timeSignature == null) {
@@ -229,13 +216,19 @@ class Song
 			var sec = tempSong.notes[i];
 			var numerator:Null<Int> = sec.numerator;
 			var denominator:Null<Int> = sec.denominator;
-			var sectionBeats:Null<Float> = sec.sectionBeats;
 			if (numerator != null && denominator != null) {
 				swagShit.notes[i].timeSignature = [numerator, denominator];
 			}
+			var sectionBeats:Null<Float> = sec.sectionBeats;
 			if (sectionBeats != null) {
 				swagShit.notes[i].timeSignature[0] = Math.round(sectionBeats);
 				swagShit.notes[i].changeSignature = true;
+			}
+			var playerKeys:Null<Int> = sec.playerKeys;
+			var opponentKeys:Null<Int> = sec.opponentKeys;
+			if (playerKeys != null && opponentKeys != null) {
+				swagShit.notes[i].boyfriendKeyAmount = playerKeys;
+				swagShit.notes[i].dadKeyAmount = opponentKeys;
 			}
 		}
 
@@ -243,20 +236,182 @@ class Song
 		return swagShit;
 	}
 
+	public static function generateNotes(song:SwagSong, ?dadStrums:StrumLine, ?boyfriendStrums:StrumLine) {
+		var notes:Array<Note> = [];
+
+		var noteData:Array<SwagSection> = song.notes;
+
+		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
+
+		var curStepCrochet = Conductor.stepCrochet;
+		var curBPM = Conductor.bpm;
+		var curDenominator = Conductor.timeSignature[1];
+		var curPlayerKeys = song.boyfriendKeyAmount;
+		var curOpponentKeys = song.dadKeyAmount;
+		for (curSection in 0...noteData.length)
+		{
+			var section = noteData[curSection];
+			if (section.changeBPM) {
+				curBPM = section.bpm;
+				curStepCrochet = (((60 / curBPM) * 4000) / curDenominator) / 4;
+			}
+			if (section.changeSignature) {
+				curDenominator = section.timeSignature[1];
+				curStepCrochet = (((60 / curBPM) * 4000) / curDenominator) / 4;
+			}
+			if (section.changeKeys) {
+				if (curOpponentKeys != section.dadKeyAmount) {
+					curOpponentKeys = section.dadKeyAmount;
+					if (dadStrums != null) {
+						var event:KeyChangeEvent = {
+							section: curSection,
+							keys: curOpponentKeys 
+						};
+						dadStrums.pushEvent(event);
+					}
+				}
+				if (curPlayerKeys != section.boyfriendKeyAmount) {
+					curPlayerKeys = section.boyfriendKeyAmount;
+					if (boyfriendStrums != null) {
+						var event:KeyChangeEvent = {
+							section: curSection,
+							keys: curPlayerKeys 
+						};
+						boyfriendStrums.pushEvent(event);
+					}
+				}
+			}
+			var leftKeys = (section.mustHitSection ? curPlayerKeys : curOpponentKeys);
+			var rightKeys = (!section.mustHitSection ? curPlayerKeys : curOpponentKeys);
+			for (songNotes in section.sectionNotes)
+			{
+				var daStrumTime:Float = songNotes[0];
+				if (PlayState.instance != null && PlayState.instance.inEditor && daStrumTime < PlayState.instance.startPos) continue;
+				var daNoteData:Int = Std.int(songNotes[1]);
+				if (songNotes[1] >= leftKeys) {
+					daNoteData = Std.int(songNotes[1] - leftKeys);
+				}
+
+				var gottaHitNote:Bool = section.mustHitSection;
+
+				if (songNotes[1] >= leftKeys)
+				{
+					gottaHitNote = !gottaHitNote;
+				}
+				var isOpponent:Bool = !gottaHitNote;
+
+				if (PlayState.instance != null && PlayState.instance.opponentChart) {
+					gottaHitNote = !gottaHitNote;
+				}
+
+				var oldNote:Note;
+				if (notes.length > 0)
+					oldNote = notes[notes.length - 1];
+				else
+					oldNote = null;
+
+				var keys = isOpponent ? curOpponentKeys : curPlayerKeys;
+
+				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys);
+				swagNote.mustPress = gottaHitNote;
+				swagNote.isOpponent = isOpponent;
+				swagNote.sustainLength = songNotes[2];
+				swagNote.gfNote = (section.gfSection && (songNotes[1] < rightKeys));
+				swagNote.characters = songNotes[4];
+				if (songNotes[4] == null) swagNote.characters = [0];
+				swagNote.bpm = curBPM;
+				swagNote.stepCrochet = curStepCrochet;
+				swagNote.noteType = songNotes[3];
+				swagNote.scrollFactor.set();
+				notes.push(swagNote);
+
+				var susLength:Float = swagNote.sustainLength / curStepCrochet;
+				var floorSus:Int = Math.floor(susLength);
+				if (floorSus > 0) {
+					for (susNote in 0...floorSus + 1)
+					{
+						oldNote = notes[notes.length - 1];
+
+						var songSpeed = PlayState.instance != null ? PlayState.instance.songSpeed : 1;
+						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / songSpeed), daNoteData, oldNote, true, false, keys);
+						sustainNote.mustPress = gottaHitNote;
+						sustainNote.isOpponent = isOpponent;
+						sustainNote.gfNote = swagNote.gfNote;
+						sustainNote.characters = songNotes[4];
+						if (songNotes[4] == null) sustainNote.characters = [0];
+						sustainNote.bpm = curBPM;
+						sustainNote.stepCrochet = curStepCrochet;
+						sustainNote.noteType = swagNote.noteType;
+						sustainNote.scrollFactor.set();
+						swagNote.tail.push(sustainNote);
+						sustainNote.parent = swagNote;
+						notes.push(sustainNote);
+
+						if (!sustainNote.isOpponent)
+						{
+							sustainNote.x += FlxG.width / 2; // general offset
+						}
+					}
+				}
+
+				if (!swagNote.isOpponent)
+				{
+					swagNote.x += FlxG.width / 2; // general offset
+				}
+			}
+			daBeats += 1;
+		}
+		trace('dad key change map: ' + dadStrums.keyChangeMap);
+		trace('bf key change map: ' + boyfriendStrums.keyChangeMap);
+		return notes;
+	}
+
+	public static function generateEventNotes(song:SwagSong, ?pushedCallback:EventNote->Void, ?earlyTriggerFunction:EventNote->Float) {
+		var eventNotes:Array<EventNote> = [];
+		var curSong = Paths.formatToSongPath(song.song);
+		if (Paths.exists('data/$curSong/events.json', TEXT)) {
+			var eventsData:Array<Dynamic> = Song.loadFromJson('events', curSong).events;
+			for (event in eventsData) //Event Notes
+			{
+				for (i in 0...event[1].length)
+				{
+					var newEventNote:Array<Dynamic> = [event[0], event[1][i][0], event[1][i][1], event[1][i][2]];
+					var subEvent:EventNote = {
+						strumTime: newEventNote[0] + ClientPrefs.noteOffset,
+						event: newEventNote[1],
+						value1: newEventNote[2],
+						value2: newEventNote[3]
+					};
+					if (earlyTriggerFunction != null) subEvent.strumTime -= earlyTriggerFunction(subEvent);
+					eventNotes.push(subEvent);
+					if (pushedCallback != null) pushedCallback(subEvent);
+				}
+			}
+		}
+		for (event in song.events) //Event Notes
+		{
+			for (i in 0...event[1].length)
+			{
+				var newEventNote:Array<Dynamic> = [event[0], event[1][i][0], event[1][i][1], event[1][i][2]];
+				var subEvent:EventNote = {
+					strumTime: newEventNote[0] + ClientPrefs.noteOffset,
+					event: newEventNote[1],
+					value1: newEventNote[2],
+					value2: newEventNote[3]
+				};
+				if (earlyTriggerFunction != null) subEvent.strumTime -= earlyTriggerFunction(subEvent);
+				eventNotes.push(subEvent);
+				if (pushedCallback != null) pushedCallback(subEvent);
+			}
+		}
+		return eventNotes;
+	}
+
 	public static function getMetaFile(name:String):MetaFile {
 		name = Paths.formatToSongPath(name);
 		var characterPath:String = 'data/$name/meta.json';
-		#if MODS_ALLOWED
-		var path:String = Paths.modFolders(characterPath);
-		if (!FileSystem.exists(path)) {
-			path = Paths.getPreloadPath(characterPath);
-		}
-
-		if (!FileSystem.exists(path))
-		#else
 		var path:String = Paths.getPreloadPath(characterPath);
-		if (!Assets.exists(path))
-		#end
+		if (!Paths.exists(path))
 		{
 			var meta:MetaFile = {
 				displayName: null,
@@ -266,11 +421,7 @@ class Song
 			return meta;
 		}
 
-		#if MODS_ALLOWED
-		var rawJson = File.getContent(path);
-		#else
-		var rawJson = Assets.getText(path);
-		#end
+		var rawJson = Paths.getContent(path);
 
 		if (rawJson == null) {
 			return null;

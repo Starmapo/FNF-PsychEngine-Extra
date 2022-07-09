@@ -9,11 +9,11 @@ class NoteSplash extends FlxSprite
 {
 	public var colorSwap:ColorSwap = null;
 	private var idleAnim:String;
-	private var textureLoaded:String = null;
 
 	var daNote:Note = null;
 	var colors:Array<String>;
 	public var alphaMult:Float = 0.6;
+	public var skinModifier:String = '';
 
 	public function new(x:Float = 0, y:Float = 0, ?note:Note = null) {
 		super(x, y);
@@ -43,9 +43,7 @@ class NoteSplash extends FlxSprite
 			if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) texture = PlayState.SONG.splashSkin;
 		}
 
-		if(textureLoaded != texture) {
-			loadAnims(texture);
-		}
+		loadAnims(texture);
 		colorSwap.hue = hueColor;
 		colorSwap.saturation = satColor;
 		colorSwap.brightness = brtColor;
@@ -71,10 +69,19 @@ class NoteSplash extends FlxSprite
 			frames = Paths.getSparrowAtlas('noteskins/default/base/noteSplashes');
 			animation.addByPrefix("note0-1", "note splash left 1", 24, false);
 		} else {
-			var image = SkinData.getNoteFile(skin, PlayState.SONG.skinModifier, ClientPrefs.noteSkin);
+			if (skinModifier.length < 1) {
+				skinModifier = 'base';
+				if (PlayState.SONG != null)
+					skinModifier = PlayState.SONG.skinModifier;
+			}
+			var image = SkinData.getNoteFile(skin, skinModifier);
 			frames = Paths.getSparrowAtlas(image);
 			for (i in 1...3) {
 				animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${colors[daNote.noteData]} ${i}0', 24, false);
+
+				if (animation.getByName('note${daNote.noteData}-$i') == null) {
+					animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${i}0', 24, false);
+				}
 			}
 			if (animation.getByName('note${daNote.noteData}-1') == null) {
 				for (i in 1...3) {
@@ -84,7 +91,7 @@ class NoteSplash extends FlxSprite
 					animation.addByPrefix('note3-$i', 'note splash red ${i}0', 24, false);
 				}
 			}
-			antialiasing = ClientPrefs.globalAntialiasing && !PlayState.SONG.skinModifier.endsWith('pixel');
+			antialiasing = ClientPrefs.globalAntialiasing && !skinModifier.endsWith('pixel');
 		}
 	}
 

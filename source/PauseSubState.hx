@@ -28,13 +28,6 @@ class PauseSubState extends MusicBeatSubState
 	var skipTimeTracker:Alphabet;
 	var curTime:Float = Math.max(0, Conductor.songPosition);
 
-	#if mobile
-	var buttonUP:Button;
-	var buttonDOWN:Button;
-	var buttonENTER:Button;
-	var buttonESC:Button;
-	#end
-
 	public function new(playSound:Bool = true)
 	{
 		super();
@@ -138,15 +131,6 @@ class PauseSubState extends MusicBeatSubState
 		FlxTween.tween(levelDifficulty, {alpha: 1, y: levelDifficulty.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.5});
 		FlxTween.tween(blueballedTxt, {alpha: 1, y: blueballedTxt.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.7});
 
-		#if mobile
-		buttonUP = new Button(10, 240, 'UP');
-		add(buttonUP);
-		buttonDOWN = new Button(buttonUP.x, buttonUP.y + buttonUP.height + 10, 'DOWN');
-		add(buttonDOWN);
-		buttonENTER = new Button(1044, 574, 'ENTER');
-		add(buttonENTER);
-		#end
-
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 	}
 
@@ -161,9 +145,9 @@ class PauseSubState extends MusicBeatSubState
 		super.update(elapsed);
 		updateSkipTextStuff();
 
-		var upP = controls.UI_UP_P || #if mobile buttonUP.justPressed #else FlxG.mouse.wheel > 0 #end;
-		var downP = controls.UI_DOWN_P || #if mobile buttonDOWN.justPressed #else FlxG.mouse.wheel < 0 #end;
-		var accepted = controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end;
+		var upP = controls.UI_UP_P || FlxG.mouse.wheel > 0;
+		var downP = controls.UI_DOWN_P || FlxG.mouse.wheel < 0;
+		var accepted = controls.ACCEPT || FlxG.mouse.justPressed;
 
 		if (upP)
 		{
@@ -176,8 +160,8 @@ class PauseSubState extends MusicBeatSubState
 			holdTime = 0;
 		}
 		
-		var down = controls.UI_DOWN #if mobile || buttonDOWN.pressed #end;
-		var up = controls.UI_UP #if mobile || buttonUP.pressed #end;
+		var down = controls.UI_DOWN;
+		var up = controls.UI_UP;
 		if (down || up)
 		{
 			var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
@@ -228,7 +212,7 @@ class PauseSubState extends MusicBeatSubState
 				if(menuItems.length - 1 != curSelected && difficultyChoices.contains(daSelected)) {
 					var actualDiff = CoolUtil.difficulties.indexOf(daSelected);
 					var name:String = PlayState.SONG.song;
-					var poop = Highscore.formatSong(name, actualDiff, false);
+					var poop = Highscore.formatSong(name, actualDiff);
 					PlayState.SONG = Song.loadFromJson(poop, name);
 					PlayState.storyDifficulty = actualDiff;
 					LoadingState.loadAndResetState();
@@ -296,7 +280,6 @@ class PauseSubState extends MusicBeatSubState
 					PlayState.deathCounter = 0;
 					PlayState.seenCutscene = false;
 
-					WeekData.loadTheFirstEnabledMod();
 					if (PlayState.isStoryMode) {
 						MusicBeatState.switchState(new StoryMenuState());
 					} else {

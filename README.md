@@ -98,16 +98,3 @@ For Linux, you only need to open a terminal in the project directory and run `li
 To build for 32-bit, add `-32 -D 32bits` to the `lime test` command:
 
 `lime test windows -32 -D 32bits`
-
-#### Android
-(NOTE: Android support is currently experimental and has not been tested on an actual device yet)
-
-All credit to the [Funkin-android repository](https://github.com/luckydog7/Funkin-android) for the entire tutorial.
-
-1. Download [Android Studio](https://developer.android.com/studio), the [Java Development Kit](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html), and the [Android NDK (r15c)](https://github.com/android/ndk/wiki/Unsupported-Downloads#r15c). Install Android Studio and the JDK, and unzip the Android NDK somewhere in your computer.
-
-2. In Android Studio, go to Settings -> Appearance & Behavior -> System Settings -> Android SDK. Install Android 4.4 (KitKat), Android SDK Build-Tools, and Android SDK Platform-Tools.
-
-3. In the Command Prompt (or the Terminal), run `lime setup android`. Insert the corresponding file paths. Your Android SDK should be located in `C:\Users\*username*\AppData\Local\Android\Sdk`, and your Java JDK in `C:\Program Files\Java\jdk1.8.0_331`.
-
-4. Run `lime build android -debug` (remove "-debug" for official releases) to build the APK. The APK will be located inside your source code directory in `export\(debug or release)\android\bin\app\build\outputs\apk`. If you have a device emulator running in Android Studio, you can instead do `lime test android` to open it in the emulator.

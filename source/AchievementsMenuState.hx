@@ -21,12 +21,6 @@ class AchievementsMenuState extends MusicBeatState
 	private var achievementArray:Array<AttachedAchievement> = [];
 	private var descText:FlxText;
 
-	#if mobile
-	var buttonUP:Button;
-	var buttonDOWN:Button;
-	var buttonESC:Button;
-	#end
-
 	override function create() {
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("Achievements Menu", null);
@@ -71,16 +65,6 @@ class AchievementsMenuState extends MusicBeatState
 		add(descText);
 		changeSelection();
 
-		#if mobile
-		buttonUP = new Button(10, 130, 'UP');
-		buttonDOWN = new Button(buttonUP.x, buttonUP.y + buttonUP.height + 10, 'DOWN');
-		buttonESC = new Button(1134, 564, 'ESC');
-
-		add(buttonUP);
-		add(buttonDOWN);
-		add(buttonESC);
-		#end
-
 		super.create();
 	}
 
@@ -88,16 +72,16 @@ class AchievementsMenuState extends MusicBeatState
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (controls.UI_UP_P || #if mobile buttonUP.justPressed #else FlxG.mouse.wheel > 0 #end) {
+		if (controls.UI_UP_P || FlxG.mouse.wheel > 0) {
 			changeSelection(-1);
 			holdTime = 0;
 		}
-		if (controls.UI_DOWN_P || #if mobile buttonDOWN.justPressed #else FlxG.mouse.wheel < 0 #end) {
+		if (controls.UI_DOWN_P || FlxG.mouse.wheel < 0) {
 			changeSelection(1);
 			holdTime = 0;
 		}
-		var down = controls.UI_DOWN #if mobile || buttonDOWN.pressed #end;
-		var up = controls.UI_UP #if mobile || buttonUP.pressed #end;
+		var down = controls.UI_DOWN;
+		var up = controls.UI_UP;
 		if (down || up)
 		{
 			var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
@@ -110,7 +94,7 @@ class AchievementsMenuState extends MusicBeatState
 			}
 		}
 
-		if (controls.BACK #if mobile || buttonESC.justPressed #end) {
+		if (controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 			MusicBeatState.switchState(new MainMenuState());
 		}

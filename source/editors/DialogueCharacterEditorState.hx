@@ -22,7 +22,7 @@ import haxe.Json;
 import DialogueBoxPsych;
 import flixel.FlxCamera;
 import flixel.group.FlxSpriteGroup;
-#if MODS_ALLOWED
+#if sys
 import sys.io.File;
 #end
 
@@ -373,7 +373,6 @@ class DialogueCharacterEditorState extends MusicBeatState
 		tab_group.add(noAntialiasingCheckbox);
 
 		var reloadImageButton:FlxButton = new FlxButton(10, scaleStepper.y + 60, "Reload Image", function() {
-			AtlasFrameMaker.clearCache();
 			reloadCharacter();
 		});
 		
@@ -424,7 +423,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 		var charsArray:Array<DialogueCharacter> = [character, ghostLoop, ghostIdle];
 		for (char in charsArray) {
 			var imagePath = 'dialogue/${character.jsonFile.image}';
-			if (Paths.fileExists('images/$imagePath/Animation.json', TEXT)) {
+			if (Paths.exists('images/$imagePath/Animation.json', TEXT)) {
 				char.frames = AtlasFrameMaker.construct(imagePath);
 			} else {
 				char.frames = Paths.getSparrowAtlas(imagePath);
@@ -699,7 +698,6 @@ class DialogueCharacterEditorState extends MusicBeatState
 			}
 
 			if (FlxG.keys.justPressed.ESCAPE) {
-				WeekData.loadTheFirstEnabledMod();
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
 				CoolUtil.playMenuMusic();
 				transitioning = true;
@@ -729,7 +727,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 		_file.removeEventListener(Event.CANCEL, onLoadCancel);
 		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
 
-		#if MODS_ALLOWED
+		#if sys
 		var fullPath:String = null;
 		@:privateAccess
 		if (_file.__path != null) fullPath = _file.__path;
@@ -740,7 +738,6 @@ class DialogueCharacterEditorState extends MusicBeatState
 				var loadedChar:DialogueCharacterFile = cast Json.parse(rawJson);
 				if (loadedChar.dialogue_pos != null) //Make sure it's really a dialogue character
 				{
-					AtlasFrameMaker.clearCache();
 					var cutName:String = _file.name.substr(0, _file.name.length - 5);
 					trace('Successfully loaded file: $cutName');
 					character.jsonFile = loadedChar;

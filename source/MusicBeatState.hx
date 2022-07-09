@@ -46,10 +46,7 @@ class MusicBeatState extends FlxUIState
 
 			if(PlayState.SONG != null)
 			{
-				if (oldStep < curStep)
-					updateSection();
-				else
-					rollbackSection();
+				updateSection();
 			}
 		}
 
@@ -59,24 +56,6 @@ class MusicBeatState extends FlxUIState
 	}
 
 	private function updateSection():Void
-	{
-		if (PlayState.SONG.notes[curSection] != null) {
-			if(stepsToDo < 1) stepsToDo = PlayState.SONG.notes[curSection].lengthInSteps;
-			while(curStep >= stepsToDo)
-			{
-				curSection++;
-				if (PlayState.SONG.notes[curSection] != null) {
-					stepsToDo += PlayState.SONG.notes[curSection].lengthInSteps;
-					sectionHit();
-				} else {
-					stepsToDo += PlayState.SONG.timeSignature[0] * 4;
-					sectionHit();
-				}
-			}
-		}
-	}
-
-	private function rollbackSection():Void
 	{
 		if(curStep < 0) return;
 

@@ -18,13 +18,6 @@ class ResetScoreSubState extends MusicBeatSubState
 	var week:String;
 	var displayName:String;
 
-	#if mobile
-	var buttonLEFT:Button;
-	var buttonRIGHT:Button;
-	var buttonENTER:Button;
-	var buttonESC:Button;
-	#end
-
 	// Week '' = Freeplay
 	public function new(song:String, difficulty:Int, character:String, week:String = '', displayName:String)
 	{
@@ -76,17 +69,6 @@ class ResetScoreSubState extends MusicBeatSubState
 		noText.x += 200;
 		add(noText);
 		updateOptions();
-
-		#if mobile
-		buttonENTER = new Button(573, 564, 'ENTER');
-		add(buttonENTER);
-		buttonLEFT = new Button(buttonENTER.x - buttonENTER.width - 10, buttonENTER.y, 'LEFT');
-		add(buttonLEFT);
-		buttonRIGHT = new Button(buttonENTER.x + buttonENTER.width + 10, buttonENTER.y, 'RIGHT');
-		add(buttonRIGHT);
-		buttonESC = new Button(10, buttonENTER.y, 'ESC');
-		add(buttonESC);
-		#end
 	}
 
 	override function update(elapsed:Float)
@@ -100,15 +82,15 @@ class ResetScoreSubState extends MusicBeatSubState
 		}
 		if (week.length < 1) icon.alpha += elapsed * 2.5;
 
-		if (controls.UI_LEFT_P || controls.UI_RIGHT_P || #if mobile buttonLEFT.justPressed || buttonRIGHT.justPressed #else FlxG.mouse.wheel != 0 #end) {
+		if (controls.UI_LEFT_P || controls.UI_RIGHT_P || FlxG.mouse.wheel != 0) {
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 			onYes = !onYes;
 			updateOptions();
 		}
-		if (controls.BACK #if mobile || buttonESC.justPressed #end) {
+		if (controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 			close();
-		} else if (controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end) {
+		} else if (controls.ACCEPT || FlxG.mouse.justPressed) {
 			if (onYes) {
 				if (week.length < 1) {
 					Highscore.resetSong(song, difficulty);

@@ -30,7 +30,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'timeBarType',
 			'string',
 			'Time Left',
-			['Time Left', 'Time Elapsed', 'Song Name', 'Disabled']);
+			['Time Left', 'Time Elapsed', 'Song Name', 'Percentage Passed', 'Disabled']);
 		addOption(option);
 
 		var option:Option = new Option('Flashing Lights',

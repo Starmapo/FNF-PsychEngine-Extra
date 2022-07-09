@@ -13,18 +13,11 @@ using StringTools;
 
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Note Colors', #if !mobile 'Controls', #end 'Adjust Delay and Combo', 'Graphics', 'Visuals and UI', 'Gameplay', 'Save Data'];
+	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Visuals and UI', 'Gameplay', 'Save Data'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
 	static var goToPlayState:Bool = false;
-
-	#if mobile
-	var buttonUP:Button;
-	var buttonDOWN:Button;
-	var buttonENTER:Button;
-	var buttonESC:Button;
-	#end
 
 	public function new(?goToPlayState:Bool)
 	{
@@ -60,9 +53,7 @@ class OptionsState extends MusicBeatState
 		DiscordClient.changePresence("Options Menu", null);
 		#end
 
-		#if !mobile
 		FlxG.mouse.visible = true;
-		#end
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xFFea71fd;
@@ -89,17 +80,6 @@ class OptionsState extends MusicBeatState
 		changeSelection();
 		ClientPrefs.saveSettings();
 
-		#if mobile
-		buttonUP = new Button(10, 240, 'UP');
-		add(buttonUP);
-		buttonDOWN = new Button(buttonUP.x, buttonUP.y + buttonUP.height + 10, 'DOWN');
-		add(buttonDOWN);
-		buttonENTER = new Button(904, 574, 'ENTER');
-		add(buttonENTER);
-		buttonESC = new Button(buttonENTER.x + buttonENTER.width + 10, buttonENTER.y, 'ESC');
-		add(buttonESC);
-		#end
-
 		super.create();
 	}
 
@@ -120,16 +100,16 @@ class OptionsState extends MusicBeatState
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (controls.UI_UP_P || #if mobile buttonUP.justPressed #else FlxG.mouse.wheel > 0 #end) {
+		if (controls.UI_UP_P || FlxG.mouse.wheel > 0) {
 			changeSelection(-1);
 			holdTime = 0;
 		}
-		if (controls.UI_DOWN_P || #if mobile buttonDOWN.justPressed #else FlxG.mouse.wheel < 0 #end) {
+		if (controls.UI_DOWN_P || FlxG.mouse.wheel < 0) {
 			changeSelection(1);
 			holdTime = 0;
 		}
-		var down = controls.UI_DOWN #if mobile || buttonDOWN.pressed #end;
-		var up = controls.UI_UP #if mobile || buttonUP.pressed #end;
+		var down = controls.UI_DOWN;
+		var up = controls.UI_UP;
 		if (down || up)
 		{
 			var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
@@ -142,7 +122,7 @@ class OptionsState extends MusicBeatState
 			}
 		}
 
-		if (controls.BACK #if mobile || buttonESC.justPressed #end) {
+		if (controls.BACK) {
 			FlxG.mouse.visible = false;
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 			if (goToPlayState) {
@@ -154,7 +134,7 @@ class OptionsState extends MusicBeatState
 			}
 		}
 
-		if (controls.ACCEPT || #if mobile buttonENTER.justPressed #else FlxG.mouse.justPressed #end) {
+		if (controls.ACCEPT || FlxG.mouse.justPressed) {
 			openSelectedSubState(options[curSelected]);
 		}
 	}

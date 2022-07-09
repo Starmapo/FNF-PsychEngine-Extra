@@ -26,7 +26,7 @@ import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.FileReference;
 import Character;
-#if MODS_ALLOWED
+#if sys
 import sys.FileSystem;
 #end
 
@@ -104,7 +104,7 @@ class CharacterEditorState extends MusicBeatState
 
 		loadChar(!daAnim.startsWith('bf'), false);
 
-		healthBarBG = new FlxSprite(30, FlxG.height - 75).loadGraphic(Paths.image('uiskins/default/healthBar'));
+		healthBarBG = new FlxSprite(30, FlxG.height - 75).loadGraphic(Paths.image('uiskins/default/base/healthBar'));
 		healthBarBG.scrollFactor.set();
 		add(healthBarBG);
 		healthBarBG.cameras = [camHUD];
@@ -435,6 +435,7 @@ class CharacterEditorState extends MusicBeatState
 
 	var flipXCheckBox:FlxUICheckBox;
 	var noAntialiasingCheckBox:FlxUICheckBox;
+	var repeatHoldAnimationCheckBox:FlxUICheckBox;
 
 	var healthColorStepperR:FlxUINumericStepper;
 	var healthColorStepperG:FlxUINumericStepper;
@@ -447,7 +448,6 @@ class CharacterEditorState extends MusicBeatState
 		imageInputText = new FlxUIInputText(15, 30, 200, 'characters/BOYFRIEND', 8);
 		var reloadImage:FlxButton = new FlxButton(imageInputText.x + 210, imageInputText.y - 3, "Reload Image", function()
 		{
-			AtlasFrameMaker.clearCache();
 			char.imageFile = imageInputText.text;
 			reloadCharacterImage();
 			if (char.animation.curAnim != null) {
@@ -481,7 +481,7 @@ class CharacterEditorState extends MusicBeatState
 			ghostChar.flipX = char.flipX;
 		};
 
-		noAntialiasingCheckBox = new FlxUICheckBox(flipXCheckBox.x, flipXCheckBox.y + 40, null, null, "No Antialiasing", 80);
+		noAntialiasingCheckBox = new FlxUICheckBox(flipXCheckBox.x, flipXCheckBox.y + 20, null, null, "No Antialiasing", 80);
 		noAntialiasingCheckBox.checked = char.noAntialiasing;
 		noAntialiasingCheckBox.callback = function() {
 			char.antialiasing = false;
@@ -490,6 +490,13 @@ class CharacterEditorState extends MusicBeatState
 			}
 			char.noAntialiasing = noAntialiasingCheckBox.checked;
 			ghostChar.antialiasing = char.antialiasing;
+		};
+
+		repeatHoldAnimationCheckBox = new FlxUICheckBox(noAntialiasingCheckBox.x, noAntialiasingCheckBox.y + 20, null, null, "Repeat Animation on Hold Notes", 80);
+		repeatHoldAnimationCheckBox.checked = char.repeatHoldAnimation;
+		repeatHoldAnimationCheckBox.callback = function() {
+			char.repeatHoldAnimation = repeatHoldAnimationCheckBox.checked;
+			ghostChar.repeatHoldAnimation = char.repeatHoldAnimation;
 		};
 
 		positionXStepper = new FlxUINumericStepper(flipXCheckBox.x + 110, flipXCheckBox.y, 10, char.positionArray[0], -9000, 9000, 0);
@@ -512,7 +519,7 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.add(new FlxText(15, scaleStepper.y - 18, 0, 'Scale:'));
 		tab_group.add(new FlxText(positionXStepper.x, positionXStepper.y - 18, 0, 'Character X/Y:'));
 		tab_group.add(new FlxText(positionCameraXStepper.x, positionCameraXStepper.y - 18, 0, 'Camera X/Y:'));
-		tab_group.add(new FlxText(healthColorStepperR.x, healthColorStepperR.y - 18, 0, 'Health bar R/G/B:'));
+		tab_group.add(new FlxText(healthColorStepperR.x, healthColorStepperR.y + 18, 0, 'Health bar R/G/B:'));
 		tab_group.add(imageInputText);
 		tab_group.add(reloadImage);
 		tab_group.add(decideIconColor);
@@ -521,6 +528,7 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.add(scaleStepper);
 		tab_group.add(flipXCheckBox);
 		tab_group.add(noAntialiasingCheckBox);
+		tab_group.add(repeatHoldAnimationCheckBox);
 		tab_group.add(positionXStepper);
 		tab_group.add(positionYStepper);
 		tab_group.add(positionCameraXStepper);
@@ -762,11 +770,11 @@ class CharacterEditorState extends MusicBeatState
 			lastAnim = char.animation.curAnim.name;
 		}
 
-		if (Paths.fileExists('images/${char.imageFile}/Animation.json', TEXT)) {
+		if (Paths.exists('images/${char.imageFile}/Animation.json', TEXT)) {
 			char.frames = AtlasFrameMaker.construct(char.imageFile);
-		} else if (Paths.fileExists('images/${char.imageFile}.txt', TEXT)) {
+		} else if (Paths.exists('images/${char.imageFile}.txt', TEXT)) {
 			char.frames = Paths.getPackerAtlas(char.imageFile);
-		} else if (Paths.fileExists('images/${char.imageFile}.json', TEXT)) {
+		} else if (Paths.exists('images/${char.imageFile}.json', TEXT)) {
 			char.frames = Paths.getTexturePackerAtlas(char.imageFile);
 		} else {
 			char.frames = Paths.getSparrowAtlas(char.imageFile);
@@ -837,7 +845,6 @@ class CharacterEditorState extends MusicBeatState
 	}
 
 	function loadChar(isDad:Bool, blahBlahBlah:Bool = true) {
-		AtlasFrameMaker.clearCache();
 		var i:Int = charLayer.members.length - 1;
 		while(i >= 0) {
 			var memb:Character = charLayer.members[i];
@@ -930,6 +937,7 @@ class CharacterEditorState extends MusicBeatState
 			scaleStepper.value = char.jsonScale;
 			flipXCheckBox.checked = char.originalFlipX;
 			noAntialiasingCheckBox.checked = char.noAntialiasing;
+			repeatHoldAnimationCheckBox.checked = char.repeatHoldAnimation;
 			resetHealthBarColor();
 			leHealthIcon.changeIcon(healthIconInputText.text);
 			positionXStepper.value = char.positionArray[0];
@@ -987,11 +995,9 @@ class CharacterEditorState extends MusicBeatState
 	function reloadCharacterDropDown() {
 		var charsLoaded:Map<String, Bool> = new Map();
 
-		#if MODS_ALLOWED
+		#if sys
 		characterList = [];
-		var directories:Array<String> = [Paths.mods('${Paths.currentModDirectory}/characters/'), Paths.mods('characters/'), Paths.getPreloadPath('characters/')];
-		for(mod in Paths.getGlobalMods())
-			directories.push(Paths.mods(mod + '/characters/'));
+		var directories:Array<String> = [Paths.getPreloadPath('characters/')];
 		for (i in 0...directories.length) {
 			var directory:String = directories[i];
 			if (FileSystem.exists(directory)) {
@@ -1032,6 +1038,7 @@ class CharacterEditorState extends MusicBeatState
 		#end
 	}
 
+	var holdTime:Float = 0;
 	override function update(elapsed:Float)
 	{
 		if (char.animationsArray[curAnim] != null) {
@@ -1087,7 +1094,6 @@ class CharacterEditorState extends MusicBeatState
 				if (goToPlayState) {
 					MusicBeatState.switchState(new PlayState());
 				} else {
-					WeekData.loadTheFirstEnabledMod();
 					MusicBeatState.switchState(new editors.MasterEditorMenu());
 					CoolUtil.playMenuMusic();
 				}
@@ -1189,6 +1195,41 @@ class CharacterEditorState extends MusicBeatState
 							ghostChar.playAnim(char.animation.curAnim.name, false);
 						}
 						genBoyOffsets();
+						holdTime = 0;
+					}
+				}
+
+				controlArray = [FlxG.keys.pressed.LEFT, FlxG.keys.pressed.RIGHT, FlxG.keys.pressed.UP, FlxG.keys.pressed.DOWN];
+				
+				if (controlArray.contains(true)) {
+					var checkLastHold:Int = Math.floor((holdTime - 0.5) * 40);
+					holdTime += elapsed;
+					var checkNewHold:Int = Math.floor((holdTime - 0.5) * 40);
+					
+					if (holdTime > 0.5 && checkNewHold - checkLastHold > 0) {
+						for (i in 0...controlArray.length) {
+							if (controlArray[i]) {
+								var holdShift = FlxG.keys.pressed.SHIFT;
+								var multiplier = 1;
+								if (holdShift)
+									multiplier = 10;
+		
+								var arrayVal = 0;
+								if (i > 1) arrayVal = 1;
+		
+								var negaMult:Int = 1;
+								if (i % 2 == 1) negaMult = -1;
+								char.animationsArray[curAnim].offsets[arrayVal] += negaMult * multiplier;
+								char.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets[0], char.animationsArray[curAnim].offsets[1]);
+								ghostChar.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets[0], char.animationsArray[curAnim].offsets[1]);
+								
+								char.playAnim(char.animationsArray[curAnim].anim, false);
+								if (ghostChar.animation.curAnim != null && char.animation.curAnim != null && char.animation.curAnim.name == ghostChar.animation.curAnim.name) {
+									ghostChar.playAnim(char.animation.curAnim.name, false);
+								}
+								genBoyOffsets();
+							}
+						}
 					}
 				}
 			}
@@ -1244,7 +1285,9 @@ class CharacterEditorState extends MusicBeatState
 		
 			"flip_x": char.originalFlipX,
 			"no_antialiasing": char.noAntialiasing,
-			"healthbar_colors": char.healthColorArray
+			"healthbar_colors": char.healthColorArray,
+
+			"repeatHoldAnimation": char.repeatHoldAnimation
 		};
 
 		var data:String = Json.stringify(json, "\t");

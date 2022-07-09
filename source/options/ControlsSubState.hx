@@ -1,5 +1,6 @@
 package options;
 
+import StrumNote.StrumLine;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -43,21 +44,7 @@ class ControlsSubState extends MusicBeatSubState {
 		['Key 2', 'debug_2']
 	];
 
-	var keyTexts:Array<Array<String>> = [
-		['1K'],
-		['2K'],
-		['3K'],
-		['4K'],
-		['5K'],
-		['6K'],
-		['7K'],
-		['8K'],
-		['9K'],
-		['10K'],
-		['11K'],
-		['12K'],
-		['13K']
-	];
+	var keyTexts:Array<Array<String>> = [];
 
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private var grpInputs:Array<AttachedText> = [];
@@ -67,6 +54,10 @@ class ControlsSubState extends MusicBeatSubState {
 
 	public function new() {
 		super();
+		
+		for (i in 1...Note.MAX_KEYS + 1) {
+			keyTexts.push(['${i}K']);
+		}
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xFFea71fd;
@@ -390,10 +381,10 @@ class NoteBindingSubState extends MusicBeatSubState {
 	var curSelected:Int = 0;
 	var curAlt:Bool = false;
 	var keys:Int = 4;
-	var strumGroup:FlxTypedGroup<StrumNote> = new FlxTypedGroup();
+	var strumGroup:StrumLine;
 	var bgTween:FlxTween;
-	var text1:Alphabet;
-	var text2:Alphabet;
+	var text1:FlxText;
+	var text2:FlxText;
 	var rebindingKey:Bool = false;
 	var nextAccept:Int = 5;
 	private var keysArray:Array<Array<FlxKey>>;
@@ -409,17 +400,23 @@ class NoteBindingSubState extends MusicBeatSubState {
 		bg.scrollFactor.set();
 		add(bg);
 
-		for (i in 0...keys) {
-			var babyArrow:StrumNote = new StrumNote(PlayState.STRUM_X_MIDDLESCROLL, 0, i, 1, keys);
-			babyArrow.screenCenter(Y);
-			strumGroup.add(babyArrow);
-			babyArrow.postAddedToGroup();
-		}
+		strumGroup = new StrumLine(320, 0, keys);
+		strumGroup.receptors.forEach(function (spr:StrumNote) {
+			spr.screenCenter(Y);
+		});
 		add(strumGroup);
 
-		text1 = new Alphabet(0, 450, '', true);
+		text1 = new FlxText(0, 450, FlxG.width - 800, '', 32);
+		text1.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		text1.screenCenter(X);
+		text1.scrollFactor.set();
+		text1.borderSize = 1.25;
 		add(text1);
-		text2 = new Alphabet(0, 550, '', true);
+		text2 = new FlxText(0, 550, FlxG.width - 800, '', 32);
+		text2.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		text2.screenCenter(X);
+		text2.scrollFactor.set();
+		text2.borderSize = 1.25;
 		text2.alpha = 0.6;
 		add(text2);
 
@@ -496,7 +493,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 					text1.visible = false;
 					text2.visible = false;
 					testTxt.text = 'Press "1" to switch to keybind changing';
-					for (i in strumGroup) {
+					for (i in strumGroup.receptors) {
 						i.alpha = 1;
 					}
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
@@ -509,7 +506,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 				if (controlArray.contains(true)) {
 					for (i in 0...controlArray.length) {
 						if (controlArray[i]) {
-							strumGroup.members[i].playAnim('pressed');
+							strumGroup.receptors.members[i].playAnim('pressed');
 						}
 					}
 				}
@@ -521,7 +518,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 				if (controlReleaseArray.contains(true)) {
 					for (i in 0...controlReleaseArray.length) {
 						if (controlReleaseArray[i]) {
-							strumGroup.members[i].playAnim('static');
+							strumGroup.receptors.members[i].playAnim('static');
 						}
 					}
 				}
@@ -590,11 +587,11 @@ class NoteBindingSubState extends MusicBeatSubState {
 		if (curSelected >= keys)
 			curSelected = 0;
 
-		for (i in 0...strumGroup.length) {
+		for (i in 0...strumGroup.receptors.length) {
 			if (i == curSelected) {
-				strumGroup.members[i].alpha = 1;
+				strumGroup.receptors.members[i].alpha = 1;
 			} else {
-				strumGroup.members[i].alpha = 0.6;
+				strumGroup.receptors.members[i].alpha = 0.6;
 			}
 		}
 
@@ -622,10 +619,8 @@ class NoteBindingSubState extends MusicBeatSubState {
 		}
 
 		var keys = ClientPrefs.keyBinds.get(getKeybindName());
-		text1.changeText(InputFormatter.getKeyName(keys[0]));
-		text1.screenCenter(X);
-		text2.changeText(InputFormatter.getKeyName(keys[1]));
-		text2.screenCenter(X);
+		text1.text = InputFormatter.getKeyName(keys[0]);
+		text2.text = InputFormatter.getKeyName(keys[1]);
 
 		text1.alpha = curAlt ? 0.6 : 1;
 		text2.alpha = !curAlt ? 0.6 : 1;

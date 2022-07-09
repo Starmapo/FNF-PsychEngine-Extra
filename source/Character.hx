@@ -6,12 +6,6 @@ import flixel.FlxSprite;
 import flixel.input.keyboard.FlxKey;
 import flixel.tweens.FlxTween;
 import haxe.Json;
-#if MODS_ALLOWED
-import sys.io.File;
-import sys.FileSystem;
-#else
-import openfl.utils.Assets;
-#end
 
 using StringTools;
 
@@ -28,6 +22,8 @@ typedef CharacterFile = {
 	var flip_x:Bool;
 	var no_antialiasing:Bool;
 	var healthbar_colors:Array<Int>;
+
+	var ?repeatHoldAnimation:Bool;
 }
 
 typedef AnimArray = {
@@ -71,6 +67,7 @@ class Character extends FlxSprite
 	public var danceIdle:Bool = false; //Character use "danceLeft" and "danceRight" instead of "idle"
 	public var danceEveryNumBeats:Float = 2;
 	public var keysPressed:Array<FlxKey> = [];
+	public var repeatHoldAnimation:Bool = true;
 
 	public var skipDance:Bool = false;
 
@@ -107,16 +104,17 @@ class Character extends FlxSprite
 
 			default:
 				var json:CharacterFile = getFile(curCharacter);
+				if (json.repeatHoldAnimation == null) json.repeatHoldAnimation = true;
 
-				if (Paths.fileExists('images/${json.image}.txt', TEXT))
+				if (Paths.exists('images/${json.image}.txt', TEXT))
 				{
 					frames = Paths.getPackerAtlas(json.image);
 				}
-				else if (Paths.fileExists('images/${json.image}.json', TEXT))
+				else if (Paths.exists('images/${json.image}.json', TEXT))
 				{
 					frames = Paths.getTexturePackerAtlas(json.image);
 				}
-				else if (Paths.fileExists('images/${json.image}/Animation.json', TEXT))
+				else if (Paths.exists('images/${json.image}/Animation.json', TEXT))
 				{
 					frames = AtlasFrameMaker.construct(json.image);	
 				}
@@ -138,8 +136,9 @@ class Character extends FlxSprite
 
 				healthIcon = json.healthicon;
 				singDuration = json.sing_duration;
-				flipX = !!json.flip_x;
-				noAntialiasing = !!json.no_antialiasing;
+				flipX = json.flip_x == true;
+				noAntialiasing = json.no_antialiasing == true;
+				repeatHoldAnimation = json.repeatHoldAnimation == true;
 
 				if (json.healthbar_colors != null && json.healthbar_colors.length > 2)
 					healthColorArray = json.healthbar_colors;
@@ -152,7 +151,7 @@ class Character extends FlxSprite
 						var animAnim:String = '${anim.anim}';
 						var animName:String = '${anim.name}';
 						var animFps:Int = anim.fps;
-						var animLoop:Bool = !!anim.loop; //Bruh
+						var animLoop:Bool = anim.loop == true;
 						var animIndices:Array<Int> = anim.indices;
 						if (animIndices != null && animIndices.length > 0) {
 							animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
@@ -365,27 +364,13 @@ class Character extends FlxSprite
 
 	public static function getFile(name:String):Dynamic {
 		var characterPath:String = 'characters/$name.json';
-		#if MODS_ALLOWED
-		var path:String = Paths.modFolders(characterPath);
-		if (!FileSystem.exists(path)) {
-			path = Paths.getPreloadPath(characterPath);
-		}
-
-		if (!FileSystem.exists(path))
-		#else
 		var path:String = Paths.getPreloadPath(characterPath);
-		if (!Assets.exists(path))
-		#end
+		if (!Paths.exists(path, TEXT))
 		{
 			path = Paths.getPreloadPath('characters/$DEFAULT_CHARACTER.json'); //If a character couldn't be found, change them to BF just to prevent a crash
 		}
 
-		#if MODS_ALLOWED
-		var rawJson = File.getContent(path);
-		#else
-		var rawJson = Assets.getText(path);
-		#end
-
+		var rawJson = Paths.getContent(path);
 		if (rawJson == null) {
 			return null;
 		}

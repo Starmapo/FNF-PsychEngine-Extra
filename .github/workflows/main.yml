@@ -40,7 +40,9 @@ jobs:
           haxelib --never install flixel
           haxelib run lime setup flixel
           haxelib run lime setup
-          haxelib install hxCodec
+          haxelib install flixel-tools
+          haxelib install flixel-ui
+          haxelib install flixel-addons
           haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
           haxelib git hscript https://github.com/HaxeFoundation/hscript
@@ -75,6 +77,9 @@ jobs:
           haxelib --never install flixel
           haxelib run lime setup flixel
           haxelib run lime setup
+          haxelib install flixel-tools
+          haxelib install flixel-ui
+          haxelib install flixel-addons
           haxelib install hxCodec
           haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
@@ -111,6 +116,9 @@ jobs:
           haxelib --never install flixel
           haxelib run lime setup flixel
           haxelib run lime setup
+          haxelib install flixel-tools
+          haxelib install flixel-ui
+          haxelib install flixel-addons
           haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
           haxelib git hscript https://github.com/HaxeFoundation/hscript
@@ -146,6 +154,9 @@ jobs:
           haxelib --never install flixel
           haxelib run lime setup flixel
           haxelib run lime setup
+          haxelib install flixel-tools
+          haxelib install flixel-ui
+          haxelib install flixel-addons
           haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
           haxelib git hscript https://github.com/HaxeFoundation/hscript
@@ -180,8 +191,12 @@ jobs:
           haxelib --never install flixel
           haxelib run lime setup flixel
           haxelib run lime setup
+          haxelib install flixel-tools
+          haxelib install flixel-ui
+          haxelib install flixel-addons
           haxelib git hscript https://github.com/HaxeFoundation/hscript
           haxelib git hscript-ex https://github.com/ianharrigan/hscript-ex
+          haxelib install hxCodec
           haxelib list
         shell: cmd
       - name: Create Version Tag
