@@ -1,5 +1,7 @@
 package pvp;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.text.FlxText;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
@@ -26,7 +28,7 @@ typedef AlternateForm = {
 class CharacterSelect extends FlxSpriteGroup {
     var characters:Array<CharacterData> = [];
 
-    var grpIcons:FlxTypedSpriteGroup<HealthIcon>;
+    public var grpIcons:FlxTypedSpriteGroup<HealthIcon>;
     var panel:FlxSprite;
     var cornerSize:Int = 5;
     var selectedSquare:FlxSprite;
@@ -45,12 +47,19 @@ class CharacterSelect extends FlxSpriteGroup {
 
     var character:FlxSprite;
     var characterText:FlxText;
+    var leftArrow:FlxSprite;
+	var rightArrow:FlxSprite;
     var selectingAlt:Bool = false;
-    var curCharacter:String = 'bf';
+    public var curCharacter:String = 'bf';
     var curAltIndex:Int = 0;
-    var ready:Bool = false;
+    public var ready:Bool = false;
     var curAlts(get, never):Array<AlternateForm>;
-    var readyText:FlxText;
+    public var readyText:FlxText;
+    var exiting:Bool = false;
+
+    var noGamepadBlack:FlxSprite;
+    var noGamepadText:FlxText;
+    var noGamepadSine:Float = 0;
 
     function get_curCharIndex() {
         return curSelectedX * 2 + curSelectedY;
@@ -98,12 +107,35 @@ class CharacterSelect extends FlxSpriteGroup {
         }
 
         character = new FlxSprite();
+        character.antialiasing = ClientPrefs.globalAntialiasing;
         character.scrollFactor.set();
+        if (isGamepad) character.flipX = true;
 
         characterText = new FlxText(0, panel.y - 64, 640, "", 32);
 		characterText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		characterText.scrollFactor.set();
         characterText.borderSize = 2;
+
+        leftArrow = new FlxSprite(0, 280);
+		leftArrow.frames = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+		leftArrow.animation.addByPrefix('idle', "arrow left");
+		leftArrow.animation.addByPrefix('press', "arrow push left");
+		leftArrow.animation.play('idle');
+		leftArrow.antialiasing = ClientPrefs.globalAntialiasing;
+        leftArrow.visible = false;
+        leftArrow.y -= leftArrow.height / 2;
+		add(leftArrow);
+
+        rightArrow = new FlxSprite(640, 280);
+		rightArrow.frames = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+		rightArrow.animation.addByPrefix('idle', "arrow right");
+		rightArrow.animation.addByPrefix('press', "arrow push right");
+		rightArrow.animation.play('idle');
+		rightArrow.antialiasing = ClientPrefs.globalAntialiasing;
+        rightArrow.visible = false;
+        rightArrow.x -= rightArrow.width;
+        rightArrow.y -= rightArrow.height / 2;
+		add(rightArrow);
 
         readyText = new FlxText(0, 280 - 32, 640, "READY", 64);
 		readyText.setFormat(Paths.font("vcr.ttf"), 64, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -111,12 +143,31 @@ class CharacterSelect extends FlxSpriteGroup {
         readyText.borderSize = 2;
         readyText.visible = false;
 
+        if (isGamepad) {
+            noGamepadBlack = new FlxSprite(0, 0).makeGraphic(640, 720, FlxColor.BLACK);
+            noGamepadBlack.scrollFactor.set();
+            noGamepadBlack.alpha = 0.8;
+            noGamepadBlack.visible = (FlxG.gamepads.lastActive == null);
+
+            noGamepadText = new FlxText(0, 360 - 16, 640, "Waiting for gamepad...", 32);
+            noGamepadText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+            noGamepadText.scrollFactor.set();
+            noGamepadText.borderSize = 2;
+            noGamepadText.visible = (FlxG.gamepads.lastActive == null);
+        }
+
         add(panel);
         add(selectedSquare);
         add(grpIcons);
         add(character);
         add(characterText);
+        add(leftArrow);
+        add(rightArrow);
         add(readyText);
+        if (isGamepad) {
+            add(noGamepadBlack);
+            add(noGamepadText);
+        }
 
         setClipRect();
         changeSelection();
@@ -126,35 +177,69 @@ class CharacterSelect extends FlxSpriteGroup {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
-        if (!isGamepad) {
+        if (!exiting) {
             var controls = PlayerSettings.player1.controls;
+            var leftP = controls.UI_LEFT_P;
+            var rightP = controls.UI_RIGHT_P;
+            var left = controls.UI_LEFT;
+            var right = controls.UI_RIGHT;
+            var upP = controls.UI_UP_P;
+            var downP = controls.UI_DOWN_P;
+            var accept = controls.ACCEPT;
+            var back = controls.BACK;
+            if (isGamepad) {
+                var gamepad = FlxG.gamepads.lastActive;
+                if (gamepad != null) {
+                    noGamepadBlack.visible = false;
+                    noGamepadText.visible = false;
+                    leftP = gamepad.justPressed.LEFT_STICK_DIGITAL_LEFT || gamepad.justPressed.DPAD_LEFT;
+                    rightP = gamepad.justPressed.LEFT_STICK_DIGITAL_RIGHT || gamepad.justPressed.DPAD_RIGHT;
+                    left = gamepad.pressed.LEFT_STICK_DIGITAL_LEFT || gamepad.pressed.DPAD_LEFT;
+                    right = gamepad.pressed.LEFT_STICK_DIGITAL_RIGHT || gamepad.pressed.DPAD_RIGHT;
+                    upP = gamepad.justPressed.LEFT_STICK_DIGITAL_UP || gamepad.justPressed.DPAD_UP;
+                    downP = gamepad.justPressed.LEFT_STICK_DIGITAL_DOWN || gamepad.justPressed.DPAD_DOWN;
+                    accept = gamepad.justPressed.A;
+                    back = gamepad.justPressed.B;
+                } else {
+                    noGamepadBlack.visible = true;
+                    noGamepadText.visible = true;
+                    leftP = false;
+                    rightP = false;
+                    left = false;
+                    right = false;
+                    upP = false;
+                    downP = false;
+                    accept = false;
+                    back = false;
+                }
+            }
             if (ready) {
-                if (controls.BACK) {
+                if (back) {
                     playerUnready();
                 }
             } else {
                 if (!selectingAlt) {
                     if (grpIcons.length > 1) {
-                        if (controls.UI_UP_P) {
+                        if (upP) {
                             changeSelection(0, -1);
                             FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
                         }
-                        if (controls.UI_DOWN_P) {
+                        if (downP) {
                             changeSelection(0, 1);
                             FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
                         }
                         if (grpIcons.length > 2) {
-                            if (controls.UI_LEFT_P) {
+                            if (leftP) {
                                 changeSelection(-1);
                                 FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
                                 holdTime = 0;
                             }
-                            if (controls.UI_RIGHT_P) {
+                            if (rightP) {
                                 changeSelection(1);
                                 FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
                                 holdTime = 0;
                             }
-                            if (controls.UI_LEFT || controls.UI_RIGHT)
+                            if (left || right)
                             {
                                 var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
                                 holdTime += elapsed;
@@ -162,20 +247,23 @@ class CharacterSelect extends FlxSpriteGroup {
                 
                                 if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
                                 {
-                                    changeSelection((checkNewHold - checkLastHold) * (controls.UI_LEFT ? -1 : 1));
+                                    changeSelection((checkNewHold - checkLastHold) * (left ? -1 : 1));
                                 }
                             }
                         }
                     }
         
-                    if (controls.BACK) {
+                    if (back) {
                         FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
                         MusicBeatState.switchState(new MainMenuState());
+                        exiting = true;
                     }
-    
-                    if (controls.ACCEPT) {
+
+                    if (accept) {
                         if (curAlts.length > 0) {
                             selectingAlt = true;
+                            leftArrow.visible = true;
+                            rightArrow.visible = true;
                             FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
                         } else {
                             playerReady();
@@ -183,22 +271,34 @@ class CharacterSelect extends FlxSpriteGroup {
                     }
                 } else {
                     if (curAlts.length > 0) {
-                        if (controls.UI_LEFT_P) {
+                        if (left)
+                            leftArrow.animation.play('press');
+                        else
+                            leftArrow.animation.play('idle');
+
+                        if (right)
+                            rightArrow.animation.play('press')
+                        else
+                            rightArrow.animation.play('idle');
+
+                        if (leftP) {
                             changeAlt(-1);
                             FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
                         }
-                        if (controls.UI_RIGHT_P) {
+                        if (rightP) {
                             changeAlt(1);
                             FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
                         }
                     }
-    
-                    if (controls.BACK) {
+
+                    if (back) {
                         selectingAlt = false;
+                        leftArrow.visible = false;
+                        rightArrow.visible = false;
                         curAltIndex = 0;
                         changeAlt();
                         FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
-                    } else if (controls.ACCEPT) {
+                    } else if (accept) {
                         playerReady();
                     }
                 }
@@ -210,6 +310,11 @@ class CharacterSelect extends FlxSpriteGroup {
 		selectedSquare.setPosition(FlxMath.lerp(selectedSquare.x, curCharPos.x, lerpVal), FlxMath.lerp(selectedSquare.y, curCharPos.y, lerpVal));
 
         setClipRect();
+
+        if (isGamepad && noGamepadText.visible) {
+            noGamepadSine += 180 * elapsed;
+            noGamepadText.alpha = 1 - Math.sin((Math.PI * noGamepadSine) / 180);
+        }
     }
 
     function changeSelection(x:Int = 0, y:Int = 0) {
@@ -284,6 +389,7 @@ class CharacterSelect extends FlxSpriteGroup {
         ready = true;
         readyText.visible = true;
         character.alpha = 0.5;
+        leftArrow.alpha = rightArrow.alpha = 0.5;
         FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
     }
 
@@ -291,7 +397,22 @@ class CharacterSelect extends FlxSpriteGroup {
         ready = false;
         readyText.visible = false;
         character.alpha = 1;
+        leftArrow.alpha = rightArrow.alpha = 1;
         FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+    }
+
+    public function fadeStuff() {
+        exiting = true;
+        var stuff = [panel, grpIcons, selectedSquare, leftArrow, rightArrow];
+        for (i in stuff) {
+            FlxTween.tween(i, {alpha: 0}, 0.4, {
+                ease: FlxEase.quadOut,
+                onComplete: function(twn:FlxTween)
+                {
+                    i.kill();
+                }
+            });
+        }
     }
 
     function makeSelectorGraphic(panel:FlxSprite,w,h,color:FlxColor)

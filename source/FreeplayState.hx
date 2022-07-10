@@ -1,6 +1,5 @@
 package;
 
-import flixel.FlxSubState;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
@@ -83,7 +82,7 @@ class FreeplayState extends MusicBeatState
 				}
 
 				var meta = Song.getMetaFile(song[0]);
-				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]), meta.displayName, (meta.iconHiddenUntilPlayed == true));
+				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]), Song.getDisplayName(song[0]), (meta.iconHiddenUntilPlayed == true));
 			}
 		}
 
@@ -716,7 +715,6 @@ class SongMetadata
 	public var songCharacter:String = "";
 	public var color:Int = -7179779;
 	public var displayName:String = "";
-	public var difficulties:Array<String> = null;
 	public var iconHiddenUntilPlayed:Bool = false;
 
 	public function new(song:String, week:Int, songCharacter:String, color:Int, ?displayName:String, iconHiddenUntilPlayed:Bool = false)

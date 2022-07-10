@@ -238,8 +238,13 @@ class StrumLine extends FlxTypedGroup<FlxBasic> {
 			babyArrow.postAddedToGroup();
 
 			//centering it where 4k note size would be
-			babyArrow.x += (80 - (babyArrow.frameWidth / 2)) * babyArrow.noteSize;
-			babyArrow.y += (80 - (babyArrow.frameHeight / 2)) * babyArrow.noteSize;
+			if (babyArrow.skinModifier.endsWith('pixel')) {
+				babyArrow.x += (8.5 - (babyArrow.frameWidth / 2)) * (babyArrow.noteSize / Note.DEFAULT_NOTE_SIZE);
+				babyArrow.y += (8.5 - (babyArrow.frameHeight / 2)) * (babyArrow.noteSize / Note.DEFAULT_NOTE_SIZE);
+			} else {
+				babyArrow.x += (80 - (babyArrow.frameWidth / 2)) * babyArrow.noteSize;
+				babyArrow.y += (80 - (babyArrow.frameHeight / 2)) * babyArrow.noteSize;
+			}
 		}
 
 		keys = keyAmount;

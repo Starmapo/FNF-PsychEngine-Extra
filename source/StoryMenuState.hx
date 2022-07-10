@@ -289,7 +289,7 @@ class StoryMenuState extends MusicBeatState
 	{
 		if (!weekIsLocked(loadedWeeks[curWeek].fileName))
 		{
-			if (stopspamming == false)
+			if (!stopspamming)
 			{
 				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 
@@ -298,44 +298,44 @@ class StoryMenuState extends MusicBeatState
 				var bf:MenuCharacter = grpWeekCharacters.members[1];
 				if(bf.character != '' && bf.hasConfirmAnimation) grpWeekCharacters.members[1].animation.play('confirm');
 				stopspamming = true;
-			}
 
-			// We can't use Dynamic Array .copy() because that crashes HTML5, here's a workaround.
-			var songArray:Array<String> = [];
-			var leWeek = loadedWeeks[curWeek].songs;
-			for (i in 0...leWeek.length) {
-				songArray.push(leWeek[i][0]);
-			}
-
-			// Nevermind that's stupid lmao
-			PlayState.storyPlaylist = songArray;
-			PlayState.isStoryMode = true;
-			selectedWeek = true;
-
-			var diffic = CoolUtil.getDifficultyFilePath(curDifficulty);
-			if (diffic == null) diffic = '';
-
-			PlayState.storyDifficulty = curDifficulty;
-
-			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
-			PlayState.campaignScore = 0;
-			PlayState.campaignMisses = 0;
-			new FlxTimer().start(1, function(tmr:FlxTimer)
-			{
-				LoadingState.loadAndSwitchState(new PlayState(), true);
-				FreeplayState.destroyFreeplayVocals();
-			});
-
-			var metadata = new SongMetadata(PlayState.storyPlaylist[0], PlayState.storyWeek, 'face', 0);
-			for (i in FreeplayState.lastPlayed) {
-				if (i.songName == metadata.songName) {
-					FreeplayState.lastPlayed.remove(i);
-					break;
+				// We can't use Dynamic Array .copy() because that crashes HTML5, here's a workaround.
+				var songArray:Array<String> = [];
+				var leWeek = loadedWeeks[curWeek].songs;
+				for (i in 0...leWeek.length) {
+					songArray.push(leWeek[i][0]);
 				}
+
+				// Nevermind that's stupid lmao
+				PlayState.storyPlaylist = songArray;
+				PlayState.isStoryMode = true;
+				selectedWeek = true;
+
+				var diffic = CoolUtil.getDifficultyFilePath(curDifficulty);
+				if (diffic == null) diffic = '';
+
+				PlayState.storyDifficulty = curDifficulty;
+
+				PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
+				PlayState.campaignScore = 0;
+				PlayState.campaignMisses = 0;
+				new FlxTimer().start(1, function(tmr:FlxTimer)
+				{
+					LoadingState.loadAndSwitchState(new PlayState(), true);
+					FreeplayState.destroyFreeplayVocals();
+				});
+
+				var metadata = new SongMetadata(PlayState.storyPlaylist[0], PlayState.storyWeek, 'face', 0);
+				for (i in FreeplayState.lastPlayed) {
+					if (i.songName == metadata.songName) {
+						FreeplayState.lastPlayed.remove(i);
+						break;
+					}
+				}
+				FreeplayState.lastPlayed.unshift(metadata);
+				FlxG.save.data.lastPlayed = FreeplayState.lastPlayed;
+				FlxG.save.flush();
 			}
-			FreeplayState.lastPlayed.unshift(metadata);
-			FlxG.save.data.lastPlayed = FreeplayState.lastPlayed;
-			FlxG.save.flush();
 		} else {
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
 		}

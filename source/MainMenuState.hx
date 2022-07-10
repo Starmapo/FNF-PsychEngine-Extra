@@ -242,7 +242,7 @@ class MainMenuState extends MusicBeatState
 										MusicBeatState.switchState(new FreeplayState());
 									#if sys
 									case 'pvp':
-										MusicBeatState.switchState(new pvp.PvPCharacterState());
+										MusicBeatState.switchState(new pvp.PvPSongState());
 									#end
 									case 'awards':
 										MusicBeatState.switchState(new AchievementsMenuState());
