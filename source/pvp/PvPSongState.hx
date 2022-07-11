@@ -36,6 +36,7 @@ class PvPSongState extends MusicBeatState {
 
     override function create() {
 		PlayerSettings.player1.controls.removeGamepad(0);
+		MainMenuState.inPvP = true;
 
         persistentUpdate = true;
 		WeekData.reloadWeekFiles(false);
@@ -200,16 +201,20 @@ class PvPSongState extends MusicBeatState {
 
                 PlayState.SONG = Song.loadFromJson(poop, song);
                 PlayState.storyDifficulty = curDifficulty;
-				if (songs[curSelected].skipStage) {
-					PlayState.SONG.stage = 'stage';
-				}
 
                 trace('CURRENT WEEK: ${WeekData.getWeekName()}');
                 if (colorTween != null) {
                     colorTween.cancel();
                 }
                 
-                MusicBeatState.switchState(new PvPCharacterState());
+				if (FlxG.keys.pressed.SHIFT) {
+					LoadingState.loadAndSwitchState(new PvPSongState());
+				} else {
+					if (songs[curSelected].skipStage) {
+						PlayState.SONG.stage = 'stage';
+					}
+                	MusicBeatState.switchState(new PvPCharacterState());
+				}
                 CoolUtil.playConfirmSound();
             }
         }

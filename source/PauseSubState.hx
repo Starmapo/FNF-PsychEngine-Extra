@@ -205,7 +205,7 @@ class PauseSubState extends MusicBeatSubState
 				}
 		}
 
-		if (accepted && (cantUnpause <= 0 || !ClientPrefs.controllerMode))
+		if (accepted && (cantUnpause <= 0 || controls.gamepadsAdded.length > 0))
 		{
 			if (menuItems == difficultyChoices)
 			{
