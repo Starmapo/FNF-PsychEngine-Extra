@@ -124,7 +124,7 @@ class OptionsState extends MusicBeatState
 
 		if (controls.BACK) {
 			FlxG.mouse.visible = false;
-			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+			CoolUtil.playCancelSound();
 			if (goToPlayState) {
 				StageData.loadDirectory(PlayState.SONG);
 				goToPlayState = false;
@@ -161,6 +161,6 @@ class OptionsState extends MusicBeatState
 				selectorRight.y = item.y;
 			}
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 	}
 }

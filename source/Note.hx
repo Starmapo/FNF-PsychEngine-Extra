@@ -229,8 +229,8 @@ class Note extends FlxSprite
 					prevNote.animation.play('${colors[prevNote.noteData]}hold');
 
 				prevNote.scale.y *= prevNote.stepCrochet / 100 * 1.05;
-				if (PlayState.instance != null) {
-					prevNote.scale.y *= PlayState.instance.songSpeed;
+				if (CoolUtil.inAnyPlayState()) {
+					prevNote.scale.y *= CoolUtil.getPlayState().songSpeed;
 				}
 				if(skinModifier.endsWith('pixel')) {
 					prevNote.scale.y *= 1.19;
@@ -258,7 +258,7 @@ class Note extends FlxSprite
 		var skin:String = texture;
 		if (skin == null || skin.length < 1) {
 			skin = PlayState.SONG.arrowSkin;
-			if(skin == null || skin.length < 1 || PlayState.instance == null) {
+			if(skin == null || skin.length < 1 || !CoolUtil.inAnyPlayState()) {
 				skin = 'NOTE_assets';
 			}
 		}
@@ -274,7 +274,7 @@ class Note extends FlxSprite
 		var lastScaleY:Float = scale.y;
 		if (skinModifier.length < 1) {
 			skinModifier = 'base';
-			if (PlayState.SONG != null && PlayState.instance != null)
+			if (PlayState.SONG != null && CoolUtil.inAnyPlayState())
 				skinModifier = PlayState.SONG.skinModifier;
 		}
 		var image = SkinData.getNoteFile(arraySkin.join('/'), skinModifier);

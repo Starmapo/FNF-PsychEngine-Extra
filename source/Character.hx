@@ -32,7 +32,9 @@ typedef AnimArray = {
 	var fps:Int;
 	var loop:Bool;
 	var indices:Array<Int>;
-	var offsets:Array<Float>;
+	var ?offsets:Array<Float>;
+	var playerOffsets:Array<Float>;
+	var enemyOffsets:Array<Float>;
 }
 
 typedef CharacterGroupFile = {
@@ -105,6 +107,13 @@ class Character extends FlxSprite
 			default:
 				var json:CharacterFile = getFile(curCharacter);
 				if (json.repeatHoldAnimation == null) json.repeatHoldAnimation = true;
+				var animations:Array<Dynamic> = json.animations;
+				for (anim in animations) {
+					if (anim.playerOffsets == null) {
+						anim.playerOffsets = anim.offsets.copy();
+						anim.enemyOffsets = anim.offsets.copy();
+					}
+				}
 
 				if (Paths.exists('images/${json.image}.txt', TEXT))
 				{
@@ -159,8 +168,10 @@ class Character extends FlxSprite
 							animation.addByPrefix(animAnim, animName, animFps, animLoop);
 						}
 
-						if (anim.offsets != null && anim.offsets.length > 1) {
-							addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+						if (flipped && anim.playerOffsets != null && anim.playerOffsets.length > 1) {
+							addOffset(anim.anim, anim.playerOffsets[0], anim.playerOffsets[1]);
+						} else if (!flipped && anim.enemyOffsets != null && anim.enemyOffsets.length > 1) {
+							addOffset(anim.anim, anim.enemyOffsets[0], anim.enemyOffsets[1]);
 						}
 					}
 				} else {
@@ -312,7 +323,7 @@ class Character extends FlxSprite
 
 	function loadMappedAnims():Void
 	{
-		if (PlayState.instance != null) {
+		if (CoolUtil.inAnyPlayState()) {
 			var song = Song.loadFromJson('picospeaker', Paths.formatToSongPath(PlayState.SONG.song));
 			if (song != null) {
 				var noteData:Array<SwagSection> = song.notes;

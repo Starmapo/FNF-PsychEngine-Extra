@@ -234,7 +234,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 		if (controls.BACK) {
 			close();
 			ClientPrefs.saveSettings();
-			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+			CoolUtil.playCancelSound();
 		}
 
 		if (nextAccept <= 0)
@@ -249,7 +249,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 			{
 				if (controls.ACCEPT || FlxG.mouse.justPressed)
 				{
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 					curOption.setValue((curOption.getValue() == true) ? false : true);
 					curOption.change();
 					reloadCheckboxes();
@@ -326,7 +326,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 							}
 							updateTextFrom(curOption);
 							curOption.change();
-							FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+							CoolUtil.playScrollSound();
 						} else if (curOption.type != 'string') {
 							holdValue += curOption.scrollSpeed * elapsed * ((controls.UI_LEFT) ? -1 : 1);
 							if (holdValue < curOption.minValue) holdValue = curOption.minValue;
@@ -380,7 +380,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 					}
 					leOption.change();
 				}
-				FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+				CoolUtil.playCancelSound();
 				reloadCheckboxes();
 			}
 		}
@@ -402,7 +402,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 	function clearHold()
 	{
 		if (holdTime > 0.5) {
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+			CoolUtil.playScrollSound();
 		}
 		holdTime = 0;
 	}
@@ -442,7 +442,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 		descBox.updateHitbox();
 
 		curOption = optionsArray[curSelected]; //shorter lol
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 	}
 
 	function reloadCheckboxes() {

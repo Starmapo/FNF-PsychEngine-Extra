@@ -124,7 +124,6 @@ class CharacterSelect extends FlxSpriteGroup {
 		leftArrow.antialiasing = ClientPrefs.globalAntialiasing;
         leftArrow.visible = false;
         leftArrow.y -= leftArrow.height / 2;
-		add(leftArrow);
 
         rightArrow = new FlxSprite(640, 280);
 		rightArrow.frames = Paths.getSparrowAtlas('campaign_menu_UI_assets');
@@ -135,7 +134,6 @@ class CharacterSelect extends FlxSpriteGroup {
         rightArrow.visible = false;
         rightArrow.x -= rightArrow.width;
         rightArrow.y -= rightArrow.height / 2;
-		add(rightArrow);
 
         readyText = new FlxText(0, 280 - 32, 640, "READY", 64);
 		readyText.setFormat(Paths.font("vcr.ttf"), 64, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -222,21 +220,21 @@ class CharacterSelect extends FlxSpriteGroup {
                     if (grpIcons.length > 1) {
                         if (upP) {
                             changeSelection(0, -1);
-                            FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+                            CoolUtil.playScrollSound();
                         }
                         if (downP) {
                             changeSelection(0, 1);
-                            FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+                            CoolUtil.playScrollSound();
                         }
                         if (grpIcons.length > 2) {
                             if (leftP) {
                                 changeSelection(-1);
-                                FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+                                CoolUtil.playScrollSound();
                                 holdTime = 0;
                             }
                             if (rightP) {
                                 changeSelection(1);
-                                FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+                                CoolUtil.playScrollSound();
                                 holdTime = 0;
                             }
                             if (left || right)
@@ -254,8 +252,8 @@ class CharacterSelect extends FlxSpriteGroup {
                     }
         
                     if (back) {
-                        FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
-                        MusicBeatState.switchState(new MainMenuState());
+                        CoolUtil.playCancelSound();
+                        MusicBeatState.switchState(new PvPSongState());
                         exiting = true;
                     }
 
@@ -264,7 +262,7 @@ class CharacterSelect extends FlxSpriteGroup {
                             selectingAlt = true;
                             leftArrow.visible = true;
                             rightArrow.visible = true;
-                            FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+                            CoolUtil.playScrollSound();
                         } else {
                             playerReady();
                         }
@@ -283,11 +281,11 @@ class CharacterSelect extends FlxSpriteGroup {
 
                         if (leftP) {
                             changeAlt(-1);
-                            FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+                            CoolUtil.playScrollSound();
                         }
                         if (rightP) {
                             changeAlt(1);
-                            FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+                            CoolUtil.playScrollSound();
                         }
                     }
 
@@ -297,7 +295,7 @@ class CharacterSelect extends FlxSpriteGroup {
                         rightArrow.visible = false;
                         curAltIndex = 0;
                         changeAlt();
-                        FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+                        CoolUtil.playCancelSound();
                     } else if (accept) {
                         playerReady();
                     }
@@ -390,7 +388,7 @@ class CharacterSelect extends FlxSpriteGroup {
         readyText.visible = true;
         character.alpha = 0.5;
         leftArrow.alpha = rightArrow.alpha = 0.5;
-        FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+        CoolUtil.playConfirmSound();
     }
 
     function playerUnready() {
@@ -398,7 +396,7 @@ class CharacterSelect extends FlxSpriteGroup {
         readyText.visible = false;
         character.alpha = 1;
         leftArrow.alpha = rightArrow.alpha = 1;
-        FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+        CoolUtil.playCancelSound();
     }
 
     public function fadeStuff() {

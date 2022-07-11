@@ -214,6 +214,18 @@ class CoolUtil
 		FlxG.sound.playMusic(Paths.music('freakyMenu'), volume);
 	}
 
+	public static function playScrollSound(volume:Float = 0.4) {
+		FlxG.sound.play(Paths.sound('scrollMenu'), volume);
+	}
+
+	public static function playConfirmSound(volume:Float = 0.7) {
+		FlxG.sound.play(Paths.sound('confirmMenu'), volume);
+	}
+
+	public static function playCancelSound(volume:Float = 0.7) {
+		FlxG.sound.play(Paths.sound('cancelMenu'), volume);
+	}
+
 	public static function sortAlphabetically(a:String, b:String):Int {
 		var val1 = a.toUpperCase();
 		var val2 = b.toUpperCase();
@@ -224,5 +236,21 @@ class CoolUtil
 		} else {
 		  return 0;
 		}
+	}
+
+	public static function inAnyPlayState(skipPvP:Bool = false) {
+		return PlayState.instance != null #if sys || (!skipPvP && pvp.PvPPlayState.instance != null) #end;
+	}
+
+	public static function inPvPState(skipPvP:Bool = false) {
+		#if sys
+		return pvp.PvPPlayState.instance != null;
+		#else
+		return false;
+		#end
+	}
+
+	public static function getPlayState():Dynamic {
+		return #if sys pvp.PvPPlayState.instance != null ? pvp.PvPPlayState.instance : #end PlayState.instance;
 	}
 }

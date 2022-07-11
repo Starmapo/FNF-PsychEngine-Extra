@@ -195,7 +195,7 @@ class CreditsState extends MusicBeatState
 					if (colorTween != null) {
 						colorTween.cancel();
 					}
-					FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+					CoolUtil.playCancelSound();
 					MusicBeatState.switchState(new MainMenuState());
 					quitting = true;
 				}
@@ -237,7 +237,7 @@ class CreditsState extends MusicBeatState
 	var moveTween:FlxTween = null;
 	function changeSelection(change:Int = 0)
 	{
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 		do {
 			curSelected += change;
 			if (curSelected < 0)

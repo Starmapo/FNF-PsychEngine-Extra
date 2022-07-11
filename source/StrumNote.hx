@@ -65,7 +65,7 @@ class StrumNote extends FlxSprite
 
 		if (skinModifier.length < 1) {
 			skinModifier = 'base';
-			if (PlayState.SONG != null && PlayState.instance != null)
+			if (PlayState.SONG != null && CoolUtil.inAnyPlayState())
 				skinModifier = PlayState.SONG.skinModifier;
 		}
 		var image = SkinData.getNoteFile(texture, skinModifier);

@@ -34,12 +34,27 @@ class PvPCharacterState extends MusicBeatState {
     override public function update(elapsed:Float) {
         super.update(elapsed);
 
-        if (!exiting && charSelect1.ready && charSelect2.ready) {
+        #if debug
+        if (!exiting && charSelect2.ready && (charSelect1.ready || FlxG.gamepads.lastActive == null))
+        #else
+        if (!exiting && charSelect2.ready && charSelect1.ready)
+        #end
+        {
             charSelect1.fadeStuff();
             charSelect2.fadeStuff();
             FlxFlicker.flicker(charSelect1.readyText, 1, 0.06, false, false);
             FlxFlicker.flicker(charSelect2.readyText, 1, 0.06, false, false, function(flick:FlxFlicker)
             {
+                if (charSelect1.curCharacter == PlayState.SONG.player1) {
+                    PvPPlayState.boyfriendMatch = true;
+                } else {
+                    PvPPlayState.boyfriendMatch = false;
+                }
+                if (charSelect2.curCharacter == PlayState.SONG.player2) {
+                    PvPPlayState.dadMatch = true;
+                } else {
+                    PvPPlayState.dadMatch = false;
+                }
                 PlayState.SONG.player1 = charSelect1.curCharacter;
                 PlayState.SONG.player2 = charSelect2.curCharacter;
                 LoadingState.loadAndSwitchState(new PvPPlayState(), true);

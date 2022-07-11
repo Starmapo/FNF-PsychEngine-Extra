@@ -236,7 +236,7 @@ class Song
 		return swagShit;
 	}
 
-	public static function generateNotes(song:SwagSong, ?dadStrums:StrumLine, ?boyfriendStrums:StrumLine) {
+	public static function generateNotes(song:SwagSong, ?dadStrums:StrumLine, ?boyfriendStrums:StrumLine, pvp:Bool = false) {
 		var notes:Array<Note> = [];
 
 		var noteData:Array<SwagSection> = song.notes;
@@ -286,7 +286,7 @@ class Song
 			for (songNotes in section.sectionNotes)
 			{
 				var daStrumTime:Float = songNotes[0];
-				if (PlayState.instance != null && PlayState.instance.inEditor && daStrumTime < PlayState.instance.startPos) continue;
+				if (CoolUtil.inAnyPlayState(true) && PlayState.instance.inEditor && daStrumTime < PlayState.instance.startPos) continue;
 				var daNoteData:Int = Std.int(songNotes[1]);
 				if (songNotes[1] >= leftKeys) {
 					daNoteData = Std.int(songNotes[1] - leftKeys);
@@ -300,9 +300,11 @@ class Song
 				}
 				var isOpponent:Bool = !gottaHitNote;
 
-				if (PlayState.instance != null && PlayState.instance.opponentChart) {
+				if (CoolUtil.inAnyPlayState(true) && PlayState.instance.opponentChart) {
 					gottaHitNote = !gottaHitNote;
 				}
+
+				if (pvp) gottaHitNote = true;
 
 				var oldNote:Note;
 				if (notes.length > 0)
@@ -332,7 +334,7 @@ class Song
 					{
 						oldNote = notes[notes.length - 1];
 
-						var songSpeed = PlayState.instance != null ? PlayState.instance.songSpeed : 1;
+						var songSpeed = CoolUtil.inAnyPlayState() ? CoolUtil.getPlayState().songSpeed : 1;
 						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / songSpeed), daNoteData, oldNote, true, false, keys);
 						sustainNote.mustPress = gottaHitNote;
 						sustainNote.isOpponent = isOpponent;
@@ -436,4 +438,25 @@ class Song
 		var meta = Song.getMetaFile(song);
 		return meta.displayName != null ? meta.displayName : song;
 	}
+
+	public static function getGFVersion(song:String, stage:String) {
+		switch (song)
+		{
+			case 'stress':
+				return 'pico-speaker';
+		}
+        switch (stage)
+        {
+            case 'limo':
+                return 'gf-car';
+            case 'mall' | 'mallEvil':
+                return 'gf-christmas';
+            case 'school' | 'schoolEvil':
+                return 'gf-pixel';
+            case 'tank':
+                return 'gf-tankmen';
+            default:
+                return 'gf';
+        }
+    }
 }

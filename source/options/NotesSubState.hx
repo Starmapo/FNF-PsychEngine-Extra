@@ -76,11 +76,11 @@ class NotesChooseSubState extends MusicBeatSubState {
 
         if (controls.BACK) {
             close();
-            FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+            CoolUtil.playCancelSound();
         }
 
         if (firstFramePass && (controls.ACCEPT || FlxG.mouse.justPressed)) {
-            FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+            CoolUtil.playScrollSound();
             openSubState(new options.NotesSubState(curSelected + 1));
         }
 		super.update(elapsed);
@@ -105,7 +105,7 @@ class NotesChooseSubState extends MusicBeatSubState {
                 item.alpha = 1;
             }
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 	}
 }
 
@@ -209,13 +209,13 @@ class NotesSubState extends MusicBeatSubState
 			if (holdTime < 0.5) {
 				if (controls.UI_LEFT_P || FlxG.mouse.wheel < 0) {
 					updateValue(-1);
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 				} else if (controls.UI_RIGHT_P || FlxG.mouse.wheel > 0) {
 					updateValue(1);
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 				} else if (controls.RESET) {
 					resetValue(curSelected, typeSelected);
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 				}
 				if (controls.UI_LEFT_R || controls.UI_RIGHT_R) {
 					holdTime = 0;
@@ -233,7 +233,7 @@ class NotesSubState extends MusicBeatSubState
 					updateValue(elapsed * add);
 				}
 				if (controls.UI_LEFT_R || controls.UI_RIGHT_R) {
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 					holdTime = 0;
 				}
 			}
@@ -241,12 +241,12 @@ class NotesSubState extends MusicBeatSubState
 			if (currentData.length > 1) {
 				if (controls.UI_UP_P || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0)) {
 					changeSelection(-1);
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 					holdTime = 0;
 				}
 				if (controls.UI_DOWN_P || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0)) {
 					changeSelection(1);
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 					holdTime = 0;
 				}
 				var down = controls.UI_DOWN;
@@ -265,20 +265,20 @@ class NotesSubState extends MusicBeatSubState
 			}
 			if (controls.UI_LEFT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0)) {
 				changeType(-1);
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				CoolUtil.playScrollSound();
 			}
 			if (controls.UI_RIGHT_P || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0)) {
 				changeType(1);
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				CoolUtil.playScrollSound();
 			}
 			if (controls.RESET) {
 				for (i in 0...3) {
 					resetValue(curSelected, i);
 				}
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				CoolUtil.playScrollSound();
 			}
 			if ((controls.ACCEPT || FlxG.mouse.justPressed) && nextAccept <= 0) {
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				CoolUtil.playScrollSound();
 				changingNote = true;
 				holdTime = 0;
 				for (i in 0...grpNumbers.length) {
@@ -307,7 +307,7 @@ class NotesSubState extends MusicBeatSubState
 				changeSelection();
 			}
 			changingNote = false;
-			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+			CoolUtil.playCancelSound();
 		}
 
 		if (nextAccept > 0) {
@@ -345,7 +345,7 @@ class NotesSubState extends MusicBeatSubState
 				camFollow.setPosition(item.getGraphicMidpoint().x, item.getGraphicMidpoint().y);
 			}
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 	}
 
 	function changeType(change:Int = 0) {

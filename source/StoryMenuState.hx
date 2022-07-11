@@ -214,14 +214,14 @@ class StoryMenuState extends MusicBeatState
 					if (upP || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
 					{
 						changeWeek(-shiftMult);
-						FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+						CoolUtil.playScrollSound();
 						holdTime = 0;
 					}
 
 					if (downP || (!FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
 					{
 						changeWeek(shiftMult);
-						FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+						CoolUtil.playScrollSound();
 						holdTime = 0;
 					}
 
@@ -275,7 +275,7 @@ class StoryMenuState extends MusicBeatState
 
 		if ((controls.BACK) && !movedBack && !selectedWeek)
 		{
-			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+			CoolUtil.playCancelSound();
 			movedBack = true;
 			MusicBeatState.switchState(new MainMenuState());
 		}
@@ -291,7 +291,7 @@ class StoryMenuState extends MusicBeatState
 		{
 			if (!stopspamming)
 			{
-				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+				CoolUtil.playConfirmSound();
 
 				grpWeekText.members[curWeek].startFlashing();
 				
@@ -337,7 +337,7 @@ class StoryMenuState extends MusicBeatState
 				FlxG.save.flush();
 			}
 		} else {
-			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+			CoolUtil.playCancelSound();
 		}
 	}
 

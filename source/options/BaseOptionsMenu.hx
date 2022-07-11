@@ -148,7 +148,7 @@ class BaseOptionsMenu extends MusicBeatSubState
 
 		if (controls.BACK) {
 			close();
-			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+			CoolUtil.playCancelSound();
 		}
 
 		if (nextAccept <= 0)
@@ -163,7 +163,7 @@ class BaseOptionsMenu extends MusicBeatSubState
 			{
 				if (controls.ACCEPT || FlxG.mouse.justPressed)
 				{
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 					curOption.setValue((curOption.getValue() == true) ? false : true);
 					curOption.change();
 					reloadCheckboxes();
@@ -171,7 +171,7 @@ class BaseOptionsMenu extends MusicBeatSubState
 			} else if (curOption.type == 'button') {
 				if (controls.ACCEPT || FlxG.mouse.justPressed)
 				{
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 					curOption.change();
 				}
 			} else if (!down && !up) {
@@ -224,7 +224,7 @@ class BaseOptionsMenu extends MusicBeatSubState
 							}
 							updateTextFrom(curOption);
 							curOption.change();
-							FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+							CoolUtil.playScrollSound();
 						} else if (curOption.type != 'string') {
 							holdValue += curOption.scrollSpeed * elapsed * ((controls.UI_LEFT) ? -1 : 1);
 							if (holdValue < curOption.minValue) holdValue = curOption.minValue;
@@ -269,7 +269,7 @@ class BaseOptionsMenu extends MusicBeatSubState
 						leOption.change();
 					}
 				}
-				FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+				CoolUtil.playCancelSound();
 				reloadCheckboxes();
 			}
 		}
@@ -295,7 +295,7 @@ class BaseOptionsMenu extends MusicBeatSubState
 	function clearHold()
 	{
 		if (holdTime > 0.5) {
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+			CoolUtil.playScrollSound();
 		}
 		holdTime = 0;
 	}
@@ -339,7 +339,7 @@ class BaseOptionsMenu extends MusicBeatSubState
 			boyfriend.visible = optionsArray[curSelected].showBoyfriend;
 		}
 		curOption = optionsArray[curSelected]; //shorter lol
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 	}
 
 	public function reloadBoyfriend()

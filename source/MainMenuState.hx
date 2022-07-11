@@ -170,14 +170,14 @@ class MainMenuState extends MusicBeatState
 		{
 			if (controls.UI_UP_P || FlxG.mouse.wheel > 0)
 			{
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				CoolUtil.playScrollSound();
 				changeItem(-1);
 				holdTime = 0;
 			}
 
 			if (controls.UI_DOWN_P || FlxG.mouse.wheel < 0)
 			{
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				CoolUtil.playScrollSound();
 				changeItem(1);
 				holdTime = 0;
 			}
@@ -199,7 +199,7 @@ class MainMenuState extends MusicBeatState
 			if (controls.BACK)
 			{
 				selectedSomethin = true;
-				FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+				CoolUtil.playCancelSound();
 				MusicBeatState.switchState(new TitleState());
 			}
 
@@ -212,7 +212,7 @@ class MainMenuState extends MusicBeatState
 				else
 				{
 					selectedSomethin = true;
-					FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+					CoolUtil.playConfirmSound();
 
 					if (ClientPrefs.flashing) FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 

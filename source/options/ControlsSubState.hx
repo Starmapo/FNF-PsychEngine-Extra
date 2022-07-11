@@ -146,7 +146,7 @@ class ControlsSubState extends MusicBeatSubState {
 			if (controls.BACK) {
 				ClientPrefs.reloadControls();
 				close();
-				FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+				CoolUtil.playCancelSound();
 			}
 
 			if ((controls.ACCEPT || FlxG.mouse.justPressed) && nextAccept <= 0) {
@@ -154,7 +154,7 @@ class ControlsSubState extends MusicBeatSubState {
 					ClientPrefs.keyBinds = ClientPrefs.defaultKeys.copy();
 					reloadKeys();
 					changeSelection();
-					FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+					CoolUtil.playConfirmSound();
 				} else {
 					var match = false;
 					for (i in keyTexts) {
@@ -172,7 +172,7 @@ class ControlsSubState extends MusicBeatSubState {
 						} else {
 							grpInputs[getInputTextNum()].alpha = 0;
 						}
-						FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+						CoolUtil.playScrollSound();
 					}
 				}
 			}
@@ -189,7 +189,7 @@ class ControlsSubState extends MusicBeatSubState {
 				ClientPrefs.keyBinds.set(optionShit[curSelected][1], keysArray);
 
 				reloadKeys();
-				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+				CoolUtil.playConfirmSound();
 				rebindingKey = false;
 			}
 
@@ -200,7 +200,7 @@ class ControlsSubState extends MusicBeatSubState {
 				} else {
 					grpInputs[curSelected].alpha = 1;
 				}
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				CoolUtil.playScrollSound();
 				rebindingKey = false;
 				bindingTime = 0;
 			}
@@ -267,7 +267,7 @@ class ControlsSubState extends MusicBeatSubState {
 
 			bullShit++;
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 	}
 
 	function changeAlt() {
@@ -290,7 +290,7 @@ class ControlsSubState extends MusicBeatSubState {
 				break;
 			}
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 	}
 
 	private function unselectableCheck(num:Int, ?checkCentered:Bool = false):Bool {
@@ -474,7 +474,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 						bgTween.cancel();
 					}
 					close();
-					FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+					CoolUtil.playCancelSound();
 				}
 	
 				if ((controls.ACCEPT || FlxG.mouse.justPressed) && nextAccept <= 0) {
@@ -485,7 +485,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 					} else {
 						text1.alpha = 0;
 					}
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 				}
 
 				if (FlxG.keys.justPressed.ONE && !rebindingKey) {
@@ -496,7 +496,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 					for (i in strumGroup.receptors) {
 						i.alpha = 1;
 					}
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					CoolUtil.playScrollSound();
 				}
 			} else {
 				var controlArray:Array<Bool> = [];
@@ -529,7 +529,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 						bgTween.cancel();
 					}
 					close();
-					FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+					CoolUtil.playCancelSound();
 				}
 
 				if (FlxG.keys.justPressed.ONE) {
@@ -558,7 +558,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 				} else {
 					text1.alpha = 1;
 				}
-				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+				CoolUtil.playConfirmSound();
 				rebindingKey = false;
 			}
 
@@ -569,7 +569,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 				} else {
 					text1.alpha = 1;
 				}
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				CoolUtil.playScrollSound();
 				rebindingKey = false;
 				bindingTime = 0;
 			}
@@ -597,7 +597,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 
 		reloadKeys();
 
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 	}
 
 	function changeAlt() {
@@ -605,7 +605,7 @@ class NoteBindingSubState extends MusicBeatSubState {
 		text1.alpha = curAlt ? 0.6 : 1;
 		text2.alpha = !curAlt ? 0.6 : 1;
 
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 	}
 
 	function getKeybindName() {

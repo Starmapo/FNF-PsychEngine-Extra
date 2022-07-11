@@ -95,7 +95,7 @@ class AchievementsMenuState extends MusicBeatState
 		}
 
 		if (controls.BACK) {
-			FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+			CoolUtil.playCancelSound();
 			MusicBeatState.switchState(new MainMenuState());
 		}
 	}
@@ -126,7 +126,7 @@ class AchievementsMenuState extends MusicBeatState
 			}
 		}
 		descText.text = options[curSelected].description;
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		CoolUtil.playScrollSound();
 	}
 	#end
 }

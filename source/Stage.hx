@@ -423,32 +423,11 @@ class Stage extends FlxBasic {
         }
     }
 
-    public function getGFVersion() {
-        switch (curStage)
-        {
-            case 'limo':
-                return 'gf-car';
-            case 'mall' | 'mallEvil':
-                return 'gf-christmas';
-            case 'school' | 'schoolEvil':
-                return 'gf-pixel';
-            case 'tank':
-                return 'gf-tankmen';
-            default:
-                return 'gf';
-        }
-    }
-
     public function onCharacterInit() {
         if (ClientPrefs.gameQuality != 'Crappy') {
-            switch(curStage)
-            {
+            switch(curStage) {
                 case 'limo':
                     resetFastCar();
-                
-                case 'schoolEvil':
-                    var evilTrail = new FlxTrail(dadGroup.members[0], null, 4, 24, 0.3, 0.069); //nice
-                    instance.addBehindDad(evilTrail);
             }
         }
     }

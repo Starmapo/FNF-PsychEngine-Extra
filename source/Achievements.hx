@@ -43,7 +43,7 @@ class Achievements {
 		FlxG.log.add('Completed achievement "$name"');
 		achievementsMap.set(name, true);
 		ClientPrefs.saveSettings();
-		FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+		CoolUtil.playConfirmSound();
 	}
 
 	public static function isAchievementUnlocked(name:String) {

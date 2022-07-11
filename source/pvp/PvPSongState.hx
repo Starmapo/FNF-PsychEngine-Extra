@@ -35,6 +35,8 @@ class PvPSongState extends MusicBeatState {
 	var colorTween:FlxTween;
 
     override function create() {
+		PlayerSettings.player1.controls.removeGamepad(0);
+
         persistentUpdate = true;
 		WeekData.reloadWeekFiles(false);
 		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
@@ -46,7 +48,7 @@ class PvPSongState extends MusicBeatState {
 
         var rawJson = Paths.getContent(Paths.json('pvpSongs')).trim();
         var stuff:Dynamic = Json.parse(rawJson);
-        var daList:Array<Array<Dynamic>> = Reflect.getProperty(stuff, "songs");
+        var daList:Dynamic = Reflect.getProperty(stuff, "songs");
 
         for (i in 0...WeekData.weeksList.length) {
 			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
@@ -56,10 +58,12 @@ class PvPSongState extends MusicBeatState {
                 var songData:Dynamic = Reflect.getProperty(daList, Paths.formatToSongPath(song[0]));
                 if (songData == null) {
                     songData = {
+						blocked: false,
                         skipStage: false,
                         difficulties: null
                     };
                 }
+				if (songData.blocked == true) continue;
 
 				var colors:Array<Int> = song[2];
 				if (colors == null || colors.length != 3)
@@ -115,6 +119,8 @@ class PvPSongState extends MusicBeatState {
 	{
         var upP = controls.UI_UP_P;
         var downP = controls.UI_DOWN_P;
+		var leftP = controls.UI_LEFT_P;
+        var rightP = controls.UI_RIGHT_P;
         var up = controls.UI_UP;
         var down = controls.UI_DOWN;
         var accepted = controls.ACCEPT || FlxG.mouse.justPressed;
@@ -124,6 +130,8 @@ class PvPSongState extends MusicBeatState {
         if (gamepad != null) {
             if (gamepad.justPressed.LEFT_STICK_DIGITAL_UP || gamepad.justPressed.DPAD_UP) upP = true;
             if (gamepad.justPressed.LEFT_STICK_DIGITAL_DOWN || gamepad.justPressed.DPAD_DOWN) downP = true;
+			if (gamepad.justPressed.LEFT_STICK_DIGITAL_LEFT || gamepad.justPressed.DPAD_LEFT) leftP = true;
+			if (gamepad.justPressed.LEFT_STICK_DIGITAL_RIGHT || gamepad.justPressed.DPAD_RIGHT) rightP = true;
             if (gamepad.pressed.LEFT_STICK_DIGITAL_UP || gamepad.pressed.DPAD_UP) up = true;
             if (gamepad.pressed.LEFT_STICK_DIGITAL_DOWN || gamepad.pressed.DPAD_DOWN) down = true;
             if (gamepad.justPressed.A) accepted = true;
@@ -161,19 +169,23 @@ class PvPSongState extends MusicBeatState {
         }
 
         if (songs.length > 0 && CoolUtil.difficulties.length > 1) {
-            if ((controls.UI_LEFT_P) || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
+            if (leftP || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel < 0))
                 changeDiff(-1);
-            else if ((controls.UI_RIGHT_P) || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
+            else if (rightP || (FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel > 0))
                 changeDiff(1);
         }
 
         if (back)
         {
+			var gamepad = FlxG.gamepads.getByID(0);
+			if (gamepad != null)
+				PlayerSettings.player1.controls.addDefaultGamepad(0);
+
             persistentUpdate = false;
             if (colorTween != null) {
                 colorTween.cancel();
             }
-            FlxG.sound.play(Paths.sound('cancelMenu'), 0.7);
+            CoolUtil.playCancelSound();
             MusicBeatState.switchState(new MainMenuState());
         }
 
@@ -198,7 +210,7 @@ class PvPSongState extends MusicBeatState {
                 }
                 
                 MusicBeatState.switchState(new PvPCharacterState());
-                FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+                CoolUtil.playConfirmSound();
             }
         }
 
@@ -227,7 +239,7 @@ class PvPSongState extends MusicBeatState {
 
     function changeSelection(change:Int = 0, playSound:Bool = true)
 	{
-		if (playSound) FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		if (playSound) CoolUtil.playScrollSound();
 
 		curSelected += change;
 
@@ -278,7 +290,7 @@ class PvPSongState extends MusicBeatState {
             if (songs[curSelected].difficulties == null)
 			    CoolUtil.getDifficulties(songs[curSelected].songName, true);
             else
-                CoolUtil.difficulties = songs[curSelected].difficulties.copy();
+                CoolUtil.difficulties = songs[curSelected].difficulties.split(',');
 		}
 
 		if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
@@ -370,10 +382,10 @@ class SongMetadata
 	public var songCharacter:String = "";
 	public var color:Int = -7179779;
 	public var displayName:String = "";
-	public var difficulties:Array<String> = null;
+	public var difficulties:String = null;
     public var skipStage:Bool = false;
 
-	public function new(song:String, week:Int, songCharacter:String, color:Int, ?displayName:String, ?skipStage:Bool = false, ?difficulties:Array<String>)
+	public function new(song:String, week:Int, songCharacter:String, color:Int, ?displayName:String, ?skipStage:Bool = false, ?difficulties:String)
 	{
 		this.songName = song;
 		this.week = week;
@@ -382,6 +394,6 @@ class SongMetadata
 		this.displayName = displayName;
 		if (this.displayName == null) this.displayName = this.songName;
         this.skipStage = skipStage;
-        this.difficulties = difficulties;
+        this.difficulties = difficulties.trim();
 	}
 }

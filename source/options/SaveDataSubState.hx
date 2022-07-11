@@ -18,7 +18,7 @@ class SaveDataSubState extends BaseOptionsMenu
         option.onChange = function() {
             openSubState(new Prompt('Are you sure you want to reset all of your highscores?\n\nThis action is irreversible.', function() {
 				clearScores();
-				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+				CoolUtil.playConfirmSound();
 			}, null));
         }
 		addOption(option);
@@ -30,7 +30,7 @@ class SaveDataSubState extends BaseOptionsMenu
 		option.onChange = function() {
 			openSubState(new Prompt('Are you sure you want to reset all of your completed weeks?\nThis action is irreversible.', function() {
 				clearWeeks();
-				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+				CoolUtil.playConfirmSound();
 			}, null));
 		}
 		addOption(option);
@@ -42,7 +42,7 @@ class SaveDataSubState extends BaseOptionsMenu
 		option.onChange = function() {
 			openSubState(new Prompt('Are you sure you want to reset all of your achievement progress?\nThis action is irreversible.', function() {
 				clearAchievements();
-				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+				CoolUtil.playConfirmSound();
 			}, null));
 		}
 		addOption(option);
@@ -57,7 +57,7 @@ class SaveDataSubState extends BaseOptionsMenu
 				clearWeeks();
 				clearAchievements();
 				clearFreeplay();
-				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+				CoolUtil.playConfirmSound();
 			}, null));
 		}
 		addOption(option);
