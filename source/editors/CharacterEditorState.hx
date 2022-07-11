@@ -211,28 +211,26 @@ class CharacterEditorState extends MusicBeatState
 		if (char.isPlayer) playerXDifference = 670;
 
 		if (onPixelBG) {
-			var playerYDifference:Float = 0;
 			if (char.isPlayer) {
 				playerXDifference += 200;
-				playerYDifference = 220;
 			}
 
-			var bgSky:BGSprite = new BGSprite('weeb/weebSky', OFFSET_X - (playerXDifference / 2) - 300, 0 - playerYDifference, 0.1, 0.1);
+			var bgSky:BGSprite = new BGSprite('weeb/weebSky', 0 + OFFSET_X, -100, 0.1, 0.1);
 			bgLayer.add(bgSky);
 			bgSky.antialiasing = false;
 
 			var repositionShit = -200 + OFFSET_X - playerXDifference;
 
-			var bgSchool:BGSprite = new BGSprite('weeb/weebSchool', repositionShit, -playerYDifference + 6, 0.6, 0.90);
+			var bgSchool:BGSprite = new BGSprite('weeb/weebSchool', repositionShit, -94, 0.6, 0.90);
 			bgLayer.add(bgSchool);
 			bgSchool.antialiasing = false;
 
-			var bgStreet:BGSprite = new BGSprite('weeb/weebStreet', repositionShit, -playerYDifference, 0.95, 0.95);
+			var bgStreet:BGSprite = new BGSprite('weeb/weebStreet', repositionShit, -100, 0.95, 0.95);
 			bgLayer.add(bgStreet);
 			bgStreet.antialiasing = false;
 
 			var widShit = Std.int(bgSky.width * 6);
-			var bgTrees:FlxSprite = new FlxSprite(repositionShit - 380, -800 - playerYDifference);
+			var bgTrees:FlxSprite = new FlxSprite(repositionShit - 380, -900);
 			bgTrees.frames = Paths.getPackerAtlas('weeb/weebTrees');
 			bgTrees.animation.add('treeLoop', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], 12);
 			bgTrees.animation.play('treeLoop');
@@ -362,6 +360,8 @@ class CharacterEditorState extends MusicBeatState
 			updatePointerPos();
 			reloadGuideChar(char.isPlayer);
 			reloadBGs();
+			char.setOffsets();
+			ghostChar.setOffsets();
 			genBoyOffsets();
 			ghostChar.flipX = char.flipX;
 		};
@@ -873,17 +873,15 @@ class CharacterEditorState extends MusicBeatState
 
 		reloadGuideChar(!isDad);
 
-		ghostChar = new Character(0, 0, daAnim, !isDad);
+		ghostChar = new Character(0, 0, daAnim, !isDad, true);
 		ghostChar.isPlayer = !isDad;
-		ghostChar.debugMode = true;
 		ghostChar.alpha = 0.6;
 
-		char = new Character(0, 0, daAnim, !isDad);
+		char = new Character(0, 0, daAnim, !isDad, true);
 		char.isPlayer = !isDad;
 		if (char.animationsArray[0] != null) {
 			char.playAnim(char.animationsArray[0].anim, true);
 		}
-		char.debugMode = true;
 
 		charLayer.add(ghostChar);
 		charLayer.add(char);
@@ -905,13 +903,9 @@ class CharacterEditorState extends MusicBeatState
 			charLayer.remove(guideChar);
 		}
 		var daChar = onPixelBG ? 'senpai' : 'dad';
-		if (onPixelBG && char.isPlayer) {
-			daChar = 'bf-pixel';
-		}
-		guideChar = new Character(0, 0, daChar, flipped);
+		guideChar = new Character(0, 0, daChar, flipped, true);
 		guideChar.animation.finish();
 		guideChar.isPlayer = flipped;
-		guideChar.debugMode = true;
 		guideChar.alpha = 0.3;
 		guideChar.x = OFFSET_X + 100;
 		guideChar.visible = lastVisible;
@@ -1182,9 +1176,9 @@ class CharacterEditorState extends MusicBeatState
 						ghostChar.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].enemyOffsets[0], char.animationsArray[curAnim].enemyOffsets[1]);
 					}
 
-					char.playAnim(char.animationsArray[curAnim].anim, false);
+					char.setOffsets();
 					if (ghostChar.animation.curAnim != null && char.animation.curAnim != null && char.animation.curAnim.name == ghostChar.animation.curAnim.name) {
-						ghostChar.playAnim(char.animation.curAnim.name, false);
+						ghostChar.setOffsets();
 					}
 					genBoyOffsets();
 				}
@@ -1218,9 +1212,9 @@ class CharacterEditorState extends MusicBeatState
 							ghostChar.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].enemyOffsets[0], char.animationsArray[curAnim].enemyOffsets[1]);
 						}
 						
-						char.playAnim(char.animationsArray[curAnim].anim, false);
+						char.setOffsets();
 						if (ghostChar.animation.curAnim != null && char.animation.curAnim != null && char.animation.curAnim.name == ghostChar.animation.curAnim.name) {
-							ghostChar.playAnim(char.animation.curAnim.name, false);
+							ghostChar.setOffsets();
 						}
 						genBoyOffsets();
 						holdTime = 0;
@@ -1257,9 +1251,9 @@ class CharacterEditorState extends MusicBeatState
 									ghostChar.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].enemyOffsets[0], char.animationsArray[curAnim].enemyOffsets[1]);
 								}
 								
-								char.playAnim(char.animationsArray[curAnim].anim, false);
+								char.setOffsets();
 								if (ghostChar.animation.curAnim != null && char.animation.curAnim != null && char.animation.curAnim.name == ghostChar.animation.curAnim.name) {
-									ghostChar.playAnim(char.animation.curAnim.name, false);
+									ghostChar.setOffsets();
 								}
 								genBoyOffsets();
 							}

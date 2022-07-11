@@ -208,10 +208,10 @@ class PvPSongState extends MusicBeatState {
                 }
                 
 				if (FlxG.keys.pressed.SHIFT) {
-					LoadingState.loadAndSwitchState(new PvPSongState());
+					LoadingState.loadAndSwitchState(new PvPPlayState());
 				} else {
 					if (songs[curSelected].skipStage) {
-						PlayState.SONG.stage = 'stage';
+						PvPPlayState.skipStage = true;
 					}
                 	MusicBeatState.switchState(new PvPCharacterState());
 				}

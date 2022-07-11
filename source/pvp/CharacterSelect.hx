@@ -33,7 +33,7 @@ class CharacterSelect extends FlxSpriteGroup {
     var cornerSize:Int = 5;
     var selectedSquare:FlxSprite;
     
-    var grpIconsPos:FlxPoint = new FlxPoint(0, 5);
+    var grpIconsPos:FlxPoint = new FlxPoint(5, 5);
 
     public var curSelectedX:Int = 0;
     public var curSelectedY:Int = 0;
@@ -81,14 +81,14 @@ class CharacterSelect extends FlxSpriteGroup {
 
         scrollFactor.set();
 
-        panel = new FlxSprite(0, 560);
+        panel = new FlxSprite(20, 560);
         makeSelectorGraphic(panel, 600, 160, 0xff999999);
         panel.scrollFactor.set();
 
-        selectedSquare = new FlxSprite(0, 560).makeGraphic(75, 75, 0xffcdcdcd);
+        selectedSquare = new FlxSprite(20, 560).makeGraphic(75, 75, 0xffcdcdcd);
         selectedSquare.scrollFactor.set();
 
-        grpIcons = new FlxTypedSpriteGroup(5, 565);
+        grpIcons = new FlxTypedSpriteGroup(25, 565);
         grpIcons.scrollFactor.set();
 
         for (i in 0...characters.length) {
@@ -317,8 +317,12 @@ class CharacterSelect extends FlxSpriteGroup {
 
     function changeSelection(x:Int = 0, y:Int = 0) {
         curSelectedX += x;
-        if (curSelectedX < 0)
+        if (curSelectedX < 0) {
 			curSelectedX = maxX;
+            if (grpIcons.members[curCharIndex] == null) {
+                curSelectedX -= 1;
+            }
+        }
 		if (curSelectedX > maxX || grpIcons.members[curCharIndex] == null)
 			curSelectedX = 0;
         
@@ -371,7 +375,7 @@ class CharacterSelect extends FlxSpriteGroup {
                 icon.visible = true;
                 var swagRect = new FlxRect(0, 0, icon.frameWidth, icon.frameHeight);
                 if (icon.x < panel.x) {
-                    swagRect.x += Math.abs(panel.x - icon.x) * 2;
+                    swagRect.x += Math.abs(panel.x - icon.x) / icon.scale.x;
                     swagRect.width -= swagRect.x;
                     icon.clipRect = swagRect;
                 } else if (icon.x + icon.width > panel.x + panel.width) {

@@ -1,148 +1,253 @@
 {
 	"animations": [
 		{
-			"offsets": [
+			"enemyOffsets": [
 				165,
 				-114
 			],
 			"loop": false,
-			"anim": "singLEFT",
+			"offsets": [
+				165,
+				-114
+			],
 			"fps": 30,
-			"name": "shaggy_left",
-			"indices": []
+			"anim": "singLEFT",
+			"playerOffsets": [
+				-55,
+				-114
+			],
+			"indices": [],
+			"name": "shaggy_left"
 		},
 		{
+			"enemyOffsets": [
+				-10,
+				-170
+			],
+			"loop": false,
 			"offsets": [
 				-10,
 				-160
 			],
-			"loop": false,
-			"anim": "singDOWN",
 			"fps": 30,
-			"name": "shaggy_down",
-			"indices": []
+			"anim": "singDOWN",
+			"playerOffsets": [
+				90,
+				-160
+			],
+			"indices": [],
+			"name": "shaggy_down"
 		},
 		{
+			"enemyOffsets": [
+				-19,
+				27
+			],
+			"loop": false,
 			"offsets": [
 				-16,
 				27
 			],
-			"loop": false,
-			"anim": "singUP",
 			"fps": 30,
-			"name": "shaggy_up",
-			"indices": []
+			"anim": "singUP",
+			"playerOffsets": [
+				-36,
+				27
+			],
+			"indices": [],
+			"name": "shaggy_up"
 		},
 		{
+			"enemyOffsets": [
+				-6,
+				-38
+			],
+			"loop": false,
 			"offsets": [
 				-1,
 				-38
 			],
-			"loop": false,
+			"fps": 30,
 			"anim": "singRIGHT",
-			"fps": 30,
-			"name": "shaggy_right",
-			"indices": []
+			"playerOffsets": [
+				129,
+				-38
+			],
+			"indices": [],
+			"name": "shaggy_right"
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				0,
 				0
 			],
 			"loop": false,
+			"offsets": [
+				0,
+				0
+			],
+			"fps": 30,
 			"anim": "danceLeft",
-			"fps": 30,
-			"name": "shaggy_idle0",
-			"indices": []
+			"playerOffsets": [
+				0,
+				0
+			],
+			"indices": [],
+			"name": "shaggy_idle0"
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				0,
 				0
 			],
 			"loop": false,
-			"fps": 30,
+			"offsets": [
+				0,
+				0
+			],
 			"anim": "danceRight",
+			"fps": 30,
+			"playerOffsets": [
+				-29,
+				0
+			],
 			"name": "shaggy_idle2"
 		},
 		{
+			"enemyOffsets": [
+				-14,
+				10
+			],
+			"loop": false,
 			"offsets": [
 				0,
 				0
 			],
-			"loop": false,
-			"anim": "idle_s",
 			"fps": 30,
-			"name": "shaggy_super_idle0",
-			"indices": []
+			"anim": "idle_s",
+			"playerOffsets": [
+				4,
+				9
+			],
+			"indices": [],
+			"name": "shaggy_super_idle0"
 		},
 		{
+			"enemyOffsets": [
+				-18,
+				25
+			],
+			"loop": false,
 			"offsets": [
 				0,
 				0
 			],
-			"loop": false,
-			"anim": "powerup",
 			"fps": 24,
-			"name": "shaggy_powerup",
-			"indices": []
+			"anim": "powerup",
+			"playerOffsets": [
+				-38,
+				24
+			],
+			"indices": [],
+			"name": "shaggy_powerup"
 		},
 		{
+			"enemyOffsets": [
+				180,
+				106
+			],
+			"loop": false,
 			"offsets": [
 				140,
 				90
 			],
-			"loop": false,
-			"anim": "catch",
 			"fps": 30,
-			"name": "shaggy_catch",
-			"indices": []
+			"anim": "catch",
+			"playerOffsets": [
+				61,
+				120
+			],
+			"indices": [],
+			"name": "shaggy_catch"
 		},
 		{
+			"enemyOffsets": [
+				129,
+				116
+			],
+			"loop": false,
 			"offsets": [
 				90,
 				100
 			],
-			"loop": false,
-			"anim": "hold",
 			"fps": 30,
-			"name": "shaggy_hold",
-			"indices": []
+			"anim": "hold",
+			"playerOffsets": [
+				74,
+				130
+			],
+			"indices": [],
+			"name": "shaggy_hold"
 		},
 		{
+			"enemyOffsets": [
+				120,
+				-9
+			],
+			"loop": false,
 			"offsets": [
 				90,
 				0
 			],
-			"loop": false,
-			"anim": "h_half",
 			"fps": 30,
-			"name": "shaggy_h_half",
-			"indices": []
+			"anim": "h_half",
+			"playerOffsets": [
+				61,
+				5
+			],
+			"indices": [],
+			"name": "shaggy_h_half"
 		},
 		{
+			"enemyOffsets": [
+				161,
+				-9
+			],
+			"loop": false,
 			"offsets": [
 				130,
 				0
 			],
-			"loop": false,
-			"anim": "fall",
 			"fps": 30,
-			"name": "shaggy_fall",
-			"indices": []
+			"anim": "fall",
+			"playerOffsets": [
+				91,
+				5
+			],
+			"indices": [],
+			"name": "shaggy_fall"
 		},
 		{
+			"enemyOffsets": [
+				141,
+				-132
+			],
+			"loop": false,
 			"offsets": [
 				110,
 				-123
 			],
-			"loop": false,
-			"anim": "kneel",
 			"fps": 30,
-			"name": "shaggy_half_ground",
-			"indices": []
+			"anim": "kneel",
+			"playerOffsets": [
+				62,
+				-118
+			],
+			"indices": [],
+			"name": "shaggy_half_ground"
 		}
 	],
+	"repeatHoldAnimation": true,
 	"no_antialiasing": false,
 	"image": "characters/shaggy",
 	"position": [

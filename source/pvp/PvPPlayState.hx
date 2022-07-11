@@ -1,5 +1,6 @@
 package pvp;
 
+import LoadingState.MultiCallback;
 import flixel.addons.effects.FlxTrail;
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.math.FlxRect;
@@ -200,6 +201,7 @@ class PvPPlayState extends MusicBeatState {
 
 	public static var boyfriendMatch:Bool = false;
 	public static var dadMatch:Bool = false;
+	public static var skipStage:Bool = false;
 
 	var boyfriendScoreMult:Float = 1;
 	var dadScoreMult:Float = 1;
@@ -259,6 +261,10 @@ class PvPPlayState extends MusicBeatState {
 
 		if (PlayState.SONG == null)
 			PlayState.SONG = Song.loadFromJson('test', 'test');
+
+		if (skipStage) {
+			PlayState.SONG.stage = 'stage';
+		}
 
 		curSong = Paths.formatToSongPath(PlayState.SONG.song);
 		curSongDisplayName = Song.getDisplayName(PlayState.SONG.song);
@@ -1745,8 +1751,6 @@ class PvPPlayState extends MusicBeatState {
 		//more accurate hit time for the ratings?
 		Conductor.songPosition = FlxG.sound.music.time;
 
-		var canMiss:Bool = !ClientPrefs.ghostTapping;
-
 		// heavily based on my own code LOL if it aint broke dont fix it
 		var pressNotes:Array<Note> = [];
 		var notesStopped:Bool = false;
@@ -1760,7 +1764,6 @@ class PvPPlayState extends MusicBeatState {
 				{
 					sortedNotesList.push(daNote);
 				}
-				canMiss = true;
 			}
 		});
 		sortedNotesList.sort(sortHitNotes);
@@ -1787,9 +1790,7 @@ class PvPPlayState extends MusicBeatState {
 
 			}
 		} else {
-			if (canMiss) {
-				noteMissPress(key, player);
-			}
+			noteMissPress(key, player);
 		}
 
 		//more accurate hit time for the ratings? part 2 (Now that the calculations are done, go back to the time it was before for not causing a note stutter)
@@ -2011,9 +2012,18 @@ class PvPPlayState extends MusicBeatState {
 
 	function noteMissPress(direction:Int = 1, player:Int = 0):Void //You pressed a key when there was no notes to press for this key
 	{
+		var charGroup = player == 0 ? dadGroup : boyfriendGroup;
+		var animToPlay = '${strumLineNotes.members[player].animations[direction]}miss';
+		for (char in charGroup) {
+			if (char.hasMissAnimations && char.animOffsets.exists(animToPlay)) {
+				char.playAnim(animToPlay, true);
+			} else {
+				char.playAnim(strumLineNotes.members[player].animations[direction], true);
+				char.holdTimer = 0;
+			}
+		}
 		if(ClientPrefs.ghostTapping) return; //fuck it
 
-		var charGroup = player == 0 ? dadGroup : boyfriendGroup;
 		if (!charGroup.members[0].stunned)
 		{
 			health -= 0.05 * (player == 0 ? -1 : 1);
@@ -2037,13 +2047,6 @@ class PvPPlayState extends MusicBeatState {
 			doRatingTween(ratingTxtGroup[player].members.length - 1);
 
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
-
-			var animToPlay = '${strumLineNotes.members[player].animations[direction]}miss';
-			for (char in charGroup) {
-				if (char.hasMissAnimations && char.animOffsets.exists(animToPlay)) {
-					char.playAnim(animToPlay, true);
-				}
-			}
 		}
 	}
 
@@ -2758,24 +2761,32 @@ class PvPPlayState extends MusicBeatState {
 		if (isDad)
 		{
 			camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
+			var mult = 1;
+			if (dad.flipped != dad.originalFlipX) {
+				mult = -1;
+			}
 
 			if (dadGroupFile != null) {
-				camFollow.x += dadGroupFile.camera_position[0] + opponentCameraOffset[0];
+				camFollow.x += (dadGroupFile.camera_position[0] + opponentCameraOffset[0]) * mult;
 				camFollow.y += dadGroupFile.camera_position[1] + opponentCameraOffset[1];
 			} else {
-				camFollow.x += dad.cameraPosition[0] + opponentCameraOffset[0];
+				camFollow.x += (dad.cameraPosition[0] + opponentCameraOffset[0]) * mult;
 				camFollow.y += dad.cameraPosition[1] + opponentCameraOffset[1];
 			}
 		}
 		else
 		{
 			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
+			var mult = -1;
+			if (boyfriend.flipped != boyfriend.originalFlipX) {
+				mult = 1;
+			}
 
 			if (bfGroupFile != null) {
-				camFollow.x -= bfGroupFile.camera_position[0] - boyfriendCameraOffset[0];
+				camFollow.x += (bfGroupFile.camera_position[0] - boyfriendCameraOffset[0]) * mult;
 				camFollow.y += bfGroupFile.camera_position[1] + boyfriendCameraOffset[1];
 			} else {
-				camFollow.x -= boyfriend.cameraPosition[0] - boyfriendCameraOffset[0];
+				camFollow.x += (boyfriend.cameraPosition[0] - boyfriendCameraOffset[0]) * mult;
 				camFollow.y += boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
 			}
 		}
@@ -2914,6 +2925,7 @@ class PvPPlayState extends MusicBeatState {
 		rating.visible = !ClientPrefs.hideHud && showRating;
 		rating.x += ClientPrefs.comboOffset[0];
 		rating.y -= ClientPrefs.comboOffset[1];
+		rating.alpha = 0.5;
 
 		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(getUIFile('combo')));
 		comboSpr.cameras = [camHUD];
@@ -2922,11 +2934,12 @@ class PvPPlayState extends MusicBeatState {
 		comboSpr.y += 60;
 		comboSpr.acceleration.y = FlxG.random.int(200, 300);
 		comboSpr.velocity.y -= FlxG.random.int(140, 160);
-		comboSpr.visible = !ClientPrefs.hideHud && showCombo;
+		comboSpr.visible = !ClientPrefs.hideHud;
 		comboSpr.x += ClientPrefs.comboOffset[0];
 		comboSpr.y -= ClientPrefs.comboOffset[1];
 		comboSpr.y += 60;
 		comboSpr.velocity.x += FlxG.random.int(1, 10);
+		comboSpr.alpha = 0.5;
 
 		insert(members.indexOf(strumLineNotes), rating);
 
@@ -2987,6 +3000,7 @@ class PvPPlayState extends MusicBeatState {
 			numScore.velocity.y -= FlxG.random.int(140, 160);
 			numScore.velocity.x = FlxG.random.float(-5, 5);
 			numScore.visible = !ClientPrefs.hideHud;
+			numScore.alpha = 0.5;
 
 			if(showComboNum)
 				insert(members.indexOf(strumLineNotes), numScore);

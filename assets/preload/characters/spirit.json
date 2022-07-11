@@ -1,61 +1,102 @@
 {
 	"animations": [
 		{
-			"offsets": [
+			"enemyOffsets": [
 				-218,
 				-280
 			],
 			"loop": false,
-			"anim": "idle",
+			"offsets": [
+				-218,
+				-280
+			],
 			"fps": 24,
-			"name": "idle spirit_",
-			"indices": []
+			"anim": "idle",
+			"playerOffsets": [
+				-218,
+				-280
+			],
+			"indices": [],
+			"name": "idle spirit_"
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				-200,
 				-280
 			],
 			"loop": false,
-			"anim": "singLEFT",
+			"offsets": [
+				-200,
+				-280
+			],
 			"fps": 24,
-			"name": "left_",
-			"indices": []
+			"anim": "singLEFT",
+			"playerOffsets": [
+				-230,
+				-280
+			],
+			"indices": [],
+			"name": "left_"
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				170,
 				110
 			],
 			"loop": false,
-			"anim": "singDOWN",
+			"offsets": [
+				170,
+				110
+			],
 			"fps": 24,
-			"name": "spirit down_",
-			"indices": []
+			"anim": "singDOWN",
+			"playerOffsets": [
+				170,
+				110
+			],
+			"indices": [],
+			"name": "spirit down_"
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				-220,
 				-280
 			],
 			"loop": false,
-			"anim": "singRIGHT",
+			"offsets": [
+				-220,
+				-280
+			],
 			"fps": 24,
-			"name": "right_",
-			"indices": []
+			"anim": "singRIGHT",
+			"playerOffsets": [
+				-220,
+				-280
+			],
+			"indices": [],
+			"name": "right_"
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				-220,
 				-240
 			],
 			"loop": false,
-			"anim": "singUP",
+			"offsets": [
+				-220,
+				-240
+			],
 			"fps": 24,
-			"name": "up_",
-			"indices": []
+			"anim": "singUP",
+			"playerOffsets": [
+				-220,
+				-240
+			],
+			"indices": [],
+			"name": "up_"
 		}
 	],
+	"repeatHoldAnimation": true,
 	"no_antialiasing": true,
 	"image": "characters/spirit",
 	"position": [

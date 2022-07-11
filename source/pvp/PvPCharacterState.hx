@@ -45,16 +45,12 @@ class PvPCharacterState extends MusicBeatState {
             FlxFlicker.flicker(charSelect1.readyText, 1, 0.06, false, false);
             FlxFlicker.flicker(charSelect2.readyText, 1, 0.06, false, false, function(flick:FlxFlicker)
             {
-                if (charSelect1.curCharacter == PlayState.SONG.player1) {
-                    PvPPlayState.boyfriendMatch = true;
-                } else {
-                    PvPPlayState.boyfriendMatch = false;
-                }
-                if (charSelect2.curCharacter == PlayState.SONG.player2) {
-                    PvPPlayState.dadMatch = true;
-                } else {
-                    PvPPlayState.dadMatch = false;
-                }
+                PvPPlayState.boyfriendMatch = (charSelect1.curCharacter == PlayState.SONG.player1);
+                PvPPlayState.dadMatch = (charSelect2.curCharacter == PlayState.SONG.player2);
+                
+                if (PvPPlayState.boyfriendMatch && PvPPlayState.dadMatch)
+                    PvPPlayState.skipStage = false;
+
                 PlayState.SONG.player1 = charSelect1.curCharacter;
                 PlayState.SONG.player2 = charSelect2.curCharacter;
                 LoadingState.loadAndSwitchState(new PvPPlayState(), true);

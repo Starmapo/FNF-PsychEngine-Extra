@@ -3,8 +3,26 @@
 		["bf", "Boyfriend", [
 			["bf-car", "Boyfriend (Week 4)"],
 			["bf-christmas", "Boyfriend (Week 5)"],
+			["bf-pixel", "Boyfriend (Week 6)"],
 			["bf-holding-gf", "Boyfriend & Girlfriend"]
 		]],
-		["dad", "Daddy Dearest"]
+		["dad", "Daddy Dearest"],
+		["mom", "Mommy Mearest", [
+			["mom-car", "Mommy Mearest (Week 4)"]
+		]],
+		["monster", "Monster", [
+			["monster-christmas", "Monster (Week 5)"]
+		]],
+		["parents-christmas", "Parents"],
+		["pico", "Pico"],
+		["senpai", "Senpai", [
+			["senpai-angry", "Senpai (Angry)"]
+		]],
+		["shaggy", "Shaggy", [
+			["sshaggy", "Shaggy (0.001%)"]
+		]],
+		["spirit", "Spirit"],
+		["spooky", "Skid & Pump"],
+		["tankman", "Tankman"]
 	]
 }

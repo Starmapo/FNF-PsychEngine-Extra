@@ -1,66 +1,107 @@
 {
 	"animations": [
 		{
-			"offsets": [
+			"enemyOffsets": [
 				2,
 				0
 			],
 			"loop": false,
-			"anim": "idle",
+			"offsets": [
+				2,
+				0
+			],
 			"fps": 24,
-			"name": "Angry Senpai Idle",
-			"indices": []
+			"anim": "idle",
+			"playerOffsets": [
+				2,
+				0
+			],
+			"indices": [],
+			"name": "Angry Senpai Idle"
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				5,
 				37
 			],
 			"loop": false,
-			"anim": "singUP",
+			"offsets": [
+				5,
+				37
+			],
 			"fps": 24,
-			"name": "Angry Senpai UP NOTE",
-			"indices": []
+			"anim": "singUP",
+			"playerOffsets": [
+				-4,
+				37
+			],
+			"indices": [],
+			"name": "Angry Senpai UP NOTE"
 		},
 		{
+			"enemyOffsets": [
+				26,
+				6
+			],
+			"loop": false,
 			"offsets": [
 				40,
 				0
 			],
-			"loop": false,
-			"anim": "singLEFT",
 			"fps": 24,
-			"name": "Angry Senpai LEFT NOTE",
-			"indices": []
+			"anim": "singLEFT",
+			"playerOffsets": [
+				-22,
+				6
+			],
+			"indices": [],
+			"name": "Angry Senpai LEFT NOTE"
 		},
 		{
+			"enemyOffsets": [
+				2,
+				0
+			],
+			"loop": false,
 			"offsets": [
 				0,
 				0
 			],
-			"loop": false,
-			"anim": "singRIGHT",
 			"fps": 24,
-			"name": "Angry Senpai RIGHT NOTE",
-			"indices": []
+			"anim": "singRIGHT",
+			"playerOffsets": [
+				0,
+				0
+			],
+			"indices": [],
+			"name": "Angry Senpai RIGHT NOTE"
 		},
 		{
+			"enemyOffsets": [
+				8,
+				6
+			],
+			"loop": false,
 			"offsets": [
 				14,
 				0
 			],
-			"loop": false,
-			"anim": "singDOWN",
 			"fps": 24,
-			"name": "Angry Senpai DOWN NOTE",
-			"indices": []
+			"anim": "singDOWN",
+			"playerOffsets": [
+				-5,
+				6
+			],
+			"indices": [],
+			"name": "Angry Senpai DOWN NOTE"
 		}
 	],
+	"repeatHoldAnimation": true,
 	"no_antialiasing": true,
 	"image": "characters/senpai",
 	"position": [
 		150,
-		360
+		300
 	],
 	"healthicon": "senpai-pixel",
 	"flip_x": false,

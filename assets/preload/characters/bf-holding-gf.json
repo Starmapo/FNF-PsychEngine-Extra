@@ -1,116 +1,197 @@
 {
 	"animations": [
 		{
+			"enemyOffsets": [
+				0,
+				0
+			],
+			"loop": false,
 			"offsets": [
 				-5,
 				0
 			],
-			"loop": false,
-			"fps": 24,
 			"anim": "idle",
-			"indices": [],
-			"name": "BF idle dance"
+			"fps": 24,
+			"playerOffsets": [
+				-5,
+				0
+			],
+			"name": "BF idle dance",
+			"indices": []
 		},
 		{
+			"enemyOffsets": [
+				-48,
+				2
+			],
+			"loop": false,
 			"offsets": [
 				12,
 				7
 			],
-			"loop": false,
-			"fps": 24,
 			"anim": "singLEFT",
-			"indices": [],
-			"name": "BF NOTE LEFT0"
+			"fps": 24,
+			"playerOffsets": [
+				4,
+				4
+			],
+			"name": "BF NOTE LEFT0",
+			"indices": []
 		},
 		{
+			"enemyOffsets": [
+				-20,
+				-10
+			],
+			"loop": false,
 			"offsets": [
 				-10,
 				-10
 			],
-			"loop": false,
-			"fps": 24,
 			"anim": "singDOWN",
-			"indices": [],
-			"name": "BF NOTE DOWN0"
+			"fps": 24,
+			"playerOffsets": [
+				-12,
+				-15
+			],
+			"name": "BF NOTE DOWN0",
+			"indices": []
 		},
 		{
+			"enemyOffsets": [
+				20,
+				10
+			],
+			"loop": false,
 			"offsets": [
 				-29,
 				10
 			],
-			"loop": false,
-			"fps": 24,
 			"anim": "singUP",
-			"indices": [],
-			"name": "BF NOTE UP0"
+			"fps": 24,
+			"playerOffsets": [
+				-49,
+				10
+			],
+			"name": "BF NOTE UP0",
+			"indices": []
 		},
 		{
+			"enemyOffsets": [
+				-3,
+				22
+			],
+			"loop": false,
 			"offsets": [
 				-41,
 				23
 			],
-			"loop": false,
-			"fps": 24,
 			"anim": "singRIGHT",
-			"indices": [],
-			"name": "BF NOTE RIGHT0"
+			"fps": 24,
+			"playerOffsets": [
+				-50,
+				21
+			],
+			"name": "BF NOTE RIGHT0",
+			"indices": []
 		},
 		{
+			"enemyOffsets": [
+				-40,
+				4
+			],
+			"loop": false,
 			"offsets": [
 				12,
 				7
 			],
-			"loop": false,
-			"fps": 24,
 			"anim": "singLEFTmiss",
-			"indices": [],
-			"name": "BF NOTE LEFT MISS"
+			"fps": 24,
+			"playerOffsets": [
+				4,
+				4
+			],
+			"name": "BF NOTE LEFT MISS",
+			"indices": []
 		},
 		{
+			"enemyOffsets": [
+				-20,
+				-10
+			],
+			"loop": false,
 			"offsets": [
 				-10,
 				-10
 			],
-			"loop": false,
-			"fps": 24,
 			"anim": "singDOWNmiss",
-			"indices": [],
-			"name": "BF NOTE DOWN MISS"
+			"fps": 24,
+			"playerOffsets": [
+				-12,
+				-15
+			],
+			"name": "BF NOTE DOWN MISS",
+			"indices": []
 		},
 		{
+			"enemyOffsets": [
+				39,
+				8
+			],
+			"loop": false,
 			"offsets": [
 				-29,
 				10
 			],
-			"loop": false,
-			"fps": 24,
 			"anim": "singUPmiss",
-			"indices": [],
-			"name": "BF NOTE UP MISS"
+			"fps": 24,
+			"playerOffsets": [
+				-49,
+				10
+			],
+			"name": "BF NOTE UP MISS",
+			"indices": []
 		},
 		{
+			"enemyOffsets": [
+				6,
+				33
+			],
+			"loop": false,
 			"offsets": [
 				-41,
 				33
 			],
-			"loop": false,
-			"fps": 24,
 			"anim": "singRIGHTmiss",
-			"indices": [],
-			"name": "BF NOTE RIGHT MISS"
+			"fps": 24,
+			"playerOffsets": [
+				-43,
+				35
+			],
+			"name": "BF NOTE RIGHT MISS",
+			"indices": []
 		},
 		{
-			"loop": false,
+			"enemyOffsets": [
+				68,
+				90
+			],
 			"offsets": [
 				0,
 				90
 			],
-			"anim": "bfCatch",
+			"loop": false,
 			"fps": 24,
-			"name": "BF catches GF",
-			"indices": []
+			"anim": "bfCatch",
+			"playerOffsets": [
+				0,
+				90
+			],
+			"indices": [],
+			"name": "BF catches GF"
 		}
 	],
+	"repeatHoldAnimation": true,
 	"no_antialiasing": false,
 	"image": "characters/bfAndGF",
 	"position": [

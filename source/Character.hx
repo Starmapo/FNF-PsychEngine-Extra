@@ -91,14 +91,18 @@ class Character extends FlxSprite
 	public var originalFlipX:Bool = false;
 	public var healthColorArray:Array<Int> = [255, 0, 0];
 
+	public var flipped:Bool = false;
+
 	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
-	public function new(x:Float, y:Float, ?character:String = 'bf', ?flipped:Bool = false)
+	public function new(x:Float, y:Float, ?character:String = 'bf', ?flipped:Bool = false, ?debugMode:Bool = false)
 	{
 		super(x, y);
 
 		animOffsets = new Map();
 		curCharacter = character;
 		antialiasing = ClientPrefs.globalAntialiasing;
+		this.debugMode = debugMode;
+		this.flipped = flipped;
 
 		switch (curCharacter)
 		{
@@ -162,23 +166,56 @@ class Character extends FlxSprite
 						var animFps:Int = anim.fps;
 						var animLoop:Bool = anim.loop == true;
 						var animIndices:Array<Int> = anim.indices;
-						if (animIndices != null && animIndices.length > 0) {
-							animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
-						} else {
-							animation.addByPrefix(animAnim, animName, animFps, animLoop);
-						}
-
-						if (flipped && anim.playerOffsets != null && anim.playerOffsets.length > 1) {
-							addOffset(anim.anim, anim.playerOffsets[0], anim.playerOffsets[1]);
-						} else if (!flipped && anim.enemyOffsets != null && anim.enemyOffsets.length > 1) {
-							addOffset(anim.anim, anim.enemyOffsets[0], anim.enemyOffsets[1]);
-						}
+						addAnimation(animAnim, animName, animFps, animLoop, animIndices);
+						addFlippedOffset(animAnim, anim.playerOffsets, anim.enemyOffsets, flipped);
 					}
 				} else {
 					quickAnimAdd('idle', 'BF idle dance');
 				}
 		}
 		originalFlipX = flipX;
+
+		if (flipped != originalFlipX && !debugMode) {
+			trace('flipping anims', curCharacter, flipped);
+			for (leftAnim in animationsArray) {
+				if (leftAnim.anim.startsWith('singLEFT')) {
+					trace('found left anim: ${leftAnim.anim}');
+					var rightName = 'singRIGHT' + leftAnim.anim.substr(8);
+					if (animOffsets.exists(rightName)) {
+						var newRight = getAnimArray(rightName);
+						var newLeft:AnimArray = {
+							anim: leftAnim.anim,
+							name: newRight.name,
+							fps: newRight.fps,
+							loop: newRight.loop == true,
+							indices: newRight.indices.copy(),
+							offsets: null,
+							playerOffsets: newRight.playerOffsets.copy(),
+							enemyOffsets: newRight.enemyOffsets.copy()
+						};
+
+						newRight.name = leftAnim.name;
+						newRight.fps = leftAnim.fps;
+						newRight.loop = leftAnim.loop == true;
+						newRight.indices = leftAnim.indices.copy();
+						newRight.playerOffsets = leftAnim.playerOffsets;
+						newRight.enemyOffsets = leftAnim.enemyOffsets;
+						addAnimation(newRight.anim, newRight.name, newRight.fps, newRight.loop, newRight.indices);
+						addFlippedOffset(newRight.anim, newRight.playerOffsets, newRight.enemyOffsets, flipped);
+
+						leftAnim.name = newLeft.name;
+						leftAnim.fps = newLeft.fps;
+						leftAnim.loop = newLeft.loop;
+						leftAnim.indices = newLeft.indices;
+						leftAnim.playerOffsets = newLeft.playerOffsets;
+						leftAnim.enemyOffsets = newLeft.enemyOffsets;
+						addAnimation(leftAnim.anim, leftAnim.name, leftAnim.fps, leftAnim.loop, leftAnim.indices);
+						addFlippedOffset(leftAnim.anim, leftAnim.playerOffsets, leftAnim.enemyOffsets, flipped);
+						trace(leftAnim, newRight);
+					}
+				}
+			}
+		}
 
 		hasMissAnimations = (animOffsets.exists('singLEFTmiss') || animOffsets.exists('singDOWNmiss') || animOffsets.exists('singUPmiss') || animOffsets.exists('singRIGHTmiss'));
 		recalculateDanceIdle();
@@ -195,6 +232,31 @@ class Character extends FlxSprite
 				skipDance = true;
 				loadMappedAnims();
 				playAnim("shoot1");
+		}
+	}
+
+	function getAnimArray(anim:String) {
+		for (i in animationsArray) {
+			if (i.anim == anim) {
+				return i;
+			}
+		}
+		return null;
+	}
+
+	function addAnimation(anim:String, name:String, fps:Int, loop:Bool, ?indices:Array<Int>) {
+		if (indices != null && indices.length > 0) {
+			animation.addByIndices(anim, name, indices, "", fps, loop);
+		} else {
+			animation.addByPrefix(anim, name, fps, loop);
+		}
+	}
+
+	function addFlippedOffset(anim:String, playerOffsets:Array<Float>, enemyOffsets:Array<Float>, flipped:Bool) {
+		if (flipped && playerOffsets != null && playerOffsets.length > 1) {
+			addOffset(anim, playerOffsets[0], playerOffsets[1]);
+		} else if (!flipped && enemyOffsets != null && enemyOffsets.length > 1) {
+			addOffset(anim, enemyOffsets[0], enemyOffsets[1]);
 		}
 	}
 
@@ -245,7 +307,7 @@ class Character extends FlxSprite
 				if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished)
 				{
 					dance();
-					playAnim(animation.curAnim.name, true, false, animation.curAnim.numFrames - 1);
+					animation.finish();
 				}
 			} else {
 				if (animation.curAnim.name.startsWith('sing')) {
@@ -273,7 +335,7 @@ class Character extends FlxSprite
 	 */
 	public function dance()
 	{
-		if (!debugMode && !skipDance && !specialAnim)
+		if (!skipDance && !specialAnim)
 		{
 			if (danceIdle)
 			{
@@ -295,13 +357,7 @@ class Character extends FlxSprite
 		specialAnim = false;
 		animation.play(AnimName, Force, Reversed, Frame);
 
-		var daOffset = animOffsets.get(AnimName);
-		if (animOffsets.exists(AnimName))
-		{
-			offset.set(daOffset[0], daOffset[1]);
-		}
-		else
-			offset.set(0, 0);
+		setOffsets();
 
 		if (curCharacter.startsWith('gf'))
 		{
@@ -319,6 +375,19 @@ class Character extends FlxSprite
 				danced = !danced;
 			}
 		}
+	}
+
+	public function setOffsets(?name:String) {
+		if (name == null)
+			name = animation.name;
+		
+		if (animOffsets.exists(name))
+		{
+			var daOffset = animOffsets.get(name);
+			offset.set(daOffset[0], daOffset[1]);
+		}
+		else
+			offset.set(0, 0);
 	}
 
 	function loadMappedAnims():Void
