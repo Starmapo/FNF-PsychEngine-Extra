@@ -3047,7 +3047,8 @@ class PlayState extends MusicBeatState
 						if(ClientPrefs.middleScroll && !daNote.mustPress)
 							strumAlpha *= 0.35;
 					}
-					if (daNote.tooLate) strumAlpha *= 0.3;
+					if (daNote.tooLate)
+						strumAlpha *= 0.3;
 					
 					if (strumScroll) //Downscroll
 					{

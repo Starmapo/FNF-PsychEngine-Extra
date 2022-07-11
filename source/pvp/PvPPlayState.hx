@@ -1213,12 +1213,10 @@ class PvPPlayState extends MusicBeatState {
 					strumY += daNote.offsetY;
 					strumAngle += daNote.offsetAngle;
 					strumAlpha *= daNote.multAlpha;
-					if (Conductor.songPosition < 0) {
+					if (Conductor.songPosition < 0)
 						strumAlpha = daNote.multAlpha;
-						if(ClientPrefs.middleScroll && !daNote.mustPress)
-							strumAlpha *= 0.35;
-					}
-					if (daNote.tooLate) strumAlpha *= 0.3;
+					if (daNote.tooLate)
+						strumAlpha *= 0.3;
 	
 					if (strumScroll) //Downscroll
 					{
@@ -1619,13 +1617,6 @@ class PvPPlayState extends MusicBeatState {
 						}
 					});
 					FlxG.sound.play(Paths.sound('introGo$introSoundsSuffix'), 0.6);
-			}
-
-			for (strumLine in strumLineNotes) {
-				strumLine.allNotes.forEachAlive(function(note:Note) {
-					note.copyAlpha = false;
-					note.alpha = note.multAlpha;
-				});
 			}
 
 			swagCounter += 1;
