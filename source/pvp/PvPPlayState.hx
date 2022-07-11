@@ -134,6 +134,8 @@ class PvPPlayState extends MusicBeatState {
 	var phillyGlowParticles:FlxTypedGroup<PhillyGlow.PhillyGlowParticle>;
 	var curLightEvent:Int = -1;
 
+	var shaggyT:FlxTrail;
+
 	public var songScore:Array<Float> = [0, 0];
 	public var songMisses:Array<Int> = [0, 0];
 	public var scoreTxt:Array<FlxText> = [];
@@ -464,7 +466,11 @@ class PvPPlayState extends MusicBeatState {
 		} 
 
 		for (img in imagesToCheck) {
-			precacheList.set(getUIFile(img), 'image');
+			var spr = new FlxSprite().loadGraphic(Paths.image(getUIFile(img)));
+			spr.alpha = 0.00001;
+			spr.scrollFactor.set();
+			spr.cameras = [camHUD];
+			add(spr);
 		}
 
 		strumLine = new FlxSprite(0, 50).makeGraphic(FlxG.width, 10);
@@ -515,7 +521,7 @@ class PvPPlayState extends MusicBeatState {
 
 		var splash:NoteSplash = new NoteSplash(100, 100, null);
 		grpNoteSplashes.add(splash);
-		splash.alphaMult = 0;
+		splash.alphaMult = 0.00001;
 
 		generateStaticArrows(0, PlayState.SONG.dadKeyAmount, false);
 		generateStaticArrows(1, PlayState.SONG.boyfriendKeyAmount, true);
@@ -1207,7 +1213,12 @@ class PvPPlayState extends MusicBeatState {
 					strumY += daNote.offsetY;
 					strumAngle += daNote.offsetAngle;
 					strumAlpha *= daNote.multAlpha;
-					if (daNote.tooLate) strumAlpha * 0.3;
+					if (Conductor.songPosition < 0) {
+						strumAlpha = daNote.multAlpha;
+						if(ClientPrefs.middleScroll && !daNote.mustPress)
+							strumAlpha *= 0.35;
+					}
+					if (daNote.tooLate) strumAlpha *= 0.3;
 	
 					if (strumScroll) //Downscroll
 					{
@@ -1697,7 +1708,7 @@ class PvPPlayState extends MusicBeatState {
 		//ALL BOYFRIEND INPUTS HERE
 		var gamepad = FlxG.gamepads.lastActive;
 		if (gamepad != null && !dadGroup.members[0].stunned && startedCountdown && !endingSong) {
-			var controlArray:Array<Bool> = [gamepad.justPressed.DPAD_LEFT, gamepad.justPressed.DPAD_DOWN, gamepad.justPressed.RIGHT_STICK_DIGITAL_UP, gamepad.justPressed.RIGHT_STICK_DIGITAL_RIGHT];
+			var controlArray:Array<Bool> = [gamepad.justPressed.LEFT_STICK_DIGITAL_LEFT, gamepad.justPressed.LEFT_STICK_DIGITAL_DOWN, gamepad.justPressed.RIGHT_STICK_DIGITAL_UP, gamepad.justPressed.RIGHT_STICK_DIGITAL_RIGHT];
 			if(controlArray.contains(true))
 			{
 				for (i in 0...controlArray.length)
@@ -1707,7 +1718,7 @@ class PvPPlayState extends MusicBeatState {
 				}
 			}
 
-			controlHoldArray = [gamepad.pressed.DPAD_LEFT, gamepad.pressed.DPAD_DOWN, gamepad.pressed.RIGHT_STICK_DIGITAL_UP, gamepad.pressed.RIGHT_STICK_DIGITAL_RIGHT];
+			controlHoldArray = [gamepad.pressed.LEFT_STICK_DIGITAL_LEFT, gamepad.pressed.LEFT_STICK_DIGITAL_DOWN, gamepad.pressed.RIGHT_STICK_DIGITAL_UP, gamepad.pressed.RIGHT_STICK_DIGITAL_RIGHT];
 			if (controlHoldArray.contains(true))
 			{
 				// rewritten inputs???
@@ -1727,7 +1738,7 @@ class PvPPlayState extends MusicBeatState {
 				}
 			}
 
-			var controlReleaseArray:Array<Bool> = [gamepad.justReleased.DPAD_LEFT, gamepad.justReleased.DPAD_DOWN, gamepad.justReleased.RIGHT_STICK_DIGITAL_UP, gamepad.justReleased.RIGHT_STICK_DIGITAL_RIGHT];
+			var controlReleaseArray:Array<Bool> = [gamepad.justReleased.LEFT_STICK_DIGITAL_LEFT, gamepad.justReleased.LEFT_STICK_DIGITAL_DOWN, gamepad.justReleased.RIGHT_STICK_DIGITAL_UP, gamepad.justReleased.RIGHT_STICK_DIGITAL_RIGHT];
 			if(controlReleaseArray.contains(true))
 			{
 				for (i in 0...controlReleaseArray.length)
@@ -2321,6 +2332,16 @@ class PvPPlayState extends MusicBeatState {
 					phillyGlowParticles.visible = false;
 					stage.background.insert(stage.background.members.indexOf(phillyGlowGradient) + 1, phillyGlowParticles);
 				}
+
+			case 'Shaggy trail alpha':
+				if (!dadMatch) return;
+				shaggyT = new FlxTrail(dad, null, 3, 6, 0.3, 0.002);
+				shaggyT.visible = false;
+				addBehindDad(shaggyT);
+				if (PlayState.SONG.player2 == 'sshaggy')
+				{
+					cameraSpeed = 2;
+				}
 		}
 	}
 
@@ -2733,6 +2754,21 @@ class PvPPlayState extends MusicBeatState {
 				} else {
 					FunkinLua.setVarInArray(this, value1, value2);
 				}
+
+			case 'Shaggy trail alpha':
+				if (!dadMatch) return;
+				if (dad.curCharacter == 'rshaggy')
+				{
+					cameraSpeed = 2.5;
+				}
+				else
+				{
+					if (value1 == '1' || value1 == 'true')
+						shaggyT.visible = false;
+					else
+						shaggyT.visible = true;
+				}
+
 		}
 		stage.onEvent(eventName, value1, value2);
 	}

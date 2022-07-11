@@ -419,6 +419,14 @@ class Stage extends FlxBasic {
                     if(ClientPrefs.gameQuality == 'Normal') foreground.add(new BGSprite('tank4', 1300, 900, 1.5, 1.5, ['fg']));
                     foreground.add(new BGSprite('tank5', 1620, 700, 1.5, 1.5, ['fg']));
                     if(ClientPrefs.gameQuality == 'Normal') foreground.add(new BGSprite('tank3', 1300, 1200, 3.5, 2.5, ['fg']));
+                
+                case 'mansion': //Shaggy - Week 1 & 2
+                    var bg = new FlxSprite(-400, -160).loadGraphic(Paths.image('shaggy/bg_lemon'));
+                    bg.setGraphicSize(Std.int(bg.width * 1.5));
+                    bg.antialiasing = ClientPrefs.globalAntialiasing;
+                    bg.scrollFactor.set(0.95, 0.95);
+                    bg.active = false;
+                    background.add(bg);
             }
         }
     }

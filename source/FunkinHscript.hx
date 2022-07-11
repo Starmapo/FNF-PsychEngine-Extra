@@ -332,6 +332,7 @@ class FunkinHscript extends InterpEx {
 		variables.set('noteOffset', ClientPrefs.noteOffset);
 		variables.set('healthBarAlpha', ClientPrefs.healthBarAlpha);
 		variables.set('noResetButton', ClientPrefs.noReset);
+		variables.set('globalAntialiasing', ClientPrefs.globalAntialiasing);
 		variables.set('gameQuality', ClientPrefs.gameQuality);
 		variables.set('instantRestart', ClientPrefs.instantRestart);
 		variables.set('lowQuality', ClientPrefs.gameQuality != 'Normal');

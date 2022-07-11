@@ -194,6 +194,7 @@ class FunkinLua {
 		set('noteOffset', ClientPrefs.noteOffset);
 		set('healthBarAlpha', ClientPrefs.healthBarAlpha);
 		set('noResetButton', ClientPrefs.noReset);
+		set('globalAntialiasing', ClientPrefs.globalAntialiasing);
 		set('gameQuality', ClientPrefs.gameQuality);
 		set('instantRestart', ClientPrefs.instantRestart);
 		set('lowQuality', ClientPrefs.gameQuality != 'Normal');

@@ -696,7 +696,15 @@ class PlayState extends MusicBeatState
 		}
 		for (i in 0...10) {
 			imagesToCheck.push('num$i');
-		} 
+		}
+
+		for (img in imagesToCheck) {
+			var spr = new FlxSprite().loadGraphic(Paths.image(getUIFile(img)));
+			spr.alpha = 0.00001;
+			spr.scrollFactor.set();
+			spr.cameras = [camHUD];
+			add(spr);
+		}
 
 		for (img in imagesToCheck) {
 			precacheList.set(getUIFile(img), 'image');
@@ -2082,18 +2090,6 @@ class PlayState extends MusicBeatState
 						FlxG.sound.play(Paths.sound('introGo$introSoundsSuffix'), 0.6);
 				}
 
-				for (strumLine in strumLineNotes) {
-					strumLine.allNotes.forEachAlive(function(note:Note) {
-						if(ClientPrefs.opponentStrums || note.mustPress)
-						{
-							note.copyAlpha = false;
-							note.alpha = note.multAlpha;
-							if(ClientPrefs.middleScroll && !note.mustPress) {
-								note.alpha *= 0.35;
-							}
-						}
-					});
-				}
 				callOnScripts('onCountdownTick', [swagCounter]);
 
 				swagCounter += 1;
@@ -3046,8 +3042,13 @@ class PlayState extends MusicBeatState
 					strumY += daNote.offsetY;
 					strumAngle += daNote.offsetAngle;
 					strumAlpha *= daNote.multAlpha;
-					if (daNote.tooLate) strumAlpha * 0.3;
-	
+					if (Conductor.songPosition < 0) {
+						strumAlpha = daNote.multAlpha;
+						if(ClientPrefs.middleScroll && !daNote.mustPress)
+							strumAlpha *= 0.35;
+					}
+					if (daNote.tooLate) strumAlpha *= 0.3;
+					
 					if (strumScroll) //Downscroll
 					{
 						daNote.distance = (0.45 * (Conductor.songPosition - daNote.strumTime) * noteSpeed);
