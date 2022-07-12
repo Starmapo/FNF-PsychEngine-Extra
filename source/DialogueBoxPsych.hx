@@ -70,7 +70,7 @@ class DialogueCharacter extends FlxSprite
 
 		reloadCharacterJson(character);
 		var imagePath = 'dialogue/${jsonFile.image}';
-		if (Paths.exists('images/$imagePath/Animation.json', TEXT)) {
+		if (Paths.existsPath('images/$imagePath/Animation.json', TEXT)) {
 			frames = AtlasFrameMaker.construct(imagePath);
 		} else {
 			frames = Paths.getSparrowAtlas(imagePath);
@@ -84,7 +84,7 @@ class DialogueCharacter extends FlxSprite
 		var characterPath:String = 'images/dialogue/$character.json';
 		var rawJson = null;
 
-		var path:String = Paths.getPreloadPath(characterPath);
+		var path:String = Paths.getPath(characterPath);
 		if (!Paths.exists(path, TEXT)) {
 			path = Paths.getPreloadPath('images/dialogue/$DEFAULT_CHARACTER.json');
 		}

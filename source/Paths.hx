@@ -183,6 +183,17 @@ class Paths
 
 	public static function getPath(file:String, type:AssetType = null, library:String = null)
 	{
+		#if MODS_ALLOWED
+		var modPath = mods((library != null ? '$library/' : '') + '$file');
+		if (FileSystem.exists(modPath)) {
+			return modPath;
+		}
+		modPath = mods(file);
+		if (FileSystem.exists(modPath)) {
+			return modPath;
+		}
+		#end
+
 		if (library != null)
 			return getLibraryPath(file, library);
 
@@ -191,12 +202,12 @@ class Paths
 			var levelPath:String = '';
 			if (currentLevel != 'shared') {
 				levelPath = getLibraryPathForce(file, currentLevel);
-				if (OpenFlAssets.exists(levelPath, type))
+				if (OpenFlAssets.exists(levelPath, type) #if sys || FileSystem.exists(levelPath) #end)
 					return levelPath;
 			}
 
 			levelPath = getLibraryPathForce(file, "shared");
-			if (OpenFlAssets.exists(levelPath, type))
+			if (OpenFlAssets.exists(levelPath, type) #if sys || FileSystem.exists(levelPath) #end)
 				return levelPath;
 		}
 
@@ -237,11 +248,6 @@ class Paths
 	inline static public function json(key:String, ?library:String)
 	{
 		return getPath('data/$key.json', TEXT, library);
-	}
-
-	inline static public function lua(key:String, ?library:String)
-	{
-		return getPath('$key.lua', TEXT, library);
 	}
 
 	static public function video(key:String)
@@ -318,8 +324,8 @@ class Paths
 	
 	static public function getTextFromFile(key:String):String
 	{
-		if (exists(getPreloadPath(key)))
-			return getContent(getPreloadPath(key));
+		if (exists(getPath(key)))
+			return getContent(getPath(key));
 
 		return null;
 	}
@@ -337,7 +343,21 @@ class Paths
 		}
 		#end
 		
-		if (OpenFlAssets.exists(getPath(key, type, library))) {
+		if (OpenFlAssets.exists(key, type)) {
+			return true;
+		}
+		return false;
+	}
+
+	inline static public function existsPath(key:String, type:AssetType = null, ?library:String)
+	{
+		#if sys
+		if (FileSystem.exists(getPath(key, type, library))) {
+			return true;
+		}
+		#end
+		
+		if (OpenFlAssets.exists(getPath(key, type, library), type)) {
 			return true;
 		}
 		return false;
@@ -346,20 +366,20 @@ class Paths
 	inline static public function getSparrowAtlas(key:String, ?library:String)
 	{
 		var imageLoaded:FlxGraphic = returnGraphic(key);
-		return FlxAtlasFrames.fromSparrow((imageLoaded != null ? imageLoaded : image(key, library)), file('images/$key.xml', library));
+		return FlxAtlasFrames.fromSparrow((imageLoaded != null ? imageLoaded : image(key, library)), getContent(file('images/$key.xml', TEXT, library)));
 	}
 
 
 	inline static public function getPackerAtlas(key:String, ?library:String)
 	{
 		var imageLoaded:FlxGraphic = returnGraphic(key);
-		return FlxAtlasFrames.fromSpriteSheetPacker((imageLoaded != null ? imageLoaded : image(key, library)), file('images/$key.txt', library));
+		return FlxAtlasFrames.fromSpriteSheetPacker((imageLoaded != null ? imageLoaded : image(key, library)), getContent(file('images/$key.txt', TEXT, library)));
 	}
 
 	inline static public function getTexturePackerAtlas(key:String, ?library:String)
 	{
 		var imageLoaded:FlxGraphic = returnGraphic(key);
-		return FlxAtlasFrames.fromTexturePackerJson((imageLoaded != null ? imageLoaded : image(key, library)), file('images/$key.json', library));
+		return FlxAtlasFrames.fromTexturePackerJson((imageLoaded != null ? imageLoaded : image(key, library)), getContent(file('images/$key.json', TEXT, library)));
 	}
 
 	inline static public function formatToSongPath(path:String) {
@@ -398,7 +418,7 @@ class Paths
 	public static var currentTrackedSounds:Map<String, Sound> = [];
 	public static function returnSound(path:String, key:String, ?library:String, doTrace:Bool = true) {
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
-		if (!Paths.exists('$path/$key.$SOUND_EXT', SOUND, library))
+		if (!existsPath('$path/$key.$SOUND_EXT', SOUND, library))
 		{
 			if (doTrace) trace('oh no its returning null NOOOO: $gottenPath');
 			return null;
@@ -416,9 +436,19 @@ class Paths
 
 	inline public static function getContent(path:String) {
 		#if sys
-		return File.getContent(path);
+		if (path.contains(':'))
+			path = path.substring(path.indexOf(':') + 1);
+		if (FileSystem.exists(path))
+			return File.getContent(path);
+		return null;
 		#else
 		return OpenFlAssets.getText(path);
 		#end
 	}
+
+	#if MODS_ALLOWED
+	inline static public function mods(key:String = '') {
+		return 'mods/' + key;
+	}
+	#end
 }

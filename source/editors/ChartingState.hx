@@ -77,6 +77,7 @@ class ChartingState extends MusicBeatState
 		['Alt Idle Animation', "Sets a specified suffix after the idle animation name.\nYou can use this to trigger 'idle-alt' if you set\nValue 2 to -alt\n\nValue 1: Character Group, Character Number to set (split with comma)\n(Character Groups: 0 = Dad, 1 = BF, 2 = GF)\nValue 2: New suffix (Leave it blank to disable)"],
 		['Screen Shake', "Value 1: Camera shake\nValue 2: HUD shake\n\nEvery value works as the following example: \"1, 0.05\".\nThe first number (1) is the duration.\nThe second number (0.05) is the intensity."],
 		['Change Character', "Value 1: Character Group, Character Number to change\n(split with comma)\n(Character Groups: 0 = BF, 1 = Dad, 2 = GF)\nValue 2: New character's name"],
+		['Change Stage', "Value 1: New stage's name"],
 		['Change Scroll Speed', "Value 1: Scroll Speed Multiplier (1 is default)\nValue 2: Time it takes to change fully in seconds."],
 		['Set Property', "Value 1: Variable name\nValue 2: New value"]
 	];
@@ -450,7 +451,7 @@ class ChartingState extends MusicBeatState
 		{
 			var songName:String = Paths.formatToSongPath(_song.song);
 			var file:String = Paths.json('${songName}/events');
-			if (Paths.exists('data/$songName/events.json', TEXT))
+			if (Paths.existsPath('data/$songName/events.json', TEXT))
 			{
 				clearEvents();
 				var events:SwagSong = Song.loadFromJson('events', songName);
@@ -485,6 +486,9 @@ class ChartingState extends MusicBeatState
 		blockPressWhileTypingOnStepper.push(stepperDadKeys);
 
 		var directories:Array<String> = [Paths.getPreloadPath('characters/')];
+		#if MODS_ALLOWED
+		directories.push(Paths.mods('characters/'));
+		#end
 		var tempMap:Map<String, Bool> = new Map();
 		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
 		for (i in 0...characters.length) {
@@ -535,6 +539,9 @@ class ChartingState extends MusicBeatState
 		blockPressWhileScrolling.push(player2DropDown);
 
 		var directories:Array<String> = [Paths.getPreloadPath('stages/')];
+		#if MODS_ALLOWED
+		directories.push(Paths.mods('stages/'));
+		#end
 		tempMap.clear();
 		var stageFile:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		var stages:Array<String> = [];
@@ -1053,6 +1060,9 @@ class ChartingState extends MusicBeatState
 
 		#if (LUA_ALLOWED && sys)
 		var directories:Array<String> = [Paths.getPreloadPath('custom_notetypes/')];
+		#if MODS_ALLOWED
+		directories.push(Paths.mods('custom_notetypes/'));
+		#end
 
 		for (i in 0...directories.length) {
 			var directory:String =  directories[i];
@@ -1111,9 +1121,12 @@ class ChartingState extends MusicBeatState
 		var tab_group_event = new FlxUI(null, UI_box);
 		tab_group_event.name = 'Events';
 
-		#if (LUA_ALLOWED && sys)
+		#if sys
 		var eventPushedMap:Map<String, Bool> = new Map();
 		var directories:Array<String> = [Paths.getPreloadPath('custom_events/')];
+		#if MODS_ALLOWED
+		directories.push(Paths.mods('custom_events/'));
+		#end
 
 		for (i in 0...directories.length) {
 			var directory:String =  directories[i];

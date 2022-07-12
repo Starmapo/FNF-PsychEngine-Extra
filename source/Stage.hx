@@ -85,7 +85,7 @@ class Stage extends FlxBasic {
         createStage(stage);
     }
 
-    function createStage(stage:String = '') {
+    public function createStage(stage:String = '') {
         var groups = [background, overGF, overDad, foreground];
         for (grp in groups) {
             for (spr in grp) {
@@ -273,11 +273,6 @@ class Stage extends FlxBasic {
                     background.add(evilSnow);
 
                 case 'school': //Week 6 - Senpai, Roses
-                    GameOverSubstate.deathSoundName = 'fnf_loss_sfx-pixel';
-                    GameOverSubstate.loopSoundName = 'gameOver-pixel';
-                    GameOverSubstate.endSoundName = 'gameOverEnd-pixel';
-                    GameOverSubstate.characterName = 'bf-pixel-dead';
-
                     var bgSky:BGSprite = new BGSprite('weeb/weebSky', 0, 0, 0.1, 0.1);
                     background.add(bgSky);
                     bgSky.antialiasing = false;
@@ -337,11 +332,6 @@ class Stage extends FlxBasic {
                     }
 
                 case 'schoolEvil': //Week 6 - Thorns
-                    GameOverSubstate.deathSoundName = 'fnf_loss_sfx-pixel';
-                    GameOverSubstate.loopSoundName = 'gameOver-pixel';
-                    GameOverSubstate.endSoundName = 'gameOverEnd-pixel';
-                    GameOverSubstate.characterName = 'bf-pixel-dead';
-
                     var posX = 400;
                     var posY = 200;
                     if (ClientPrefs.gameQuality == 'Normal') {
@@ -421,12 +411,66 @@ class Stage extends FlxBasic {
                     if(ClientPrefs.gameQuality == 'Normal') foreground.add(new BGSprite('tank3', 1300, 1200, 3.5, 2.5, ['fg']));
                 
                 case 'mansion': //Shaggy - Week 1 & 2
-                    var bg = new FlxSprite(-400, -160).loadGraphic(Paths.image('shaggy/bg_lemon'));
+                    var bg = new BGSprite('shaggy/bg_lemon', -400, -160, 0.95, 0.95);
                     bg.setGraphicSize(Std.int(bg.width * 1.5));
-                    bg.antialiasing = ClientPrefs.globalAntialiasing;
-                    bg.scrollFactor.set(0.95, 0.95);
-                    bg.active = false;
                     background.add(bg);
+
+                case 'sonicStage':
+                    var sSKY = new BGSprite('sonicexe/PolishedP1/SKY', -222, 134);
+                    background.add(sSKY);
+
+                    if (ClientPrefs.gameQuality == 'Normal') {
+                        var hills = new BGSprite('sonicexe/PolishedP1/HILLS', -264, -6, 1.1);
+                        background.add(hills);
+
+                        var bg2 = new BGSprite('sonicexe/PolishedP1/FLOOR2', -345, -119, 1.2);
+                        background.add(bg2);
+                    }
+
+                    var bg = new BGSprite('sonicexe/PolishedP1/FLOOR1', -297, -96, 1.3);
+                    background.add(bg);
+                    
+                    var eggman = new BGSprite('sonicexe/PolishedP1/EGGMAN', -218, -69, 1.32);
+                    background.add(eggman);
+
+                    var knuckle = new BGSprite('sonicexe/PolishedP1/KNUCKLE', 285, -200, 1.36);
+                    background.add(knuckle);
+
+                    var sticklol:FlxSprite = new FlxSprite(-100, 50);
+                    sticklol.frames = Paths.getSparrowAtlas('sonicexe/PolishedP1/TailsSpikeAnimated');
+                    sticklol.animation.addByPrefix('a', 'Tails Spike Animated instance 1', 4, true);
+                    sticklol.setGraphicSize(Std.int(sticklol.width * 1.2));
+                    sticklol.updateHitbox();
+                    sticklol.antialiasing = ClientPrefs.globalAntialiasing;
+                    sticklol.scrollFactor.set(1.37, 1);
+                    background.add(sticklol);
+                    sticklol.animation.play('a', true);
+                    if (ClientPrefs.gameQuality != 'Normal')
+                        sticklol.animation.stop();
+
+                    var tail = new BGSprite('sonicexe/PolishedP1/TAIL', -349, -109, 1.34);
+                    foreground.add(tail);
+            }
+        }
+    }
+
+    public function onStageSwitch() {
+        if (ClientPrefs.gameQuality != 'Crappy') {
+            switch(curStage) {
+                case 'school' | 'schoolEvil':
+                    GameOverSubstate.deathSoundName = 'fnf_loss_sfx-pixel';
+                    GameOverSubstate.loopSoundName = 'gameOver-pixel';
+                    GameOverSubstate.endSoundName = 'gameOverEnd-pixel';
+                    GameOverSubstate.characterName = 'bf-pixel-dead';
+                
+                case 'sonicStage':
+                    var grps = [boyfriendGroup, dadGroup, gfGroup];
+                    for (grp in grps) {
+                        if (grp != null) {
+                            for (char in grp)
+                                char.scrollFactor.set(1.37, 1);
+                        }
+                    }
             }
         }
     }

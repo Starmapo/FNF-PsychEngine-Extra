@@ -47,7 +47,7 @@ class MenuCharacter extends FlxSprite
 				var characterPath:String = 'images/menucharacters/$character.json';
 				var rawJson = null;
 
-				var path:String = Paths.getPreloadPath(characterPath);
+				var path:String = Paths.getPath(characterPath);
 				if (!Paths.exists(path, TEXT)) {
 					path = Paths.getPreloadPath('images/menucharacters/$DEFAULT_CHARACTER.json');
 				}
@@ -56,7 +56,7 @@ class MenuCharacter extends FlxSprite
 				charFile = cast Json.parse(rawJson);
 
 				var imagePath = 'menucharacters/${charFile.image}';
-				if (Paths.exists('images/$imagePath/Animation.json', TEXT)) {
+				if (Paths.existsPath('images/$imagePath/Animation.json', TEXT)) {
 					frames = AtlasFrameMaker.construct(imagePath);
 				} else {
 					frames = Paths.getSparrowAtlas(imagePath);

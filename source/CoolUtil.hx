@@ -185,7 +185,7 @@ class CoolUtil
 							suffix = '';
 						}
 						var poop:String = song + suffix;
-						if (!Paths.exists('data/$song/$poop.json', TEXT)) {
+						if (!Paths.existsPath('data/$song/$poop.json', TEXT)) {
 							diffs.remove(diffs[i]);
 						} else {
 							i++;

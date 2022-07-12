@@ -119,15 +119,15 @@ class Character extends FlxSprite
 					}
 				}
 
-				if (Paths.exists('images/${json.image}.txt', TEXT))
+				if (Paths.existsPath('images/${json.image}.txt', TEXT))
 				{
 					frames = Paths.getPackerAtlas(json.image);
 				}
-				else if (Paths.exists('images/${json.image}.json', TEXT))
+				else if (Paths.existsPath('images/${json.image}.json', TEXT))
 				{
 					frames = Paths.getTexturePackerAtlas(json.image);
 				}
-				else if (Paths.exists('images/${json.image}/Animation.json', TEXT))
+				else if (Paths.existsPath('images/${json.image}/Animation.json', TEXT))
 				{
 					frames = AtlasFrameMaker.construct(json.image);	
 				}
@@ -176,10 +176,8 @@ class Character extends FlxSprite
 		originalFlipX = flipX;
 
 		if (flipped != originalFlipX && !debugMode) {
-			trace('flipping anims', curCharacter, flipped);
 			for (leftAnim in animationsArray) {
 				if (leftAnim.anim.startsWith('singLEFT')) {
-					trace('found left anim: ${leftAnim.anim}');
 					var rightName = 'singRIGHT' + leftAnim.anim.substr(8);
 					if (animOffsets.exists(rightName)) {
 						var newRight = getAnimArray(rightName);
@@ -211,7 +209,6 @@ class Character extends FlxSprite
 						leftAnim.enemyOffsets = newLeft.enemyOffsets;
 						addAnimation(leftAnim.anim, leftAnim.name, leftAnim.fps, leftAnim.loop, leftAnim.indices);
 						addFlippedOffset(leftAnim.anim, leftAnim.playerOffsets, leftAnim.enemyOffsets, flipped);
-						trace(leftAnim, newRight);
 					}
 				}
 			}
@@ -444,7 +441,7 @@ class Character extends FlxSprite
 
 	public static function getFile(name:String):Dynamic {
 		var characterPath:String = 'characters/$name.json';
-		var path:String = Paths.getPreloadPath(characterPath);
+		var path:String = Paths.getPath(characterPath);
 		if (!Paths.exists(path, TEXT))
 		{
 			path = Paths.getPreloadPath('characters/$DEFAULT_CHARACTER.json'); //If a character couldn't be found, change them to BF just to prevent a crash
@@ -457,5 +454,13 @@ class Character extends FlxSprite
 
 		var json = cast Json.parse(rawJson);
 		return json;
+	}
+
+	public static function getCharacterGroupLength(name:String):Int {
+		var characterFile = getFile(name);
+		if (characterFile.characters != null) {
+			return characterFile.characters.length;
+		}
+		return 1;
 	}
 }

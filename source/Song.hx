@@ -128,7 +128,7 @@ class Song
 				if (note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
 				if (note[3] != null && note[3] == true) note[3] = 'Alt Animation';
 				if (note[3] == null) note[3] = '';
-				if (note[4] == null || note[4].length < 1) note[4] = [0];
+				if (note[4] == null || note[4].length < 1) note[4] = [];
 				notes[i] = [note[0], note[1], note[2], note[3], note[4]];
 				i++;
 			}
@@ -371,7 +371,7 @@ class Song
 	public static function generateEventNotes(song:SwagSong, ?pushedCallback:EventNote->Void, ?earlyTriggerFunction:EventNote->Float) {
 		var eventNotes:Array<EventNote> = [];
 		var curSong = Paths.formatToSongPath(song.song);
-		if (Paths.exists('data/$curSong/events.json', TEXT)) {
+		if (Paths.existsPath('data/$curSong/events.json', TEXT)) {
 			var eventsData:Array<Dynamic> = Song.loadFromJson('events', curSong).events;
 			for (event in eventsData) //Event Notes
 			{
@@ -412,7 +412,7 @@ class Song
 	public static function getMetaFile(name:String):MetaFile {
 		name = Paths.formatToSongPath(name);
 		var characterPath:String = 'data/$name/meta.json';
-		var path:String = Paths.getPreloadPath(characterPath);
+		var path:String = Paths.getPath(characterPath);
 		if (!Paths.exists(path))
 		{
 			var meta:MetaFile = {

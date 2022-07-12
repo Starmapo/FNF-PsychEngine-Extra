@@ -563,7 +563,7 @@ class FunkinHscript extends InterpEx {
 		variables.set('addScript', function(name:String, ?ignoreAlreadyRunning:Bool = false) {
 			var cervix = '$name.hscript';
 			var doPush = false;
-			cervix = Paths.getPreloadPath(cervix);
+			cervix = Paths.getPath(cervix);
 			if (Paths.exists(cervix, TEXT)) {
 				doPush = true;
 			}
@@ -583,7 +583,7 @@ class FunkinHscript extends InterpEx {
 		variables.set('removeScript', function(name:String) {
 			var cervix = '$name.hscript';
 			var doPush = false;
-			cervix = Paths.getPreloadPath(cervix);
+			cervix = Paths.getPath(cervix);
 			if (Paths.exists(cervix, TEXT)) {
 				doPush = true;
 			}

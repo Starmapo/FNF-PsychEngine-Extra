@@ -1,218 +1,218 @@
 {
 	"animations": [
 		{
-			"enemyOffsets": [
-				0,
-				0
-			],
-			"loop": false,
 			"offsets": [
 				0,
 				0
 			],
-			"fps": 24,
+			"loop": false,
+			"enemyOffsets": [
+				0,
+				0
+			],
 			"anim": "idle",
+			"fps": 24,
+			"name": "Mom Idle",
+			"indices": [],
 			"playerOffsets": [
 				0,
 				0
-			],
-			"indices": [],
-			"name": "Mom Idle"
+			]
 		},
 		{
-			"enemyOffsets": [
-				250,
-				-23
-			],
-			"loop": false,
 			"offsets": [
 				250,
 				-23
 			],
-			"fps": 24,
+			"loop": false,
+			"enemyOffsets": [
+				250,
+				-23
+			],
 			"anim": "singLEFT",
+			"fps": 24,
+			"name": "Mom Left Pose",
+			"indices": [],
 			"playerOffsets": [
 				-160,
 				-23
-			],
-			"indices": [],
-			"name": "Mom Left Pose"
+			]
 		},
 		{
-			"enemyOffsets": [
-				10,
-				-60
-			],
-			"loop": false,
 			"offsets": [
 				10,
 				-60
 			],
-			"fps": 24,
+			"loop": false,
+			"enemyOffsets": [
+				10,
+				-60
+			],
 			"anim": "singRIGHT",
+			"fps": 24,
+			"name": "Mom Pose Left",
+			"indices": [],
 			"playerOffsets": [
 				241,
 				-60
-			],
-			"indices": [],
-			"name": "Mom Pose Left"
+			]
 		},
 		{
-			"enemyOffsets": [
-				20,
-				-160
-			],
-			"loop": false,
 			"offsets": [
 				20,
 				-160
 			],
-			"fps": 24,
+			"loop": false,
+			"enemyOffsets": [
+				20,
+				-160
+			],
 			"anim": "singDOWN",
+			"fps": 24,
+			"name": "MOM DOWN POSE",
+			"indices": [],
 			"playerOffsets": [
 				-13,
 				-160
-			],
-			"indices": [],
-			"name": "MOM DOWN POSE"
+			]
 		},
 		{
-			"enemyOffsets": [
-				14,
-				71
-			],
-			"loop": false,
 			"offsets": [
 				14,
 				71
 			],
-			"fps": 24,
+			"loop": false,
+			"enemyOffsets": [
+				14,
+				71
+			],
 			"anim": "singUP",
+			"fps": 24,
+			"name": "Mom Up Pose",
+			"indices": [],
 			"playerOffsets": [
 				-30,
 				71
-			],
-			"indices": [],
-			"name": "Mom Up Pose"
+			]
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				0,
 				0
 			],
 			"loop": true,
-			"offsets": [
+			"enemyOffsets": [
 				0,
 				0
 			],
-			"anim": "idle-loop",
 			"fps": 24,
-			"playerOffsets": [
-				0,
-				0
-			],
-			"name": "Mom Idle",
+			"anim": "idle-loop",
 			"indices": [
 				10,
 				11,
 				12,
 				13
+			],
+			"name": "Mom Idle",
+			"playerOffsets": [
+				0,
+				0
 			]
 		},
 		{
-			"enemyOffsets": [
-				250,
-				-23
-			],
-			"loop": true,
 			"offsets": [
 				250,
 				-23
 			],
-			"anim": "singLEFT-loop",
+			"loop": true,
+			"enemyOffsets": [
+				250,
+				-23
+			],
 			"fps": 24,
+			"anim": "singLEFT-loop",
+			"indices": [
+				6,
+				7,
+				8,
+				9
+			],
+			"name": "Mom Left Pose",
 			"playerOffsets": [
 				-160,
 				-23
-			],
-			"name": "Mom Left Pose",
-			"indices": [
-				6,
-				7,
-				8,
-				9
 			]
 		},
 		{
-			"enemyOffsets": [
-				14,
-				71
-			],
-			"loop": true,
 			"offsets": [
 				14,
 				71
 			],
-			"anim": "singUP-loop",
+			"loop": true,
+			"enemyOffsets": [
+				14,
+				71
+			],
 			"fps": 24,
+			"anim": "singUP-loop",
+			"indices": [
+				11,
+				12,
+				13,
+				14
+			],
+			"name": "Mom Up Pose",
 			"playerOffsets": [
 				-30,
 				71
-			],
-			"name": "Mom Up Pose",
-			"indices": [
-				11,
-				12,
-				13,
-				14
 			]
 		},
 		{
-			"enemyOffsets": [
-				10,
-				-60
-			],
-			"loop": true,
 			"offsets": [
 				10,
 				-60
 			],
-			"anim": "singRIGHT-loop",
-			"fps": 24,
-			"playerOffsets": [
-				241,
+			"loop": true,
+			"enemyOffsets": [
+				10,
 				-60
 			],
-			"name": "Mom Pose Left",
+			"fps": 24,
+			"anim": "singRIGHT-loop",
 			"indices": [
 				6,
 				7,
 				8,
 				9
+			],
+			"name": "Mom Pose Left",
+			"playerOffsets": [
+				241,
+				-60
 			]
 		},
 		{
-			"enemyOffsets": [
-				20,
-				-160
-			],
-			"loop": true,
 			"offsets": [
 				20,
 				-160
 			],
-			"anim": "singDOWN-loop",
-			"fps": 24,
-			"playerOffsets": [
-				-13,
+			"loop": true,
+			"enemyOffsets": [
+				20,
 				-160
 			],
-			"name": "MOM DOWN POSE",
+			"fps": 24,
+			"anim": "singDOWN-loop",
 			"indices": [
 				11,
 				12,
 				13,
 				14
+			],
+			"name": "MOM DOWN POSE",
+			"playerOffsets": [
+				-13,
+				-160
 			]
 		}
 	],
@@ -220,7 +220,7 @@
 	"no_antialiasing": false,
 	"image": "characters/momCar",
 	"position": [
-		0,
+		60,
 		0
 	],
 	"healthicon": "mom",

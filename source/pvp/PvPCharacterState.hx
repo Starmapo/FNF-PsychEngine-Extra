@@ -47,6 +47,8 @@ class PvPCharacterState extends MusicBeatState {
             {
                 PvPPlayState.boyfriendMatch = (charSelect1.curCharacter == PlayState.SONG.player1);
                 PvPPlayState.dadMatch = (charSelect2.curCharacter == PlayState.SONG.player2);
+                PvPPlayState.intendedBoyfriendLength = Character.getCharacterGroupLength(PlayState.SONG.player1);
+                PvPPlayState.intendedDadLength = Character.getCharacterGroupLength(PlayState.SONG.player2);
                 
                 if (PvPPlayState.boyfriendMatch && PvPPlayState.dadMatch)
                     PvPPlayState.skipStage = false;

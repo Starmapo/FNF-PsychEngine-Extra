@@ -278,7 +278,7 @@ class Note extends FlxSprite
 				skinModifier = PlayState.SONG.skinModifier;
 		}
 		var image = SkinData.getNoteFile(arraySkin.join('/'), skinModifier);
-		if (!Paths.exists('images/$image.xml', TEXT)) { //assume it is pixel notes
+		if (!Paths.existsPath('images/$image.xml', TEXT)) { //assume it is pixel notes
 			if (isSustainNote) {
 				loadGraphic(Paths.image(image + 'ENDS'));
 				width = width / 4;

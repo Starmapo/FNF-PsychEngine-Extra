@@ -4,16 +4,16 @@ class SkinData {
         skin = Paths.formatToSongPath(skin);
         var path = 'noteskins/$skin/$folder/$file';
         //trace(path);
-        if (!Paths.exists('images/$path.png', IMAGE)) {
+        if (!Paths.existsPath('images/$path.png', IMAGE)) {
             path = 'noteskins/default/$folder/$file';
             //trace(path);
         }
-        if (!Paths.exists('images/$path.png', IMAGE)) {
+        if (!Paths.existsPath('images/$path.png', IMAGE)) {
             path = 'noteskins/default/base/$file';
             //trace(path);
         }
-        if (!Paths.exists('images/$path.png', IMAGE)) {
-            path = (folder == 'pixel' && Paths.exists('images/pixelUI/$file.png', IMAGE) ? 'pixelUI' : '') + file;
+        if (!Paths.existsPath('images/$path.png', IMAGE)) {
+            path = (folder == 'pixel' && Paths.existsPath('images/pixelUI/$file.png', IMAGE) ? 'pixelUI' : '') + file;
             //trace(path);
         }
         return path;
@@ -24,16 +24,16 @@ class SkinData {
         skin = Paths.formatToSongPath(skin);
         var path = 'uiskins/$skin/$folder/$file';
         //trace(path);
-        if (!Paths.exists('images/$path.png', IMAGE)) {
+        if (!Paths.existsPath('images/$path.png', IMAGE)) {
             path = 'uiskins/default/$folder/$file';
             //trace(path);
         }
-        if (!Paths.exists('images/$path.png', IMAGE)) {
+        if (!Paths.existsPath('images/$path.png', IMAGE)) {
             path = 'uiskins/default/base/$file';
             //trace(path);
         }
-        if (!Paths.exists('images/$path.png', IMAGE)) {
-            path = (folder == 'pixel' && Paths.exists('images/pixelUI/$file.png', IMAGE) ? 'pixelUI' : '') + file;
+        if (!Paths.existsPath('images/$path.png', IMAGE)) {
+            path = (folder == 'pixel' && Paths.existsPath('images/pixelUI/$file.png', IMAGE) ? 'pixelUI' : '') + file;
             //trace(path);
         }
         return path;

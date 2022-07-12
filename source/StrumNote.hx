@@ -29,6 +29,9 @@ class StrumNote extends FlxSprite
 	public var xOffset:Float = 0;
 	public var noteSize:Float = 0.7;
 	public var skinModifier:String = '';
+
+	public var defaultX:Float = 0;
+	public var defaultY:Float = 0;
 	
 	public var texture(default, set):String = null;
 	private function set_texture(value:String):String {
@@ -69,7 +72,7 @@ class StrumNote extends FlxSprite
 				skinModifier = PlayState.SONG.skinModifier;
 		}
 		var image = SkinData.getNoteFile(texture, skinModifier);
-		if (!Paths.exists('images/$image.xml', TEXT)) { //assume it is pixel notes
+		if (!Paths.existsPath('images/$image.xml', TEXT)) { //assume it is pixel notes
 			loadGraphic(Paths.image(image));
 			width = width / 4;
 			height = height / 5;
@@ -245,6 +248,9 @@ class StrumLine extends FlxTypedGroup<FlxBasic> {
 				babyArrow.x += (80 - (babyArrow.frameWidth / 2)) * babyArrow.noteSize;
 				babyArrow.y += (80 - (babyArrow.frameHeight / 2)) * babyArrow.noteSize;
 			}
+
+			babyArrow.defaultX = babyArrow.x;
+			babyArrow.defaultY = babyArrow.y;
 		}
 
 		keys = keyAmount;

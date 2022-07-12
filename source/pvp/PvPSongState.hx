@@ -207,7 +207,12 @@ class PvPSongState extends MusicBeatState {
                     colorTween.cancel();
                 }
                 
+				PvPPlayState.skipStage = false;
 				if (FlxG.keys.pressed.SHIFT) {
+					PvPPlayState.boyfriendMatch = true;
+					PvPPlayState.dadMatch = true;
+					PvPPlayState.intendedBoyfriendLength = Character.getCharacterGroupLength(PlayState.SONG.player1);
+					PvPPlayState.intendedDadLength = Character.getCharacterGroupLength(PlayState.SONG.player2);
 					LoadingState.loadAndSwitchState(new PvPPlayState());
 				} else {
 					if (songs[curSelected].skipStage) {

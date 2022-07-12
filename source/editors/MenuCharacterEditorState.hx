@@ -230,7 +230,7 @@ class MenuCharacterEditorState extends MusicBeatState
 
 		char.alpha = 1;
 		var imagePath = 'menucharacters/${characterFile.image}';
-		if (Paths.exists('images/$imagePath/Animation.json', TEXT)) {
+		if (Paths.existsPath('images/$imagePath/Animation.json', TEXT)) {
 			char.frames = AtlasFrameMaker.construct(imagePath);
 		} else {
 			char.frames = Paths.getSparrowAtlas(imagePath);

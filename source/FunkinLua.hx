@@ -263,7 +263,7 @@ class FunkinLua {
 			var cervix = luaFile + ".lua";
 			if(luaFile.endsWith(".lua"))cervix=luaFile;
 			var doPush = false;
-			cervix = Paths.getPreloadPath(cervix);
+			cervix = Paths.getPath(cervix);
 			if(Paths.exists(cervix, TEXT)) {
 				doPush = true;
 			}
@@ -300,7 +300,7 @@ class FunkinLua {
 			var cervix = luaFile + ".lua";
 			if(luaFile.endsWith(".lua"))cervix=luaFile;
 			var doPush = false;
-			cervix = Paths.getPreloadPath(cervix);
+			cervix = Paths.getPath(cervix);
 			if(Paths.exists(cervix, TEXT)) {
 				doPush = true;
 			}
@@ -335,7 +335,7 @@ class FunkinLua {
 			var cervix = luaFile + ".lua";
 			if(luaFile.endsWith(".lua"))cervix=luaFile;
 			var doPush = false;
-			cervix = Paths.getPreloadPath(cervix);
+			cervix = Paths.getPath(cervix);
 			if(Paths.exists(cervix, TEXT)) {
 				doPush = true;
 			}
@@ -356,7 +356,7 @@ class FunkinLua {
 			var cervix = luaFile + ".lua";
 			if(luaFile.endsWith(".lua"))cervix=luaFile;
 			var doPush = false;
-			cervix = Paths.getPreloadPath(cervix);
+			cervix = Paths.getPath(cervix);
 			if(Paths.exists(cervix, TEXT)) {
 				doPush = true;
 			}
@@ -377,7 +377,7 @@ class FunkinLua {
 			var cervix = '$luaFile.lua';
 			if(luaFile.endsWith(".lua"))cervix=luaFile;
 			var doPush = false;
-			cervix = Paths.getPreloadPath(cervix);
+			cervix = Paths.getPath(cervix);
 			if (Paths.exists(cervix, TEXT)) {
 				doPush = true;
 			}
@@ -404,7 +404,7 @@ class FunkinLua {
 			var cervix = '$luaFile.lua';
 			if(luaFile.endsWith(".lua"))cervix=luaFile;
 			var doPush = false;
-			cervix = Paths.getPreloadPath(cervix);
+			cervix = Paths.getPath(cervix);
 			if (Paths.exists(cervix, TEXT)) {
 				doPush = true;
 			}
@@ -2138,7 +2138,7 @@ class FunkinLua {
 			{
 				return Paths.exists(filename);
 			}
-			return Paths.exists(Paths.getPath('assets/$filename'));
+			return Paths.exists('assets/$filename');
 		});
 		Lua_helper.add_callback(lua, "saveFile", function(path:String, content:String, ?absolute:Bool = false)
 		{

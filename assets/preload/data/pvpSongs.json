@@ -1,20 +1,5 @@
 {
 	"songs": {
-		"calamitous-timelines": {
-			"blocked": true,
-			"skipStage": false,
-			"difficulties": null
-		},
-		"golden-land": {
-			"blocked": true,
-			"skipStage": false,
-			"difficulties": null
-		},
-		"kaio-ken": {
-			"blocked": false,
-			"skipStage": false,
-			"difficulties": "Easy"
-		},
 		"tutorial": {
 			"blocked": false,
 			"skipStage": false,

@@ -85,6 +85,9 @@ class WeekData {
 		weeksLoaded.clear();
 
 		var directories:Array<String> = [Paths.getPreloadPath()];
+		#if MODS_ALLOWED
+		directories.push(Paths.mods());
+		#end
 		var originalLength:Int = directories.length;
 
 		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getPreloadPath('weeks/weekList.txt'));

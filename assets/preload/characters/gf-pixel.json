@@ -1,14 +1,21 @@
 {
 	"animations": [
 		{
-			"loop": false,
+			"enemyOffsets": [
+				0,
+				0
+			],
 			"offsets": [
 				0,
 				0
 			],
-			"anim": "danceLeft",
+			"loop": false,
 			"fps": 24,
-			"name": "GF IDLE",
+			"anim": "danceLeft",
+			"playerOffsets": [
+				0,
+				0
+			],
 			"indices": [
 				30,
 				0,
@@ -26,17 +33,25 @@
 				12,
 				13,
 				14
-			]
+			],
+			"name": "GF IDLE"
 		},
 		{
-			"loop": false,
+			"enemyOffsets": [
+				0,
+				0
+			],
 			"offsets": [
 				0,
 				0
 			],
-			"anim": "danceRight",
+			"loop": false,
 			"fps": 24,
-			"name": "GF IDLE",
+			"anim": "danceRight",
+			"playerOffsets": [
+				0,
+				0
+			],
 			"indices": [
 				15,
 				16,
@@ -53,25 +68,35 @@
 				27,
 				28,
 				29
-			]
+			],
+			"name": "GF IDLE"
 		},
 		{
-			"loop": false,
+			"enemyOffsets": [
+				0,
+				0
+			],
 			"offsets": [
 				0,
 				0
 			],
-			"anim": "singUP",
+			"loop": false,
 			"fps": 24,
-			"name": "GF IDLE",
-			"indices": []
+			"anim": "singUP",
+			"playerOffsets": [
+				0,
+				0
+			],
+			"indices": [],
+			"name": "GF IDLE"
 		}
 	],
+	"repeatHoldAnimation": false,
 	"no_antialiasing": true,
 	"image": "characters/gfPixel",
 	"position": [
-		0,
-		0
+		-290,
+		280
 	],
 	"healthicon": "gf",
 	"flip_x": false,

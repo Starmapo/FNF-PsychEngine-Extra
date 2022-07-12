@@ -525,6 +525,7 @@ class PlayState extends MusicBeatState
 			gfGroup = new FlxTypedSpriteGroup(GF_X, GF_Y);
 
 			stage = new Stage(curStage, this);
+			stage.onStageSwitch();
 			add(stage.background);
 
 			switch(Paths.formatToSongPath(SONG.song))
@@ -555,6 +556,9 @@ class PlayState extends MusicBeatState
 			// "GLOBAL" SCRIPTS
 			var filesPushed:Array<String> = [];
 			var foldersToCheck:Array<String> = [Paths.getPreloadPath('scripts/')];
+			#if MODS_ALLOWED
+			foldersToCheck.push(Paths.mods('scripts/'));
+			#end
 
 			for (folder in foldersToCheck)
 			{
@@ -585,7 +589,7 @@ class PlayState extends MusicBeatState
 			if (ClientPrefs.gameQuality != 'Crappy') {
 				#if LUA_ALLOWED
 				var doPush:Bool = false;
-				var luaFile:String = Paths.getPreloadPath('stages/$curStage.lua');
+				var luaFile:String = Paths.getPath('stages/$curStage.lua');
 				if (Paths.exists(luaFile, TEXT)) {
 					doPush = true;
 				}
@@ -596,7 +600,7 @@ class PlayState extends MusicBeatState
 
 				#if HSCRIPT_ALLOWED
 				var doPush:Bool = false;
-				var hscriptFile:String = Paths.getPreloadPath('stages/$curStage.hscript');
+				var hscriptFile:String = Paths.getPath('stages/$curStage.hscript');
 				if (Paths.exists(hscriptFile, TEXT)) {
 					doPush = true;
 				}
@@ -806,7 +810,7 @@ class PlayState extends MusicBeatState
 			for (notetype in noteTypeMap.keys())
 			{
 				#if LUA_ALLOWED
-				var luaToLoad:String = Paths.getPreloadPath('custom_notetypes/$notetype.lua');
+				var luaToLoad:String = Paths.getPath('custom_notetypes/$notetype.lua');
 				if (Paths.exists(luaToLoad, TEXT))
 				{
 					luaArray.push(new FunkinLua(luaToLoad));
@@ -814,7 +818,7 @@ class PlayState extends MusicBeatState
 				#end
 
 				#if HSCRIPT_ALLOWED
-				var hscriptToLoad:String = Paths.getPreloadPath('custom_notetypes/$notetype.hscript');
+				var hscriptToLoad:String = Paths.getPath('custom_notetypes/$notetype.hscript');
 				if (Paths.exists(hscriptToLoad, TEXT))
 				{
 					addHscript(hscriptToLoad);
@@ -824,7 +828,7 @@ class PlayState extends MusicBeatState
 			for (event in eventPushedMap.keys())
 			{
 				#if LUA_ALLOWED
-				var luaToLoad:String = Paths.getPreloadPath('custom_events/$event.lua');
+				var luaToLoad:String = Paths.getPath('custom_events/$event.lua');
 				if (Paths.exists(luaToLoad, TEXT))
 				{
 					luaArray.push(new FunkinLua(luaToLoad));
@@ -832,7 +836,7 @@ class PlayState extends MusicBeatState
 				#end
 
 				#if HSCRIPT_ALLOWED
-				var hscriptToLoad:String = Paths.getPreloadPath('custom_events/$event.hscript');
+				var hscriptToLoad:String = Paths.getPath('custom_events/$event.hscript');
 				if (Paths.exists(hscriptToLoad, TEXT))
 				{
 					addHscript(hscriptToLoad);
@@ -849,12 +853,12 @@ class PlayState extends MusicBeatState
 		var doof:DialogueBox = null;
 		if (!inEditor) {
 			var file:String = Paths.json('$curSong/dialogue'); //Checks for json/Psych Engine dialogue
-			if (Paths.exists(file, TEXT) && dialogueJson == null) {
+			if (Paths.existsPath(file, TEXT) && dialogueJson == null) {
 				dialogueJson = DialogueBoxPsych.parseDialogue(file);
 			}
 
 			var file:String = Paths.txt('$curSong/${curSong}Dialogue'); //Checks for vanilla/Senpai dialogue
-			if (Paths.exists(file, TEXT) && dialogue == null) {
+			if (Paths.existsPath(file, TEXT) && dialogue == null) {
 				dialogue = CoolUtil.coolTextFile(file);
 			}
 			doof = new DialogueBox(dialogue);
@@ -1025,6 +1029,9 @@ class PlayState extends MusicBeatState
 			#if sys
 			var filesPushed:Array<String> = [];
 			var foldersToCheck:Array<String> = [Paths.getPreloadPath('data/$curSong/')];
+			#if MODS_ALLOWED
+			foldersToCheck.push(Paths.mods('data/$curSong/'));
+			#end
 
 			for (folder in foldersToCheck)
 			{
@@ -1403,7 +1410,7 @@ class PlayState extends MusicBeatState
 	{
 		#if LUA_ALLOWED
 		var doPush:Bool = false;
-		var luaFile:String = Paths.getPreloadPath('characters/$name.lua');
+		var luaFile:String = Paths.getPath('characters/$name.lua');
 		if (Paths.exists(luaFile, TEXT)) {
 			doPush = true;
 		}
@@ -1420,7 +1427,7 @@ class PlayState extends MusicBeatState
 
 		#if HSCRIPT_ALLOWED
 		var doPush:Bool = false;
-		var hscriptFile:String = Paths.getPreloadPath('characters/$name.hscript');
+		var hscriptFile:String = Paths.getPath('characters/$name.hscript');
 		if (Paths.exists(hscriptFile, TEXT)) {
 			doPush = true;
 		}
@@ -1444,7 +1451,11 @@ class PlayState extends MusicBeatState
 			char.scrollFactor.set(0.95, 0.95);
 			char.danceEveryNumBeats = 2;
 		}
-		char.x += char.positionArray[0];
+		if (char.flipped != char.originalFlipX) {
+			char.x -= char.positionArray[0];
+		} else {
+			char.x += char.positionArray[0];
+		}
 		char.y += char.positionArray[1];
 	}
 
@@ -3709,12 +3720,16 @@ class PlayState extends MusicBeatState
 		if (isDad)
 		{
 			camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
+			var mult = 1;
+			if (dad.flipped != dad.originalFlipX) {
+				mult = -1;
+			}
 
 			if (dadGroupFile != null) {
-				camFollow.x += dadGroupFile.camera_position[0] + opponentCameraOffset[0];
+				camFollow.x += dadGroupFile.camera_position[0] * mult + opponentCameraOffset[0];
 				camFollow.y += dadGroupFile.camera_position[1] + opponentCameraOffset[1];
 			} else {
-				camFollow.x += dad.cameraPosition[0] + opponentCameraOffset[0];
+				camFollow.x += dad.cameraPosition[0] * mult + opponentCameraOffset[0];
 				camFollow.y += dad.cameraPosition[1] + opponentCameraOffset[1];
 			}
 			tweenCamIn();
@@ -3722,12 +3737,17 @@ class PlayState extends MusicBeatState
 		else
 		{
 			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
+			var mult = -1;
+			if (boyfriend.flipped != boyfriend.originalFlipX) {
+				camFollow.x -= 50;
+				mult = 1;
+			}
 
 			if (bfGroupFile != null) {
-				camFollow.x -= bfGroupFile.camera_position[0] - boyfriendCameraOffset[0];
+				camFollow.x += bfGroupFile.camera_position[0] * mult + boyfriendCameraOffset[0];
 				camFollow.y += bfGroupFile.camera_position[1] + boyfriendCameraOffset[1];
 			} else {
-				camFollow.x -= boyfriend.cameraPosition[0] - boyfriendCameraOffset[0];
+				camFollow.x += boyfriend.cameraPosition[0] * mult + boyfriendCameraOffset[0];
 				camFollow.y += boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
 			}
 

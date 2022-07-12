@@ -203,6 +203,8 @@ class PvPPlayState extends MusicBeatState {
 
 	public static var boyfriendMatch:Bool = false;
 	public static var dadMatch:Bool = false;
+	public static var intendedBoyfriendLength:Int = 1;
+	public static var intendedDadLength:Int = 1;
 	public static var skipStage:Bool = false;
 
 	var boyfriendScoreMult:Float = 1;
@@ -1492,7 +1494,7 @@ class PvPPlayState extends MusicBeatState {
 				if (note.isOpponent) dadNotes += 1;
 				else boyfriendNotes += 1;
 			}
-			if ((!note.isOpponent && !boyfriendMatch) || (note.isOpponent && !dadMatch)) {
+			if ((!note.isOpponent && boyfriendGroup.length != intendedBoyfriendLength) || (note.isOpponent && dadGroup.length != intendedDadLength)) {
 				note.characters = [];
 			}
 		}
@@ -1828,7 +1830,7 @@ class PvPPlayState extends MusicBeatState {
 				FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
 			}
 
-			if (note.isOpponent) {
+			if (note.isOpponent && !(curSong == 'tutorial' && dadMatch)) {
 				camZooming = true;
 				camBop = true;
 			}
@@ -2119,7 +2121,11 @@ class PvPPlayState extends MusicBeatState {
 			char.scrollFactor.set(0.95, 0.95);
 			char.danceEveryNumBeats = 2;
 		}
-		char.x += char.positionArray[0];
+		if (char.flipped != char.originalFlipX) {
+			char.x -= char.positionArray[0];
+		} else {
+			char.x += char.positionArray[0];
+		}
 		char.y += char.positionArray[1];
 	}
 
@@ -2794,11 +2800,19 @@ class PvPPlayState extends MusicBeatState {
 			}
 
 			if (dadGroupFile != null) {
-				camFollow.x += (dadGroupFile.camera_position[0] + opponentCameraOffset[0]) * mult;
+				camFollow.x += dadGroupFile.camera_position[0] * mult + opponentCameraOffset[0];
 				camFollow.y += dadGroupFile.camera_position[1] + opponentCameraOffset[1];
 			} else {
-				camFollow.x += (dad.cameraPosition[0] + opponentCameraOffset[0]) * mult;
+				camFollow.x += dad.cameraPosition[0] * mult + opponentCameraOffset[0];
 				camFollow.y += dad.cameraPosition[1] + opponentCameraOffset[1];
+			}
+
+			if (curSong == 'tutorial' && dadMatch && cameraTwn == null && FlxG.camera.zoom != 1.3) {
+				cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1.3}, (Conductor.normalizedCrochet / 1000), {ease: FlxEase.elasticInOut, onComplete:
+					function (twn:FlxTween) {
+						cameraTwn = null;
+					}
+				});
 			}
 		}
 		else
@@ -2806,15 +2820,26 @@ class PvPPlayState extends MusicBeatState {
 			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
 			var mult = -1;
 			if (boyfriend.flipped != boyfriend.originalFlipX) {
+				camFollow.x -= 50;
 				mult = 1;
 			}
 
 			if (bfGroupFile != null) {
-				camFollow.x += (bfGroupFile.camera_position[0] - boyfriendCameraOffset[0]) * mult;
+				camFollow.x += bfGroupFile.camera_position[0] * mult + boyfriendCameraOffset[0];
 				camFollow.y += bfGroupFile.camera_position[1] + boyfriendCameraOffset[1];
 			} else {
-				camFollow.x += (boyfriend.cameraPosition[0] - boyfriendCameraOffset[0]) * mult;
+				camFollow.x += boyfriend.cameraPosition[0] * mult + boyfriendCameraOffset[0];
 				camFollow.y += boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
+			}
+
+			if (curSong == 'tutorial' && dadMatch && cameraTwn == null && FlxG.camera.zoom != 1)
+			{
+				cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1}, (Conductor.normalizedCrochet / 1000), {ease: FlxEase.elasticInOut, onComplete:
+					function (twn:FlxTween)
+					{
+						cameraTwn = null;
+					}
+				});
 			}
 		}
 	}

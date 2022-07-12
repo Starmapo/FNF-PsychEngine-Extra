@@ -19,6 +19,7 @@ class MasterEditorMenu extends MusicBeatState
 		'Dialogue Editor',
 		'Dialogue Portrait Editor',
 		'Menu Character Editor',
+		'Stage Editor',
 		'Week Editor'
 	];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
@@ -89,23 +90,23 @@ class MasterEditorMenu extends MusicBeatState
 
 		if (controls.ACCEPT || FlxG.mouse.justPressed)
 		{
+			PlayState.SONG = null;
 			switch(options[curSelected]) {
 				case 'Character Editor':
-					PlayState.SONG = null;
 					LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
 				case 'Week Editor':
 					MusicBeatState.switchState(new WeekEditorState());
 				case 'Menu Character Editor':
 					MusicBeatState.switchState(new MenuCharacterEditorState());
 				case 'Dialogue Portrait Editor':
-					PlayState.SONG = null;
 					LoadingState.loadAndSwitchState(new DialogueCharacterEditorState());
 				case 'Dialogue Editor':
-					PlayState.SONG = null;
 					LoadingState.loadAndSwitchState(new DialogueEditorState());
 				case 'Chart Editor'://felt it would be cool maybe
 					PlayState.chartingMode = true;
 					LoadingState.loadAndSwitchState(new ChartingState(true));
+				case 'Stage Editor':
+					LoadingState.loadAndSwitchState(new StageEditorState());
 			}
 			FlxG.sound.music.volume = 0;
 			FreeplayState.destroyFreeplayVocals();

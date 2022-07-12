@@ -184,7 +184,6 @@ class WeekEditorState extends MusicBeatState
 		backgroundInputText = new FlxUIInputText(10, opponentInputText.y + 40, 120, '', 8);
 		blockPressWhileTypingOn.push(backgroundInputText);
 		
-
 		displayNameInputText = new FlxUIInputText(10, backgroundInputText.y + 60, 200, '', 8);
 		blockPressWhileTypingOn.push(backgroundInputText);
 
@@ -327,7 +326,7 @@ class WeekEditorState extends MusicBeatState
 
 		var isMissing:Bool = true;
 		if (assetName != null && assetName.length > 0) {
-			if (Paths.exists('images/menubackgrounds/menu_$assetName.png', IMAGE)) {
+			if (Paths.existsPath('images/menubackgrounds/menu_$assetName.png', IMAGE)) {
 				bgSprite.loadGraphic(Paths.image('menubackgrounds/menu_$assetName'));
 				isMissing = false;
 			}
@@ -345,7 +344,7 @@ class WeekEditorState extends MusicBeatState
 		
 		var isMissing:Bool = true;
 		if (assetName != null && assetName.length > 0) {
-			if (Paths.exists('images/storymenu/$assetName.png', IMAGE)) {
+			if (Paths.existsPath('images/storymenu/$assetName.png', IMAGE)) {
 				weekThing.loadGraphic(Paths.image('storymenu/$assetName'));
 				isMissing = false;
 			}

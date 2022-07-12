@@ -62,7 +62,7 @@ class StageData {
 
 	public static function getStageFile(stage:String):StageFile {
 		var rawJson:String = null;
-		var path:String = Paths.getPreloadPath('stages/$stage.json');
+		var path:String = Paths.getPath('stages/$stage.json');
 
 		if (Paths.exists(path)) {
 			rawJson = Paths.getContent(path);
