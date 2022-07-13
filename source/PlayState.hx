@@ -505,20 +505,11 @@ class PlayState extends MusicBeatState
 			DAD_X = stageData.opponent[0];
 			DAD_Y = stageData.opponent[1];
 			
-			if(stageData.camera_speed != null)
-				cameraSpeed = stageData.camera_speed;
+			cameraSpeed = stageData.camera_speed;
 	
 			boyfriendCameraOffset = stageData.camera_boyfriend;
-			if(boyfriendCameraOffset == null) //Fucks sake should have done it since the start :rolling_eyes:
-				boyfriendCameraOffset = [0, 0];
-	
 			opponentCameraOffset = stageData.camera_opponent;
-			if(opponentCameraOffset == null)
-				opponentCameraOffset = [0, 0];
-	
 			girlfriendCameraOffset = stageData.camera_girlfriend;
-			if(girlfriendCameraOffset == null)
-				girlfriendCameraOffset = [0, 0];
 
 			boyfriendGroup = new FlxTypedSpriteGroup(BF_X, BF_Y);
 			dadGroup = new FlxTypedSpriteGroup(DAD_X, DAD_Y);
@@ -586,29 +577,7 @@ class PlayState extends MusicBeatState
 			#end
 			
 			// STAGE SCRIPTS
-			if (ClientPrefs.gameQuality != 'Crappy') {
-				#if LUA_ALLOWED
-				var doPush:Bool = false;
-				var luaFile:String = Paths.getPath('stages/$curStage.lua');
-				if (Paths.exists(luaFile, TEXT)) {
-					doPush = true;
-				}
-
-				if (doPush) 
-					luaArray.push(new FunkinLua(luaFile));
-				#end
-
-				#if HSCRIPT_ALLOWED
-				var doPush:Bool = false;
-				var hscriptFile:String = Paths.getPath('stages/$curStage.hscript');
-				if (Paths.exists(hscriptFile, TEXT)) {
-					doPush = true;
-				}
-
-				if (doPush) 
-					addHscript(hscriptFile);
-				#end
-			}
+			startStageScripts();
 			#end
 
 			var gfVersion:String = SONG.gfVersion;
@@ -1435,6 +1404,34 @@ class PlayState extends MusicBeatState
 		if (doPush && !hscriptMap.exists(hscriptFile))
 		{
 			addHscript(hscriptFile);
+		}
+		#end
+	}
+
+	function startStageScripts() {
+		#if (LUA_ALLOWED || HSCRIPT_ALLOWED)
+		if (ClientPrefs.gameQuality != 'Crappy') {
+			#if LUA_ALLOWED
+			var doPush:Bool = false;
+			var luaFile:String = Paths.getPath('stages/$curStage.lua');
+			if (Paths.exists(luaFile, TEXT)) {
+				doPush = true;
+			}
+
+			if (doPush) 
+				luaArray.push(new FunkinLua(luaFile));
+			#end
+
+			#if HSCRIPT_ALLOWED
+			var doPush:Bool = false;
+			var hscriptFile:String = Paths.getPath('stages/$curStage.hscript');
+			if (Paths.exists(hscriptFile, TEXT)) {
+				doPush = true;
+			}
+
+			if (doPush) 
+				addHscript(hscriptFile);
+			#end
 		}
 		#end
 	}
@@ -2355,6 +2352,30 @@ class PlayState extends MusicBeatState
 
 				var newCharacter:String = event.value2;
 				addCharacterToList(newCharacter, charType, index);
+
+			case 'Change Stage':
+				if (inEditor) return;
+				var stage = event.value1;
+				var stageData:StageFile = StageData.getStageFile(stage);
+				var lastDirectory = Paths.currentLevel;
+				if (stageData.directory != null && stageData.directory.length > 0) Paths.setCurrentLevel(stageData.directory);
+				var dummyStage = new Stage(stage, this);
+				var grps = [dummyStage.background, dummyStage.overGF, dummyStage.overDad, dummyStage.foreground];
+				for (grp in grps) {
+					for (obj in grp) {
+						var sprite:Dynamic = obj;
+						if ((sprite is FlxSprite)) {
+							var sprite:FlxSprite = sprite;
+							sprite.alpha = 0.00001;
+							sprite.x = 0;
+							sprite.y = 0;
+							sprite.scrollFactor.set();
+							sprite.cameras = [camHUD];
+							add(obj);
+						}
+					}
+				}
+				Paths.setCurrentLevel(lastDirectory);
 
 			case 'Dadbattle Spotlight':
 				if (inEditor) return;
@@ -3646,6 +3667,39 @@ class PlayState extends MusicBeatState
 							}
 						}
 				}
+
+			case 'Change Stage':
+				curStage = value1;
+				
+				var stageData:StageFile = StageData.getStageFile(curStage);
+				Paths.setCurrentLevel(stageData.directory);
+				defaultCamZoom = stageData.defaultZoom;
+				isPixelStage = stageData.isPixelStage;
+				BF_X = stageData.boyfriend[0];
+				BF_Y = stageData.boyfriend[1];
+				GF_X = stageData.girlfriend[0];
+				GF_Y = stageData.girlfriend[1];
+				DAD_X = stageData.opponent[0];
+				DAD_Y = stageData.opponent[1];
+				
+				cameraSpeed = stageData.camera_speed;
+		
+				boyfriendCameraOffset = stageData.camera_boyfriend;
+				opponentCameraOffset = stageData.camera_opponent;
+				girlfriendCameraOffset = stageData.camera_girlfriend;
+
+				for (gf in gfGroup) {
+					gf.visible = (stageData.hide_girlfriend == false);
+				}
+
+				gfGroup.setPosition(GF_X, GF_Y);
+				dadGroup.setPosition(DAD_X, DAD_Y);
+				boyfriendGroup.setPosition(BF_X, BF_Y);
+
+				stage.createStage(curStage);
+				stage.onStageSwitch();
+
+				startStageScripts();
 			
 			case 'Change Scroll Speed':
 				if (songSpeedType == "constant")

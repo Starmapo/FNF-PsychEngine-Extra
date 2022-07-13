@@ -52,8 +52,8 @@ class Stage extends FlxBasic {
 	public var limoCorpse:BGSprite;
 	public var limoCorpseTwo:BGSprite;
 	public var bgLimo:BGSprite;
-	public var grpLimoParticles:FlxTypedGroup<BGSprite>;
-	public var grpLimoDancers:FlxTypedGroup<BackgroundDancer>;
+	public var grpLimoParticles:FlxTypedSpriteGroup<BGSprite>;
+	public var grpLimoDancers:FlxTypedSpriteGroup<BackgroundDancer>;
 	public var fastCar:BGSprite;
     var limoSpeed:Float = 0;
     var fastCarCanDrive:Bool = true;
@@ -69,7 +69,7 @@ class Stage extends FlxBasic {
 
     public var tankWatchtower:BGSprite;
 	public var tankGround:BGSprite;
-	public var tankmanRun:FlxTypedGroup<TankmenBG>;
+	public var tankmanRun:FlxTypedSpriteGroup<TankmenBG>;
     var tankX:Float = 400;
 	var tankSpeed:Float = FlxG.random.float(5, 7);
 	var tankAngle:Float = FlxG.random.int(-90, 45);
@@ -192,7 +192,7 @@ class Stage extends FlxBasic {
                         limoCorpseTwo = new BGSprite('gore/noooooo', -500, limoMetalPole.y, 0.4, 0.4, ['henchmen death'], true);
                         background.add(limoCorpseTwo);
 
-                        grpLimoDancers = new FlxTypedGroup<BackgroundDancer>();
+                        grpLimoDancers = new FlxTypedSpriteGroup<BackgroundDancer>();
                         background.add(grpLimoDancers);
 
                         for (i in 0...5)
@@ -205,7 +205,7 @@ class Stage extends FlxBasic {
                         limoLight = new BGSprite('gore/coldHeartKiller', limoMetalPole.x - 180, limoMetalPole.y - 80, 0.4, 0.4);
                         background.add(limoLight);
 
-                        grpLimoParticles = new FlxTypedGroup<BGSprite>();
+                        grpLimoParticles = new FlxTypedSpriteGroup<BGSprite>();
                         background.add(grpLimoParticles);
 
                         //PRECACHE BLOOD
@@ -394,7 +394,7 @@ class Stage extends FlxBasic {
                     tankGround = new BGSprite('tankRolling', 300, 300, 0.5, 0.5,['BG tank w lighting'], true);
                     background.add(tankGround);
 
-                    tankmanRun = new FlxTypedGroup<TankmenBG>();
+                    tankmanRun = new FlxTypedSpriteGroup<TankmenBG>();
                     background.add(tankmanRun);
 
                     var ground:BGSprite = new BGSprite('tankGround', -420, -150);
@@ -517,7 +517,7 @@ class Stage extends FlxBasic {
                 case 'limo':
                     if (ClientPrefs.gameQuality == 'Normal') {
                         grpLimoParticles.forEach(function(spr:BGSprite) {
-                            if (spr.animation.curAnim.finished) {
+                            if (spr.animation.curAnim != null && spr.animation.curAnim.finished) {
                                 spr.kill();
                                 grpLimoParticles.remove(spr, true);
                                 spr.destroy();
@@ -609,7 +609,7 @@ class Stage extends FlxBasic {
                     }
                 
                 case 'schoolEvil':
-                    if (ClientPrefs.gameQuality == 'Normal' && bgGhouls.animation.curAnim.finished) {
+                    if (ClientPrefs.gameQuality == 'Normal' && bgGhouls.animation.curAnim != null && bgGhouls.animation.curAnim.finished) {
                         bgGhouls.visible = false;
                     }
 

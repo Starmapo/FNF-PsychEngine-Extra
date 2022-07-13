@@ -2273,6 +2273,29 @@ class PvPPlayState extends MusicBeatState {
 				var newCharacter:String = event.value2;
 				addCharacterToList(newCharacter, charType, index);
 
+			case 'Change Stage':
+				var stage = event.value1;
+				var stageData:StageFile = StageData.getStageFile(stage);
+				var lastDirectory = Paths.currentLevel;
+				if (stageData.directory != null && stageData.directory.length > 0) Paths.setCurrentLevel(stageData.directory);
+				var dummyStage = new Stage(stage, this);
+				var grps = [dummyStage.background, dummyStage.overGF, dummyStage.overDad, dummyStage.foreground];
+				for (grp in grps) {
+					for (obj in grp) {
+						var sprite:Dynamic = obj;
+						if ((sprite is FlxSprite)) {
+							var sprite:FlxSprite = sprite;
+							sprite.alpha = 0.00001;
+							sprite.x = 0;
+							sprite.y = 0;
+							sprite.scrollFactor.set();
+							sprite.cameras = [camHUD];
+							add(obj);
+						}
+					}
+				}
+				Paths.setCurrentLevel(lastDirectory);
+
 			case 'Dadbattle Spotlight':
 				dadbattleBlack = new BGSprite(null, -800, -400, 0, 0);
 				dadbattleBlack.makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.BLACK);
@@ -2720,6 +2743,37 @@ class PvPPlayState extends MusicBeatState {
 							}
 						}
 				}
+
+			case 'Change Stage':
+				curStage = value1;
+				
+				var stageData:StageFile = StageData.getStageFile(curStage);
+				Paths.setCurrentLevel(stageData.directory);
+				defaultCamZoom = stageData.defaultZoom;
+				isPixelStage = stageData.isPixelStage;
+				BF_X = stageData.boyfriend[0];
+				BF_Y = stageData.boyfriend[1];
+				GF_X = stageData.girlfriend[0];
+				GF_Y = stageData.girlfriend[1];
+				DAD_X = stageData.opponent[0];
+				DAD_Y = stageData.opponent[1];
+				
+				cameraSpeed = stageData.camera_speed;
+		
+				boyfriendCameraOffset = stageData.camera_boyfriend;
+				opponentCameraOffset = stageData.camera_opponent;
+				girlfriendCameraOffset = stageData.camera_girlfriend;
+
+				for (gf in gfGroup) {
+					gf.visible = (stageData.hide_girlfriend == false);
+				}
+
+				gfGroup.setPosition(GF_X, GF_Y);
+				dadGroup.setPosition(DAD_X, DAD_Y);
+				boyfriendGroup.setPosition(BF_X, BF_Y);
+
+				stage.createStage(curStage);
+				stage.onStageSwitch();
 			
 			case 'Change Scroll Speed':
 				var val1:Float = Std.parseFloat(value1);
