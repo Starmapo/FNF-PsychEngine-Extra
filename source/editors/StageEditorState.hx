@@ -480,6 +480,7 @@ class StageEditorState extends MusicBeatState {
         gfPositionYStepper.value = stageFile.girlfriend[1];
         directoryInputText.text = stageFile.directory;
         defaultZoomStepper.value = stageFile.defaultZoom;
+        cameraSpeedStepper.value = stageFile.camera_speed;
         boyfriendCameraXStepper.value = stageFile.camera_boyfriend[0];
         boyfriendCameraYStepper.value = stageFile.camera_boyfriend[1];
         dadCameraXStepper.value = stageFile.camera_opponent[0];

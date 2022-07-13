@@ -3097,13 +3097,6 @@ class PlayState extends MusicBeatState
 	
 					if (daNote.copyAlpha)
 						daNote.alpha = strumAlpha;
-	
-					if (daNote.copyScale) {
-						daNote.scale.x = daStrum.scale.x;
-						if (!daNote.isSustainNote) {
-							daNote.scale.y = daStrum.scale.y;
-						}
-					}
 					
 					if (daNote.copyX)
 						daNote.x = strumX + Math.cos(angleDir) * daNote.distance;

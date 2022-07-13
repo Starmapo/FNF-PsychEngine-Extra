@@ -72,6 +72,7 @@ class Character extends FlxSprite
 	public var repeatHoldAnimation:Bool = true;
 
 	public var skipDance:Bool = false;
+	public var skipSing:Bool = false;
 
 	public var healthIcon:String = 'face';
 	public var animationsArray:Array<AnimArray> = [];

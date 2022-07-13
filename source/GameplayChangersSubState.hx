@@ -93,40 +93,42 @@ class GameplayChangersSubState extends MusicBeatSubState
 		option.displayFormat = '%vX';
 		optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Play as Opponent',
-			"Self-explanatory! Does not save your score.",
-			'opponentplay',
-			'bool',
-			false);
-		optionsArray.push(option);
+		if (!MainMenuState.inPvP) {
+			var option:GameplayOption = new GameplayOption('Play as Opponent',
+				"Self-explanatory! Does not save your score.",
+				'opponentplay',
+				'bool',
+				false);
+			optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Instakill on Miss',
-			"Instantly die if you miss a note or hit a hurt note.",
-			'instakill',
-			'bool',
-			false);
-		optionsArray.push(option);
+			var option:GameplayOption = new GameplayOption('Instakill on Miss',
+				"Instantly die if you miss a note or hit a hurt note.",
+				'instakill',
+				'bool',
+				false);
+			optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Practice Mode',
-			"Prevents you from dying. Does not save your score.",
-			'practice',
-			'bool',
-			false);
-		optionsArray.push(option);
+			var option:GameplayOption = new GameplayOption('Practice Mode',
+				"Prevents you from dying. Does not save your score.",
+				'practice',
+				'bool',
+				false);
+			optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Botplay',
-			"Let the game play by itself!",
-			'botplay',
-			'bool',
-			false);
-		optionsArray.push(option);
+			var option:GameplayOption = new GameplayOption('Botplay',
+				"Let the game play by itself!",
+				'botplay',
+				'bool',
+				false);
+			optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Demo Mode',
-			"Hides most HUD elements so you can showcase the song. Botplay is activated.",
-			'demomode',
-			'bool',
-			false);
-		optionsArray.push(option);
+			var option:GameplayOption = new GameplayOption('Demo Mode',
+				"Hides most HUD elements so you can showcase the song. Botplay is activated.",
+				'demomode',
+				'bool',
+				false);
+			optionsArray.push(option);
+		}
 	}
 
 	public function getOptionByName(name:String)
@@ -206,19 +208,49 @@ class GameplayChangersSubState extends MusicBeatSubState
 	var holdValue:Float = 0;
 	override function update(elapsed:Float)
 	{
-		if (controls.UI_UP_P || FlxG.mouse.wheel > 0)
+		var upP = controls.UI_UP_P;
+        var downP = controls.UI_DOWN_P;
+		var leftP = controls.UI_LEFT_P;
+        var rightP = controls.UI_RIGHT_P;
+        var up = controls.UI_UP;
+        var down = controls.UI_DOWN;
+		var left = controls.UI_LEFT;
+        var right = controls.UI_RIGHT;
+		var leftR = controls.UI_LEFT_R;
+        var rightR = controls.UI_RIGHT_R;
+        var accept = controls.ACCEPT;
+        var back = controls.BACK;
+		var reset = controls.RESET;
+		if (MainMenuState.inPvP) {
+			var gamepad = FlxG.gamepads.lastActive;
+			if (gamepad != null) {
+				if (gamepad.justPressed.LEFT_STICK_DIGITAL_UP || gamepad.justPressed.DPAD_UP) upP = true;
+				if (gamepad.justPressed.LEFT_STICK_DIGITAL_DOWN || gamepad.justPressed.DPAD_DOWN) downP = true;
+				if (gamepad.justPressed.LEFT_STICK_DIGITAL_LEFT || gamepad.justPressed.DPAD_LEFT) leftP = true;
+				if (gamepad.justPressed.LEFT_STICK_DIGITAL_RIGHT || gamepad.justPressed.DPAD_RIGHT) rightP = true;
+				if (gamepad.pressed.LEFT_STICK_DIGITAL_UP || gamepad.pressed.DPAD_UP) up = true;
+				if (gamepad.pressed.LEFT_STICK_DIGITAL_DOWN || gamepad.pressed.DPAD_DOWN) down = true;
+				if (gamepad.pressed.LEFT_STICK_DIGITAL_LEFT || gamepad.pressed.DPAD_LEFT) left = true;
+				if (gamepad.pressed.LEFT_STICK_DIGITAL_RIGHT || gamepad.pressed.DPAD_RIGHT) right = true;
+				if (gamepad.justReleased.LEFT_STICK_DIGITAL_LEFT || gamepad.justReleased.DPAD_LEFT) leftR = true;
+				if (gamepad.justReleased.LEFT_STICK_DIGITAL_RIGHT || gamepad.justReleased.DPAD_RIGHT) rightR = true;
+				if (gamepad.justPressed.A) accept = true;
+				if (gamepad.justPressed.B) back = true;
+				if (gamepad.justPressed.Y) reset = true;
+			}
+		}
+
+		if (upP || FlxG.mouse.wheel > 0)
 		{
 			changeSelection(-1);
 			holdTime = 0;
 		}
-		if (controls.UI_DOWN_P || FlxG.mouse.wheel < 0)
+		if (downP || FlxG.mouse.wheel < 0)
 		{
 			changeSelection(1);
 			holdTime = 0;
 		}
 
-		var down = controls.UI_DOWN;
-		var up = controls.UI_UP;
 		if (down || up)
 		{
 			var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
@@ -231,7 +263,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 			}
 		}
 
-		if (controls.BACK) {
+		if (back) {
 			close();
 			ClientPrefs.saveSettings();
 			CoolUtil.playCancelSound();
@@ -247,7 +279,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 
 			if (usesCheckbox)
 			{
-				if (controls.ACCEPT || FlxG.mouse.justPressed)
+				if (accept || FlxG.mouse.justPressed)
 				{
 					CoolUtil.playScrollSound();
 					curOption.setValue((curOption.getValue() == true) ? false : true);
@@ -255,8 +287,8 @@ class GameplayChangersSubState extends MusicBeatSubState
 					reloadCheckboxes();
 				}
 			} else if (!down && !up) {
-				if (controls.UI_LEFT || controls.UI_RIGHT || (FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT)) {
-					var pressed = (controls.UI_LEFT_P || controls.UI_RIGHT_P);
+				if (left || right || (FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT)) {
+					var pressed = (leftP || rightP);
 					var useWheel = FlxG.mouse.wheel != 0 && FlxG.keys.pressed.SHIFT;
 					if (holdTime > 0.5 || pressed || useWheel) {
 						if (pressed || useWheel) {
@@ -265,7 +297,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 								if (useWheel) {
 									add = curOption.changeValue * Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1));
 								} else {
-									add = (controls.UI_LEFT) ? -curOption.changeValue : curOption.changeValue;
+									add = (left) ? -curOption.changeValue : curOption.changeValue;
 								}
 							}
 
@@ -290,7 +322,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 								case 'string':
 									var num:Int = curOption.curOption; //lol
 									if (useWheel) num += Std.int(CoolUtil.boundTo(FlxG.mouse.wheel, -1, 1));
-									else if (controls.UI_LEFT_P) --num;
+									else if (leftP) --num;
 									else num++;
 
 									if (num < 0) {
@@ -328,7 +360,7 @@ class GameplayChangersSubState extends MusicBeatSubState
 							curOption.change();
 							CoolUtil.playScrollSound();
 						} else if (curOption.type != 'string') {
-							holdValue += curOption.scrollSpeed * elapsed * ((controls.UI_LEFT) ? -1 : 1);
+							holdValue += curOption.scrollSpeed * elapsed * ((left) ? -1 : 1);
 							if (holdValue < curOption.minValue) holdValue = curOption.minValue;
 							else if (holdValue > curOption.maxValue) holdValue = curOption.maxValue;
 
@@ -348,12 +380,12 @@ class GameplayChangersSubState extends MusicBeatSubState
 					if (curOption.type != 'string' && !useWheel) {
 						holdTime += elapsed;
 					}
-				} else if (controls.UI_LEFT_R || controls.UI_RIGHT_R) {
+				} else if (leftR || rightR) {
 					clearHold();
 				}
 			}
 
-			if (controls.RESET)
+			if (reset)
 			{
 				for (i in 0...optionsArray.length)
 				{

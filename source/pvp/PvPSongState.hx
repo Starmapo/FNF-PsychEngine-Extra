@@ -39,6 +39,7 @@ class PvPSongState extends MusicBeatState {
 		MainMenuState.inPvP = true;
 
         persistentUpdate = true;
+		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
 		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 
@@ -109,6 +110,16 @@ class PvPSongState extends MusicBeatState {
             lastDifficultyName = CoolUtil.defaultDifficulty;
         }
         curDifficulty = FlxMath.maxInt(0, CoolUtil.defaultDifficulties.indexOf(lastDifficultyName));
+
+		var textBG:FlxSprite = new FlxSprite(0, FlxG.height - 26).makeGraphic(FlxG.width, 26, 0xFF000000);
+		textBG.alpha = 0.6;
+		add(textBG);
+
+		var leText:String = "Press CTRL to open the Gameplay Changers Menu";
+		var text:FlxText = new FlxText(textBG.x, textBG.y + 4, FlxG.width, leText, 16);
+		text.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT);
+		text.scrollFactor.set();
+		add(text);
         
         changeSelection();
 
@@ -126,6 +137,7 @@ class PvPSongState extends MusicBeatState {
         var down = controls.UI_DOWN;
         var accepted = controls.ACCEPT || FlxG.mouse.justPressed;
         var back = controls.BACK;
+		var ctrl = FlxG.keys.justPressed.CONTROL;
 
         var gamepad = FlxG.gamepads.lastActive;
         if (gamepad != null) {
@@ -137,6 +149,7 @@ class PvPSongState extends MusicBeatState {
             if (gamepad.pressed.LEFT_STICK_DIGITAL_DOWN || gamepad.pressed.DPAD_DOWN) down = true;
             if (gamepad.justPressed.A) accepted = true;
             if (gamepad.justPressed.B) back = true;
+			if (gamepad.justPressed.X) ctrl = true;
         }
 
         var shiftMult:Int = 1;
@@ -190,7 +203,12 @@ class PvPSongState extends MusicBeatState {
             MusicBeatState.switchState(new MainMenuState());
         }
 
-       if (songs.length > 0)
+		if (ctrl)
+		{
+			persistentUpdate = false;
+			openSubState(new GameplayChangersSubState());
+		}
+       	else if (songs.length > 0)
         {
             if (accepted)
             {
@@ -225,6 +243,12 @@ class PvPSongState extends MusicBeatState {
         }
 
 		super.update(elapsed);
+	}
+
+	override function closeSubState() {
+		changeSelection(0, false);
+		persistentUpdate = true;
+		super.closeSubState();
 	}
 
     function changeDiff(change:Int = 0)

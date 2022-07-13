@@ -74,6 +74,8 @@ class Stage extends FlxBasic {
 	var tankSpeed:Float = FlxG.random.float(5, 7);
 	var tankAngle:Float = FlxG.random.int(-90, 45);
 
+    public var bgspec:BGSprite;
+
     public function new(stage:String = '', instance:Dynamic) {
         super();
         this.instance = instance;
@@ -410,7 +412,7 @@ class Stage extends FlxBasic {
                     foreground.add(new BGSprite('tank5', 1620, 700, 1.5, 1.5, ['fg']));
                     if(ClientPrefs.gameQuality == 'Normal') foreground.add(new BGSprite('tank3', 1300, 1200, 3.5, 2.5, ['fg']));
                 
-                case 'mansion': //Shaggy - Week 1 & 2
+                case 'mansion':
                     var bg = new BGSprite('shaggy/bg_lemon', -400, -160, 0.95, 0.95);
                     bg.setGraphicSize(Std.int(bg.width * 1.5));
                     background.add(bg);
@@ -450,6 +452,31 @@ class Stage extends FlxBasic {
 
                     var tail = new BGSprite('sonicexe/PolishedP1/TAIL', -349, -109, 1.34);
                     foreground.add(tail);
+
+                case 'sonicexeStage':
+                    var sSKY = new BGSprite('sonicexe/SonicP2/sky', -414, -440.8);
+                    sSKY.scale.set(1.4, 1.4);
+                    background.add(sSKY);
+
+                    var trees = new BGSprite('sonicexe/SonicP2/backtrees', -290.55, -298.3, 1.1);
+                    trees.scale.set(1.2, 1.2);
+                    background.add(trees);
+
+                    var bg2 = new BGSprite('sonicexe/SonicP2/trees', -306, -334.65, 1.2);
+                    bg2.scale.set(1.2, 1.2);
+                    background.add(bg2);
+
+                    var bg = new BGSprite('sonicexe/SonicP2/ground', -309.95, -240.2, 1.3);
+                    bg.scale.x = 1.2;
+                    bg.scale.y = 1.2;
+                    background.add(bg);
+
+                    bgspec = new BGSprite("sonicexe/SonicP2/GreenHill", 321.5, 382.65);
+                    bgspec.antialiasing = false;
+                    bgspec.alpha = 0.00001;
+                    bgspec.scale.x = 8;
+                    bgspec.scale.y = 8;
+                    background.add(bgspec);
             }
         }
     }
@@ -463,7 +490,7 @@ class Stage extends FlxBasic {
                     GameOverSubstate.endSoundName = 'gameOverEnd-pixel';
                     GameOverSubstate.characterName = 'bf-pixel-dead';
                 
-                case 'sonicStage':
+                case 'sonicStage' | 'sonicexeStage':
                     var grps = [boyfriendGroup, dadGroup, gfGroup];
                     for (grp in grps) {
                         if (grp != null) {

@@ -81,7 +81,6 @@ class Note extends FlxSprite
 	public var copyY:Bool = true;
 	public var copyAngle:Bool = true;
 	public var copyAlpha:Bool = true;
-	public var copyScale:Bool = true;
 
 	public var hitHealth:Float = 0.023;
 	public var missHealth:Float = 0.0475;
@@ -138,20 +137,22 @@ class Note extends FlxSprite
 			if (noteType != value) {
 				switch(value) {
 					case 'Hurt Note':
-						ignoreNote = !isOpponent;
-						reloadNote('HURT');
-						noteSplashTexture = 'HURTnoteSplashes';
-						colorSwap.hue = 0;
-						colorSwap.saturation = 0;
-						colorSwap.brightness = 0;
-						lowPriority = true;
+						if (!isOpponent || !mustPress) {
+							ignoreNote = mustPress;
+							reloadNote('HURT');
+							noteSplashTexture = 'HURTnoteSplashes';
+							colorSwap.hue = 0;
+							colorSwap.saturation = 0;
+							colorSwap.brightness = 0;
+							lowPriority = true;
 
-						if (isSustainNote) {
-							missHealth = 0.1;
-						} else {
-							missHealth = 0.3;
+							if (isSustainNote) {
+								missHealth = 0.1;
+							} else {
+								missHealth = 0.3;
+							}
+							hitCausesMiss = true;
 						}
-						hitCausesMiss = true;
 					case 'Alt Animation':
 						animSuffix = '-alt';
 					case 'No Animation':
@@ -159,6 +160,20 @@ class Note extends FlxSprite
 						noMissAnimation = true;
 					case 'GF Sing':
 						gfNote = true;
+					case 'Sonic.exe Static Note':
+						reloadNote('', 'staticNotes');
+						colorSwap.hue = 0;
+						colorSwap.saturation = 0;
+						colorSwap.brightness = 0;
+						missHealth = 0.3;
+					case 'Sonic.exe Phantom Note':
+						reloadNote('', 'PhantomNote');
+						colorSwap.hue = 0;
+						colorSwap.saturation = 0;
+						colorSwap.brightness = 0;
+						ignoreNote = true;
+						hitCausesMiss = true;
+						missHealth = 0;
 				}
 				noteType = value;
 			}

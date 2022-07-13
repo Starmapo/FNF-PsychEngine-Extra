@@ -125,10 +125,19 @@ class Song
 				while (note.length < 5) {
 					note.push(null);
 				}
+				switch (curSong) {
+					case 'too-slow' | 'you-cant-run' | 'triple-trouble':
+						switch (note[3]) {
+							case 2:
+								note[3] = 'Sonic.exe Static Note';
+							case 3:
+								note[3] = 'Sonic.exe Phantom Note';
+						}
+				}
 				if (note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
 				if (note[3] != null && note[3] == true) note[3] = 'Alt Animation';
 				if (note[3] == null) note[3] = '';
-				if (note[4] == null || note[4].length < 1) note[4] = [];
+				if (note[4] == null || !Std.isOfType(note[4], Array)) note[4] = [];
 				notes[i] = [note[0], note[1], note[2], note[3], note[4]];
 				i++;
 			}
@@ -237,11 +246,10 @@ class Song
 	}
 
 	public static function generateNotes(song:SwagSong, ?dadStrums:StrumLine, ?boyfriendStrums:StrumLine, pvp:Bool = false) {
+		var curSong = Paths.formatToSongPath(song.song);
 		var notes:Array<Note> = [];
 
 		var noteData:Array<SwagSection> = song.notes;
-
-		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 
 		var curStepCrochet = Conductor.stepCrochet;
 		var curBPM = Conductor.bpm;
@@ -250,6 +258,12 @@ class Song
 		var curOpponentKeys = song.dadKeyAmount;
 		for (curSection in 0...noteData.length)
 		{
+			if (curSong == 'you-cant-run') {
+				if (curSection == 33)
+					PlayState.SONG.skinModifier = 'pixel';
+				if (curSection == 49)
+					PlayState.SONG.skinModifier = 'base';
+			}
 			var section = noteData[curSection];
 			if (section.changeBPM) {
 				curBPM = section.bpm;
@@ -320,7 +334,7 @@ class Song
 				swagNote.sustainLength = songNotes[2];
 				swagNote.gfNote = (section.gfSection && (songNotes[1] < rightKeys));
 				swagNote.characters = songNotes[4];
-				if (songNotes[4] == null) swagNote.characters = [0];
+				if (songNotes[4] == null) swagNote.characters = [];
 				swagNote.bpm = curBPM;
 				swagNote.stepCrochet = curStepCrochet;
 				swagNote.noteType = songNotes[3];
@@ -340,7 +354,7 @@ class Song
 						sustainNote.isOpponent = isOpponent;
 						sustainNote.gfNote = swagNote.gfNote;
 						sustainNote.characters = songNotes[4];
-						if (songNotes[4] == null) sustainNote.characters = [0];
+						if (songNotes[4] == null) sustainNote.characters = [];
 						sustainNote.bpm = curBPM;
 						sustainNote.stepCrochet = curStepCrochet;
 						sustainNote.noteType = swagNote.noteType;
@@ -361,7 +375,6 @@ class Song
 					swagNote.x += FlxG.width / 2; // general offset
 				}
 			}
-			daBeats += 1;
 		}
 		trace('dad key change map: ' + dadStrums.keyChangeMap);
 		trace('bf key change map: ' + boyfriendStrums.keyChangeMap);
