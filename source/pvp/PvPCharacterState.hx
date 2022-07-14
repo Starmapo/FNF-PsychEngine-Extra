@@ -84,7 +84,6 @@ class PvPCharacterState extends MusicBeatState {
             charDataList.push(charData);
         }
 
-        charDataList.sort(sortChars);
         return charDataList;
     }
 

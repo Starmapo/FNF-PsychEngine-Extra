@@ -69,31 +69,31 @@ class GameplayChangersSubState extends MusicBeatSubState
 		optionsArray.push(option);
 		#end
 
-		var option:GameplayOption = new GameplayOption('Health Gain Multiplier',
-			"Multiplies the health gained from hitting notes.",
-			'healthgain',
-			'float',
-			1);
-		option.scrollSpeed = 2.5;
-		option.minValue = 0;
-		option.maxValue = 5;
-		option.changeValue = 0.1;
-		option.displayFormat = '%vX';
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Health Loss Multiplier',
-			"Multiplies the health lost from missing notes or hitting hurt notes.",
-			'healthloss',
-			'float',
-			1);
-		option.scrollSpeed = 2.5;
-		option.minValue = 0.5;
-		option.maxValue = 5;
-		option.changeValue = 0.1;
-		option.displayFormat = '%vX';
-		optionsArray.push(option);
-
 		if (!MainMenuState.inPvP) {
+			var option:GameplayOption = new GameplayOption('Health Gain Multiplier',
+				"Multiplies the health gained from hitting notes.",
+				'healthgain',
+				'float',
+				1);
+			option.scrollSpeed = 2.5;
+			option.minValue = 0;
+			option.maxValue = 5;
+			option.changeValue = 0.1;
+			option.displayFormat = '%vX';
+			optionsArray.push(option);
+
+			var option:GameplayOption = new GameplayOption('Health Loss Multiplier',
+				"Multiplies the health lost from missing notes or hitting hurt notes.",
+				'healthloss',
+				'float',
+				1);
+			option.scrollSpeed = 2.5;
+			option.minValue = 0.5;
+			option.maxValue = 5;
+			option.changeValue = 0.1;
+			option.displayFormat = '%vX';
+			optionsArray.push(option);
+
 			var option:GameplayOption = new GameplayOption('Play as Opponent',
 				"Self-explanatory! Does not save your score.",
 				'opponentplay',

@@ -16,7 +16,7 @@ class PvPPauseSubState extends MusicBeatSubState {
     var grpMenuShit:FlxTypedGroup<Alphabet>;
 
 	var menuItems:Array<String> = [];
-	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty', 'Exit to menu'];
+	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty', 'Options', 'Exit to menu'];
 	var difficultyChoices = [];
 	var curSelected:Int = 0;
 
@@ -171,6 +171,9 @@ class PvPPauseSubState extends MusicBeatSubState {
 				case "Restart Cutscene":
 					restartSong();
 					pauseMusic.volume = 0;
+				case "Options":
+					MusicBeatState.switchState(new options.OptionsState(true));
+					CoolUtil.playMenuMusic();
 				case "Exit to menu":
 					MusicBeatState.switchState(new PvPSongState());
 					PvPPlayState.cancelMusicFadeTween();

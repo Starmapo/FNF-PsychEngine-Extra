@@ -384,6 +384,12 @@ class CharacterEditorState extends MusicBeatState
 					ghostChar.addOffset(anim.anim, anim.enemyOffsets[0], anim.enemyOffsets[1]);
 				}
 			}
+			char.x = OFFSET_X + 100;
+			if (char.isPlayer != char.originalFlipX && char.positionArray[0] < 0) {
+				char.x -= char.positionArray[0];
+			} else {
+				char.x += char.positionArray[0];
+			}
 			updatePointerPos();
 			reloadGuideChar();
 			reloadBGs();
@@ -439,7 +445,7 @@ class CharacterEditorState extends MusicBeatState
 				character.healthIcon = parsedJson.healthicon;
 				character.healthColorArray = parsedJson.healthbar_colors;
 				character.setPosition(OFFSET_X + 100, character.positionArray[1]);
-				if (char.isPlayer != char.originalFlipX) {
+				if (char.isPlayer != char.originalFlipX && char.positionArray[0] < 0) {
 					char.x -= char.positionArray[0];
 				} else {
 					char.x += char.positionArray[0];
@@ -777,7 +783,7 @@ class CharacterEditorState extends MusicBeatState
 			{
 				char.positionArray[0] = positionXStepper.value;
 				char.x = OFFSET_X + 100;
-				if (char.isPlayer != char.originalFlipX) {
+				if (char.isPlayer != char.originalFlipX && char.positionArray[0] < 0) {
 					char.x -= char.positionArray[0];
 				} else {
 					char.x += char.positionArray[0];
@@ -931,7 +937,7 @@ class CharacterEditorState extends MusicBeatState
 		charLayer.add(char);
 
 		char.setPosition(OFFSET_X + 100, char.positionArray[1]);
-		if (char.isPlayer != char.originalFlipX) {
+		if (char.isPlayer != char.originalFlipX && char.positionArray[0] < 0) {
 			char.x -= char.positionArray[0];
 		} else {
 			char.x += char.positionArray[0];

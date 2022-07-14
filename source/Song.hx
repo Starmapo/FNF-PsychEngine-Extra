@@ -122,26 +122,39 @@ class Song
 			while(i < len)
 			{
 				var note = notes[i];
-				while (note.length < 5) {
-					note.push(null);
+				if (note != null) {
+					while (note.length < 5) {
+						note.push(null);
+					}
+					switch (curSong) {
+						case 'too-slow' | 'you-cant-run' | 'triple-trouble':
+							switch (note[3]) {
+								case 2:
+									note[3] = 'Sonic.exe Static Note';
+								case 3:
+									note[3] = 'Sonic.exe Phantom Note';
+							}
+							if (curSong == 'triple-trouble') {
+								if (note[1] == 2 || note[1] == 7) {
+									notes.remove(note);
+									continue;
+								}
+								if (note[1] > 1) {
+									note[1] -= 1;
+									if (note[1] > 5)
+										note[1] -= 1;
+								}
+							}
+					}
+					if (note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
+					if (note[3] != null && note[3] == true) note[3] = 'Alt Animation';
+					if (note[3] == null) note[3] = '';
+					if (note[4] == null || !Std.isOfType(note[4], Array)) note[4] = [];
+					//notes[i] = [note[0], note[1], note[2], note[3], note[4]];
 				}
-				switch (curSong) {
-					case 'too-slow' | 'you-cant-run' | 'triple-trouble':
-						switch (note[3]) {
-							case 2:
-								note[3] = 'Sonic.exe Static Note';
-							case 3:
-								note[3] = 'Sonic.exe Phantom Note';
-						}
-				}
-				if (note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
-				if (note[3] != null && note[3] == true) note[3] = 'Alt Animation';
-				if (note[3] == null) note[3] = '';
-				if (note[4] == null || !Std.isOfType(note[4], Array)) note[4] = [];
-				notes[i] = [note[0], note[1], note[2], note[3], note[4]];
 				i++;
 			}
-			songJson.notes[secNum] = sec;
+			//songJson.notes[secNum] = sec;
 		}
 	}
 

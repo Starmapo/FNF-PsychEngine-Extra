@@ -1,21 +1,18 @@
 {
 	"animations": [
 		{
-			"enemyOffsets": [
-				0,
-				0
-			],
+			"loop": false,
 			"offsets": [
 				0,
 				0
 			],
-			"loop": false,
-			"fps": 24,
-			"anim": "danceLeft",
-			"playerOffsets": [
+			"enemyOffsets": [
 				0,
 				0
 			],
+			"anim": "danceLeft",
+			"fps": 24,
+			"name": "GF IDLE",
 			"indices": [
 				30,
 				0,
@@ -34,24 +31,24 @@
 				13,
 				14
 			],
-			"name": "GF IDLE"
-		},
-		{
-			"enemyOffsets": [
+			"playerOffsets": [
 				0,
 				0
-			],
+			]
+		},
+		{
+			"loop": false,
 			"offsets": [
 				0,
 				0
 			],
-			"loop": false,
-			"fps": 24,
-			"anim": "danceRight",
-			"playerOffsets": [
+			"enemyOffsets": [
 				0,
 				0
 			],
+			"anim": "danceRight",
+			"fps": 24,
+			"name": "GF IDLE",
 			"indices": [
 				15,
 				16,
@@ -69,26 +66,29 @@
 				28,
 				29
 			],
-			"name": "GF IDLE"
-		},
-		{
-			"enemyOffsets": [
+			"playerOffsets": [
 				0,
 				0
-			],
+			]
+		},
+		{
+			"loop": false,
 			"offsets": [
 				0,
 				0
 			],
-			"loop": false,
-			"fps": 24,
-			"anim": "singUP",
-			"playerOffsets": [
+			"enemyOffsets": [
 				0,
 				0
 			],
+			"anim": "singUP",
+			"fps": 24,
+			"name": "GF IDLE",
 			"indices": [],
-			"name": "GF IDLE"
+			"playerOffsets": [
+				0,
+				0
+			]
 		}
 	],
 	"repeatHoldAnimation": false,

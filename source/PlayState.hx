@@ -516,7 +516,6 @@ class PlayState extends MusicBeatState
 			gfGroup = new FlxTypedSpriteGroup(GF_X, GF_Y);
 
 			stage = new Stage(curStage, this);
-			stage.onStageSwitch();
 			add(stage.background);
 
 			switch(Paths.formatToSongPath(SONG.song))
@@ -656,32 +655,6 @@ class PlayState extends MusicBeatState
 		hideInDemoMode.push(underlayPlayer);
 
 		Conductor.songPosition = -5000;
-
-		//PRECACHING UI IMAGES
-		var imagesToCheck = [
-			'combo',
-			'ready',
-			'set',
-			'go'
-		];
-		for (i in ratingsData) {
-			imagesToCheck.push(i.image);
-		}
-		for (i in 0...10) {
-			imagesToCheck.push('num$i');
-		}
-
-		for (img in imagesToCheck) {
-			var spr = new FlxSprite().loadGraphic(Paths.image(getUIFile(img)));
-			spr.alpha = 0.00001;
-			spr.scrollFactor.set();
-			spr.cameras = [camHUD];
-			add(spr);
-		}
-
-		for (img in imagesToCheck) {
-			precacheList.set(getUIFile(img), 'image');
-		}
 
 		strumLine = new FlxSprite(0, 50).makeGraphic(FlxG.width, 10);
 		if (ClientPrefs.downScroll) strumLine.y = FlxG.height - 210;
@@ -1131,6 +1104,8 @@ class PlayState extends MusicBeatState
 			precacheList.set(Paths.formatToSongPath(ClientPrefs.pauseMusic), 'music');
 		}
 
+		precacheList.set('alphabet', 'image');
+
 		#if DISCORD_ALLOWED
 		if (!inEditor) {
 			// Updating Discord Rich Presence.
@@ -1162,7 +1137,8 @@ class PlayState extends MusicBeatState
 
 		super.create();
 
-		Paths.clearUnusedMemory();
+		cacheCountdown();
+		cachePopUpScore();
 
 		for (key => type in precacheList)
 		{
@@ -1176,6 +1152,7 @@ class PlayState extends MusicBeatState
 					Paths.music(key);
 			}
 		}
+		Paths.clearUnusedMemory();
 
 		if (!inEditor) {
 			CustomFadeTransition.nextCamera = camOther;
@@ -1448,7 +1425,7 @@ class PlayState extends MusicBeatState
 			char.scrollFactor.set(0.95, 0.95);
 			char.danceEveryNumBeats = 2;
 		}
-		if (char.flipped != char.originalFlipX) {
+		if (char.flipped != char.originalFlipX && char.positionArray[0] < 0) {
 			char.x -= char.positionArray[0];
 		} else {
 			char.x += char.positionArray[0];
@@ -1972,6 +1949,18 @@ class PlayState extends MusicBeatState
 	public static var startOnTime:Float = 0;
 	public var introSoundsSuffix = '';
 
+	function cacheCountdown()
+	{
+		var introAlts:Array<String> = ['ready', 'set', 'go'];
+		for (asset in introAlts)
+			Paths.image(getUIFile(asset));
+
+		Paths.sound('intro3' + introSoundsSuffix);
+		Paths.sound('intro2' + introSoundsSuffix);
+		Paths.sound('intro1' + introSoundsSuffix);
+		Paths.sound('introGo' + introSoundsSuffix);
+	}
+
 	public function startCountdown():Void
 	{
 		if (startedCountdown) {
@@ -2173,7 +2162,7 @@ class PlayState extends MusicBeatState
 			scoreTxt.text = 'Score: ' + songScore + ' | Fails: ' + songMisses + ' | Rating: ' + ratingName;
 		}
 		if(ratingName != '?')
-			scoreTxt.text += ' (' + Highscore.floorDecimal(ratingPercent * 100, 2) + '%)' + ' - ' + ratingFC;
+			scoreTxt.text += ' [${Highscore.floorDecimal(ratingPercent * 100, 2)}% | $ratingFC]';
 
 		if (inEditor)
 			scoreTxt.text = 'Hits: $songHits';
@@ -2191,6 +2180,7 @@ class PlayState extends MusicBeatState
 				}
 			});
 		}
+		callOnScripts('onUpdateScore', [miss]);
 	}
 
 	public function setSongTime(time:Float)
@@ -3690,7 +3680,6 @@ class PlayState extends MusicBeatState
 				boyfriendGroup.setPosition(BF_X, BF_Y);
 
 				stage.createStage(curStage);
-				stage.onStageSwitch();
 
 				startStageScripts();
 			
@@ -4062,6 +4051,19 @@ class PlayState extends MusicBeatState
 	public var showCombo:Bool = false;
 	public var showComboNum:Bool = true;
 	public var showRating:Bool = true;
+	
+	private function cachePopUpScore()
+	{
+		Paths.image(getUIFile('sick'));
+		Paths.image(getUIFile('good'));
+		Paths.image(getUIFile('bad'));
+		Paths.image(getUIFile('shit'));
+		Paths.image(getUIFile('combo'));
+
+		for (i in 0...10) {
+			Paths.image(getUIFile('num$i'));
+		}
+	}
 
 	private function popUpScore(note:Note = null):Void
 	{
@@ -5014,11 +5016,6 @@ class PlayState extends MusicBeatState
 		setOnScripts('misses', songMisses);
 		setOnScripts('hits', songHits);
 
-		if (badHit)
-			updateScore(true); // miss notes shouldn't make the scoretxt bounce -Ghost
-		else
-			updateScore(false);
-
 		var ret:Dynamic = callOnScripts('onRecalculateRating', [], false);
 		if (ret != FunkinLua.Function_Stop)
 		{
@@ -5055,6 +5052,7 @@ class PlayState extends MusicBeatState
 			if (songMisses > 0 && songMisses < 10) ratingFC = "SDCB";
 			else if (songMisses >= 10) ratingFC = "Clear";
 		}
+		updateScore(badHit); // score will only update after rating is calculated, if it's a badHit, it shouldn't bounce -Ghost
 		setOnScripts('rating', ratingPercent);
 		setOnScripts('ratingName', ratingName);
 		setOnScripts('ratingFC', ratingFC);

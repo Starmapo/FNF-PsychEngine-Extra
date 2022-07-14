@@ -74,7 +74,7 @@ class Stage extends FlxBasic {
 	var tankSpeed:Float = FlxG.random.float(5, 7);
 	var tankAngle:Float = FlxG.random.int(-90, 45);
 
-    public var bgspec:BGSprite;
+    public var bgspec:FlxSprite;
 
     public function new(stage:String = '', instance:Dynamic) {
         super();
@@ -477,27 +477,27 @@ class Stage extends FlxBasic {
                     bgspec.scale.x = 8;
                     bgspec.scale.y = 8;
                     background.add(bgspec);
-            }
-        }
-    }
 
-    public function onStageSwitch() {
-        if (ClientPrefs.gameQuality != 'Crappy') {
-            switch(curStage) {
-                case 'school' | 'schoolEvil':
-                    GameOverSubstate.deathSoundName = 'fnf_loss_sfx-pixel';
-                    GameOverSubstate.loopSoundName = 'gameOver-pixel';
-                    GameOverSubstate.endSoundName = 'gameOverEnd-pixel';
-                    GameOverSubstate.characterName = 'bf-pixel-dead';
-                
-                case 'sonicStage' | 'sonicexeStage':
-                    var grps = [boyfriendGroup, dadGroup, gfGroup];
-                    for (grp in grps) {
-                        if (grp != null) {
-                            for (char in grp)
-                                char.scrollFactor.set(1.37, 1);
-                        }
-                    }
+                case 'trioStage':
+                    var sSKY = new BGSprite('sonicexe/Phase3/Glitch', -621.1, -395.65, 0.9);
+                    sSKY.scale.x = 1.2;
+                    sSKY.scale.y = 1.2;
+                    background.add(sSKY);
+
+                    var trees = new BGSprite('sonicexe/Phase3/Trees', -607.35, -401.55, 0.95);
+                    trees.scale.x = 1.2;
+                    trees.scale.y = 1.2;
+                    background.add(trees);
+
+                    var bg2 = new BGSprite('sonicexe/Phase3/Trees2', -623.5, -410.4);
+                    bg2.scale.x = 1.2;
+                    bg2.scale.y = 1.2;
+                    background.add(bg2);
+
+                    var bg = new BGSprite('sonicexe/Phase3/Grass', -630.4, -266, 1.1);
+                    bg.scale.x = 1.2;
+                    bg.scale.y = 1.2;
+                    background.add(bg);
             }
         }
     }
@@ -507,6 +507,30 @@ class Stage extends FlxBasic {
             switch(curStage) {
                 case 'limo':
                     resetFastCar();
+
+                case 'school' | 'schoolEvil':
+                    GameOverSubstate.deathSoundName = 'fnf_loss_sfx-pixel';
+                    GameOverSubstate.loopSoundName = 'gameOver-pixel';
+                    GameOverSubstate.endSoundName = 'gameOverEnd-pixel';
+                    GameOverSubstate.characterName = 'bf-pixel-dead';
+
+                case 'sonicStage' | 'sonicexeStage':
+                    var grps = [boyfriendGroup, dadGroup, gfGroup];
+                    for (grp in grps) {
+                        if (grp != null) {
+                            for (char in grp)
+                                char.scrollFactor.set(1.37, 1);
+                        }
+                    }
+
+                case 'trioStage':
+                    var grps = [boyfriendGroup, dadGroup];
+                    for (grp in grps) {
+                        if (grp != null) {
+                            for (char in grp)
+                                char.scrollFactor.set(1.1, 1);
+                        }
+                    }
             }
         }
     }

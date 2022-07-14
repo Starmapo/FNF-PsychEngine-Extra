@@ -35,7 +35,7 @@ class PvPSongState extends MusicBeatState {
 	var colorTween:FlxTween;
 
     override function create() {
-		PlayerSettings.player1.controls.removeGamepad(0);
+		controls.removeGamepad(0);
 		MainMenuState.inPvP = true;
 
         persistentUpdate = true;
@@ -193,7 +193,7 @@ class PvPSongState extends MusicBeatState {
         {
 			var gamepad = FlxG.gamepads.getByID(0);
 			if (gamepad != null)
-				PlayerSettings.player1.controls.addDefaultGamepad(0);
+				controls.addDefaultGamepad(0);
 
             persistentUpdate = false;
             if (colorTween != null) {
@@ -225,19 +225,8 @@ class PvPSongState extends MusicBeatState {
                     colorTween.cancel();
                 }
                 
-				PvPPlayState.skipStage = false;
-				if (FlxG.keys.pressed.SHIFT) {
-					PvPPlayState.boyfriendMatch = true;
-					PvPPlayState.dadMatch = true;
-					PvPPlayState.intendedBoyfriendLength = Character.getCharacterGroupLength(PlayState.SONG.player1);
-					PvPPlayState.intendedDadLength = Character.getCharacterGroupLength(PlayState.SONG.player2);
-					LoadingState.loadAndSwitchState(new PvPPlayState());
-				} else {
-					if (songs[curSelected].skipStage) {
-						PvPPlayState.skipStage = true;
-					}
-                	MusicBeatState.switchState(new PvPCharacterState());
-				}
+				PvPPlayState.skipStage = songs[curSelected].skipStage;
+				MusicBeatState.switchState(new PvPCharacterState());
                 CoolUtil.playConfirmSound();
             }
         }
