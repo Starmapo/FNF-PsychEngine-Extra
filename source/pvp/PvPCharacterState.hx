@@ -13,9 +13,13 @@ class PvPCharacterState extends MusicBeatState {
     var charSelect1:CharacterSelect;
     var charSelect2:CharacterSelect;
 
+    public static var lastCharacters:Array<Array<Int>> = [[], []];
+    public static var exiting:Bool = false;
+
     override public function create() {
         super.create();
         persistentUpdate = true;
+        exiting = false;
 
         var bg = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
@@ -24,37 +28,44 @@ class PvPCharacterState extends MusicBeatState {
         add(bg);
 
         var chars = getCharacters();
-        charSelect2 = new CharacterSelect(0, 0, chars);
-        add(charSelect2);
-        charSelect1 = new CharacterSelect(FlxG.width / 2, 0, chars, true);
+        charSelect1 = new CharacterSelect(0, 0, chars);
         add(charSelect1);
+        charSelect2 = new CharacterSelect(FlxG.width / 2, 0, chars, true);
+        add(charSelect2);
     }
 
-    var exiting:Bool = false;
     override public function update(elapsed:Float) {
         super.update(elapsed);
 
         #if debug
-        if (!exiting && charSelect2.ready && (charSelect1.ready || FlxG.gamepads.lastActive == null))
+        if (!exiting && charSelect1.ready && (charSelect2.ready || FlxG.gamepads.getByID(0) == null))
         #else
-        if (!exiting && charSelect2.ready && charSelect1.ready)
+        if (!exiting && charSelect1.ready && charSelect2.ready)
         #end
         {
             charSelect1.fadeStuff();
             charSelect2.fadeStuff();
             FlxFlicker.flicker(charSelect1.readyText, 1, 0.06, false, false);
-            FlxFlicker.flicker(charSelect2.readyText, 1, 0.06, false, false, function(flick:FlxFlicker)
-            {
-                PvPPlayState.boyfriendMatch = (charSelect1.curCharacter == PlayState.SONG.player1);
-                PvPPlayState.dadMatch = (charSelect2.curCharacter == PlayState.SONG.player2);
-                PvPPlayState.intendedBoyfriendLength = Character.getCharacterGroupLength(PlayState.SONG.player1);
-                PvPPlayState.intendedDadLength = Character.getCharacterGroupLength(PlayState.SONG.player2);
-                
-                if (PvPPlayState.boyfriendMatch && PvPPlayState.dadMatch)
-                    PvPPlayState.skipStage = false;
+            FlxFlicker.flicker(charSelect2.readyText, 1, 0.06, false, false, function(flick:FlxFlicker) {
+                var charSelects = [charSelect1, charSelect2];
+                for (charSelect in charSelects) {
+                    for (i in 0...charSelect.selectedChars.length) {
+                        if (charSelect.selectedChars[i] == '!random')
+                            charSelect.selectedChars[i] = charSelect.fullCharList[FlxG.random.int(1, charSelect.fullCharList.length - 1)];
+                    }
+                    trace(charSelect.selectedChars);
+                }
 
-                PlayState.SONG.player1 = charSelect1.curCharacter;
-                PlayState.SONG.player2 = charSelect2.curCharacter;
+                PvPPlayState.dadMatch = (charSelect1.selectedChars[0] == PlayState.SONG.player2);
+                PvPPlayState.boyfriendMatch = (charSelect2.selectedChars[0] == PlayState.SONG.player1);
+                PvPPlayState.intendedDadLength = Character.getCharacterGroupLength(PlayState.SONG.player2);
+                PvPPlayState.intendedBoyfriendLength = Character.getCharacterGroupLength(PlayState.SONG.player1);
+
+                PlayState.SONG.player2 = charSelect1.selectedChars[0];
+                PlayState.SONG.player1 = charSelect2.selectedChars[0];
+                PvPPlayState.dadSwitch = charSelect1.selectedChars[1];
+                PvPPlayState.boyfriendSwitch = charSelect2.selectedChars[1];
+                StageData.loadDirectory(PlayState.SONG);
                 LoadingState.loadAndSwitchState(new PvPPlayState(), true);
             });
             exiting = true;
@@ -65,6 +76,11 @@ class PvPCharacterState extends MusicBeatState {
         var rawJson = Paths.getContent(Paths.json('pvpCharacters')).trim();
         var stuff:Dynamic = Json.parse(rawJson);
         var charDataList:Array<CharacterData> = [];
+        charDataList.push({
+            name: '!random',
+            displayName: 'Random',
+            alternateForms: []
+        });
         var daList:Array<Array<Dynamic>> = Reflect.getProperty(stuff, "characters");
         for (char in daList) {
             var charData:CharacterData = {

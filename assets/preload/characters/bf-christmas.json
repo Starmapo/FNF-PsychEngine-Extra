@@ -1,121 +1,170 @@
 {
 	"animations": [
 		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				-3,
 				-1
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "idle",
-			"indices": [],
-			"name": "BF idle dance"
+			"loop": false,
+			"name": "BF idle dance",
+			"playerOffsets": [
+				-3,
+				-1
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
-				12,
+			"enemyOffsets": [
+				-36,
 				-6
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singLEFT",
-			"indices": [],
-			"name": "BF NOTE LEFT0"
+			"loop": false,
+			"name": "BF NOTE LEFT0",
+			"playerOffsets": [
+				12,
+				-6
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
-				-10,
+			"enemyOffsets": [
+				-14,
 				-50
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singDOWN",
-			"indices": [],
-			"name": "BF NOTE DOWN0"
+			"loop": false,
+			"name": "BF NOTE DOWN0",
+			"playerOffsets": [
+				-10,
+				-50
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
-				-29,
+			"enemyOffsets": [
+				3,
 				27
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singUP",
-			"indices": [],
-			"name": "BF NOTE UP0"
+			"loop": false,
+			"name": "BF NOTE UP0",
+			"playerOffsets": [
+				-29,
+				27
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
-				-38,
+			"enemyOffsets": [
+				36,
 				-7
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singRIGHT",
-			"indices": [],
-			"name": "BF NOTE RIGHT0"
+			"loop": false,
+			"name": "BF NOTE RIGHT0",
+			"playerOffsets": [
+				-38,
+				-7
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
-				12,
-				24
+			"enemyOffsets": [
+				-36,
+				16
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singLEFTmiss",
-			"indices": [],
-			"name": "BF NOTE LEFT MISS"
+			"loop": false,
+			"name": "BF NOTE LEFT MISS",
+			"playerOffsets": [
+				12,
+				24
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				-11,
 				-19
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singDOWNmiss",
-			"indices": [],
-			"name": "BF NOTE DOWN MISS"
+			"loop": false,
+			"name": "BF NOTE DOWN MISS",
+			"playerOffsets": [
+				-11,
+				-19
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
-				-29,
+			"enemyOffsets": [
+				-6,
 				27
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singUPmiss",
-			"indices": [],
-			"name": "BF NOTE UP MISS"
+			"loop": false,
+			"name": "BF NOTE UP MISS",
+			"playerOffsets": [
+				-29,
+				27
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
-				-30,
+			"enemyOffsets": [
+				40,
 				21
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singRIGHTmiss",
-			"indices": [],
-			"name": "BF NOTE RIGHT MISS"
+			"loop": false,
+			"name": "BF NOTE RIGHT MISS",
+			"playerOffsets": [
+				-30,
+				21
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
-				-3,
+			"enemyOffsets": [
+				-1,
 				5
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "hey",
-			"indices": [],
-			"name": "BF HEY"
+			"loop": false,
+			"name": "BF HEY",
+			"playerOffsets": [
+				-3,
+				5
+			]
 		}
 	],
+	"enemy_position": [
+		-5,
+		350
+	],
+	"repeatHoldAnimation": true,
 	"no_antialiasing": false,
 	"image": "characters/bfChristmas",
-	"position": [
+	"enemy_cameraPosition": [
 		0,
-		350
+		0
+	],
+	"player_cameraPosition": [
+		0,
+		0
 	],
 	"healthicon": "bf",
 	"flip_x": true,
@@ -124,9 +173,9 @@
 		176,
 		209
 	],
-	"camera_position": [
-		0,
-		0
+	"player_position": [
+		-5,
+		350
 	],
 	"sing_duration": 4,
 	"scale": 1

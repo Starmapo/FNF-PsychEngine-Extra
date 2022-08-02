@@ -1,115 +1,156 @@
 {
 	"animations": [
 		{
-			"offsets": [
+			"enemyOffsets": [
 				0,
 				0
 			],
-			"loop": false,
+			"indices": [],
 			"fps": 24,
 			"anim": "shoot1",
-			"indices": [],
-			"name": "Pico shoot 1"
+			"loop": false,
+			"name": "Pico shoot 1",
+			"playerOffsets": [
+				0,
+				0
+			]
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				-1,
 				-128
 			],
-			"loop": false,
+			"indices": [],
 			"fps": 24,
 			"anim": "shoot2",
-			"indices": [],
-			"name": "Pico shoot 2"
+			"loop": false,
+			"name": "Pico shoot 2",
+			"playerOffsets": [
+				-1,
+				-128
+			]
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				412,
 				-64
 			],
-			"loop": false,
+			"indices": [],
 			"fps": 24,
 			"anim": "shoot3",
-			"indices": [],
-			"name": "Pico shoot 3"
+			"loop": false,
+			"name": "Pico shoot 3",
+			"playerOffsets": [
+				412,
+				-64
+			]
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				439,
 				-19
 			],
-			"loop": false,
+			"indices": [],
 			"fps": 24,
 			"anim": "shoot4",
-			"indices": [],
-			"name": "Pico shoot 4"
+			"loop": false,
+			"name": "Pico shoot 4",
+			"playerOffsets": [
+				439,
+				-19
+			]
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				412,
 				-64
 			],
-			"loop": true,
-			"fps": 24,
-			"anim": "shoot3-loop",
 			"indices": [
 				50,
 				51,
 				52
 			],
-			"name": "Pico shoot 3"
+			"fps": 24,
+			"anim": "shoot3-loop",
+			"loop": true,
+			"name": "Pico shoot 3",
+			"playerOffsets": [
+				412,
+				-64
+			]
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				0,
 				0
 			],
-			"loop": true,
-			"fps": 24,
-			"anim": "shoot1-loop",
 			"indices": [
 				23,
 				24,
 				25
 			],
-			"name": "Pico shoot 1"
+			"fps": 24,
+			"anim": "shoot1-loop",
+			"loop": true,
+			"name": "Pico shoot 1",
+			"playerOffsets": [
+				0,
+				0
+			]
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				1,
 				-128
 			],
-			"loop": true,
-			"fps": 24,
-			"anim": "shoot2-loop",
 			"indices": [
 				57,
 				58,
 				59
 			],
-			"name": "Pico shoot 2"
+			"fps": 24,
+			"anim": "shoot2-loop",
+			"loop": true,
+			"name": "Pico shoot 2",
+			"playerOffsets": [
+				1,
+				-128
+			]
 		},
 		{
-			"offsets": [
+			"enemyOffsets": [
 				439,
 				-19
 			],
-			"loop": true,
-			"fps": 24,
-			"anim": "shoot4-loop",
 			"indices": [
 				50,
 				51,
 				52
 			],
-			"name": "Pico shoot 4"
+			"fps": 24,
+			"anim": "shoot4-loop",
+			"loop": true,
+			"name": "Pico shoot 4",
+			"playerOffsets": [
+				439,
+				-19
+			]
 		}
 	],
+	"enemy_position": [
+		0,
+		-143
+	],
+	"repeatHoldAnimation": true,
 	"no_antialiasing": false,
 	"image": "characters/picoSpeaker",
-	"position": [
-		120,
-		-125
+	"enemy_cameraPosition": [
+		-170,
+		100
+	],
+	"player_cameraPosition": [
+		310,
+		100
 	],
 	"healthicon": "pico",
 	"flip_x": false,
@@ -118,9 +159,9 @@
 		216,
 		85
 	],
-	"camera_position": [
-		-310,
-		100
+	"player_position": [
+		0,
+		-125
 	],
 	"sing_duration": 4,
 	"scale": 1

@@ -5,117 +5,93 @@
 				1,
 				0
 			],
-			"loop": false,
-			"offsets": [
-				1,
-				0
-			],
-			"anim": "idle",
+			"indices": [],
 			"fps": 24,
+			"anim": "idle",
+			"loop": false,
+			"name": "monster idle",
 			"playerOffsets": [
 				1,
 				0
-			],
-			"name": "monster idle",
-			"indices": []
+			]
 		},
 		{
 			"enemyOffsets": [
 				-20,
 				50
 			],
-			"loop": false,
-			"offsets": [
-				-20,
-				50
-			],
-			"anim": "singUP",
+			"indices": [],
 			"fps": 24,
+			"anim": "singUP",
+			"loop": false,
+			"name": "monster up note",
 			"playerOffsets": [
 				-40,
 				50
-			],
-			"name": "monster up note",
-			"indices": []
+			]
 		},
 		{
 			"enemyOffsets": [
 				-30,
 				0
 			],
-			"loop": false,
-			"offsets": [
-				-30,
-				0
-			],
-			"anim": "singLEFT",
+			"indices": [],
 			"fps": 24,
+			"anim": "singLEFT",
+			"loop": false,
+			"name": "Monster left note",
 			"playerOffsets": [
 				30,
 				0
-			],
-			"name": "Monster left note",
-			"indices": []
+			]
 		},
 		{
 			"enemyOffsets": [
 				-51,
 				0
 			],
-			"loop": false,
-			"offsets": [
-				-51,
-				0
-			],
-			"anim": "singRIGHT",
+			"indices": [],
 			"fps": 24,
+			"anim": "singRIGHT",
+			"loop": false,
+			"name": "Monster Right note",
 			"playerOffsets": [
 				-51,
 				0
-			],
-			"name": "Monster Right note",
-			"indices": []
+			]
 		},
 		{
 			"enemyOffsets": [
 				-40,
 				-94
 			],
-			"loop": false,
-			"offsets": [
-				-40,
-				-94
-			],
-			"anim": "singDOWN",
+			"indices": [],
 			"fps": 24,
+			"anim": "singDOWN",
+			"loop": false,
+			"name": "monster down",
 			"playerOffsets": [
 				0,
 				-94
-			],
-			"name": "monster down",
-			"indices": []
+			]
 		},
 		{
 			"enemyOffsets": [
 				-20,
 				50
 			],
-			"loop": true,
-			"offsets": [
-				-20,
-				50
-			],
-			"anim": "singUP-loop",
-			"fps": 24,
-			"playerOffsets": [
-				-40,
-				50
-			],
-			"name": "monster up note",
 			"indices": [
 				21,
 				22,
 				23
+			],
+			"fps": 24,
+			"anim": "singUP-loop",
+			"loop": true,
+			"name": "monster up note",
+			"playerOffsets": [
+				-40,
+				50
 			]
 		},
 		{
@@ -123,22 +99,18 @@
 				-40,
 				-94
 			],
-			"loop": true,
-			"offsets": [
-				-40,
-				-94
-			],
-			"anim": "singDOWN-loop",
-			"fps": 24,
-			"playerOffsets": [
-				0,
-				-94
-			],
-			"name": "monster down",
 			"indices": [
 				27,
 				28,
 				29
+			],
+			"fps": 24,
+			"anim": "singDOWN-loop",
+			"loop": true,
+			"name": "monster down",
+			"playerOffsets": [
+				0,
+				-94
 			]
 		},
 		{
@@ -146,22 +118,18 @@
 				-51,
 				0
 			],
-			"loop": true,
-			"offsets": [
-				-51,
-				0
-			],
-			"anim": "singRIGHT-loop",
-			"fps": 24,
-			"playerOffsets": [
-				-51,
-				0
-			],
-			"name": "Monster Right note",
 			"indices": [
 				12,
 				13,
 				14
+			],
+			"fps": 24,
+			"anim": "singRIGHT-loop",
+			"loop": true,
+			"name": "Monster Right note",
+			"playerOffsets": [
+				-51,
+				0
 			]
 		},
 		{
@@ -169,22 +137,18 @@
 				-30,
 				0
 			],
-			"loop": true,
-			"offsets": [
-				-30,
-				0
-			],
-			"anim": "singLEFT-loop",
-			"fps": 24,
-			"playerOffsets": [
-				30,
-				0
-			],
-			"name": "Monster left note",
 			"indices": [
 				17,
 				18,
 				19
+			],
+			"fps": 24,
+			"anim": "singLEFT-loop",
+			"loop": true,
+			"name": "Monster left note",
+			"playerOffsets": [
+				30,
+				0
 			]
 		},
 		{
@@ -192,29 +156,33 @@
 				1,
 				0
 			],
-			"loop": true,
-			"offsets": [
-				1,
-				0
-			],
-			"anim": "idle-loop",
-			"fps": 24,
-			"playerOffsets": [
-				1,
-				0
-			],
-			"name": "monster idle",
 			"indices": [
 				12,
 				13,
 				14
+			],
+			"fps": 24,
+			"anim": "idle-loop",
+			"loop": true,
+			"name": "monster idle",
+			"playerOffsets": [
+				1,
+				0
 			]
 		}
+	],
+	"enemy_position": [
+		-110,
+		70
 	],
 	"repeatHoldAnimation": true,
 	"no_antialiasing": false,
 	"image": "characters/monsterChristmas",
-	"position": [
+	"enemy_cameraPosition": [
+		0,
+		50
+	],
+	"player_cameraPosition": [
 		0,
 		50
 	],
@@ -225,9 +193,9 @@
 		255,
 		110
 	],
-	"camera_position": [
-		0,
-		0
+	"player_position": [
+		50,
+		70
 	],
 	"sing_duration": 4,
 	"scale": 1

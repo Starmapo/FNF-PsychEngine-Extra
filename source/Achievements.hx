@@ -91,11 +91,10 @@ class AttachedAchievement extends FlxSprite {
 	}
 
 	public function reloadAchievementImage() {
-		if (Achievements.isAchievementUnlocked(tag)) {
+		if (Achievements.isAchievementUnlocked(tag))
 			loadGraphic(Paths.image('achievements/' + tag));
-		} else {
+		else
 			loadGraphic(Paths.image('achievements/lockedachievement'));
-		}
 		scale.set(0.7, 0.7);
 		updateHitbox();
 	}
@@ -105,6 +104,12 @@ class AttachedAchievement extends FlxSprite {
 			setPosition(sprTracker.x - 130, sprTracker.y + 25);
 
 		super.update(elapsed);
+	}
+
+	override public function destroy() {
+		sprTracker = null;
+		tag = null;
+		super.destroy();
 	}
 }
 
@@ -160,9 +165,12 @@ class AchievementObject extends FlxSpriteGroup {
 	}
 
 	override function destroy() {
+		onFinish = null;
 		if (alphaTween != null) {
 			alphaTween.cancel();
+			alphaTween.destroy();
 		}
+		alphaTween = null;
 		super.destroy();
 	}
 }

@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -17,12 +18,10 @@ class GameOverSubstate extends MusicBeatSubState
 	var updateCamera:Bool = false;
 	var playingDeathSound:Bool = false;
 
-	var stageSuffix:String = "";
-
-	public static var characterName:String = 'bf-dead';
-	public static var deathSoundName:String = 'fnf_loss_sfx';
-	public static var loopSoundName:String = 'gameOver';
-	public static var endSoundName:String = 'gameOverEnd';
+	public static var characterName:String;
+	public static var deathSoundName:String;
+	public static var loopSoundName:String;
+	public static var endSoundName:String;
 
 	public static var instance:GameOverSubstate;
 
@@ -58,7 +57,7 @@ class GameOverSubstate extends MusicBeatSubState
 		boyfriend.y += boyfriend.positionArray[1];
 		add(boyfriend);
 
-		camFollow = new FlxPoint(boyfriend.getGraphicMidpoint().x, boyfriend.getGraphicMidpoint().y);
+		camFollow = FlxPoint.get(boyfriend.getGraphicMidpoint().x, boyfriend.getGraphicMidpoint().y);
 
 		FlxG.sound.play(Paths.sound(deathSoundName));
 		Conductor.changeBPM(100);
@@ -166,5 +165,13 @@ class GameOverSubstate extends MusicBeatSubState
 			});
 			PlayState.instance.callOnScripts('onGameOverConfirm', [true]);
 		}
+	}
+
+	override public function destroy() {
+		boyfriend = FlxDestroyUtil.destroy(boyfriend);
+		camGame = FlxDestroyUtil.destroy(camGame);
+		camFollow = FlxDestroyUtil.put(camFollow);
+		camFollowPos = FlxDestroyUtil.destroy(camFollowPos);
+		super.destroy();
 	}
 }

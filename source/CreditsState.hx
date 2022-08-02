@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
@@ -35,6 +36,8 @@ class CreditsState extends MusicBeatState
 
 	override function create()
 	{
+		super.create();
+		
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
@@ -82,7 +85,6 @@ class CreditsState extends MusicBeatState
 			creditsStuff.push(i);
 		}
 	
-		var skipped = false;
 		for (i in 0...creditsStuff.length)
 		{
 			var isSelectable:Bool = !unselectableCheck(i);
@@ -141,19 +143,12 @@ class CreditsState extends MusicBeatState
 		bg.color = getCurrentBGColor();
 		intendedColor = bg.color;
 		changeSelection();
-
-		super.create();
 	}
 
 	var quitting:Bool = false;
 	var holdTime:Float = 0;
 	override function update(elapsed:Float)
 	{
-		if (FlxG.sound.music.volume < 0.7)
-		{
-			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
-		}
-
 		if (!quitting) {
 			if (!warningText.visible) {
 				var shiftMult:Int = 1;
@@ -294,5 +289,27 @@ class CreditsState extends MusicBeatState
 
 	private function unselectableCheck(num:Int):Bool {
 		return creditsStuff[num].length <= 1;
+	}
+
+	override public function destroy() {
+		iconArray = null;
+		creditsStuff = null;
+		if (colorTween != null) {
+			colorTween.cancel();
+			colorTween.destroy();
+		}
+		colorTween = null;
+		if (moveTween != null) {
+			moveTween.cancel();
+			moveTween.destroy();
+		}
+		moveTween = null;
+		grpOptions = FlxDestroyUtil.destroy(grpOptions);
+		bg = FlxDestroyUtil.destroy(bg);
+		descText = FlxDestroyUtil.destroy(descText);
+		descBox = FlxDestroyUtil.destroy(descBox);
+		warningText = FlxDestroyUtil.destroy(warningText);
+		warningBG = FlxDestroyUtil.destroy(warningBG);
+		super.destroy();
 	}
 }

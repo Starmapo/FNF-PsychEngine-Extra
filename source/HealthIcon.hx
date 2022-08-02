@@ -15,8 +15,8 @@ class HealthIcon extends FlxSprite
 {
 	public var sprTracker:FlxSprite;
 	private var isOldIcon:Bool = false;
-	private var isPlayer:Bool = false;
-	private var char:String = '';
+	public var isPlayer:Bool = false;
+	public var char(default, null):String = '';
 	var originalChar:String = 'bf-old';
 	public var iconJson:IconFile;
 
@@ -45,6 +45,8 @@ class HealthIcon extends FlxSprite
 	private var iconOffsets:Array<Float> = [0, 0];
 	public function changeIcon(char:String) {
 		if (this.char != char) {
+			if (char.length < 1)
+				char = 'face';
 			iconJson = getFile(char);
 			var name:String = 'icons/$char';
 			if (!Paths.existsPath('images/$name.png', IMAGE)) {
@@ -58,19 +60,23 @@ class HealthIcon extends FlxSprite
 				animation.addByPrefix('normal', 'normal', iconJson.fps, iconJson.fps > 0, isPlayer);
 				animation.addByPrefix('losing', 'losing', iconJson.fps, iconJson.fps > 0, isPlayer);
 				animation.addByPrefix('winning', 'winning', iconJson.fps, iconJson.fps > 0, isPlayer);
-				if (animation.getByName('winning') == null) { //No winning icon
+				if (!animation.exists('winning')) { //No winning icon
 					animation.addByPrefix('winning', 'normal', iconJson.fps, iconJson.fps > 0, isPlayer);
 				}
-				animation.play('normal');
+				playAnim('normal');
 			} else {
 				var file = Paths.image(name);
-				loadGraphic(file); //Load stupidly first for getting the file size
-				loadGraphic(file, true, Math.floor(width / (iconJson.hasWinIcon ? 3 : 2)), Math.floor(height)); //Then load it fr
+				if (file != null) {
+					loadGraphic(file); //Load stupidly first for getting the file size
+					loadGraphic(file, true, Math.floor(width / (iconJson.hasWinIcon ? 3 : 2)), Math.floor(height)); //Then load it fr
 
-				animation.add('normal', [0], 0, false, isPlayer);
-				animation.add('losing', [1], 0, false, isPlayer);
-				animation.add('winning', [iconJson.hasWinIcon ? 2 : 0], 0, false, isPlayer);
-				animation.play('normal');
+					animation.add('normal', [0], 0, false, isPlayer);
+					animation.add('losing', [1], 0, false, isPlayer);
+					animation.add('winning', [iconJson.hasWinIcon ? 2 : 0], 0, false, isPlayer);
+					playAnim('normal');
+				} else {
+					visible = false;
+				}
 			}
 			iconOffsets[0] = (width - 150) / 2;
 			iconOffsets[1] = (height - 150) / 2;
@@ -91,10 +97,6 @@ class HealthIcon extends FlxSprite
 		offset.y = iconOffsets[1];
 	}
 
-	public function getCharacter():String {
-		return char;
-	}
-
 	public static function getFile(name:String):IconFile {
 		var characterPath:String = 'images/icons/$name.json';
 		var path:String = Paths.getPath(characterPath);
@@ -113,5 +115,19 @@ class HealthIcon extends FlxSprite
 		if (json.fps == null) json.fps = 24;
 		if (json.hasWinIcon == null) json.hasWinIcon = false;
 		return json;
+	}
+
+	public function playAnim(anim:String) {
+		if (animation.exists(anim))
+			animation.play(anim);
+	}
+
+	override public function destroy() {
+		sprTracker = null;
+		char = null;
+		originalChar = null;
+		iconJson = null;
+		iconOffsets = null;
+		super.destroy();
 	}
 }

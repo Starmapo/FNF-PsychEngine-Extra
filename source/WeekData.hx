@@ -163,14 +163,7 @@ class WeekData {
 	}
 
 	//   FUNCTIONS YOU WILL PROBABLY NEVER NEED TO USE
-
-	//returns raw week file name, no mod directory included
 	public static function getWeekFileName():String {
-		return weeksLoaded.get(weeksList[PlayState.storyWeek]).fileName;
-	}
-
-	//returns week file name with mod directory included
-	public static function getWeekName():String {
 		return weeksList[PlayState.storyWeek];
 	}
 

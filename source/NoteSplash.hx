@@ -79,11 +79,11 @@ class NoteSplash extends FlxSprite
 			for (i in 1...3) {
 				animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${colors[daNote.noteData]} ${i}0', 24, false);
 
-				if (animation.getByName('note${daNote.noteData}-$i') == null) {
+				if (!animation.exists('note${daNote.noteData}-$i')) {
 					animation.addByPrefix('note${daNote.noteData}-$i', 'note splash ${i}0', 24, false);
 				}
 			}
-			if (animation.getByName('note${daNote.noteData}-1') == null) {
+			if (!animation.exists('note${daNote.noteData}-1')) {
 				for (i in 1...3) {
 					animation.addByPrefix('note0-$i', 'note splash purple ${i}0', 24, false);
 					animation.addByPrefix('note1-$i', 'note splash blue ${i}0', 24, false);

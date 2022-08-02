@@ -41,6 +41,9 @@ class NoteOffsetState extends MusicBeatState
 
 	override public function create()
 	{
+		CustomFadeTransition.nextCamera = camOther;
+		super.create();
+		
 		// Cameras
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
@@ -52,7 +55,6 @@ class NoteOffsetState extends MusicBeatState
 		FlxG.cameras.add(camHUD, false);
 		FlxG.cameras.add(camOther, false);
 
-		CustomFadeTransition.nextCamera = camOther;
 		FlxG.camera.scroll.set(120, 130);
 
 		persistentUpdate = true;
@@ -192,8 +194,6 @@ class NoteOffsetState extends MusicBeatState
 
 		Conductor.changeBPM(128);
 		FlxG.sound.playMusic(Paths.music('offsetSong'), 1, true);
-
-		super.create();
 	}
 
 	var holdTime:Float = 0;

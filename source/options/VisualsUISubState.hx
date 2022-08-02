@@ -114,6 +114,19 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
 
+		var option:Option = new Option('Menu Music Volume',
+			'How loud the background menu music should be.',
+			'menuMusicVolume',
+			'percent',
+			1);
+		option.scrollSpeed = 1.6;
+		option.minValue = 0.0;
+		option.maxValue = 1;
+		option.changeValue = 0.1;
+		option.decimals = 1;
+		option.onChange = onChangeMenuMusicVolume;
+		addOption(option);
+
 		var option:Option = new Option('Pause Screen Song:',
 			"What song do you prefer for the Pause Screen?",
 			'pauseMusic',
@@ -156,5 +169,10 @@ class VisualsUISubState extends BaseOptionsMenu
 	{
 		if (Main.fpsVar != null)
 			Main.fpsVar.visible = ClientPrefs.showFPS;
+	}
+
+	function onChangeMenuMusicVolume()
+	{
+		FlxG.sound.music.volume = ClientPrefs.menuMusicVolume;
 	}
 }

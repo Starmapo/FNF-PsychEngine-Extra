@@ -72,9 +72,7 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
-		Paths.clearStoredMemory();
-		Paths.clearUnusedMemory();
-		Application.current.window.title = "Friday Night Funkin': Psych Engine Extra";
+		super.create();
 
 		FlxG.game.focusLostFramerate = 60;
 		FlxG.sound.muteKeys = muteKeys;
@@ -87,7 +85,6 @@ class TitleState extends MusicBeatState
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
 		swagShader = new ColorSwap();
-		super.create();
 
 		FlxG.save.bind('funkin', 'extra');
 
@@ -121,6 +118,13 @@ class TitleState extends MusicBeatState
 
 		// IGNORE THIS!!!
 		titleJSON = Json.parse(Paths.getTextFromFile('images/gfDanceTitle.json'));
+
+		#if debug
+		if (FlxG.save.data.windowSettings == null) {
+			FlxG.save.data.windowSettings = [for (_ in 0...6) true];
+			FlxG.save.flush();
+		}
+		#end
 
 		#if TITLE_SCREEN_EASTER_EGG
 		if (FlxG.save.data.psychDevsEasterEgg == null) FlxG.save.data.psychDevsEasterEgg = ''; //Crash prevention
@@ -538,7 +542,7 @@ class TitleState extends MusicBeatState
 			{
 				case 1:
 					CoolUtil.playMenuMusic(0);
-					FlxG.sound.music.fadeIn(4, 0, 0.7);
+					FlxG.sound.music.fadeIn(4, 0, ClientPrefs.menuMusicVolume);
 				case 2:
 					#if PSYCH_WATERMARKS
 					createCoolText(['Psych Engine by'], 15);
@@ -617,7 +621,7 @@ class TitleState extends MusicBeatState
 						playJingle = false;
 
 						CoolUtil.playMenuMusic(0);
-						FlxG.sound.music.fadeIn(4, 0, 0.7);
+						FlxG.sound.music.fadeIn(4, 0, ClientPrefs.menuMusicVolume);
 						return;
 				}
 
@@ -639,7 +643,7 @@ class TitleState extends MusicBeatState
 					FlxG.camera.flash(FlxColor.WHITE, 3);
 					sound.onComplete = function() {
 						CoolUtil.playMenuMusic(0);
-						FlxG.sound.music.fadeIn(4, 0, 0.7);
+						FlxG.sound.music.fadeIn(4, 0, ClientPrefs.menuMusicVolume);
 						transitioning = false;
 					};
 				}

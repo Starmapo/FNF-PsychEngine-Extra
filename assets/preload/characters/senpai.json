@@ -5,103 +5,91 @@
 				1,
 				0
 			],
-			"loop": false,
-			"offsets": [
-				1,
-				0
-			],
+			"indices": [],
 			"fps": 24,
 			"anim": "idle",
+			"loop": false,
+			"name": "Senpai Idle",
 			"playerOffsets": [
 				1,
 				0
-			],
-			"indices": [],
-			"name": "Senpai Idle"
+			]
 		},
 		{
 			"enemyOffsets": [
 				5,
 				37
 			],
-			"loop": false,
-			"offsets": [
-				5,
-				37
-			],
-			"anim": "singUP",
+			"indices": [],
 			"fps": 24,
+			"anim": "singUP",
+			"loop": false,
+			"name": "SENPAI UP NOTE",
 			"playerOffsets": [
 				-3,
 				37
-			],
-			"name": "SENPAI UP NOTE",
-			"indices": []
+			]
 		},
 		{
 			"enemyOffsets": [
 				0,
 				0
 			],
-			"loop": false,
-			"offsets": [
-				0,
-				0
-			],
-			"anim": "singRIGHT",
+			"indices": [],
 			"fps": 24,
+			"anim": "singRIGHT",
+			"loop": false,
+			"name": "SENPAI RIGHT NOTE",
 			"playerOffsets": [
 				0,
 				0
-			],
-			"name": "SENPAI RIGHT NOTE",
-			"indices": []
+			]
 		},
 		{
 			"enemyOffsets": [
 				40,
 				0
 			],
-			"loop": false,
-			"offsets": [
-				40,
-				0
-			],
-			"anim": "singLEFT",
+			"indices": [],
 			"fps": 24,
+			"anim": "singLEFT",
+			"loop": false,
+			"name": "SENPAI LEFT NOTE",
 			"playerOffsets": [
 				-23,
 				0
-			],
-			"name": "SENPAI LEFT NOTE",
-			"indices": []
+			]
 		},
 		{
 			"enemyOffsets": [
 				14,
 				0
 			],
-			"loop": false,
-			"offsets": [
-				14,
-				0
-			],
-			"anim": "singDOWN",
+			"indices": [],
 			"fps": 24,
+			"anim": "singDOWN",
+			"loop": false,
+			"name": "SENPAI DOWN NOTE",
 			"playerOffsets": [
 				-5,
 				0
-			],
-			"name": "SENPAI DOWN NOTE",
-			"indices": []
+			]
 		}
+	],
+	"enemy_position": [
+		120,
+		300
 	],
 	"repeatHoldAnimation": true,
 	"no_antialiasing": true,
 	"image": "characters/senpai",
-	"position": [
-		150,
-		300
+	"enemy_cameraPosition": [
+		0,
+		130
+	],
+	"player_cameraPosition": [
+		0,
+		130
 	],
 	"healthicon": "senpai-pixel",
 	"flip_x": false,
@@ -110,9 +98,9 @@
 		170,
 		111
 	],
-	"camera_position": [
-		-240,
-		-330
+	"player_position": [
+		190,
+		300
 	],
 	"sing_duration": 4,
 	"scale": 6

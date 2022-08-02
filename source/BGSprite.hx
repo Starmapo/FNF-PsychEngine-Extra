@@ -33,4 +33,9 @@ class BGSprite extends FlxSprite
 			animation.play(idleAnim, forceplay);
 		}
 	}
+
+	override public function destroy() {
+		idleAnim = null;
+		super.destroy();
+	}
 }

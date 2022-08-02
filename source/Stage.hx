@@ -74,7 +74,13 @@ class Stage extends FlxBasic {
 	var tankSpeed:Float = FlxG.random.float(5, 7);
 	var tankAngle:Float = FlxG.random.int(-90, 45);
 
-    public var bgspec:FlxSprite;
+    public var bgspec:BGSprite;
+    var hands:FlxSprite;
+	var eyeflower:FlxSprite;
+    var funpillarts1ANIM:FlxSprite;
+	var funpillarts2ANIM:FlxSprite;
+	var funboppers1ANIM:FlxSprite;
+	var funboppers2ANIM:FlxSprite;
 
     public function new(stage:String = '', instance:Dynamic) {
         super();
@@ -124,7 +130,7 @@ class Stage extends FlxBasic {
                         var stageCurtains:BGSprite = new BGSprite('stagecurtains', -500, -300, 1.3, 1.3);
                         stageCurtains.setGraphicSize(Std.int(stageCurtains.width * 0.9));
                         stageCurtains.updateHitbox();
-                        foreground.add(stageCurtains);
+                        background.add(stageCurtains);
                     }
 
                 case 'spooky': //Week 2
@@ -418,24 +424,24 @@ class Stage extends FlxBasic {
                     background.add(bg);
 
                 case 'sonicStage':
-                    var sSKY = new BGSprite('sonicexe/PolishedP1/SKY', -222, 134);
+                    var sSKY = new BGSprite('sonicexe/PolishedP1/SKY', -222, 134, 0.1, 0.1);
                     background.add(sSKY);
 
                     if (ClientPrefs.gameQuality == 'Normal') {
-                        var hills = new BGSprite('sonicexe/PolishedP1/HILLS', -264, -6, 1.1);
+                        var hills = new BGSprite('sonicexe/PolishedP1/HILLS', -264, -6, 0.2, 0.2);
                         background.add(hills);
 
-                        var bg2 = new BGSprite('sonicexe/PolishedP1/FLOOR2', -345, -119, 1.2);
+                        var bg2 = new BGSprite('sonicexe/PolishedP1/FLOOR2', -345, -119, 0.8, 0.8);
                         background.add(bg2);
                     }
 
-                    var bg = new BGSprite('sonicexe/PolishedP1/FLOOR1', -297, -96, 1.3);
+                    var bg = new BGSprite('sonicexe/PolishedP1/FLOOR1', -297, -96, 0.9, 0.9);
                     background.add(bg);
                     
-                    var eggman = new BGSprite('sonicexe/PolishedP1/EGGMAN', -218, -69, 1.32);
+                    var eggman = new BGSprite('sonicexe/PolishedP1/EGGMAN', -218, -69, 0.9, 0.9);
                     background.add(eggman);
 
-                    var knuckle = new BGSprite('sonicexe/PolishedP1/KNUCKLE', 285, -200, 1.36);
+                    var knuckle = new BGSprite('sonicexe/PolishedP1/KNUCKLE', 285, -200, 0.9, 0.9);
                     background.add(knuckle);
 
                     var sticklol:FlxSprite = new FlxSprite(-100, 50);
@@ -444,29 +450,33 @@ class Stage extends FlxBasic {
                     sticklol.setGraphicSize(Std.int(sticklol.width * 1.2));
                     sticklol.updateHitbox();
                     sticklol.antialiasing = ClientPrefs.globalAntialiasing;
-                    sticklol.scrollFactor.set(1.37, 1);
+                    sticklol.scrollFactor.set(0.9, 0.9);
                     background.add(sticklol);
                     sticklol.animation.play('a', true);
                     if (ClientPrefs.gameQuality != 'Normal')
                         sticklol.animation.stop();
 
-                    var tail = new BGSprite('sonicexe/PolishedP1/TAIL', -349, -109, 1.34);
-                    foreground.add(tail);
+                    if (ClientPrefs.gameQuality == 'Normal') {
+                        var tail = new BGSprite('sonicexe/PolishedP1/TAIL', -349, -109, 1.1, 1.1);
+                        foreground.add(tail);
+                    }
 
                 case 'sonicexeStage':
-                    var sSKY = new BGSprite('sonicexe/SonicP2/sky', -414, -440.8);
-                    sSKY.scale.set(1.4, 1.4);
+                    var sSKY = new BGSprite('sonicexe/SonicP2/sky', -414, -440.8, 0.1, 0.1);
+                    sSKY.scale.set(0.6, 0.6);
                     background.add(sSKY);
 
-                    var trees = new BGSprite('sonicexe/SonicP2/backtrees', -290.55, -298.3, 1.1);
-                    trees.scale.set(1.2, 1.2);
-                    background.add(trees);
+                    if (ClientPrefs.gameQuality == 'Normal') {
+                        var trees = new BGSprite('sonicexe/SonicP2/backtrees', -290.55, -298.3, 0.5, 0.5);
+                        trees.scale.set(1.2, 1.2);
+                        background.add(trees);
+                    }
 
-                    var bg2 = new BGSprite('sonicexe/SonicP2/trees', -306, -334.65, 1.2);
+                    var bg2 = new BGSprite('sonicexe/SonicP2/trees', -306, -334.65, 0.6, 0.6);
                     bg2.scale.set(1.2, 1.2);
                     background.add(bg2);
 
-                    var bg = new BGSprite('sonicexe/SonicP2/ground', -309.95, -240.2, 1.3);
+                    var bg = new BGSprite('sonicexe/SonicP2/ground', -309.95, -240.2, 0.9, 0.9);
                     bg.scale.x = 1.2;
                     bg.scale.y = 1.2;
                     background.add(bg);
@@ -479,25 +489,130 @@ class Stage extends FlxBasic {
                     background.add(bgspec);
 
                 case 'trioStage':
-                    var sSKY = new BGSprite('sonicexe/Phase3/Glitch', -621.1, -395.65, 0.9);
+                    var sSKY = new BGSprite('sonicexe/Phase3/Glitch', -621.1, -395.65, 0.1, 0.1);
                     sSKY.scale.x = 1.2;
                     sSKY.scale.y = 1.2;
                     background.add(sSKY);
 
-                    var trees = new BGSprite('sonicexe/Phase3/Trees', -607.35, -401.55, 0.95);
+                    var trees = new BGSprite('sonicexe/Phase3/Trees', -607.35, -401.55, 0.5, 0.5);
                     trees.scale.x = 1.2;
                     trees.scale.y = 1.2;
                     background.add(trees);
 
-                    var bg2 = new BGSprite('sonicexe/Phase3/Trees2', -623.5, -410.4);
-                    bg2.scale.x = 1.2;
-                    bg2.scale.y = 1.2;
-                    background.add(bg2);
+                    if (ClientPrefs.gameQuality == 'Normal') {
+                        var bg2 = new BGSprite('sonicexe/Phase3/Trees2', -623.5, -410.4, 0.6, 0.6);
+                        bg2.scale.x = 1.2;
+                        bg2.scale.y = 1.2;
+                        background.add(bg2);
+                    }
 
-                    var bg = new BGSprite('sonicexe/Phase3/Grass', -630.4, -266, 1.1);
+                    var bg = new BGSprite('sonicexe/Phase3/Grass', -630.4, -266, 0.9, 0.9);
                     bg.scale.x = 1.2;
                     bg.scale.y = 1.2;
                     background.add(bg);
+
+                case 'LordXStage':
+                    var sky = new BGSprite('sonicexe/LordXStage/sky', -1900, -1006, 0.1, 0.1);
+                    sky.setGraphicSize(Std.int(sky.width * .5));
+                    background.add(sky);
+
+                    var hills1 = new BGSprite('sonicexe/LordXStage/hills1', -1440, -606, 0.2, 0.2);
+                    hills1.setGraphicSize(Std.int(hills1.width * .5));
+                    hills1.scale.x = 0.6;
+                    background.add(hills1);
+
+                    var floor = new BGSprite('sonicexe/LordXStage/floor', -1400, -496, 0.9, 0.9);
+                    floor.setGraphicSize(Std.int(floor.width * .5));
+                    floor.scale.x = 1;
+                    background.add(floor);
+
+                    if (ClientPrefs.gameQuality == 'Normal') {
+                        eyeflower = new FlxSprite(-400, 100);
+                        eyeflower.frames = Paths.getSparrowAtlas('sonicexe/LordXStage/WeirdAssFlower_Assets');
+                        eyeflower.animation.addByPrefix('animatedeye', 'flower', 30, true);
+                        eyeflower.setGraphicSize(Std.int(eyeflower.width * 0.8));
+                        eyeflower.antialiasing = ClientPrefs.globalAntialiasing;
+                        eyeflower.scrollFactor.set(0.9, 0.9);
+                        eyeflower.animation.play('animatedeye', true);
+                        background.add(eyeflower);
+
+                        hands = new FlxSprite(-200, -375);
+                        hands.frames = Paths.getSparrowAtlas('sonicexe/LordXStage/NotKnuckles_Assets');
+                        hands.animation.addByPrefix('handss', 'Notknuckles', 30, true);
+                        hands.setGraphicSize(Std.int(hands.width * .5));
+                        hands.antialiasing = ClientPrefs.globalAntialiasing;
+                        hands.scrollFactor.set(0.9, 0.9);
+                        hands.animation.play('handss', true);
+                        background.add(hands);
+
+                        var smallflower = new BGSprite('sonicexe/LordXStage/smallflower', -1500, -506, 0.9, 0.9);
+                        smallflower.setGraphicSize(Std.int(smallflower.width * .6));
+                        background.add(smallflower);
+
+                        var bFsmallflower = new BGSprite('sonicexe/LordXStage/smallflower', -1200, -556, 0.9, 0.9);
+                        bFsmallflower.setGraphicSize(Std.int(bFsmallflower.width * .6));
+                        bFsmallflower.flipX = true;
+                        background.add(bFsmallflower);
+
+                        var smallflowe2 = new BGSprite('sonicexe/LordXStage/smallflowe2', -1500, -506, 0.9, 0.9);
+                        smallflowe2.setGraphicSize(Std.int(smallflower.width * .6));
+                        background.add(smallflowe2);
+                    }
+
+                    var tree = new BGSprite('sonicexe/LordXStage/tree', -1350, -656, 0.9, 0.9);
+                    tree.setGraphicSize(Std.int(tree.width * .7));
+                    background.add(tree);
+
+                case 'sonicfunStage':
+                    var funsky = new BGSprite('sonicexe/FunInfiniteStage/sonicFUNsky', -600, -200, 0.1, 0.1);
+                    funsky.setGraphicSize(Std.int(funsky.width * 0.9));
+                    background.add(funsky);
+
+                    if (ClientPrefs.gameQuality == 'Normal') {
+                        var funbush = new BGSprite('sonicexe/FunInfiniteStage/Bush2', -42, 171, 0.2, 0.2);
+                        background.add(funbush);
+
+                        funpillarts2ANIM = new FlxSprite(182, -100); // Zekuta why...
+                        funpillarts2ANIM.frames = Paths.getSparrowAtlas('sonicexe/FunInfiniteStage/Majin Boppers Back');
+                        funpillarts2ANIM.animation.addByPrefix('bumpypillar', 'MajinBop2 instance 1', 24, false);
+                        funpillarts2ANIM.antialiasing = ClientPrefs.globalAntialiasing;
+                        funpillarts2ANIM.scrollFactor.set(0.4, 0.4);
+                        background.add(funpillarts2ANIM);
+                    }
+
+                    var funbush2 = new BGSprite('sonicexe/FunInfiniteStage/Bush 1', 132, 354, 0.5, 0.5);
+                    background.add(funbush2);
+
+                    funpillarts1ANIM = new FlxSprite(-169, -167);
+                    funpillarts1ANIM.frames = Paths.getSparrowAtlas('sonicexe/FunInfiniteStage/Majin Boppers Front');
+                    funpillarts1ANIM.animation.addByPrefix('bumpypillar', 'MajinBop1 instance 1', 24, false);
+                    funpillarts1ANIM.antialiasing = ClientPrefs.globalAntialiasing;
+                    funpillarts1ANIM.scrollFactor.set(0.6, 0.6);
+                    background.add(funpillarts1ANIM);
+
+                    var funfloor = new BGSprite('sonicexe/FunInfiniteStage/floor BG', -340, 660, 0.9, 0.9);
+                    background.add(funfloor);
+
+                    if (ClientPrefs.gameQuality == 'Normal') {
+                        funboppers1ANIM = new FlxSprite(1126, 903);
+                        funboppers1ANIM.frames = Paths.getSparrowAtlas('sonicexe/FunInfiniteStage/majin FG1');
+                        funboppers1ANIM.animation.addByPrefix('bumpypillar', 'majin front bopper1', 24, false);
+                        funboppers1ANIM.antialiasing = ClientPrefs.globalAntialiasing;
+                        funboppers1ANIM.scrollFactor.set(1.3, 1.3);
+                        foreground.add(funboppers1ANIM);
+
+                        funboppers2ANIM = new FlxSprite(-293, 871);
+                        funboppers2ANIM.frames = Paths.getSparrowAtlas('sonicexe/FunInfiniteStage/majin FG2');
+                        funboppers2ANIM.animation.addByPrefix('bumpypillar', 'majin front bopper2', 24, false);
+                        funboppers2ANIM.antialiasing = ClientPrefs.globalAntialiasing;
+                        funboppers2ANIM.scrollFactor.set(1.3, 1.3);
+                        foreground.add(funboppers2ANIM);
+                    }
+
+                case 'TDStage':
+                    bgspec = new BGSprite('sonicexe/TailsBG', -370, -130, .91, .91);
+                    bgspec.setGraphicSize(Std.int(bgspec.width * 1.2));
+                    background.add(bgspec);
             }
         }
     }
@@ -513,24 +628,6 @@ class Stage extends FlxBasic {
                     GameOverSubstate.loopSoundName = 'gameOver-pixel';
                     GameOverSubstate.endSoundName = 'gameOverEnd-pixel';
                     GameOverSubstate.characterName = 'bf-pixel-dead';
-
-                case 'sonicStage' | 'sonicexeStage':
-                    var grps = [boyfriendGroup, dadGroup, gfGroup];
-                    for (grp in grps) {
-                        if (grp != null) {
-                            for (char in grp)
-                                char.scrollFactor.set(1.37, 1);
-                        }
-                    }
-
-                case 'trioStage':
-                    var grps = [boyfriendGroup, dadGroup];
-                    for (grp in grps) {
-                        if (grp != null) {
-                            for (char in grp)
-                                char.scrollFactor.set(1.1, 1);
-                        }
-                    }
             }
         }
     }
@@ -733,6 +830,14 @@ class Stage extends FlxBasic {
                         var sprite:BGSprite = sprite;
                         sprite.dance();
                     });
+
+                case 'sonicfunStage':
+                    funpillarts1ANIM.animation.play('bumpypillar', true);
+                    if (ClientPrefs.gameQuality == 'Normal') {
+                        funpillarts2ANIM.animation.play('bumpypillar', true);
+                        funboppers1ANIM.animation.play('bumpypillar', true);
+                        funboppers2ANIM.animation.play('bumpypillar', true);
+                    }
             }
         }
     }
@@ -794,7 +899,7 @@ class Stage extends FlxBasic {
 		var chars = [boyfriendGroup, gfGroup];
 		for (group in chars) {
 			for (char in group) {
-				if (char.animOffsets.exists('scared')) {
+				if (char.animation.exists('scared')) {
 					char.playAnim('scared', true);
 				}
 			}
@@ -829,7 +934,7 @@ class Stage extends FlxBasic {
 		{
 			startedMoving = true;
 			for (gf in gfGroup) {
-				if (gf.animOffsets.exists('hairBlow')) {
+				if (gf.animation.exists('hairBlow')) {
 					gf.playAnim('hairBlow');
 					gf.specialAnim = true;
 				}
@@ -857,7 +962,7 @@ class Stage extends FlxBasic {
 	function trainReset():Void
 	{
 		for (gf in gfGroup) {
-			if (gf.animOffsets.exists('hairFall')) {
+			if (gf.animation.exists('hairFall')) {
 				gf.danced = false; //Sets head to the correct position once the animation ends
 				gf.playAnim('hairFall');
 				gf.specialAnim = true;

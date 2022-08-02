@@ -19,6 +19,8 @@ class NotesChooseSubState extends MusicBeatSubState {
 
     override function create()
 	{
+		super.create();
+
         for (i in 1...Note.MAX_KEYS + 1) {
 			optionShit.push('${i}K');
 		}
@@ -43,8 +45,6 @@ class NotesChooseSubState extends MusicBeatSubState {
 			grpOptions.add(optionText);
 		}
 		changeSelection();
-
-        super.create();
 	}
 
 	var holdTime:Float = 0;
@@ -138,6 +138,8 @@ class NotesSubState extends MusicBeatSubState
 
 	override function create()
 	{
+		super.create();
+		
 		resetCameraOnClose = true;
 		
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
@@ -196,8 +198,6 @@ class NotesSubState extends MusicBeatSubState
 		add(hsbText);
 
 		changeSelection();
-
-		super.create();
 	}
 
 	var changingNote:Bool = false;

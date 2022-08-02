@@ -38,14 +38,16 @@ class CheckboxThingie extends FlxSprite
 	}
 
 	private function set_daValue(check:Bool):Bool {
-		if (check) {
-			if (animation.curAnim.name != 'checked' && animation.curAnim.name != 'checking') {
-				animation.play('checking', true);
-				offset.set(34, 25);
+		if (animation.curAnim != null) {
+			if (check) {
+				if (animation.curAnim.name != 'checked' && animation.curAnim.name != 'checking') {
+					animation.play('checking', true);
+					offset.set(34, 25);
+				}
+			} else if (animation.curAnim.name != 'unchecked' && animation.curAnim.name != 'unchecking') {
+				animation.play("unchecking", true);
+				offset.set(25, 28);
 			}
-		} else if (animation.curAnim.name != 'unchecked' && animation.curAnim.name != 'unchecking') {
-			animation.play("unchecking", true);
-			offset.set(25, 28);
 		}
 		return check;
 	}
@@ -62,5 +64,10 @@ class CheckboxThingie extends FlxSprite
 				animation.play('unchecked', true);
 				offset.set(0, 2);
 		}
+	}
+
+	override public function destroy() {
+		sprTracker = null;
+		super.destroy();
 	}
 }

@@ -38,6 +38,8 @@ class DialogueEditorState extends MusicBeatState
 	var dialogueFile:DialogueFile = null;
 
 	override function create() {
+		super.create();
+		
 		persistentUpdate = true;
 		FlxG.camera.bgColor = FlxColor.fromHSL(0, 0, 0.5);
 
@@ -92,7 +94,6 @@ class DialogueEditorState extends MusicBeatState
 		animText.scrollFactor.set();
 		add(animText);
 		changeText();
-		super.create();
 	}
 
 	var UI_box:FlxUITabMenu;

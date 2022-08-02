@@ -168,5 +168,6 @@ class FlxGridOverlay
 				obj = null;
 			}
 		}
+		gridMap.clear();
 	}
 }

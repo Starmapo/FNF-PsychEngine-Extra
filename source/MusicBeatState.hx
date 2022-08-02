@@ -1,5 +1,7 @@
 package;
 
+import lime.app.Application;
+import openfl.system.System;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -18,17 +20,23 @@ class MusicBeatState extends FlxUIState
 	private var curDecBeat:Float = 0;
 	private var controls(get, never):Controls;
 
+	public var windowNamePrefix:String = "Psych Engine Extra";
+	public var windowNameSuffix:String = "";
+
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
 	override function create() {
+		Paths.clearStoredMemory();
+		if ((!Std.isOfType(this, PlayState)) && (!Std.isOfType(this, pvp.PvPPlayState)) && (!Std.isOfType(this, editors.ChartingState)))
+			Paths.clearUnusedMemory();
+
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
 		super.create();
 
 		// Custom made Trans out
-		if (!skip) {
+		if (!skip)
 			openSubState(new CustomFadeTransition(0.7, true));
-		}
 		FlxTransitionableState.skipNextTransOut = false;
 	}
 
@@ -51,6 +59,8 @@ class MusicBeatState extends FlxUIState
 		}
 
 		if (FlxG.save.data != null) FlxG.save.data.fullscreen = FlxG.fullscreen;
+
+		Application.current.window.title = windowNamePrefix + windowNameSuffix;
 		
 		super.update(elapsed);
 	}
@@ -84,7 +94,7 @@ class MusicBeatState extends FlxUIState
 
 	private function updateCurStep():Void
 	{
-		var lastChange = Conductor.getBPMFromSeconds(Conductor.songPosition);
+		var lastChange = Conductor.getBPMFromSeconds(PlayState.SONG, Conductor.songPosition - ClientPrefs.noteOffset);
 
 		var shit = ((Conductor.songPosition - ClientPrefs.noteOffset) - lastChange.songTime) / lastChange.stepCrochet;
 		curDecStep = lastChange.stepTime + shit;

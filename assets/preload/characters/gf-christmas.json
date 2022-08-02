@@ -1,69 +1,85 @@
 {
 	"animations": [
 		{
+			"enemyOffsets": [
+				0,
+				9
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "cheer",
 			"loop": false,
-			"offsets": [
+			"name": "GF Cheer",
+			"playerOffsets": [
 				1,
 				0
-			],
-			"anim": "cheer",
-			"fps": 24,
-			"name": "GF Cheer",
-			"indices": []
+			]
 		},
 		{
+			"enemyOffsets": [
+				0,
+				-10
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singLEFT",
 			"loop": false,
-			"offsets": [
+			"name": "GF left note",
+			"playerOffsets": [
 				0,
 				-19
-			],
-			"anim": "singLEFT",
-			"fps": 24,
-			"name": "GF left note",
-			"indices": []
+			]
 		},
 		{
+			"enemyOffsets": [
+				0,
+				-11
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singDOWN",
 			"loop": false,
-			"offsets": [
+			"name": "GF Down Note",
+			"playerOffsets": [
 				0,
 				-20
-			],
-			"anim": "singDOWN",
-			"fps": 24,
-			"name": "GF Down Note",
-			"indices": []
+			]
 		},
 		{
+			"enemyOffsets": [
+				0,
+				13
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singUP",
 			"loop": false,
-			"offsets": [
+			"name": "GF Up Note",
+			"playerOffsets": [
 				0,
 				4
-			],
-			"anim": "singUP",
-			"fps": 24,
-			"name": "GF Up Note",
-			"indices": []
+			]
 		},
 		{
+			"enemyOffsets": [
+				0,
+				-11
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singRIGHT",
 			"loop": false,
-			"offsets": [
+			"name": "GF Right Note",
+			"playerOffsets": [
 				0,
 				-20
-			],
-			"anim": "singRIGHT",
-			"fps": 24,
-			"name": "GF Right Note",
-			"indices": []
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
-				-2,
-				-21
+			"enemyOffsets": [
+				0,
+				-12
 			],
-			"anim": "sad",
-			"fps": 24,
-			"name": "gf sad",
 			"indices": [
 				0,
 				1,
@@ -78,17 +94,21 @@
 				10,
 				11,
 				12
+			],
+			"fps": 24,
+			"anim": "sad",
+			"loop": false,
+			"name": "gf sad",
+			"playerOffsets": [
+				-2,
+				-21
 			]
 		},
 		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				0,
-				-9
+				0
 			],
-			"anim": "danceLeft",
-			"fps": 24,
-			"name": "GF Dancing Beat",
 			"indices": [
 				30,
 				0,
@@ -106,17 +126,21 @@
 				12,
 				13,
 				14
+			],
+			"fps": 24,
+			"anim": "danceLeft",
+			"loop": false,
+			"name": "GF Dancing Beat",
+			"playerOffsets": [
+				0,
+				-9
 			]
 		},
 		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				0,
-				-9
+				0
 			],
-			"anim": "danceRight",
-			"fps": 24,
-			"name": "GF Dancing Beat",
 			"indices": [
 				15,
 				16,
@@ -133,17 +157,21 @@
 				27,
 				28,
 				29
+			],
+			"fps": 24,
+			"anim": "danceRight",
+			"loop": false,
+			"name": "GF Dancing Beat",
+			"playerOffsets": [
+				0,
+				-9
 			]
 		},
 		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				0,
-				-9
+				0
 			],
-			"anim": "hairFall",
-			"fps": 24,
-			"name": "GF Dancing Beat Hair Landing",
 			"indices": [
 				0,
 				1,
@@ -157,23 +185,44 @@
 				9,
 				10,
 				11
+			],
+			"fps": 24,
+			"anim": "hairFall",
+			"loop": false,
+			"name": "GF Dancing Beat Hair Landing",
+			"playerOffsets": [
+				0,
+				-9
 			]
 		},
 		{
+			"enemyOffsets": [
+				0,
+				-8
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "scared",
 			"loop": true,
-			"offsets": [
+			"name": "GF FEAR",
+			"playerOffsets": [
 				-2,
 				-17
-			],
-			"anim": "scared",
-			"fps": 24,
-			"name": "GF FEAR",
-			"indices": []
+			]
 		}
 	],
+	"enemy_position": [
+		-81,
+		0
+	],
+	"repeatHoldAnimation": true,
 	"no_antialiasing": false,
 	"image": "characters/gfChristmas",
-	"position": [
+	"enemy_cameraPosition": [
+		20,
+		0
+	],
+	"player_cameraPosition": [
 		0,
 		0
 	],
@@ -184,7 +233,7 @@
 		0,
 		77
 	],
-	"camera_position": [
+	"player_position": [
 		0,
 		0
 	],

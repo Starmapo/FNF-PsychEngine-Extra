@@ -414,6 +414,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		return null;
 	}
 
+	var holdTime:Float = 0;
 	public override function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
@@ -427,12 +428,32 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 					--currentScroll;
 					if (currentScroll < 0) currentScroll = 0;
 					updateButtonPositions();
+					holdTime = 0;
 				}
 				else if (FlxG.mouse.wheel < 0 || FlxG.keys.justPressed.DOWN) {
 					// Go down
 					currentScroll++;
 					if (currentScroll >= list.length) currentScroll = list.length-1;
 					updateButtonPositions();
+					holdTime = 0;
+				}
+				if (FlxG.keys.pressed.UP || FlxG.keys.pressed.DOWN) {
+					var checkLastHold:Int = Math.floor((holdTime - 0.5) * 40);
+					holdTime += elapsed;
+					var checkNewHold:Int = Math.floor((holdTime - 0.5) * 40);
+
+					if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
+					{
+						if (FlxG.keys.pressed.UP) {
+							--currentScroll;
+							if (currentScroll < 0) currentScroll = 0;
+							updateButtonPositions();
+						} else {
+							currentScroll++;
+							if (currentScroll >= list.length) currentScroll = list.length-1;
+							updateButtonPositions();
+						}
+					}
 				}
 			}
 
@@ -463,8 +484,8 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		}
 
 		dropPanel.visible = b;
-		if (currentScroll != 0) {
-			currentScroll = 0;
+		if (currentScroll >= list.length) {
+			currentScroll = list.length - 1;
 			updateButtonPositions();
 		}
 

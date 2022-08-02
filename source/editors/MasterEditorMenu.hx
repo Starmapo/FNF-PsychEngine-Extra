@@ -28,6 +28,8 @@ class MasterEditorMenu extends MusicBeatState
 
 	override function create()
 	{
+		super.create();
+		
 		FlxG.camera.bgColor = FlxColor.BLACK;
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
@@ -53,7 +55,6 @@ class MasterEditorMenu extends MusicBeatState
 		changeSelection();
 
 		FlxG.mouse.visible = false;
-		super.create();
 	}
 
 	var holdTime:Float = 0;

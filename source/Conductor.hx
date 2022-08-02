@@ -41,7 +41,7 @@ class Conductor
 
 	public static function judgeNote(note:Note, diff:Float = 0):Rating // die
 	{
-		var data:Array<Rating> = PlayState.instance.ratingsData; //shortening cuz fuck u
+		var data:Array<Dynamic> = CoolUtil.getPlayState().ratingsData; //shortening cuz fuck u
 		for(i in 0...data.length - 1) //skips last window (Shit)
 		{
 			if (diff <= data[i].hitWindow * playbackRate)
@@ -52,21 +52,20 @@ class Conductor
 		return data[data.length - 1];
 	}
 
-	public static function getCrotchetAtTime(time:Float){
-		var lastChange = getBPMFromSeconds(time);
+	public static function getCrochetAtTime(song:SwagSong, time:Float){
+		var lastChange = getBPMFromSeconds(song, time);
 		return lastChange.stepCrochet * 4;
 	}
 
-	public static function getBPMFromSeconds(time:Float){
+	public static function getBPMFromSeconds(song:SwagSong, time:Float){
 		var lastChange:BPMChangeEvent = {
 			stepTime: 0,
 			songTime: 0,
-			bpm: bpm,
-			timeSignature: timeSignature,
-			stepCrochet: stepCrochet
+			bpm: (song != null ? song.bpm : bpm),
+			timeSignature: (song != null ? song.timeSignature : timeSignature),
+			stepCrochet: (((60 / (song != null ? song.bpm : bpm)) * 4000) / (song != null ? song.timeSignature[1] : timeSignature[1])) / 4
 		}
-		for (i in 0...Conductor.bpmChangeMap.length)
-		{
+		for (i in 0...Conductor.bpmChangeMap.length) {
 			if (time >= Conductor.bpmChangeMap[i].songTime)
 				lastChange = Conductor.bpmChangeMap[i];
 		}
@@ -74,16 +73,15 @@ class Conductor
 		return lastChange;
 	}
 
-	public static function getBPMFromStep(step:Float){
+	public static function getBPMFromStep(song:SwagSong, step:Float){
 		var lastChange:BPMChangeEvent = {
 			stepTime: 0,
 			songTime: 0,
-			bpm: bpm,
-			timeSignature: timeSignature,
-			stepCrochet: stepCrochet
+			bpm: (song != null ? song.bpm : bpm),
+			timeSignature: (song != null ? song.timeSignature : timeSignature),
+			stepCrochet: (((60 / (song != null ? song.bpm : bpm)) * 4000) / (song != null ? song.timeSignature[1] : timeSignature[1])) / 4
 		}
-		for (i in 0...Conductor.bpmChangeMap.length)
-		{
+		for (i in 0...Conductor.bpmChangeMap.length) {
 			if (Conductor.bpmChangeMap[i].stepTime <= step)
 				lastChange = Conductor.bpmChangeMap[i];
 		}
@@ -91,28 +89,28 @@ class Conductor
 		return lastChange;
 	}
 
-	public static function beatToSeconds(beat:Float): Float{
+	public static function beatToSeconds(song:SwagSong, beat:Float): Float{
 		var step = beat * 4;
-		var lastChange = getBPMFromStep(step);
-		return lastChange.songTime + ((step - lastChange.stepTime) / (lastChange.bpm / 60)/lastChange.timeSignature[1]) * 1000; // TODO: make less shit and take BPM into account PROPERLY
+		var lastChange = getBPMFromStep(song, step);
+		return lastChange.songTime + ((step - lastChange.stepTime) / (lastChange.bpm / 60) / lastChange.timeSignature[1]) * 1000; // TODO: make less shit and take BPM into account PROPERLY
 	}
 
-	public static function getStep(time:Float){
-		var lastChange = getBPMFromSeconds(time);
+	public static function getStep(song:SwagSong, time:Float){
+		var lastChange = getBPMFromSeconds(song, time);
 		return lastChange.stepTime + (time - lastChange.songTime) / lastChange.stepCrochet;
 	}
 
-	public static function getStepRounded(time:Float){
-		var lastChange = getBPMFromSeconds(time);
+	public static function getStepRounded(song:SwagSong, time:Float){
+		var lastChange = getBPMFromSeconds(song, time);
 		return Math.floor(lastChange.stepTime + (time - lastChange.songTime) / lastChange.stepCrochet);
 	}
 
-	public static function getBeat(time:Float){
-		return getStep(time)/4;
+	public static function getBeat(song:SwagSong, time:Float){
+		return getStep(song, time)/4;
 	}
 
-	public static function getBeatRounded(time:Float):Int{
-		return Math.floor(getStepRounded(time)/4);
+	public static function getBeatRounded(song:SwagSong, time:Float):Int{
+		return Math.floor(getStepRounded(song, time)/4);
 	}
 
 	/**
@@ -132,12 +130,12 @@ class Conductor
 		{
 			var sec = song.notes[i];
 			var doPush = false;
-			if (sec.changeBPM)
+			if (sec.changeBPM && sec.bpm != curBPM)
 			{
 				curBPM = sec.bpm;
 				doPush = true;
 			}
-			if (sec.changeSignature)
+			if (sec.changeSignature && (sec.timeSignature[0] != curSignature[0] || sec.timeSignature[1] != curSignature[1]))
 			{
 				curSignature = sec.timeSignature.copy();
 				doPush = true;
@@ -157,6 +155,7 @@ class Conductor
 			totalSteps += deltaSteps;
 			totalPos += calculateCrochet(curBPM, curSignature[1])/4 * deltaSteps;
 		}
+		trace('bpm change map: ' + bpmChangeMap);
 	}
 
 	inline public static function calculateCrochet(bpm:Float, denominator:Int){
@@ -196,7 +195,7 @@ class Conductor
 	}
 
 	/**
-	 * Gets the latest BPM and time signature based on the current step and changes the Conductor values if necessary.
+	 * Gets the latest BPM and time signature based on the current step and changes the Conductor values.
 	 *
 	 * @param	song	Song to take the BPM and time signature changes from.
 	 * @param   step	The current step of the song.
@@ -262,8 +261,12 @@ class Rating
 		}
 	}
 
-	public function increase(blah:Int = 1)
+	public function increase(blah:Int = 1, ?player:Int)
 	{
-		Reflect.setField(PlayState.instance, counter, Reflect.field(PlayState.instance, counter) + blah);
+		if (player != null) {
+			var counter:Array<Int> = Reflect.field(CoolUtil.getPlayState(), counter);
+			counter[player] += blah;
+		} else
+			Reflect.setField(CoolUtil.getPlayState(), counter, Reflect.field(CoolUtil.getPlayState(), counter) + blah);
 	}
 }

@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
@@ -58,6 +59,8 @@ class FreeplayState extends MusicBeatState
 
 	override function create()
 	{
+		super.create();
+		
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
@@ -173,8 +176,6 @@ class FreeplayState extends MusicBeatState
 		text.sprTracker = searchSort;
 		text.yAdd = -15;
 		add(text);
-
-		super.create();
 	}
 
 	override function closeSubState() {
@@ -202,16 +203,8 @@ class FreeplayState extends MusicBeatState
 	{
 		FlxG.mouse.visible = true;
 
-		if (FlxG.sound.music != null) {
-			if (FlxG.sound.music.volume < 0.7)
-			{
-				FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
-			}
-
-			if (instPlaying > -1) {
-				Conductor.songPosition = FlxG.sound.music.time;
-			}
-		}
+		if (FlxG.sound.music != null && instPlaying > -1)
+			Conductor.songPosition = FlxG.sound.music.time;
 
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, CoolUtil.boundTo(elapsed * 24, 0, 1)));
 		lerpRating = FlxMath.lerp(lerpRating, intendedRating, CoolUtil.boundTo(elapsed * 12, 0, 1));
@@ -285,9 +278,9 @@ class FreeplayState extends MusicBeatState
 
 				if (controls.UI_DOWN || controls.UI_UP)
 				{
-					var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
+					var checkLastHold:Int = Math.floor((holdTime - 0.5) * 20);
 					holdTime += elapsed;
-					var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
+					var checkNewHold:Int = Math.floor((holdTime - 0.5) * 20);
 
 					if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
 					{
@@ -373,7 +366,7 @@ class FreeplayState extends MusicBeatState
 					PlayState.isStoryMode = false;
 					PlayState.storyDifficulty = curDifficulty;
 
-					trace('CURRENT WEEK: ${WeekData.getWeekName()}');
+					trace('CURRENT WEEK: ${WeekData.getWeekFileName()}');
 					if (colorTween != null) {
 						colorTween.cancel();
 					}
@@ -705,6 +698,27 @@ class FreeplayState extends MusicBeatState
 		if (change) {
 			changeSelection(0, false);
 		}
+	}
+
+	override public function destroy() {
+		songs = null;
+		songsOG = null;
+		scoreBG = FlxDestroyUtil.destroy(scoreBG);
+		scoreText = FlxDestroyUtil.destroy(scoreText);
+		diffText = FlxDestroyUtil.destroy(diffText);
+		grpSongs = FlxDestroyUtil.destroy(grpSongs);
+		grpIcons = FlxDestroyUtil.destroy(grpIcons);
+		iconArray = null;
+		bg = FlxDestroyUtil.destroy(bg);
+		if (colorTween != null) {
+			colorTween.cancel();
+			colorTween.destroy();
+		}
+		colorTween = null;
+		searchBG = FlxDestroyUtil.destroy(searchBG);
+		searchText = FlxDestroyUtil.destroy(searchText);
+		searchSort = FlxDestroyUtil.destroy(searchSort);
+		super.destroy();
 	}
 }
 

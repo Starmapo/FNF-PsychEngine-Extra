@@ -50,7 +50,7 @@ class MusicBeatSubState extends FlxSubState
 
 	private function updateCurStep():Void
 	{
-		var lastChange = Conductor.getBPMFromSeconds(Conductor.songPosition);
+		var lastChange = Conductor.getBPMFromSeconds(PlayState.SONG, Conductor.songPosition);
 
 		var shit = ((Conductor.songPosition - ClientPrefs.noteOffset) - lastChange.songTime) / lastChange.stepCrochet;
 		curDecStep = lastChange.stepTime + shit;

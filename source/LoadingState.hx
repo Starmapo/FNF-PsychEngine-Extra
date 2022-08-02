@@ -38,6 +38,8 @@ class LoadingState extends MusicBeatState
 	var loadBar:FlxSprite;
 	override function create()
 	{
+		super.create();
+		
 		var imagePath = Paths.image('funkay');
 		
 		var bg:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d);
@@ -78,7 +80,6 @@ class LoadingState extends MusicBeatState
 		});
 
 		FlxTransitionableState.skipNextTransOut = true;
-		super.create();
 	}
 	
 	function checkLoadSong(path:String)

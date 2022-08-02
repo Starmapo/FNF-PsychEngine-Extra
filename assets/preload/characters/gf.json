@@ -1,68 +1,85 @@
 {
 	"animations": [
 		{
-			"loop": false,
-			"offsets": [
-				3,
-				0
+			"enemyOffsets": [
+				0,
+				9
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "cheer",
-			"indices": [],
-			"name": "GF Cheer"
+			"loop": false,
+			"name": "GF Cheer",
+			"playerOffsets": [
+				3,
+				0
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				0,
-				-19
+				-10
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singLEFT",
-			"indices": [],
-			"name": "GF left note"
+			"loop": false,
+			"name": "GF left note",
+			"playerOffsets": [
+				0,
+				-19
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				0,
-				-20
+				-11
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singDOWN",
-			"indices": [],
-			"name": "GF Down Note"
-		},
-		{
 			"loop": false,
-			"offsets": [
-				0,
-				4
-			],
-			"fps": 24,
-			"anim": "singUP",
-			"indices": [],
-			"name": "GF Up Note"
-		},
-		{
-			"loop": false,
-			"offsets": [
+			"name": "GF Down Note",
+			"playerOffsets": [
 				0,
 				-20
-			],
-			"fps": 24,
-			"anim": "singRIGHT",
-			"indices": [],
-			"name": "GF Right Note"
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
-				-2,
-				-21
+			"enemyOffsets": [
+				0,
+				13
 			],
+			"indices": [],
 			"fps": 24,
-			"anim": "sad",
+			"anim": "singUP",
+			"loop": false,
+			"name": "GF Up Note",
+			"playerOffsets": [
+				0,
+				4
+			]
+		},
+		{
+			"enemyOffsets": [
+				0,
+				-11
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singRIGHT",
+			"loop": false,
+			"name": "GF Right Note",
+			"playerOffsets": [
+				0,
+				-20
+			]
+		},
+		{
+			"enemyOffsets": [
+				-2,
+				-12
+			],
 			"indices": [
 				0,
 				1,
@@ -78,16 +95,20 @@
 				11,
 				12
 			],
-			"name": "gf sad"
+			"fps": 24,
+			"anim": "sad",
+			"loop": false,
+			"name": "gf sad",
+			"playerOffsets": [
+				-2,
+				-21
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				0,
-				-9
+				0
 			],
-			"fps": 24,
-			"anim": "danceLeft",
 			"indices": [
 				30,
 				0,
@@ -106,16 +127,20 @@
 				13,
 				14
 			],
-			"name": "GF Dancing Beat"
-		},
-		{
+			"fps": 24,
+			"anim": "danceLeft",
 			"loop": false,
-			"offsets": [
+			"name": "GF Dancing Beat",
+			"playerOffsets": [
 				0,
 				-9
+			]
+		},
+		{
+			"enemyOffsets": [
+				0,
+				0
 			],
-			"fps": 24,
-			"anim": "danceRight",
 			"indices": [
 				15,
 				16,
@@ -133,32 +158,40 @@
 				28,
 				29
 			],
-			"name": "GF Dancing Beat"
+			"fps": 24,
+			"anim": "danceRight",
+			"loop": false,
+			"name": "GF Dancing Beat",
+			"playerOffsets": [
+				0,
+				-9
+			]
 		},
 		{
-			"loop": true,
-			"offsets": [
+			"enemyOffsets": [
 				45,
-				-8
+				1
 			],
-			"fps": 24,
-			"anim": "hairBlow",
 			"indices": [
 				0,
 				1,
 				2,
 				3
 			],
-			"name": "GF Dancing Beat Hair blowing"
+			"fps": 24,
+			"anim": "hairBlow",
+			"loop": true,
+			"name": "GF Dancing Beat Hair blowing",
+			"playerOffsets": [
+				45,
+				-8
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				0,
-				-9
+				0
 			],
-			"fps": 24,
-			"anim": "hairFall",
 			"indices": [
 				0,
 				1,
@@ -173,23 +206,43 @@
 				10,
 				11
 			],
-			"name": "GF Dancing Beat Hair Landing"
+			"fps": 24,
+			"anim": "hairFall",
+			"loop": false,
+			"name": "GF Dancing Beat Hair Landing",
+			"playerOffsets": [
+				0,
+				-9
+			]
 		},
 		{
-			"loop": true,
-			"offsets": [
+			"enemyOffsets": [
 				-2,
-				-17
+				-8
 			],
+			"indices": [],
 			"fps": 24,
 			"anim": "scared",
-			"indices": [],
-			"name": "GF FEAR"
+			"loop": true,
+			"name": "GF FEAR",
+			"playerOffsets": [
+				-2,
+				-17
+			]
 		}
 	],
+	"enemy_position": [
+		0,
+		0
+	],
+	"repeatHoldAnimation": true,
 	"no_antialiasing": false,
 	"image": "characters/GF_assets",
-	"position": [
+	"enemy_cameraPosition": [
+		0,
+		0
+	],
+	"player_cameraPosition": [
 		0,
 		0
 	],
@@ -200,7 +253,7 @@
 		0,
 		77
 	],
-	"camera_position": [
+	"player_position": [
 		0,
 		0
 	],

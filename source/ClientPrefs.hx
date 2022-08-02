@@ -39,6 +39,7 @@ class ClientPrefs {
 	public static var shitMisses:Bool = true;
 	public static var smoothHealth:Bool = true;
 	public static var keybindReminders:Bool = true;
+	public static var menuMusicVolume:Float = 1;
 	public static var gameplaySettings:Map<String, Dynamic> = [
 		'scrollspeed' => 1.0,
 		'scrolltype' => 'multiplicative', 
@@ -321,6 +322,7 @@ class ClientPrefs {
 		FlxG.save.data.shitMisses = shitMisses;
 		FlxG.save.data.smoothHealth = smoothHealth;
 		FlxG.save.data.keybindReminders = keybindReminders;
+		FlxG.save.data.menuMusicVolume = menuMusicVolume;
 		FlxG.save.data.achievementsMap = Achievements.achievementsMap;
 		FlxG.save.data.henchmenDeath = Achievements.henchmenDeath;
 
@@ -466,6 +468,9 @@ class ClientPrefs {
 		}
 		if (FlxG.save.data.keybindReminders != null) {
 			keybindReminders = FlxG.save.data.keybindReminders;
+		}
+		if (FlxG.save.data.menuMusicVolume != null) {
+			menuMusicVolume = FlxG.save.data.menuMusicVolume;
 		}
 		if (FlxG.save.data.gameplaySettings != null)
 		{

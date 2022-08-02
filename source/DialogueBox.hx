@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
@@ -16,7 +17,6 @@ class DialogueBox extends FlxSpriteGroup
 
 	var curCharacter:String = '';
 
-	var dialogue:Alphabet;
 	var dialogueList:Array<String> = [];
 
 	// SECOND DIALOGUE FOR THE PIXEL SHIT INSTEAD???
@@ -139,8 +139,6 @@ class DialogueBox extends FlxSpriteGroup
 		swagDialogue.color = 0xFF3F2021;
 		swagDialogue.sounds = [FlxG.sound.load(Paths.sound('pixelText'), 0.6)];
 		add(swagDialogue);
-
-		dialogue = new Alphabet(0, 80, "", false, true);
 	}
 
 	var dialogueOpened:Bool = false;
@@ -180,7 +178,6 @@ class DialogueBox extends FlxSpriteGroup
 		{
 			if (dialogueEnded)
 			{
-				remove(dialogue);
 				if (dialogueList[1] == null && dialogueList[0] != null)
 				{
 					if (!isEnding)
@@ -272,5 +269,22 @@ class DialogueBox extends FlxSpriteGroup
 		var splitName:Array<String> = dialogueList[0].split(":");
 		curCharacter = splitName[1];
 		dialogueList[0] = dialogueList[0].substr(splitName[1].length + 2).trim();
+	}
+
+	override public function destroy() {
+		curCharacter = null;
+		dialogueList = null;
+		finishThing = null;
+		nextDialogueThing = null;
+		skipDialogueThing = null;
+		songName = null;
+		box = FlxDestroyUtil.destroy(box);
+		swagDialogue = FlxDestroyUtil.destroy(swagDialogue);
+		dropText = FlxDestroyUtil.destroy(dropText);
+		portraitLeft = FlxDestroyUtil.destroy(portraitLeft);
+		portraitRight = FlxDestroyUtil.destroy(portraitRight);
+		handSelect = FlxDestroyUtil.destroy(handSelect);
+		bgFade = FlxDestroyUtil.destroy(bgFade);
+		super.destroy();
 	}
 }

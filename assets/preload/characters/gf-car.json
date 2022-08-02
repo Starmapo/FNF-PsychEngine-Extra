@@ -1,24 +1,10 @@
 {
 	"animations": [
 		{
-			"loop": false,
-			"offsets": [
-				2,
-				0
-			],
-			"anim": "singUP",
-			"fps": 24,
-			"name": "GF Dancing Beat Hair blowing CAR",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				0,
 				0
 			],
-			"fps": 24,
-			"anim": "danceRight",
 			"indices": [
 				15,
 				16,
@@ -36,16 +22,20 @@
 				28,
 				29
 			],
-			"name": "GF Dancing Beat Hair blowing CAR"
+			"fps": 24,
+			"anim": "danceRight",
+			"loop": false,
+			"name": "GF Dancing Beat Hair blowing CAR",
+			"playerOffsets": [
+				0,
+				0
+			]
 		},
 		{
-			"loop": false,
-			"offsets": [
+			"enemyOffsets": [
 				0,
 				0
 			],
-			"fps": 24,
-			"anim": "danceLeft",
 			"indices": [
 				30,
 				0,
@@ -64,12 +54,28 @@
 				13,
 				14
 			],
-			"name": "GF Dancing Beat Hair blowing CAR"
+			"fps": 24,
+			"anim": "danceLeft",
+			"loop": false,
+			"name": "GF Dancing Beat Hair blowing CAR",
+			"playerOffsets": [
+				0,
+				0
+			]
 		}
 	],
+	"enemy_position": [
+		0,
+		0
+	],
+	"repeatHoldAnimation": true,
 	"no_antialiasing": false,
 	"image": "characters/gfCar",
-	"position": [
+	"enemy_cameraPosition": [
+		-30,
+		0
+	],
+	"player_cameraPosition": [
 		0,
 		0
 	],
@@ -80,7 +86,7 @@
 		0,
 		77
 	],
-	"camera_position": [
+	"player_position": [
 		0,
 		0
 	],

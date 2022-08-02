@@ -67,6 +67,8 @@ class DialogueCharacterEditorState extends MusicBeatState
 	var curAnim:Int = 0;
 
 	override function create() {
+		super.create();
+		
 		Alphabet.setDialogueSound();
 
 		persistentUpdate = true;
@@ -149,8 +151,6 @@ class DialogueCharacterEditorState extends MusicBeatState
 		addEditorBox();
 		FlxG.mouse.visible = true;
 		updateCharTypeBox();
-		
-		super.create();
 	}
 
 	var UI_typebox:FlxUITabMenu;

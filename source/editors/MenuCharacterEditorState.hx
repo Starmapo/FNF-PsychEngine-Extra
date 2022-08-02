@@ -34,6 +34,8 @@ class MenuCharacterEditorState extends MusicBeatState
 	var defaultCharacters:Array<String> = ['dad', 'bf', 'gf'];
 
 	override function create() {
+		super.create();
+		
 		characterFile = {
 			image: 'Menu_Dad',
 			scale: 1,
@@ -74,8 +76,6 @@ class MenuCharacterEditorState extends MusicBeatState
 		addEditorBox();
 		FlxG.mouse.visible = true;
 		updateCharTypeBox();
-
-		super.create();
 	}
 
 	var UI_typebox:FlxUITabMenu;

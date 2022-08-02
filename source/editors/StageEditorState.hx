@@ -1,5 +1,6 @@
 package editors;
 
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import openfl.events.IOErrorEvent;
 import openfl.events.Event;
 import openfl.net.FileReference;
@@ -50,6 +51,10 @@ class StageEditorState extends MusicBeatState {
     var cameraFollowPointerDad:FlxSprite;
     var cameraFollowPointerGF:FlxSprite;
 
+    public var boyfriendGroup:FlxTypedSpriteGroup<Character>;
+	public var dadGroup:FlxTypedSpriteGroup<Character>;
+	public var gfGroup:FlxTypedSpriteGroup<Character>;
+
     public function new(stage:String = 'stage') {
         super();
         curStage = stage;
@@ -57,6 +62,8 @@ class StageEditorState extends MusicBeatState {
     }
 
     override public function create() {
+        super.create();
+        
         FlxG.mouse.visible = true;
         camEditor = new FlxCamera();
 		camHUD = new FlxCamera();
@@ -67,6 +74,10 @@ class StageEditorState extends MusicBeatState {
 		FlxG.cameras.reset(camEditor);
 		FlxG.cameras.add(camHUD, false);
 		FlxG.cameras.add(camMenu, false);
+
+        boyfriendGroup = new FlxTypedSpriteGroup();
+        dadGroup = new FlxTypedSpriteGroup();
+        gfGroup = new FlxTypedSpriteGroup();
 
         stage = new Stage('', this);
         add(stage.background);
@@ -81,6 +92,10 @@ class StageEditorState extends MusicBeatState {
         boyfriend = new Character(0, 0, 'bf', true, true);
         add(boyfriend);
         add(stage.foreground);
+
+        boyfriendGroup.add(boyfriend);
+        dadGroup.add(dad);
+        gfGroup.add(gf);
 
         var pointer:FlxGraphic = FlxGraphic.fromClass(GraphicCursorCross);
         cameraFollowPointerGF = new FlxSprite().loadGraphic(pointer);
@@ -134,8 +149,6 @@ class StageEditorState extends MusicBeatState {
 
         camFollow.set(gf.getMidpoint().x, gf.getMidpoint().y);
         camFollowPos.setPosition(camFollow.x, camFollow.y);
-
-        super.create();
     }
 
     override function update(elapsed:Float) {
@@ -435,9 +448,9 @@ class StageEditorState extends MusicBeatState {
         if (!gf.visible)
             cameraFollowPointerGF.setPosition(stageFile.camera_girlfriend[0], stageFile.camera_girlfriend[1]);
         else
-            cameraFollowPointerGF.setPosition(gf.getMidpoint().x + stageFile.camera_girlfriend[0], gf.getMidpoint().y + stageFile.camera_girlfriend[1]);
-        cameraFollowPointerDad.setPosition(dad.getMidpoint().x + 150 + stageFile.camera_opponent[0], dad.getMidpoint().y - 100 + stageFile.camera_opponent[1]);
-        cameraFollowPointerBoyfriend.setPosition(boyfriend.getMidpoint().x - 100 + stageFile.camera_boyfriend[0], boyfriend.getMidpoint().y - 100 + stageFile.camera_boyfriend[1]);
+            cameraFollowPointerGF.setPosition(CoolUtil.getCamFollowCharacter(gf).x + stageFile.camera_girlfriend[0], CoolUtil.getCamFollowCharacter(gf).y + stageFile.camera_girlfriend[1]);
+        cameraFollowPointerDad.setPosition(CoolUtil.getCamFollowCharacter(dad).x + stageFile.camera_opponent[0], CoolUtil.getCamFollowCharacter(dad).y + stageFile.camera_opponent[1]);
+        cameraFollowPointerBoyfriend.setPosition(CoolUtil.getCamFollowCharacter(boyfriend).x + stageFile.camera_boyfriend[0], CoolUtil.getCamFollowCharacter(boyfriend).y + stageFile.camera_boyfriend[1]);
 
         cameraFollowPointerGF.x -= 20;
         cameraFollowPointerGF.y -= 20;
@@ -445,6 +458,10 @@ class StageEditorState extends MusicBeatState {
         cameraFollowPointerDad.y -= 20;
         cameraFollowPointerBoyfriend.x -= 20;
         cameraFollowPointerBoyfriend.y -= 20;
+
+        cameraFollowPointerGF.scrollFactor.copyFrom(gf.scrollFactor);
+        cameraFollowPointerDad.scrollFactor.copyFrom(dad.scrollFactor);
+        cameraFollowPointerBoyfriend.scrollFactor.copyFrom(boyfriend.scrollFactor);
     }
 
     function loadStage() {
@@ -468,6 +485,7 @@ class StageEditorState extends MusicBeatState {
         }
         Paths.setCurrentLevel(stageFile.directory);
         stage.createStage(curStage);
+        stage.onCharacterInit();
         gf.visible = (stageFile.hide_girlfriend == false);
         repositionChars();
         FlxG.camera.zoom = stageFile.defaultZoom;

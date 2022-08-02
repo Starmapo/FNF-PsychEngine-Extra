@@ -368,6 +368,19 @@ class Alphabet extends FlxSpriteGroup
 		}
 		typeTimer = null;
 	}
+
+	override public function destroy() {
+		text = null;
+		_finalText = null;
+		lastSprite = null;
+		splitWords = null;
+		lettersArray = null;
+		if (dialogueSound != null)
+			dialogueSound.destroy();
+		dialogueSound = null;
+		killTheTimer();
+		super.destroy();
+	}
 }
 
 class AlphaCharacter extends FlxSprite

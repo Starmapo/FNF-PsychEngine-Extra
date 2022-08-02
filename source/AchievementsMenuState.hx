@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 #if DISCORD_ALLOWED
 import Discord.DiscordClient;
 #end
@@ -15,13 +16,15 @@ using StringTools;
 class AchievementsMenuState extends MusicBeatState
 {
 	#if ACHIEVEMENTS_ALLOWED
-	var options:Array<AchievementFile> = [];
+	var achievements:Array<AchievementFile> = [];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	private var achievementArray:Array<AttachedAchievement> = [];
 	private var descText:FlxText;
 
 	override function create() {
+		super.create();
+		
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("Achievements Menu", null);
 		#end
@@ -38,14 +41,13 @@ class AchievementsMenuState extends MusicBeatState
 		
 		Achievements.loadAchievements();
 		for (i in 0...Achievements.achievementsStuff.length) {
-			if (!Achievements.achievementsStuff[i].hiddenUntilUnlocked || Achievements.achievementsMap.exists(Achievements.achievementsStuff[i].name)) {
-				options.push(Achievements.achievementsStuff[i]);
-			}
+			if (!Achievements.achievementsStuff[i].hiddenUntilUnlocked || Achievements.achievementsMap.exists(Achievements.achievementsStuff[i].name))
+				achievements.push(Achievements.achievementsStuff[i]);
 		}
 
-		for (i in 0...options.length) {
-			var achieveName:String = options[i].name;
-			var optionText:Alphabet = new Alphabet(0, (100 * i) + 210, Achievements.isAchievementUnlocked(achieveName) ? options[i].displayName : '?');
+		for (i in 0...achievements.length) {
+			var achieveName:String = achievements[i].name;
+			var optionText:Alphabet = new Alphabet(0, (100 * i) + 210, Achievements.isAchievementUnlocked(achieveName) ? achievements[i].displayName : '?');
 			optionText.isMenuItem = true;
 			optionText.x += 280;
 			optionText.xAdd = 200;
@@ -64,8 +66,6 @@ class AchievementsMenuState extends MusicBeatState
 		descText.borderSize = 2.4;
 		add(descText);
 		changeSelection();
-
-		super.create();
 	}
 
 	var holdTime:Float = 0;
@@ -103,8 +103,8 @@ class AchievementsMenuState extends MusicBeatState
 	function changeSelection(change:Int = 0) {
 		curSelected += change;
 		if (curSelected < 0)
-			curSelected = options.length - 1;
-		if (curSelected >= options.length)
+			curSelected = achievements.length - 1;
+		if (curSelected >= achievements.length)
 			curSelected = 0;
 
 		var bullShit:Int = 0;
@@ -125,8 +125,16 @@ class AchievementsMenuState extends MusicBeatState
 				achievementArray[i].alpha = 1;
 			}
 		}
-		descText.text = options[curSelected].description;
+		descText.text = achievements[curSelected].description;
 		CoolUtil.playScrollSound();
 	}
 	#end
+
+	override public function destroy() {
+		achievements = null;
+		achievementArray = null;
+		grpOptions = FlxDestroyUtil.destroy(grpOptions);
+		descText = FlxDestroyUtil.destroy(descText);
+		super.destroy();
+	}
 }

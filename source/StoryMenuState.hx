@@ -49,9 +49,8 @@ class StoryMenuState extends MusicBeatState
 
 	override function create()
 	{
-		Paths.clearStoredMemory();
-		Paths.clearUnusedMemory();
-
+		super.create();
+		
 		PlayState.isStoryMode = true;
 		WeekData.reloadWeekFiles(true);
 		if (curWeek >= WeekData.weeksList.length) curWeek = 0;
@@ -183,8 +182,6 @@ class StoryMenuState extends MusicBeatState
 
 		changeWeek();
 		changeDifficulty();
-
-		super.create();
 	}
 
 	override function closeSubState() {

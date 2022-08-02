@@ -1,5 +1,6 @@
 package;
 
+import flixel.math.FlxMath;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
@@ -118,19 +119,8 @@ class CoolUtil
 	{
 		var dumbArray:Array<Int> = [];
 		for (i in min...max)
-		{
 			dumbArray.push(i);
-		}
 		return dumbArray;
-	}
-
-	//uhhhh does this even work at all? i'm starting to doubt
-	public static function precacheSound(sound:String, ?library:String = null):Void {
-		Paths.sound(sound, library);
-	}
-
-	public static function precacheMusic(sound:String, ?library:String = null):Void {
-		Paths.music(sound, library);
 	}
 
 	public static function browserLoad(site:String) {
@@ -211,7 +201,7 @@ class CoolUtil
 	}
 
 	public static function playMenuMusic(volume:Float = 1) {
-		FlxG.sound.playMusic(Paths.music('freakyMenu'), volume);
+		FlxG.sound.playMusic(Paths.music('freakyMenu'), volume * ClientPrefs.menuMusicVolume);
 	}
 
 	public static function playScrollSound(volume:Float = 0.4) {
@@ -238,19 +228,34 @@ class CoolUtil
 		}
 	}
 
-	public static function inAnyPlayState(skipPvP:Bool = false) {
-		return PlayState.instance != null #if sys || (!skipPvP && pvp.PvPPlayState.instance != null) #end;
+	public static function inPlayState(skipPvP:Bool = false) {
+		return PlayState.instance != null || (!skipPvP && pvp.PvPPlayState.instance != null);
 	}
 
 	public static function inPvPState(skipPvP:Bool = false) {
-		#if sys
 		return pvp.PvPPlayState.instance != null;
-		#else
-		return false;
-		#end
 	}
 
 	public static function getPlayState():Dynamic {
-		return #if sys pvp.PvPPlayState.instance != null ? pvp.PvPPlayState.instance : #end PlayState.instance;
+		return pvp.PvPPlayState.instance != null ? pvp.PvPPlayState.instance : PlayState.instance;
+	}
+
+	public static function alert(message:String, title:String = 'Error!') {
+		#if desktop
+		Application.current.window.alert(message, title);
+		#end
+	}
+
+	public static function getCamFollowCharacter(char:Character):Dynamic {
+		return {
+			x: ((char.x * char.scrollFactor.x) - (char.width - (char.width / char.jsonScale)) / 2) + (char.width / 2),
+			y: ((char.y * char.scrollFactor.y) - (char.height - (char.height / char.jsonScale)) / 2) + (char.height / 4)
+		};
+	}
+
+	public static function scrollSpeedFromBPM(bpm:Float, denominator:Int = 4, noteSize:Float = 112) {
+		var stepCrochet = (((60 / bpm) * 4000) / denominator) / 4;
+		var noteY = 0.45 * stepCrochet;
+		return FlxMath.roundDecimal(noteSize / noteY, 2);
 	}
 }

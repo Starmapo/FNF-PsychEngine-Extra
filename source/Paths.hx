@@ -194,7 +194,7 @@ class Paths
 		}
 		#end
 
-		if (library != null)
+		if (library != null && exists(getLibraryPath(file, library)))
 			return getLibraryPath(file, library);
 
 		if (currentLevel != null)
@@ -202,12 +202,12 @@ class Paths
 			var levelPath:String = '';
 			if (currentLevel != 'shared') {
 				levelPath = getLibraryPathForce(file, currentLevel);
-				if (OpenFlAssets.exists(levelPath, type) #if sys || FileSystem.exists(levelPath) #end)
+				if (exists(levelPath, type))
 					return levelPath;
 			}
 
 			levelPath = getLibraryPathForce(file, "shared");
-			if (OpenFlAssets.exists(levelPath, type) #if sys || FileSystem.exists(levelPath) #end)
+			if (exists(levelPath, type))
 				return levelPath;
 		}
 
@@ -279,24 +279,22 @@ class Paths
 		return file;
 	}
 
-	inline static public function voices(song:String, ?suffix:String = ''):Sound
-	{
-		var songKey:String = '${formatToSongPath(song)}';
-		var voices = returnSound(songKey, 'Voices$suffix', 'songs', false);
-		if (voices == null && suffix.length > 0) {
-			voices = returnSound(songKey, 'Voices', 'songs');
-		}
-		return voices;
-	}
-
 	inline static public function inst(song:String, ?suffix:String = ''):Sound
 	{
 		var songKey:String = '${formatToSongPath(song)}';
-		var inst = returnSound(songKey, 'Inst$suffix', 'songs', false);
-		if (inst == null && suffix.length > 0) {
-			inst = returnSound(songKey, 'Inst', 'songs');
-		}
+		var inst = returnSound(songKey, 'Inst', 'songs');
+		if (suffix.length > 0 && existsPath('$songKey/Inst$suffix', SOUND, 'songs'))
+			inst = returnSound(songKey, 'Inst$suffix', 'songs');
 		return inst;
+	}
+
+	inline static public function voices(song:String, ?suffix:String = ''):Sound
+	{
+		var songKey:String = '${formatToSongPath(song)}';
+		var voices = returnSound(songKey, 'Voices', 'songs');
+		if (suffix.length > 0 && existsPath('$songKey/Voices$suffix', SOUND, 'songs'))
+			voices = returnSound(songKey, 'Voices$suffix', 'songs');
+		return voices;
 	}
 
 	static public function voicesDad(song:String, ?suffix:String = ''):Sound
@@ -304,13 +302,11 @@ class Paths
 		var songKey:String = '${formatToSongPath(song)}';
 		var suffixes = ['Dad', 'Opponent'];
 		for (dadSuffix in suffixes) {
-			var voices = returnSound(songKey, 'Voices$dadSuffix$suffix', 'songs', false);
-			if (voices == null && suffix.length > 0) {
-				voices = returnSound(songKey, 'Voices$dadSuffix', 'songs', false);
-			}
-			if (voices != null) {
+			var voices = returnSound(songKey, 'Voices$dadSuffix', 'songs');
+			if (suffix.length > 0 && existsPath('$songKey/Voices$dadSuffix$suffix', SOUND, 'songs'))
+				voices = returnSound(songKey, 'Voices$dadSuffix', 'songs');
+			if (voices != null)
 				return voices;
-			}
 		}
 		return null;
 	}
@@ -398,7 +394,7 @@ class Paths
 				newGraphic.persist = true;
 				currentTrackedAssets.set(path, newGraphic);
 			}
-			localTrackedAssets.push(path);
+			if (!localTrackedAssets.contains(path)) localTrackedAssets.push(path);
 			return currentTrackedAssets.get(path);
 		}
 		#end
@@ -408,7 +404,7 @@ class Paths
 				newGraphic.persist = true;
 				currentTrackedAssets.set(path, newGraphic);
 			}
-			localTrackedAssets.push(path);
+			if (!localTrackedAssets.contains(path)) localTrackedAssets.push(path);
 			return currentTrackedAssets.get(path);
 		}
 		trace('oh no its returning null NOOOO: $path');
@@ -416,21 +412,19 @@ class Paths
 	}
 
 	public static var currentTrackedSounds:Map<String, Sound> = [];
-	public static function returnSound(path:String, key:String, ?library:String, doTrace:Bool = true) {
+	public static function returnSound(path:String, key:String, ?library:String) {
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
-		if (!existsPath('$path/$key.$SOUND_EXT', SOUND, library))
-		{
-			if (doTrace) trace('oh no its returning null NOOOO: $gottenPath');
+		if (!existsPath('$path/$key.$SOUND_EXT', SOUND, library)) {
+			trace('oh no its returning null NOOOO: $gottenPath');
 			return null;
 		}
-		if (!currentTrackedSounds.exists(gottenPath)) {
+		if (!currentTrackedSounds.exists(gottenPath))
 			#if sys
-			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length)));
+			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath.substring(gottenPath.indexOf(':') + 1)));
 			#else
 			currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(gottenPath));
 			#end
-		}
-		localTrackedAssets.push(gottenPath);
+		if (!localTrackedAssets.contains(gottenPath)) localTrackedAssets.push(gottenPath);
 		return currentTrackedSounds.get(gottenPath);
 	}
 

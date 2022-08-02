@@ -26,19 +26,25 @@ typedef AlternateForm = {
 }
 
 class CharacterSelect extends FlxSpriteGroup {
-    var characters:Array<CharacterData> = [];
+    public var characters:Array<CharacterData> = [];
+    public var fullCharList:Array<String> = [];
 
     public var grpIcons:FlxTypedSpriteGroup<HealthIcon>;
     var panel:FlxSprite;
     var cornerSize:Int = 5;
-    var selectedSquare:FlxSprite;
+    var curSelectSprite(get, never):FlxSprite;
+    var select1:AttachedSprite;
+    var select2:AttachedSprite;
     
     var grpIconsPos:FlxPoint = new FlxPoint(5, 5);
 
     public var curSelectedX:Int = 0;
     public var curSelectedY:Int = 0;
+    var curCharSelect:Int = 0;
+    var firstSelected:Array<Int> = [0, 0];
 
     public var isGamepad:Bool = false;
+    public var id:Int = 0;
 
     var curCharIndex(get, never):Int;
     var curCharPos(get, never):FlxPoint;
@@ -50,12 +56,11 @@ class CharacterSelect extends FlxSpriteGroup {
     var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
     var selectingAlt:Bool = false;
-    public var curCharacter:String = 'bf';
+    public var selectedChars:Array<String> = ['bf', 'pico'];
     var curAltIndex:Int = 0;
     public var ready:Bool = false;
     var curAlts(get, never):Array<AlternateForm>;
     public var readyText:FlxText;
-    var exiting:Bool = false;
 
     var noGamepadBlack:FlxSprite;
     var noGamepadText:FlxText;
@@ -66,18 +71,28 @@ class CharacterSelect extends FlxSpriteGroup {
     }
 
     function get_curCharPos() {
-        var point = new FlxPoint(grpIcons.members[curCharIndex].x, grpIcons.members[curCharIndex].y);
-        return point;
+        return new FlxPoint(grpIcons.members[curCharIndex].x, grpIcons.members[curCharIndex].y);
     }
 
     function get_curAlts() {
         return characters[curCharIndex].alternateForms;
     }
 
+    function get_curSelectSprite() {
+        return curCharSelect > 0 ? select2 : select1;
+    }
+
     public function new(x:Float = 0, y:Float = 0, characters:Array<CharacterData>, isGamepad:Bool = false) {
         super(x, y);
         this.characters = characters;
         this.isGamepad = isGamepad;
+        id = (isGamepad ? 1 : 0);
+
+        for (i in characters) {
+            fullCharList.push(i.name);
+            for (j in i.alternateForms)
+                fullCharList.push(j.name);
+        }
 
         scrollFactor.set();
 
@@ -85,26 +100,32 @@ class CharacterSelect extends FlxSpriteGroup {
         makeSelectorGraphic(panel, 600, 160, 0xff999999);
         panel.scrollFactor.set();
 
-        selectedSquare = new FlxSprite(20, 560).makeGraphic(75, 75, 0xffcdcdcd);
-        selectedSquare.scrollFactor.set();
-
         grpIcons = new FlxTypedSpriteGroup(25, 565);
         grpIcons.scrollFactor.set();
 
         for (i in 0...characters.length) {
             var char = characters[i].name;
             var charFile = Character.getFile(char);
+            if (char == '!random')
+                charFile.healthicon = '!random'; //incredibly smart coding
             
             var icon = new HealthIcon(charFile.healthicon);
             icon.setGraphicSize(75, 75);
             updateIconHitbox(icon);
             icon.x = 75 * Math.floor(i / 2);
-            if (icon.x / 75 > maxX) {
+            if (icon.x / 75 > maxX)
                 maxX = Std.int(icon.x / 75);
-            }
             icon.y = 75 * (i % 2);
             grpIcons.add(icon);
         }
+
+        select1 = new AttachedSprite('pvp/select1');
+        select1.scrollFactor.set();
+        select1.copyAlpha = false;
+        select2 = new AttachedSprite('pvp/select2');
+        select2.scrollFactor.set();
+        select2.alpha = 0;
+        select2.copyAlpha = false;
 
         character = new FlxSprite();
         character.antialiasing = ClientPrefs.globalAntialiasing;
@@ -145,18 +166,19 @@ class CharacterSelect extends FlxSpriteGroup {
             noGamepadBlack = new FlxSprite(0, 0).makeGraphic(640, 720, FlxColor.BLACK);
             noGamepadBlack.scrollFactor.set();
             noGamepadBlack.alpha = 0.8;
-            noGamepadBlack.visible = (FlxG.gamepads.lastActive == null);
+            noGamepadBlack.visible = (FlxG.gamepads.getByID(0) == null);
 
             noGamepadText = new FlxText(0, 360 - 16, 640, "Waiting for gamepad...", 32);
             noGamepadText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
             noGamepadText.scrollFactor.set();
             noGamepadText.borderSize = 2;
-            noGamepadText.visible = (FlxG.gamepads.lastActive == null);
+            noGamepadText.visible = (FlxG.gamepads.getByID(0) == null);
         }
 
         add(panel);
-        add(selectedSquare);
         add(grpIcons);
+        add(select1);
+        add(select2);
         add(character);
         add(characterText);
         add(leftArrow);
@@ -167,15 +189,23 @@ class CharacterSelect extends FlxSpriteGroup {
             add(noGamepadText);
         }
 
+        if (PvPCharacterState.lastCharacters[id].length == 2) {
+            curSelectedX = PvPCharacterState.lastCharacters[id][0];
+            curSelectedY = PvPCharacterState.lastCharacters[id][1];
+        }
+
         setClipRect();
         changeSelection();
     }
 
     var holdTime:Float = 0;
     override function update(elapsed:Float) {
+        var lerpVal:Float = CoolUtil.boundTo(elapsed * 10, 0, 1);
+        grpIcons.setPosition(FlxMath.lerp(grpIcons.x, panel.x + grpIconsPos.x, lerpVal), FlxMath.lerp(grpIcons.y, panel.y + grpIconsPos.y, lerpVal));
+
         super.update(elapsed);
 
-        if (!exiting) {
+        if (!PvPCharacterState.exiting) {
             var controls = PlayerSettings.player1.controls;
             var leftP = controls.UI_LEFT_P;
             var rightP = controls.UI_RIGHT_P;
@@ -186,7 +216,7 @@ class CharacterSelect extends FlxSpriteGroup {
             var accept = controls.ACCEPT;
             var back = controls.BACK;
             if (isGamepad) {
-                var gamepad = FlxG.gamepads.lastActive;
+                var gamepad = FlxG.gamepads.getByID(0);
                 if (gamepad != null) {
                     noGamepadBlack.visible = false;
                     noGamepadText.visible = false;
@@ -220,21 +250,17 @@ class CharacterSelect extends FlxSpriteGroup {
                     if (grpIcons.length > 1) {
                         if (upP) {
                             changeSelection(0, -1);
-                            CoolUtil.playScrollSound();
                         }
                         if (downP) {
                             changeSelection(0, 1);
-                            CoolUtil.playScrollSound();
                         }
                         if (grpIcons.length > 2) {
                             if (leftP) {
                                 changeSelection(-1);
-                                CoolUtil.playScrollSound();
                                 holdTime = 0;
                             }
                             if (rightP) {
                                 changeSelection(1);
-                                CoolUtil.playScrollSound();
                                 holdTime = 0;
                             }
                             if (left || right)
@@ -252,9 +278,17 @@ class CharacterSelect extends FlxSpriteGroup {
                     }
         
                     if (back) {
-                        CoolUtil.playCancelSound();
-                        MusicBeatState.switchState(new PvPSongState());
-                        exiting = true;
+                        if (curCharSelect > 0) {
+                            curCharSelect = 0;
+                            select2.alpha = 0;
+                            curSelectedX = firstSelected[0];
+                            curSelectedY = firstSelected[1];
+                            changeSelection();
+                        } else {
+                            CoolUtil.playCancelSound();
+                            MusicBeatState.switchState(new PvPSongState());
+                            PvPCharacterState.exiting = true;
+                        }
                     }
 
                     if (accept) {
@@ -264,7 +298,18 @@ class CharacterSelect extends FlxSpriteGroup {
                             rightArrow.visible = true;
                             CoolUtil.playScrollSound();
                         } else {
-                            playerReady();
+                            if (curCharSelect > 0)
+                                playerReady();
+                            else {
+                                firstSelected = [curSelectedX, curSelectedY];
+                                curCharSelect = 1;
+                                select2.alpha = 1;
+                                var lastAlt = curAltIndex;
+                                changeSelection();
+                                curAltIndex = lastAlt;
+                                changeAlt();
+                                CoolUtil.playConfirmSound();
+                            }
                         }
                     }
                 } else {
@@ -297,15 +342,22 @@ class CharacterSelect extends FlxSpriteGroup {
                         changeAlt();
                         CoolUtil.playCancelSound();
                     } else if (accept) {
-                        playerReady();
+                        if (curCharSelect > 0)
+                            playerReady();
+                        else {
+                            firstSelected = [curSelectedX, curSelectedY];
+                            curCharSelect = 1;
+                            select2.alpha = 1;
+                            var lastAlt = curAltIndex;
+                            changeSelection();
+                            curAltIndex = lastAlt;
+                            changeAlt();
+                            CoolUtil.playConfirmSound();
+                        }
                     }
                 }
             }
         }
-
-        var lerpVal:Float = CoolUtil.boundTo(elapsed * 10, 0, 1);
-        grpIcons.setPosition(FlxMath.lerp(grpIcons.x, panel.x + grpIconsPos.x, lerpVal), FlxMath.lerp(grpIcons.y, panel.y + grpIconsPos.y, lerpVal));
-		selectedSquare.setPosition(FlxMath.lerp(selectedSquare.x, curCharPos.x, lerpVal), FlxMath.lerp(selectedSquare.y, curCharPos.y, lerpVal));
 
         setClipRect();
 
@@ -316,17 +368,20 @@ class CharacterSelect extends FlxSpriteGroup {
     }
 
     function changeSelection(x:Int = 0, y:Int = 0) {
+        var playSound = false;
+        var lastX = curSelectedX;
         curSelectedX += x;
         if (curSelectedX < 0) {
 			curSelectedX = maxX;
-            if (grpIcons.members[curCharIndex] == null) {
+            if (grpIcons.members[curCharIndex] == null)
                 curSelectedX -= 1;
-            }
         }
 		if (curSelectedX > maxX || grpIcons.members[curCharIndex] == null)
 			curSelectedX = 0;
+        if (curSelectedX != lastX)
+            playSound = true;
         
-
+        var lastY = curSelectedY;
         curSelectedY += y;
         if (curSelectedY < 0)
 			curSelectedY = maxY;
@@ -334,13 +389,22 @@ class CharacterSelect extends FlxSpriteGroup {
             curSelectedY = 0;
         if (grpIcons.members[curCharIndex] == null)
             curSelectedY -= 1;
+        if (curSelectedY != lastY)
+            playSound = true;
 
-        if (maxX >= 9) {
-            grpIconsPos.x = FlxMath.remapToRange(curSelectedX, 0, maxX, 5, panel.width - grpIcons.width);
-        }
+        if (playSound)
+            CoolUtil.playScrollSound();
 
+        if (maxX > 8)
+            grpIconsPos.x = FlxMath.remapToRange(curSelectedX, 0, maxX, 5, panel.width - grpIcons.width - 5);
         curAltIndex = 0;
         changeAlt();
+
+        if (curCharSelect == 0) {
+            select1.sprTracker = grpIcons.members[curCharIndex];
+            PvPCharacterState.lastCharacters[id] = [curSelectedX, curSelectedY];
+        }
+        select2.sprTracker = grpIcons.members[curCharIndex];
     }
 
     function changeAlt(add:Int = 0) {
@@ -351,13 +415,14 @@ class CharacterSelect extends FlxSpriteGroup {
 			curAltIndex = 0;
 
         if (curAltIndex > 0) {
-            curCharacter = curAlts[curAltIndex - 1].name;
+            selectedChars[curCharSelect] = curAlts[curAltIndex - 1].name;
             characterText.text = curAlts[curAltIndex - 1].displayName;
         } else {
-            curCharacter = characters[curCharIndex].name;
+            selectedChars[curCharSelect] = characters[curCharIndex].name;
             characterText.text = characters[curCharIndex].displayName;
         }
-        character.loadGraphic(Paths.image('pvp/char/$curCharacter'));
+        character.loadGraphic(Paths.image('pvp/char/${selectedChars[curCharSelect]}'));
+        character.flipX = (characters[curCharIndex].name != '!random' && isGamepad);
     }
 
     function updateIconHitbox(icon:HealthIcon) {
@@ -366,23 +431,26 @@ class CharacterSelect extends FlxSpriteGroup {
     }
 
     function setClipRect() {
-        for (icon in grpIcons) {
-            if (icon.x + icon.width < panel.x || icon.x > panel.x + panel.width) {
-                icon.active = false;
-                icon.visible = false;
+        var sprites:Array<FlxSprite> = [];
+        for (spr in grpIcons)
+            sprites.push(spr);
+        sprites.push(select1);
+        sprites.push(select2);
+        for (spr in sprites) {
+            if (spr.x + spr.width < panel.x || spr.x > panel.x + panel.width) {
+                spr.visible = false;
             } else {
-                icon.active = true;
-                icon.visible = true;
-                var swagRect = new FlxRect(0, 0, icon.frameWidth, icon.frameHeight);
-                if (icon.x < panel.x) {
-                    swagRect.x += Math.abs(panel.x - icon.x) / icon.scale.x;
+                spr.visible = true;
+                var swagRect = new FlxRect(0, 0, spr.frameWidth, spr.frameHeight);
+                if (spr.x < panel.x) {
+                    swagRect.x += Math.abs(panel.x - spr.x) / spr.scale.x;
                     swagRect.width -= swagRect.x;
-                    icon.clipRect = swagRect;
-                } else if (icon.x + icon.width > panel.x + panel.width) {
-                    swagRect.width -= ((icon.x + icon.width) - (panel.x + panel.width)) / icon.scale.x;
-                    icon.clipRect = swagRect;
+                    spr.clipRect = swagRect;
+                } else if (spr.x + spr.width > panel.x + panel.width) {
+                    swagRect.width -= ((spr.x + spr.width) - (panel.x + panel.width)) / spr.scale.x;
+                    spr.clipRect = swagRect;
                 }
-                icon.clipRect = swagRect;
+                spr.clipRect = swagRect;
             }
         }
     }
@@ -404,8 +472,7 @@ class CharacterSelect extends FlxSpriteGroup {
     }
 
     public function fadeStuff() {
-        exiting = true;
-        var stuff = [panel, grpIcons, selectedSquare, leftArrow, rightArrow];
+        var stuff = [panel, grpIcons, select1, select2, leftArrow, rightArrow];
         for (i in stuff) {
             FlxTween.tween(i, {alpha: 0}, 0.4, {
                 ease: FlxEase.quadOut,

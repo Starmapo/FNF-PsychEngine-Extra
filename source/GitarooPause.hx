@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 import flixel.FlxG;
 import flixel.FlxSprite;
 
@@ -17,6 +18,8 @@ class GitarooPause extends MusicBeatState
 
 	override function create()
 	{
+		super.create();
+		
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
@@ -45,8 +48,6 @@ class GitarooPause extends MusicBeatState
 		add(cancelButton);
 
 		changeThing();
-
-		super.create();
 	}
 
 	override function update(elapsed:Float)
@@ -88,5 +89,11 @@ class GitarooPause extends MusicBeatState
 			cancelButton.animation.curAnim.curFrame = 1;
 			replayButton.animation.curAnim.curFrame = 0;
 		}
+	}
+
+	override public function destroy() {
+		replayButton = FlxDestroyUtil.destroy(replayButton);
+		cancelButton = FlxDestroyUtil.destroy(cancelButton);
+		super.destroy();
 	}
 }

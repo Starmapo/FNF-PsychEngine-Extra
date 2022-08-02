@@ -68,7 +68,7 @@ class StrumNote extends FlxSprite
 
 		if (skinModifier.length < 1) {
 			skinModifier = 'base';
-			if (PlayState.SONG != null && CoolUtil.inAnyPlayState())
+			if (PlayState.SONG != null && CoolUtil.inPlayState())
 				skinModifier = PlayState.SONG.skinModifier;
 		}
 		var image = SkinData.getNoteFile(texture, skinModifier);
@@ -134,9 +134,8 @@ class StrumNote extends FlxSprite
 				resetAnim = 0;
 			}
 		}
-		if (animation.curAnim != null && animation.curAnim.name == 'confirm' && !skinModifier.endsWith('pixel')) {
+		if (animation.curAnim != null && animation.curAnim.name == 'confirm' && !skinModifier.endsWith('pixel'))
 			centerOrigin();
-		}
 
 		super.update(elapsed);
 	}
@@ -220,7 +219,7 @@ class StrumLine extends FlxTypedGroup<FlxBasic> {
 			babyArrow.downScroll = ClientPrefs.downScroll;
 			if (inPlayState && tweenAlpha)
 			{
-				var delay = Conductor.normalizedCrochet / (250 * keyAmount);
+				var delay = 500 / (250 * keyAmount);
 				babyArrow.alpha = 0;
 				FlxTween.tween(babyArrow, {alpha: targetAlpha}, delay, {ease: FlxEase.circOut, startDelay: delay * (i + 1)});
 			}
@@ -262,6 +261,12 @@ class StrumLine extends FlxTypedGroup<FlxBasic> {
 		chosenGroup.add(newNote);
 		allNotes.add(newNote);
 		chosenGroup.sort(FlxSort.byY, (!ClientPrefs.downScroll ? FlxSort.DESCENDING : FlxSort.ASCENDING));
+	}
+
+	public function removeNote(note:Note) {
+		allNotes.remove(note, true);
+		var daGroup = (note.isSustainNote ? holdsGroup : notesGroup);
+		daGroup.remove(note, true);
 	}
 
 	public function takeNotesFrom(strum:StrumLine) {

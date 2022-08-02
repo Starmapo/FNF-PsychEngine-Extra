@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 import flixel.text.FlxText;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -24,35 +25,37 @@ class GameplayChangersSubState extends MusicBeatSubState
 
 	function getOptions()
 	{
-		var goption:GameplayOption = new GameplayOption('Scroll Type',
-			'How should the scroll speed be affected?',
-			'scrolltype',
-			'string',
-			'multiplicative',
-			["multiplicative", "constant"]);
-		optionsArray.push(goption);
+		if (!MainMenuState.inPvP) {
+			var goption:GameplayOption = new GameplayOption('Scroll Type',
+				'How should the scroll speed be affected?',
+				'scrolltype',
+				'string',
+				'multiplicative',
+				["multiplicative", "constant"]);
+			optionsArray.push(goption);
 
-		var option:GameplayOption = new GameplayOption('Scroll Speed',
-			'',
-			'scrollspeed',
-			'float',
-			1);
-		option.scrollSpeed = 1.5;
-		option.minValue = 0.5;
-		option.changeValue = 0.1;
-		if (goption.getValue() != "constant")
-		{
-			option.description = "Multiplies the chart's scroll speed.";
-			option.displayFormat = '%vX';
-			option.maxValue = 3;
+			var option:GameplayOption = new GameplayOption('Scroll Speed',
+				'',
+				'scrollspeed',
+				'float',
+				1);
+			option.scrollSpeed = 1.5;
+			option.minValue = 0.5;
+			option.changeValue = 0.1;
+			if (goption.getValue() != "constant")
+			{
+				option.description = "Multiplies the chart's scroll speed.";
+				option.displayFormat = '%vX';
+				option.maxValue = 3;
+			}
+			else
+			{
+				option.description = 'Forces a single scroll speed for every chart.';
+				option.displayFormat = "%v";
+				option.maxValue = 6;
+			}
+			optionsArray.push(option);
 		}
-		else
-		{
-			option.description = 'Forces a single scroll speed for every chart.';
-			option.displayFormat = "%v";
-			option.maxValue = 6;
-		}
-		optionsArray.push(option);
 
 		#if cpp
 		var option:GameplayOption = new GameplayOption('Playback Rate',
@@ -222,7 +225,7 @@ class GameplayChangersSubState extends MusicBeatSubState
         var back = controls.BACK;
 		var reset = controls.RESET;
 		if (MainMenuState.inPvP) {
-			var gamepad = FlxG.gamepads.lastActive;
+			var gamepad = FlxG.gamepads.getByID(0);
 			if (gamepad != null) {
 				if (gamepad.justPressed.LEFT_STICK_DIGITAL_UP || gamepad.justPressed.DPAD_UP) upP = true;
 				if (gamepad.justPressed.LEFT_STICK_DIGITAL_DOWN || gamepad.justPressed.DPAD_DOWN) downP = true;
@@ -481,6 +484,17 @@ class GameplayChangersSubState extends MusicBeatSubState
 		for (checkbox in checkboxGroup) {
 			checkbox.daValue = (optionsArray[checkbox.ID].getValue() == true);
 		}
+	}
+
+	override public function destroy() {
+		curOption = null;
+		optionsArray = null;
+		grpOptions = FlxDestroyUtil.destroy(grpOptions);
+		checkboxGroup = FlxDestroyUtil.destroy(checkboxGroup);
+		grpTexts = FlxDestroyUtil.destroy(grpTexts);
+		descBox = FlxDestroyUtil.destroy(descBox);
+		descText = FlxDestroyUtil.destroy(descText);
+		super.destroy();
 	}
 }
 

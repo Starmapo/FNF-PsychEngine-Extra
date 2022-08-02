@@ -51,6 +51,8 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{	
+		super.create();
+		
 		inPvP = false;
 		
 		#if DISCORD_ALLOWED
@@ -144,8 +146,6 @@ class MainMenuState extends MusicBeatState
 			}
 		}
 		#end
-
-		super.create();
 	}
 
 	#if ACHIEVEMENTS_ALLOWED
@@ -160,13 +160,6 @@ class MainMenuState extends MusicBeatState
 	var holdTime:Float = 0;
 	override function update(elapsed:Float)
 	{
-		if (FlxG.sound.music != null && FlxG.sound.music.volume < 0.8)
-		{
-			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
-			if(FreeplayState.vocals != null) FreeplayState.vocals.volume += 0.5 * elapsed;
-			if(FreeplayState.vocalsDad != null) FreeplayState.vocalsDad.volume += 0.5 * elapsed;
-		}
-
 		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
 		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
 
@@ -196,6 +189,7 @@ class MainMenuState extends MusicBeatState
 
 				if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
 				{
+					CoolUtil.playScrollSound();
 					changeItem((checkNewHold - checkLastHold) * (up ? -1 : 1));
 				}
 			}

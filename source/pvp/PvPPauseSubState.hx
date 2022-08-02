@@ -16,7 +16,7 @@ class PvPPauseSubState extends MusicBeatSubState {
     var grpMenuShit:FlxTypedGroup<Alphabet>;
 
 	var menuItems:Array<String> = [];
-	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty', 'Options', 'Exit to menu'];
+	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Reload Song', 'Change Difficulty', 'Options', 'Exit to menu'];
 	var difficultyChoices = [];
 	var curSelected:Int = 0;
 
@@ -101,8 +101,8 @@ class PvPPauseSubState extends MusicBeatSubState {
 		var down = controls.UI_DOWN;
 		var accepted = controls.ACCEPT || FlxG.mouse.justPressed;
 
-		if (FlxG.gamepads.lastActive != null) {
-			var gamepad = FlxG.gamepads.lastActive;
+		if (FlxG.gamepads.getByID(0) != null) {
+			var gamepad = FlxG.gamepads.getByID(0);
 			if (gamepad.justPressed.LEFT_STICK_DIGITAL_UP || gamepad.justPressed.DPAD_UP) upP = true;
             if (gamepad.justPressed.LEFT_STICK_DIGITAL_DOWN || gamepad.justPressed.DPAD_DOWN) downP = true;
             if (gamepad.pressed.LEFT_STICK_DIGITAL_UP || gamepad.pressed.DPAD_UP) up = true;
@@ -171,11 +171,21 @@ class PvPPauseSubState extends MusicBeatSubState {
 				case "Restart Cutscene":
 					restartSong();
 					pauseMusic.volume = 0;
+				case 'Reload Song':
+					var oldP1 = PlayState.SONG.player1;
+					var oldP2 = PlayState.SONG.player2;
+					var name:String = PlayState.SONG.song;
+					var poop = Highscore.formatSong(name, PlayState.storyDifficulty);
+					PlayState.SONG = Song.loadFromJson(poop, name);
+					PlayState.SONG.player1 = oldP1;
+					PlayState.SONG.player2 = oldP2;
+					restartSong();
+					pauseMusic.volume = 0;
 				case "Options":
 					MusicBeatState.switchState(new options.OptionsState(true));
 					CoolUtil.playMenuMusic();
 				case "Exit to menu":
-					MusicBeatState.switchState(new PvPSongState());
+					MusicBeatState.switchState(new PvPCharacterState());
 					PvPPlayState.cancelMusicFadeTween();
 					CoolUtil.playMenuMusic();
 			}

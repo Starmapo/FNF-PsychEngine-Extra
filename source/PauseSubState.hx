@@ -1,5 +1,6 @@
 package;
 
+import pvp.PvPPlayState;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
@@ -18,7 +19,7 @@ class PauseSubState extends MusicBeatSubState
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
 	var menuItems:Array<String> = [];
-	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty', 'Options', 'Exit to menu'];
+	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Reload Song', 'Change Difficulty', 'Options', 'Exit to menu'];
 	var difficultyChoices = [];
 	var curSelected:Int = 0;
 
@@ -236,6 +237,9 @@ class PauseSubState extends MusicBeatSubState
 					regenMenu();
 				case 'Toggle Practice Mode':
 					PlayState.instance.practiceMode = !PlayState.instance.practiceMode;
+					PlayState.instance.practiceFailedTxt.visible = PlayState.instance.practiceMode;
+					PlayState.instance.practiceFailedTxt.alpha = 1;
+					PlayState.instance.practiceFailedSine = 0;
 					PlayState.changedDifficulty = true;
 					practiceText.visible = PlayState.instance.practiceMode;
 				case "Restart Song":
@@ -243,6 +247,12 @@ class PauseSubState extends MusicBeatSubState
 					pauseMusic.volume = 0;
 				case "Restart Cutscene":
 					PlayState.seenCutscene = false;
+					restartSong();
+					pauseMusic.volume = 0;
+				case 'Reload Song':
+					var name:String = PlayState.SONG.song;
+					var poop = Highscore.formatSong(name, PlayState.storyDifficulty);
+					PlayState.SONG = Song.loadFromJson(poop, name);
 					restartSong();
 					pauseMusic.volume = 0;
 				case "Leave Charting Mode":
@@ -311,7 +321,7 @@ class PauseSubState extends MusicBeatSubState
 		skipTimeTracker = null;
 	}
 
-	public static function restartSong(noTrans:Bool = false)
+	public static function restartSong(noTrans:Bool = false, load:Bool = false)
 	{
 		FlxG.timeScale = 1;
 		PlayState.instance.paused = true; // For lua
@@ -324,7 +334,10 @@ class PauseSubState extends MusicBeatSubState
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
 		}
-		MusicBeatState.resetState();
+		if (load)
+			LoadingState.loadAndResetState();
+		else
+			MusicBeatState.resetState();
 	}
 
 	override function destroy()

@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -65,5 +66,10 @@ class FlashingState extends MusicBeatState
 				}
 			}
 		}
+	}
+
+	override public function destroy() {
+		warnText = FlxDestroyUtil.destroy(warnText);
+		super.destroy();
 	}
 }

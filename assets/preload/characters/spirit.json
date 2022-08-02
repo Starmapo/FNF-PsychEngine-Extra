@@ -5,103 +5,91 @@
 				-218,
 				-280
 			],
-			"loop": false,
-			"offsets": [
-				-218,
-				-280
-			],
+			"indices": [],
 			"fps": 24,
 			"anim": "idle",
+			"loop": false,
+			"name": "idle spirit_",
 			"playerOffsets": [
 				-218,
 				-280
-			],
-			"indices": [],
-			"name": "idle spirit_"
+			]
 		},
 		{
 			"enemyOffsets": [
 				-200,
 				-280
 			],
-			"loop": false,
-			"offsets": [
-				-200,
-				-280
-			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singLEFT",
+			"loop": false,
+			"name": "left_",
 			"playerOffsets": [
 				-230,
 				-280
-			],
-			"indices": [],
-			"name": "left_"
+			]
 		},
 		{
 			"enemyOffsets": [
 				170,
 				110
 			],
-			"loop": false,
-			"offsets": [
-				170,
-				110
-			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singDOWN",
+			"loop": false,
+			"name": "spirit down_",
 			"playerOffsets": [
 				170,
 				110
-			],
-			"indices": [],
-			"name": "spirit down_"
+			]
 		},
 		{
 			"enemyOffsets": [
 				-220,
 				-280
 			],
-			"loop": false,
-			"offsets": [
-				-220,
-				-280
-			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singRIGHT",
+			"loop": false,
+			"name": "right_",
 			"playerOffsets": [
 				-220,
 				-280
-			],
-			"indices": [],
-			"name": "right_"
+			]
 		},
 		{
 			"enemyOffsets": [
 				-220,
 				-240
 			],
-			"loop": false,
-			"offsets": [
-				-220,
-				-240
-			],
+			"indices": [],
 			"fps": 24,
 			"anim": "singUP",
+			"loop": false,
+			"name": "up_",
 			"playerOffsets": [
 				-220,
 				-240
-			],
-			"indices": [],
-			"name": "up_"
+			]
 		}
+	],
+	"enemy_position": [
+		-130,
+		100
 	],
 	"repeatHoldAnimation": true,
 	"no_antialiasing": true,
 	"image": "characters/spirit",
-	"position": [
-		-150,
-		100
+	"enemy_cameraPosition": [
+		230,
+		490
+	],
+	"player_cameraPosition": [
+		200,
+		490
 	],
 	"healthicon": "spirit-pixel",
 	"flip_x": false,
@@ -110,9 +98,9 @@
 		60,
 		110
 	],
-	"camera_position": [
-		0,
-		0
+	"player_position": [
+		-10,
+		100
 	],
 	"sing_duration": 4,
 	"scale": 6

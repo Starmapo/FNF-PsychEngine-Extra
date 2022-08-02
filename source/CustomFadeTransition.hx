@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 import flixel.FlxG;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -78,7 +79,13 @@ class CustomFadeTransition extends MusicBeatSubState {
 		if (leTween != null) {
 			finishCallback();
 			leTween.cancel();
+			leTween.destroy();
 		}
+		leTween = null;
+		finishCallback = null;
+		nextCamera = null;
+		transBlack = FlxDestroyUtil.destroy(transBlack);
+		transGradient = FlxDestroyUtil.destroy(transGradient);
 		super.destroy();
 	}
 }

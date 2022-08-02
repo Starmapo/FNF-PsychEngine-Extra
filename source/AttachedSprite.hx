@@ -93,6 +93,11 @@ class AttachedSprite extends FlxSprite
 		frames = graph.imageFrame;
 		return this;
 	}
+
+	override public function destroy() {
+		sprTracker = null;
+		super.destroy();
+	}
 }
 
 class AttachedText extends Alphabet
@@ -118,17 +123,20 @@ class AttachedText extends Alphabet
 			setPosition(sprTracker.x + offsetX, sprTracker.y + offsetY);
 			scrollFactor.set(sprTracker.scrollFactor.x, sprTracker.scrollFactor.y);
 
-			if (copyVisible) {
+			if (copyVisible)
 				visible = sprTracker.visible;
-			}
-			if (copyAlpha) {
+			if (copyAlpha)
 				alpha = sprTracker.alpha * alphaMult;
-			}
 			if (copyAngle)
 				angle = sprTracker.angle + angleAdd;
 		}
 
 		super.update(elapsed);
+	}
+
+	override public function destroy() {
+		sprTracker = null;
+		super.destroy();
 	}
 }
 
@@ -164,6 +172,11 @@ class AttachedFlxText extends FlxText
 				visible = sprTracker.visible;
 		}
 	}
+
+	override public function destroy() {
+		sprTracker = null;
+		super.destroy();
+	}
 }
 
 class AttachedInputText extends FlxUIInputText {
@@ -189,6 +202,11 @@ class AttachedInputText extends FlxUIInputText {
 				visible = sprTracker.visible;
 		}
 	}
+
+	override public function destroy() {
+		sprTracker = null;
+		super.destroy();
+	}
 }
 
 class AttachedDropDownMenu extends FlxUIDropDownMenu {
@@ -213,5 +231,10 @@ class AttachedDropDownMenu extends FlxUIDropDownMenu {
 		}
 
 		super.update(elapsed);
+	}
+
+	override public function destroy() {
+		sprTracker = null;
+		super.destroy();
 	}
 }

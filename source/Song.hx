@@ -61,38 +61,30 @@ class Song
 		var curSong:String = Paths.formatToSongPath(songJson.song);
 		
 		if (songJson.events == null)
-		{
 			songJson.events = [];
-			for (secNum in 0...songJson.notes.length)
-			{
-				var sec:SwagSection = songJson.notes[secNum];
+		for (secNum in 0...songJson.notes.length) {
+			var sec:SwagSection = songJson.notes[secNum];
 
-				var i:Int = 0;
-				var notes = sec.sectionNotes;
-				var len:Int = notes.length;
-				while(i < len)
-				{
-					var note = notes[i];
-					if (note[1] < 0)
-					{
-						songJson.events.push([note[0], [[note[2], note[3], note[4]]]]);
-						notes.remove(note);
-						len = notes.length;
-					}
-					else i++;
-				}
+			var i:Int = 0;
+			var notes = sec.sectionNotes;
+			var len:Int = notes.length;
+			while(i < len) {
+				var note = notes[i];
+				if (note[1] < 0) {
+					songJson.events.push([note[0], [[note[2], note[3], note[4]]]]);
+					notes.remove(note);
+					len = notes.length;
+				} else
+					i++;
 			}
 		}
 
-		if (songJson.boyfriendKeyAmount == null)
-		{
+		if (songJson.boyfriendKeyAmount == null) {
 			songJson.boyfriendKeyAmount = 4;
 			songJson.dadKeyAmount = 4;
 		}
 		if (songJson.timeSignature == null)
-		{
 			songJson.timeSignature = [4, 4];
-		}
 		if (songJson.skinModifier == null || songJson.skinModifier.length < 1) {
 			switch (curSong) {
 				case 'senpai' | 'roses' | 'thorns':
@@ -101,7 +93,7 @@ class Song
 					songJson.skinModifier = ''; //set to default
 			}
 		}
-		
+
 		for (secNum in 0...songJson.notes.length) {
 			var sec:SwagSection = songJson.notes[secNum];
 			if (sec.gfSection == null) sec.gfSection = false;
@@ -116,45 +108,31 @@ class Song
 			if (sec.changeKeys == null) sec.changeKeys = false;
 			if (sec.boyfriendKeyAmount == null) sec.boyfriendKeyAmount = songJson.boyfriendKeyAmount;
 			if (sec.dadKeyAmount == null) sec.dadKeyAmount = songJson.dadKeyAmount;
-			var i:Int = 0;
-			var notes = sec.sectionNotes;
-			var len:Int = notes.length;
-			while(i < len)
-			{
-				var note = notes[i];
-				if (note != null) {
-					while (note.length < 5) {
-						note.push(null);
-					}
-					switch (curSong) {
-						case 'too-slow' | 'you-cant-run' | 'triple-trouble':
-							switch (note[3]) {
-								case 2:
-									note[3] = 'Sonic.exe Static Note';
-								case 3:
-									note[3] = 'Sonic.exe Phantom Note';
-							}
-							if (curSong == 'triple-trouble') {
-								if (note[1] == 2 || note[1] == 7) {
-									notes.remove(note);
-									continue;
-								}
-								if (note[1] > 1) {
-									note[1] -= 1;
-									if (note[1] > 5)
-										note[1] -= 1;
-								}
-							}
-					}
-					if (note[3] != null && Std.isOfType(note[3], Int)) note[3] = editors.ChartingState.noteTypeList[note[3]];
-					if (note[3] != null && note[3] == true) note[3] = 'Alt Animation';
-					if (note[3] == null) note[3] = '';
-					if (note[4] == null || !Std.isOfType(note[4], Array)) note[4] = [];
-					//notes[i] = [note[0], note[1], note[2], note[3], note[4]];
+			for (note in sec.sectionNotes) {
+				while (note.length < 5)
+					note.push(null);
+
+				switch (curSong) {
+					case 'too-slow' | 'too-slow-encore' | 'you-cant-run' | 'triple-trouble':
+						switch (note[3]) {
+							case 2 | 'Static Note' | 'Sonic.exe Static Note':
+								note[3] = '';
+							case 3 | 'Phantom Note' | 'Sonic.exe Phantom Note':
+								sec.sectionNotes.remove(note);
+								note = null;
+								continue;
+						}
 				}
-				i++;
+
+				if (note[3] != null && Std.isOfType(note[3], Int))
+					note[3] = editors.ChartingState.noteTypeList[note[3]];
+				if (note[3] != null && note[3] == true)
+					note[3] = 'Alt Animation';
+				if (note[3] == null)
+					note[3] = '';
+				if (note[4] == null || !Std.isOfType(note[4], Array))
+					note[4] = [];
 			}
-			//songJson.notes[secNum] = sec;
 		}
 	}
 
@@ -168,6 +146,7 @@ class Song
 		rawJson = Paths.getContent(Paths.json('$formattedFolder/$formattedSong')).trim();
 
 		if (rawJson == null) {
+			CoolUtil.alert('Could not find chart file: $formattedFolder/$formattedSong');
 			return null;
 		}
 
@@ -178,8 +157,10 @@ class Song
 		}
 
 		var songJson:Dynamic = parseJSONshit(rawJson);
-		if (formattedSong != 'events' && formattedSong != 'picospeaker') StageData.loadDirectory(songJson);
 		onLoadJson(songJson);
+		if (formattedSong != 'events' && formattedSong != 'picospeaker') {
+			StageData.loadDirectory(songJson);
+		}
 		return songJson;
 	}
 
@@ -225,6 +206,7 @@ class Song
 			}
 		}
 		if (swagShit.timeSignature == null) {
+			swagShit.timeSignature = [4, 4];
 			if (tempSong.numerator != null && tempSong.denominator != null) {
 				swagShit.timeSignature = [tempSong.numerator, tempSong.denominator];
 			}
@@ -234,8 +216,12 @@ class Song
 			}
 		}
 
+		var curSignature = swagShit.timeSignature.copy();
 		for (i in 0...tempSong.notes.length) {
 			var sec = tempSong.notes[i];
+			if (swagShit.notes[i].timeSignature == null) {
+				swagShit.notes[i].timeSignature = [4, 4];
+			}
 			var numerator:Null<Int> = sec.numerator;
 			var denominator:Null<Int> = sec.denominator;
 			if (numerator != null && denominator != null) {
@@ -244,7 +230,10 @@ class Song
 			var sectionBeats:Null<Float> = sec.sectionBeats;
 			if (sectionBeats != null) {
 				swagShit.notes[i].timeSignature[0] = Math.round(sectionBeats);
-				swagShit.notes[i].changeSignature = true;
+				if (swagShit.notes[i].timeSignature[0] != curSignature[0]) {
+					swagShit.notes[i].changeSignature = true;
+					curSignature[0] = swagShit.notes[i].timeSignature[0];
+				}
 			}
 			var playerKeys:Null<Int> = sec.playerKeys;
 			var opponentKeys:Null<Int> = sec.opponentKeys;
@@ -258,25 +247,21 @@ class Song
 		return swagShit;
 	}
 
-	public static function generateNotes(song:SwagSong, ?dadStrums:StrumLine, ?boyfriendStrums:StrumLine, pvp:Bool = false) {
-		var curSong = Paths.formatToSongPath(song.song);
+	public static function generateNotes(song:SwagSong, ?dadStrums:StrumLine, ?boyfriendStrums:StrumLine, ?pushedCallback:Array<Note>->Void, pvp:Bool = false) {
+		var curSong = Paths.formatToSongPath(song.song); //In case you want to do something for a specific song
 		var notes:Array<Note> = [];
 
 		var noteData:Array<SwagSection> = song.notes;
+		var lastSkinModifier = song.skinModifier;
 
 		var curStepCrochet = Conductor.stepCrochet;
-		var curBPM = Conductor.bpm;
-		var curDenominator = Conductor.timeSignature[1];
+		var curBPM = song.bpm;
+		var curDenominator = song.timeSignature[1];
 		var curPlayerKeys = song.boyfriendKeyAmount;
 		var curOpponentKeys = song.dadKeyAmount;
+		var songSpeed = CoolUtil.inPlayState() ? CoolUtil.getPlayState().songSpeed : 1;
 		for (curSection in 0...noteData.length)
 		{
-			if (curSong == 'you-cant-run') {
-				if (curSection == 33)
-					PlayState.SONG.skinModifier = 'pixel';
-				if (curSection == 49)
-					PlayState.SONG.skinModifier = 'base';
-			}
 			var section = noteData[curSection];
 			if (section.changeBPM) {
 				curBPM = section.bpm;
@@ -286,7 +271,7 @@ class Song
 				curDenominator = section.timeSignature[1];
 				curStepCrochet = (((60 / curBPM) * 4000) / curDenominator) / 4;
 			}
-			if (section.changeKeys) {
+			if (section.changeKeys && !pvp) {
 				if (curOpponentKeys != section.dadKeyAmount) {
 					curOpponentKeys = section.dadKeyAmount;
 					if (dadStrums != null) {
@@ -312,47 +297,41 @@ class Song
 			var rightKeys = (!section.mustHitSection ? curPlayerKeys : curOpponentKeys);
 			for (songNotes in section.sectionNotes)
 			{
-				var daStrumTime:Float = songNotes[0];
-				if (CoolUtil.inAnyPlayState(true) && PlayState.instance.inEditor && daStrumTime < PlayState.instance.startPos) continue;
-				var daNoteData:Int = Std.int(songNotes[1]);
-				if (songNotes[1] >= leftKeys) {
-					daNoteData = Std.int(songNotes[1] - leftKeys);
-				}
+				if (CoolUtil.inPlayState(true) && PlayState.instance.inEditor && songNotes[0] < PlayState.instance.startPos)
+					continue;
+				var daNoteData:Int = (songNotes[1] >= leftKeys ? Std.int(songNotes[1] - leftKeys) : Std.int(songNotes[1]));
 
 				var gottaHitNote:Bool = section.mustHitSection;
-
 				if (songNotes[1] >= leftKeys)
-				{
 					gottaHitNote = !gottaHitNote;
-				}
 				var isOpponent:Bool = !gottaHitNote;
 
-				if (CoolUtil.inAnyPlayState(true) && PlayState.instance.opponentChart) {
-					gottaHitNote = !gottaHitNote;
+				if (pvp)
+					gottaHitNote = true;
+				else {
+					if (CoolUtil.inPlayState(true) && PlayState.instance.opponentChart)
+						gottaHitNote = !gottaHitNote;
 				}
 
-				if (pvp) gottaHitNote = true;
-
-				var oldNote:Note;
-				if (notes.length > 0)
-					oldNote = notes[notes.length - 1];
-				else
-					oldNote = null;
+				var oldNote:Note = (notes.length > 0 ? notes[notes.length - 1] : null);
 
 				var keys = isOpponent ? curOpponentKeys : curPlayerKeys;
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, keys);
+				var swagNote:Note = new Note(songNotes[0], daNoteData, oldNote, false, keys);
 				swagNote.mustPress = gottaHitNote;
 				swagNote.isOpponent = isOpponent;
 				swagNote.sustainLength = songNotes[2];
 				swagNote.gfNote = (section.gfSection && (songNotes[1] < rightKeys));
 				swagNote.characters = songNotes[4];
-				if (songNotes[4] == null) swagNote.characters = [];
 				swagNote.bpm = curBPM;
 				swagNote.stepCrochet = curStepCrochet;
 				swagNote.noteType = songNotes[3];
 				swagNote.scrollFactor.set();
+				if (section.altAnim && isOpponent)
+					swagNote.animSuffix = '-alt';
 				notes.push(swagNote);
+				if (pushedCallback != null)
+					pushedCallback(notes);
 
 				var susLength:Float = swagNote.sustainLength / curStepCrochet;
 				var floorSus:Int = Math.floor(susLength);
@@ -361,34 +340,28 @@ class Song
 					{
 						oldNote = notes[notes.length - 1];
 
-						var songSpeed = CoolUtil.inAnyPlayState() ? CoolUtil.getPlayState().songSpeed : 1;
-						var sustainNote:Note = new Note(daStrumTime + (curStepCrochet * susNote) + (curStepCrochet / songSpeed), daNoteData, oldNote, true, false, keys);
+						var sustainNote:Note = new Note(songNotes[0] + (curStepCrochet * susNote) + (curStepCrochet / songSpeed), daNoteData, oldNote, true, keys);
+						sustainNote.ogSustainTime = songNotes[0] + (curStepCrochet * susNote);
 						sustainNote.mustPress = gottaHitNote;
 						sustainNote.isOpponent = isOpponent;
 						sustainNote.gfNote = swagNote.gfNote;
 						sustainNote.characters = songNotes[4];
-						if (songNotes[4] == null) sustainNote.characters = [];
 						sustainNote.bpm = curBPM;
 						sustainNote.stepCrochet = curStepCrochet;
 						sustainNote.noteType = swagNote.noteType;
 						sustainNote.scrollFactor.set();
 						swagNote.tail.push(sustainNote);
 						sustainNote.parent = swagNote;
+						if (section.altAnim && isOpponent)
+							sustainNote.animSuffix = '-alt';
 						notes.push(sustainNote);
-
-						if (!sustainNote.isOpponent)
-						{
-							sustainNote.x += FlxG.width / 2; // general offset
-						}
+						if (pushedCallback != null)
+							pushedCallback(notes);
 					}
-				}
-
-				if (!swagNote.isOpponent)
-				{
-					swagNote.x += FlxG.width / 2; // general offset
 				}
 			}
 		}
+		song.skinModifier = lastSkinModifier;
 		trace('dad key change map: ' + dadStrums.keyChangeMap);
 		trace('bf key change map: ' + boyfriendStrums.keyChangeMap);
 		return notes;

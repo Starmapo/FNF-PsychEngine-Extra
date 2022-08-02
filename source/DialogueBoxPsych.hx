@@ -1,15 +1,11 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
 import haxe.Json;
-#if sys
-import sys.FileSystem;
-import sys.io.File;
-#end
-import openfl.utils.Assets;
 
 using StringTools;
 
@@ -142,12 +138,18 @@ class DialogueCharacter extends FlxSprite
 		if (animation.curAnim == null) return false;
 		return !animation.curAnim.name.endsWith(IDLE_SUFFIX);
 	}
+
+	override public function destroy() {
+		jsonFile = null;
+		dialogueAnimations = null;
+		curCharacter = null;
+		super.destroy();
+	}
 }
 
 // TO DO: Clean code? Maybe? idk
 class DialogueBoxPsych extends FlxSpriteGroup
 {
-	var dialogue:Alphabet;
 	var dialogueList:DialogueFile = null;
 
 	public var finishThing:Void->Void;
@@ -162,7 +164,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 	var currentText:Int = 0;
 	var offsetPos:Float = -600;
 
-	var textBoxTypes:Array<String> = ['normal', 'angry'];
+	static var textBoxTypes:Array<String> = ['normal', 'angry'];
 
 	var curCharacter:String = "";
 
@@ -514,5 +516,20 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		}
 		
 		if (!box.flipX) box.offset.y += 10;
+	}
+
+	override public function destroy() {
+		dialogueList = null;
+		finishThing = null;
+		nextDialogueThing = null;
+		skipDialogueThing = null;
+		bgFade = FlxDestroyUtil.destroy(bgFade);
+		box = FlxDestroyUtil.destroy(box);
+		textToType = null;
+		arrayCharacters = null;
+		curCharacter = null;
+		daText = FlxDestroyUtil.destroy(daText);
+		lastBoxType = null;
+		super.destroy();
 	}
 }
