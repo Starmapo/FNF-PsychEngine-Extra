@@ -86,7 +86,7 @@ class CharacterSelect extends FlxSpriteGroup {
         super(x, y);
         this.characters = characters;
         this.isGamepad = isGamepad;
-        id = (isGamepad ? 1 : 0);
+        id = (isGamepad ? 0 : 1);
 
         for (i in characters) {
             fullCharList.push(i.name);
@@ -130,7 +130,7 @@ class CharacterSelect extends FlxSpriteGroup {
         character = new FlxSprite();
         character.antialiasing = ClientPrefs.globalAntialiasing;
         character.scrollFactor.set();
-        if (isGamepad) character.flipX = true;
+        if (!isGamepad) character.flipX = true;
 
         characterText = new FlxText(0, panel.y - 64, 640, "", 32);
 		characterText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -166,13 +166,13 @@ class CharacterSelect extends FlxSpriteGroup {
             noGamepadBlack = new FlxSprite(0, 0).makeGraphic(640, 720, FlxColor.BLACK);
             noGamepadBlack.scrollFactor.set();
             noGamepadBlack.alpha = 0.8;
-            noGamepadBlack.visible = (FlxG.gamepads.getByID(0) == null);
+            noGamepadBlack.visible = (FlxG.gamepads.lastActive == null);
 
             noGamepadText = new FlxText(0, 360 - 16, 640, "Waiting for gamepad...", 32);
             noGamepadText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
             noGamepadText.scrollFactor.set();
             noGamepadText.borderSize = 2;
-            noGamepadText.visible = (FlxG.gamepads.getByID(0) == null);
+            noGamepadText.visible = (FlxG.gamepads.lastActive == null);
         }
 
         add(panel);
@@ -216,7 +216,7 @@ class CharacterSelect extends FlxSpriteGroup {
             var accept = controls.ACCEPT;
             var back = controls.BACK;
             if (isGamepad) {
-                var gamepad = FlxG.gamepads.getByID(0);
+                var gamepad = FlxG.gamepads.lastActive;
                 if (gamepad != null) {
                     noGamepadBlack.visible = false;
                     noGamepadText.visible = false;
@@ -422,7 +422,7 @@ class CharacterSelect extends FlxSpriteGroup {
             characterText.text = characters[curCharIndex].displayName;
         }
         character.loadGraphic(Paths.image('pvp/char/${selectedChars[curCharSelect]}'));
-        character.flipX = (characters[curCharIndex].name != '!random' && isGamepad);
+        character.flipX = (characters[curCharIndex].name != '!random' && !isGamepad);
     }
 
     function updateIconHitbox(icon:HealthIcon) {

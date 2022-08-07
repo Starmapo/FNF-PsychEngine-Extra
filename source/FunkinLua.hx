@@ -2473,9 +2473,8 @@ class FunkinLua {
 		var killMe:Array<String> = variable.split('.');
 		if (killMe.length > 1) {
 			var coverMeInPiss:Dynamic = Reflect.getProperty(leArray, killMe[0]);
-			for (i in 1...killMe.length-1) {
+			for (i in 1...killMe.length - 1)
 				coverMeInPiss = Reflect.getProperty(coverMeInPiss, killMe[i]);
-			}
 			switch(Type.typeof(coverMeInPiss)){
 				case ValueType.TClass(haxe.ds.StringMap) | ValueType.TClass(haxe.ds.ObjectMap) | ValueType.TClass(haxe.ds.IntMap) | ValueType.TClass(haxe.ds.EnumValueMap):
 					return coverMeInPiss.get(killMe[killMe.length-1]);

@@ -520,11 +520,13 @@ class StageEditorState extends MusicBeatState {
 
 	function onSaveComplete(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-		FlxG.log.notice("Successfully saved file.");
+        if (_file != null) {
+            _file.removeEventListener(Event.COMPLETE, onSaveComplete);
+            _file.removeEventListener(Event.CANCEL, onSaveCancel);
+            _file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+            _file = null;
+            FlxG.log.notice("Successfully saved file.");
+        }
 	}
 
 	/**
@@ -532,10 +534,12 @@ class StageEditorState extends MusicBeatState {
 		*/
 	function onSaveCancel(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
+        if (_file != null) {
+            _file.removeEventListener(Event.COMPLETE, onSaveComplete);
+            _file.removeEventListener(Event.CANCEL, onSaveCancel);
+            _file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+            _file = null;
+        }
 	}
 
 	/**
@@ -543,16 +547,18 @@ class StageEditorState extends MusicBeatState {
 		*/
 	function onSaveError(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-		FlxG.log.error("Problem saving file");
+        if (_file != null) {
+            _file.removeEventListener(Event.COMPLETE, onSaveComplete);
+            _file.removeEventListener(Event.CANCEL, onSaveCancel);
+            _file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+            _file = null;
+            FlxG.log.error("Problem saving file");
+        }
 	}
 
     function saveStage() {
-		var json = {
-			"directory": stageFile.directory,
+        var json = {
+            "directory": stageFile.directory,
             "defaultZoom": stageFile.defaultZoom,
             "isPixelStage": stageFile.isPixelStage,
 
@@ -565,17 +571,17 @@ class StageEditorState extends MusicBeatState {
             "camera_opponent": stageFile.camera_opponent,
             "camera_girlfriend": stageFile.camera_girlfriend,
             "camera_speed": stageFile.camera_speed
-		};
+        };
 
-		var data:String = Json.stringify(json, "\t");
+        var data:String = Json.stringify(json, "\t");
 
-		if (data.length > 0)
-		{
-			_file = new FileReference();
-			_file.addEventListener(Event.COMPLETE, onSaveComplete);
-			_file.addEventListener(Event.CANCEL, onSaveCancel);
-			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data, '$curStage.json');
-		}
+        if (data.length > 0)
+        {
+            _file = new FileReference();
+            _file.addEventListener(Event.COMPLETE, onSaveComplete);
+            _file.addEventListener(Event.CANCEL, onSaveCancel);
+            _file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+            _file.save(data, '$curStage.json');
+        }
 	}
 }

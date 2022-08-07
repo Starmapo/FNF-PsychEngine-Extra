@@ -365,39 +365,41 @@ class MenuCharacterEditorState extends MusicBeatState
 
 	function onLoadComplete(_):Void
 	{
-		_file.removeEventListener(Event.SELECT, onLoadComplete);
-		_file.removeEventListener(Event.CANCEL, onLoadCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+		if (_file != null) {
+			_file.removeEventListener(Event.SELECT, onLoadComplete);
+			_file.removeEventListener(Event.CANCEL, onLoadCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
 
-		#if sys
-		var fullPath:String = null;
-		@:privateAccess
-		if (_file.__path != null) fullPath = _file.__path;
+			#if sys
+			var fullPath:String = null;
+			@:privateAccess
+			if (_file.__path != null) fullPath = _file.__path;
 
-		if (fullPath != null) {
-			var rawJson:String = File.getContent(fullPath);
-			if (rawJson != null) {
-				var loadedChar:MenuCharacterFile = cast Json.parse(rawJson);
-				if (loadedChar.idle_anim != null && loadedChar.confirm_anim != null) //Make sure it's really a character
-				{
-					var cutName:String = _file.name.substr(0, _file.name.length - 5);
-					trace('Successfully loaded file: $cutName');
-					characterFile = loadedChar;
-					reloadSelectedCharacter();
-					imageInputText.text = characterFile.image;
-					idleInputText.text = characterFile.image;
-					confirmInputText.text = characterFile.image;
-					scaleStepper.value = characterFile.scale;
-					updateOffset();
-					_file = null;
-					return;
+			if (fullPath != null) {
+				var rawJson:String = File.getContent(fullPath);
+				if (rawJson != null) {
+					var loadedChar:MenuCharacterFile = cast Json.parse(rawJson);
+					if (loadedChar.idle_anim != null && loadedChar.confirm_anim != null) //Make sure it's really a character
+					{
+						var cutName:String = _file.name.substr(0, _file.name.length - 5);
+						trace('Successfully loaded file: $cutName');
+						characterFile = loadedChar;
+						reloadSelectedCharacter();
+						imageInputText.text = characterFile.image;
+						idleInputText.text = characterFile.image;
+						confirmInputText.text = characterFile.image;
+						scaleStepper.value = characterFile.scale;
+						updateOffset();
+						_file = null;
+						return;
+					}
 				}
 			}
+			_file = null;
+			#else
+			trace("File couldn't be loaded! You aren't on Desktop, are you?");
+			#end
 		}
-		_file = null;
-		#else
-		trace("File couldn't be loaded! You aren't on Desktop, are you?");
-		#end
 	}
 
 	/**
@@ -405,11 +407,13 @@ class MenuCharacterEditorState extends MusicBeatState
 		*/
 	function onLoadCancel(_):Void
 	{
-		_file.removeEventListener(Event.SELECT, onLoadComplete);
-		_file.removeEventListener(Event.CANCEL, onLoadCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
-		_file = null;
-		trace("Cancelled file loading.");
+		if (_file != null) {
+			_file.removeEventListener(Event.SELECT, onLoadComplete);
+			_file.removeEventListener(Event.CANCEL, onLoadCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+			_file = null;
+			trace("Cancelled file loading.");
+		}
 	}
 
 	/**
@@ -417,11 +421,13 @@ class MenuCharacterEditorState extends MusicBeatState
 		*/
 	function onLoadError(_):Void
 	{
-		_file.removeEventListener(Event.SELECT, onLoadComplete);
-		_file.removeEventListener(Event.CANCEL, onLoadCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
-		_file = null;
-		trace("Problem loading file");
+		if (_file != null) {
+			_file.removeEventListener(Event.SELECT, onLoadComplete);
+			_file.removeEventListener(Event.CANCEL, onLoadCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+			_file = null;
+			trace("Problem loading file");
+		}
 	}
 
 	function saveCharacter() {
@@ -441,11 +447,13 @@ class MenuCharacterEditorState extends MusicBeatState
 
 	function onSaveComplete(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-		FlxG.log.notice("Successfully saved file.");
+		if (_file != null) {
+			_file.removeEventListener(Event.COMPLETE, onSaveComplete);
+			_file.removeEventListener(Event.CANCEL, onSaveCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+			_file = null;
+			FlxG.log.notice("Successfully saved file.");
+		}
 	}
 
 	/**
@@ -453,10 +461,12 @@ class MenuCharacterEditorState extends MusicBeatState
 		*/
 	function onSaveCancel(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
+		if (_file != null) {
+			_file.removeEventListener(Event.COMPLETE, onSaveComplete);
+			_file.removeEventListener(Event.CANCEL, onSaveCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+			_file = null;
+		}
 	}
 
 	/**
@@ -464,10 +474,12 @@ class MenuCharacterEditorState extends MusicBeatState
 		*/
 	function onSaveError(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-		FlxG.log.error("Problem saving file");
+		if (_file != null) {
+			_file.removeEventListener(Event.COMPLETE, onSaveComplete);
+			_file.removeEventListener(Event.CANCEL, onSaveCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+			_file = null;
+			FlxG.log.error("Problem saving file");
+		}
 	}
 }

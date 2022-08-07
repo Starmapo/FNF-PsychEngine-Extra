@@ -1,7 +1,6 @@
 package;
 
 import Note.EventNote;
-import flixel.FlxG;
 import StrumNote.KeyChangeEvent;
 import StrumNote.StrumLine;
 import haxe.Json;
@@ -30,6 +29,8 @@ typedef SwagSong =
 	var skinModifier:String;
 
 	var validScore:Bool;
+
+	var type:String;
 }
 
 typedef SwagSection =
@@ -94,6 +95,9 @@ class Song
 			}
 		}
 
+		var curKeys = songJson.boyfriendKeyAmount + songJson.dadKeyAmount;
+		var altMap:Map<Int, Bool> = new Map();
+		var hadAltLol:Bool = false;
 		for (secNum in 0...songJson.notes.length) {
 			var sec:SwagSection = songJson.notes[secNum];
 			if (sec.gfSection == null) sec.gfSection = false;
@@ -108,22 +112,28 @@ class Song
 			if (sec.changeKeys == null) sec.changeKeys = false;
 			if (sec.boyfriendKeyAmount == null) sec.boyfriendKeyAmount = songJson.boyfriendKeyAmount;
 			if (sec.dadKeyAmount == null) sec.dadKeyAmount = songJson.dadKeyAmount;
+
+			if (sec.changeKeys) curKeys = sec.boyfriendKeyAmount + sec.dadKeyAmount;
 			for (note in sec.sectionNotes) {
 				while (note.length < 5)
 					note.push(null);
 
-				switch (curSong) {
-					case 'too-slow' | 'too-slow-encore' | 'you-cant-run' | 'triple-trouble':
-						switch (note[3]) {
-							case 2 | 'Static Note' | 'Sonic.exe Static Note':
-								note[3] = '';
-							case 3 | 'Phantom Note' | 'Sonic.exe Phantom Note':
-								sec.sectionNotes.remove(note);
-								note = null;
-								continue;
-						}
+				if (note[1] >= curKeys) {
+					var daAlt = Math.floor(note[1] / curKeys);
+					note[3] = 'Alt ${daAlt}';
+					note[1] = note[1] % curKeys;
+					if (!altMap.exists(daAlt))
+						altMap.set(daAlt, true);
+					hadAltLol = true;
 				}
-
+				if (songJson.type == 'leather' && note[3] != null) {
+					if (Std.isOfType(note[3], Array)) {
+						var fuck:Array<Int> = note[3];
+						note[4] = fuck.copy();
+					} else
+						note[4] = [note[3]];
+					note[3] = '';
+				}
 				if (note[3] != null && Std.isOfType(note[3], Int))
 					note[3] = editors.ChartingState.noteTypeList[note[3]];
 				if (note[3] != null && note[3] == true)
@@ -134,6 +144,8 @@ class Song
 					note[4] = [];
 			}
 		}
+		if (hadAltLol)
+			trace(altMap);
 	}
 
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
@@ -158,9 +170,8 @@ class Song
 
 		var songJson:Dynamic = parseJSONshit(rawJson);
 		onLoadJson(songJson);
-		if (formattedSong != 'events' && formattedSong != 'picospeaker') {
+		if (formattedSong != 'events' && formattedSong != 'picospeaker')
 			StageData.loadDirectory(songJson);
-		}
 		return songJson;
 	}
 
@@ -242,6 +253,18 @@ class Song
 				swagShit.notes[i].dadKeyAmount = opponentKeys;
 			}
 		}
+		
+		swagShit.type = 'fnf';
+		if (tempSong.noteStyle != null)
+			swagShit.type = 'kade';
+		if (tempSong.arrowSkin != null)
+			swagShit.type = 'psych';
+		if (tempSong.boyfriendKeyAmount != null)
+			swagShit.type = 'psychextra';
+		if (tempSong.assetModifier != null) //this doesnt work with older forever engine charts but i literally have nothing else to use
+			swagShit.type = 'forever';
+		if (tempSong.keyCount != null)
+			swagShit.type = 'leather';
 
 		swagShit.validScore = true;
 		return swagShit;
@@ -299,7 +322,7 @@ class Song
 			{
 				if (CoolUtil.inPlayState(true) && PlayState.instance.inEditor && songNotes[0] < PlayState.instance.startPos)
 					continue;
-				var daNoteData:Int = (songNotes[1] >= leftKeys ? Std.int(songNotes[1] - leftKeys) : Std.int(songNotes[1]));
+				var daNoteData:Int = (songNotes[1] >= leftKeys ? Std.int(songNotes[1] - leftKeys) : Std.int(songNotes[1])) % (leftKeys + rightKeys);
 
 				var gottaHitNote:Bool = section.mustHitSection;
 				if (songNotes[1] >= leftKeys)
@@ -333,37 +356,40 @@ class Song
 				if (pushedCallback != null)
 					pushedCallback(notes);
 
-				var susLength:Float = swagNote.sustainLength / curStepCrochet;
-				var floorSus:Int = Math.floor(susLength);
-				if (floorSus > 0) {
-					for (susNote in 0...floorSus + 1)
-					{
-						oldNote = notes[notes.length - 1];
+				if (swagNote.exists) {
+					var susLength:Float = swagNote.sustainLength / curStepCrochet;
+					var floorSus:Int = Math.floor(susLength);
+					if (floorSus > 0) {
+						for (susNote in 0...floorSus + 1)
+						{
+							oldNote = notes[notes.length - 1];
 
-						var sustainNote:Note = new Note(songNotes[0] + (curStepCrochet * susNote) + (curStepCrochet / songSpeed), daNoteData, oldNote, true, keys);
-						sustainNote.ogSustainTime = songNotes[0] + (curStepCrochet * susNote);
-						sustainNote.mustPress = gottaHitNote;
-						sustainNote.isOpponent = isOpponent;
-						sustainNote.gfNote = swagNote.gfNote;
-						sustainNote.characters = songNotes[4];
-						sustainNote.bpm = curBPM;
-						sustainNote.stepCrochet = curStepCrochet;
-						sustainNote.noteType = swagNote.noteType;
-						sustainNote.scrollFactor.set();
-						swagNote.tail.push(sustainNote);
-						sustainNote.parent = swagNote;
-						if (section.altAnim && isOpponent)
-							sustainNote.animSuffix = '-alt';
-						notes.push(sustainNote);
-						if (pushedCallback != null)
-							pushedCallback(notes);
+							var sustainNote:Note = new Note(songNotes[0] + (curStepCrochet * susNote) + (curStepCrochet / songSpeed), daNoteData, oldNote, true, keys);
+							sustainNote.mustPress = gottaHitNote;
+							sustainNote.isOpponent = isOpponent;
+							sustainNote.gfNote = swagNote.gfNote;
+							sustainNote.characters = songNotes[4];
+							sustainNote.bpm = curBPM;
+							sustainNote.stepCrochet = curStepCrochet;
+							sustainNote.noteType = swagNote.noteType;
+							sustainNote.scrollFactor.set();
+							swagNote.tail.push(sustainNote);
+							sustainNote.parent = swagNote;
+							if (section.altAnim && isOpponent)
+								sustainNote.animSuffix = '-alt';
+							notes.push(sustainNote);
+							if (pushedCallback != null)
+								pushedCallback(notes);
+						}
 					}
 				}
 			}
 		}
 		song.skinModifier = lastSkinModifier;
-		trace('dad key change map: ' + dadStrums.keyChangeMap);
-		trace('bf key change map: ' + boyfriendStrums.keyChangeMap);
+		if (dadStrums.keyChangeMap.length > 0)
+			trace('dad key change map: ' + dadStrums.keyChangeMap);
+		if (boyfriendStrums.keyChangeMap.length > 0)
+			trace('bf key change map: ' + boyfriendStrums.keyChangeMap);
 		return notes;
 	}
 

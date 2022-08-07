@@ -14,6 +14,8 @@ typedef IconFile = {
 class HealthIcon extends FlxSprite
 {
 	public var sprTracker:FlxSprite;
+	public var xAdd:Float = 0;
+	public var yAdd:Float = 0;
 	private var isOldIcon:Bool = false;
 	public var isPlayer:Bool = false;
 	public var char(default, null):String = '';
@@ -34,7 +36,7 @@ class HealthIcon extends FlxSprite
 		super.update(elapsed);
 
 		if (sprTracker != null)
-			setPosition(sprTracker.x + sprTracker.width + 10, sprTracker.y - 30);
+			setPosition(sprTracker.x + sprTracker.width + 10 + xAdd, sprTracker.y - 30 + yAdd);
 	}
 
 	public function swapOldIcon() {
@@ -42,7 +44,7 @@ class HealthIcon extends FlxSprite
 		else changeIcon(originalChar);
 	}
 
-	private var iconOffsets:Array<Float> = [0, 0];
+	public var iconOffsets:Array<Float> = [0, 0];
 	public function changeIcon(char:String) {
 		if (this.char != char) {
 			if (char.length < 1)
@@ -60,9 +62,8 @@ class HealthIcon extends FlxSprite
 				animation.addByPrefix('normal', 'normal', iconJson.fps, iconJson.fps > 0, isPlayer);
 				animation.addByPrefix('losing', 'losing', iconJson.fps, iconJson.fps > 0, isPlayer);
 				animation.addByPrefix('winning', 'winning', iconJson.fps, iconJson.fps > 0, isPlayer);
-				if (!animation.exists('winning')) { //No winning icon
+				if (!animation.exists('winning')) //No winning icon
 					animation.addByPrefix('winning', 'normal', iconJson.fps, iconJson.fps > 0, isPlayer);
-				}
 				playAnim('normal');
 			} else {
 				var file = Paths.image(name);

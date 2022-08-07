@@ -26,7 +26,7 @@
 			"loop": false,
 			"name": "Mom Left Pose",
 			"playerOffsets": [
-				250,
+				-30,
 				-23
 			]
 		},
@@ -41,7 +41,7 @@
 			"loop": false,
 			"name": "Mom Pose Left",
 			"playerOffsets": [
-				10,
+				180,
 				-60
 			]
 		},
@@ -56,7 +56,7 @@
 			"loop": false,
 			"name": "MOM DOWN POSE",
 			"playerOffsets": [
-				20,
+				5,
 				-160
 			]
 		},
@@ -71,7 +71,7 @@
 			"loop": false,
 			"name": "Mom Up Pose",
 			"playerOffsets": [
-				14,
+				-14,
 				71
 			]
 		}

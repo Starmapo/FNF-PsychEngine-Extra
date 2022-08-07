@@ -1,52 +1,40 @@
 {
 	"animations": [
 		{
-			"enemyOffsets": [
-				0,
+			"offsets": [
+				7,
 				0
 			],
 			"indices": [],
 			"fps": 24,
 			"anim": "idle",
 			"loop": false,
-			"name": "BF IDLE",
-			"playerOffsets": [
-				7,
-				0
-			]
+			"name": "BF IDLE"
 		},
 		{
-			"enemyOffsets": [
-				7,
+			"offsets": [
+				0,
 				0
 			],
 			"indices": [],
 			"fps": 24,
 			"anim": "singLEFTmiss",
 			"loop": false,
-			"name": "BF LEFT MISS",
-			"playerOffsets": [
-				0,
-				0
-			]
+			"name": "BF LEFT MISS"
 		},
 		{
-			"enemyOffsets": [
-				7,
+			"offsets": [
+				0,
 				0
 			],
 			"indices": [],
 			"fps": 24,
 			"anim": "singLEFT",
 			"loop": false,
-			"name": "BF LEFT NOTE",
-			"playerOffsets": [
-				0,
-				0
-			]
+			"name": "BF LEFT NOTE"
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				0,
 				0
 			],
@@ -54,14 +42,10 @@
 			"fps": 24,
 			"anim": "singUPmiss",
 			"loop": false,
-			"name": "BF UP MISS",
-			"playerOffsets": [
-				0,
-				0
-			]
+			"name": "BF UP MISS"
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				0,
 				0
 			],
@@ -69,14 +53,10 @@
 			"fps": 24,
 			"anim": "singUP",
 			"loop": false,
-			"name": "BF UP NOTE",
-			"playerOffsets": [
-				0,
-				0
-			]
+			"name": "BF UP NOTE"
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				0,
 				0
 			],
@@ -84,14 +64,10 @@
 			"fps": 24,
 			"anim": "singRIGHT",
 			"loop": false,
-			"name": "BF RIGHT NOTE",
-			"playerOffsets": [
-				0,
-				0
-			]
+			"name": "BF RIGHT NOTE"
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				0,
 				0
 			],
@@ -99,14 +75,10 @@
 			"fps": 24,
 			"anim": "singRIGHTmiss",
 			"loop": false,
-			"name": "BF RIGHT MISS",
-			"playerOffsets": [
-				0,
-				0
-			]
+			"name": "BF RIGHT MISS"
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				0,
 				0
 			],
@@ -114,14 +86,10 @@
 			"fps": 24,
 			"anim": "singDOWN",
 			"loop": false,
-			"name": "BF DOWN NOTE",
-			"playerOffsets": [
-				0,
-				0
-			]
+			"name": "BF DOWN NOTE"
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				0,
 				0
 			],
@@ -129,27 +97,15 @@
 			"fps": 24,
 			"anim": "singDOWNmiss",
 			"loop": false,
-			"name": "BF DOWN MISS",
-			"playerOffsets": [
-				0,
-				0
-			]
+			"name": "BF DOWN MISS"
 		}
-	],
-	"enemy_position": [
-		150,
-		510
 	],
 	"repeatHoldAnimation": true,
 	"no_antialiasing": true,
 	"image": "characters/bfPixel",
-	"enemy_cameraPosition": [
-		20,
-		100
-	],
-	"player_cameraPosition": [
-		-30,
-		100
+	"position": [
+		10,
+		330
 	],
 	"healthicon": "bf-pixel",
 	"flip_x": true,
@@ -158,9 +114,9 @@
 		214,
 		246
 	],
-	"player_position": [
-		190,
-		510
+	"camera_position": [
+		-30,
+		100
 	],
 	"sing_duration": 4,
 	"scale": 6

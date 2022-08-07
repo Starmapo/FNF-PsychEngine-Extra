@@ -147,7 +147,7 @@ class TitleState extends MusicBeatState
 
 		if (!initialized)
 		{
-			if(FlxG.save.data != null && FlxG.save.data.fullscreen)
+			if(FlxG.save.data != null && FlxG.save.data.fullscreen != null && FlxG.save.data.fullscreen)
 			{
 				FlxG.fullscreen = FlxG.save.data.fullscreen;
 			}

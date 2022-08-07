@@ -29,14 +29,13 @@ class Note extends FlxSprite
 	public var hitByOpponent:Bool = false;
 	public var prevNote:Note;
 	public var nextNote:Note;
-	public var characters:Array<Int> = [0];
+	public var characters:Array<Int> = [];
 
 	public var spawned:Bool = false;
 
 	public var tail:Array<Note> = []; // for sustains
 	public var parent:Note;
 	public var blockHit:Bool = false; // only works for player
-	public var ogSustainTime:Float = 0;
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
@@ -118,7 +117,6 @@ class Note extends FlxSprite
 	{
 		if(isSustainNote && animation.curAnim != null && !animation.curAnim.name.endsWith('end'))
 		{
-			updateSustainTime((strumTime - ogSustainTime) * ratio);
 			scale.y *= ratio;
 			updateHitbox();
 		}
@@ -277,7 +275,7 @@ class Note extends FlxSprite
 		var skin:String = texture;
 		if (skin == null || skin.length < 1 && PlayState.SONG != null) {
 			skin = PlayState.SONG.arrowSkin;
-			if(skin == null || skin.length < 1 || !CoolUtil.inPlayState())
+			if(skin == null || skin.length < 1)
 				skin = 'NOTE_assets';
 		}
 
@@ -291,7 +289,7 @@ class Note extends FlxSprite
 		var lastScaleY:Float = scale.y;
 		if (skinModifier.length < 1) {
 			skinModifier = 'base';
-			if (PlayState.SONG != null && CoolUtil.inPlayState())
+			if (PlayState.SONG != null)
 				skinModifier = PlayState.SONG.skinModifier;
 		}
 		var image = SkinData.getNoteFile(arraySkin.join('/'), skinModifier);
@@ -402,10 +400,6 @@ class Note extends FlxSprite
 			animation.add(colors[2], [GREEN_NOTE + 4]);
 			animation.add(colors[3], [RED_NOTE + 4]);
 		}
-	}
-
-	public function updateSustainTime(newTimeAdd:Float) {
-		strumTime = ogSustainTime + newTimeAdd;
 	}
 
 	override function update(elapsed:Float) {

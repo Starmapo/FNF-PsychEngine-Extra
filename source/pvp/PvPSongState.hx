@@ -68,10 +68,10 @@ class PvPSongState extends MusicBeatState {
 		songsOG.sort(sortAlphabetically);
 		songsOG.insert(0, new SongMetadata(''));
 
-		var songSelect1 = new SongSelect(0, 0, songsOG);
+		var songSelect1 = new SongSelect(0, 0, songsOG, true);
 		songSelects.push(songSelect1);
 		add(songSelect1);
-		var songSelect2 = new SongSelect(FlxG.width / 2, 0, songsOG, true);
+		var songSelect2 = new SongSelect(FlxG.width / 2, 0, songsOG);
 		songSelects.push(songSelect2);
 		add(songSelect2);
 
@@ -96,7 +96,7 @@ class PvPSongState extends MusicBeatState {
 			#if cpp
 			var ctrl = FlxG.keys.justPressed.CONTROL;
 
-			var gamepad = FlxG.gamepads.getByID(0);
+			var gamepad = FlxG.gamepads.lastActive;
 			if (gamepad != null) {
 				if (gamepad.justPressed.X) ctrl = true;
 			}
@@ -109,14 +109,14 @@ class PvPSongState extends MusicBeatState {
 			#end
 
 			#if debug
-			if (songSelects[0].ready && (songSelects[1].ready || FlxG.gamepads.getByID(0) == null))
+			if (songSelects[1].ready && (songSelects[0].ready || FlxG.gamepads.lastActive == null))
 			#else
-			if (songSelects[0].ready && songSelects[1].ready)
+			if (songSelects[1].ready && songSelects[0].ready)
 			#end
 			{
 				var n = FlxG.random.int(0, 1);
 				#if debug
-				if (FlxG.gamepads.getByID(0) == null)
+				if (FlxG.gamepads.lastActive == null)
 					n = 0;
 				#end
 				var chosenSong = songSelects[n];

@@ -16,12 +16,8 @@ typedef CharacterFile = {
 	var sing_duration:Float;
 	var healthicon:String;
 
-	var ?position:Array<Float>; //not used
-	var ?player_position:Array<Float>;
-	var ?enemy_position:Array<Float>;
-	var ?camera_position:Array<Float>; //not used
-	var ?player_cameraPosition:Array<Float>;
-	var ?enemy_cameraPosition:Array<Float>;
+	var position:Array<Float>;
+	var camera_position:Array<Float>;
 
 	var flip_x:Bool;
 	var no_antialiasing:Bool;
@@ -36,9 +32,7 @@ typedef AnimArray = {
 	var fps:Int;
 	var loop:Bool;
 	var indices:Array<Int>;
-	var ?offsets:Array<Float>; //not used
-	var ?playerOffsets:Array<Float>;
-	var ?enemyOffsets:Array<Float>;
+	var offsets:Array<Float>;
 }
 
 typedef CharacterGroupFile = {
@@ -129,53 +123,48 @@ class Character extends FlxSprite
 
 			default:
 				var json:CharacterFile = getFile(curCharacter);
+				var dummyJson:Dynamic = getFile(curCharacter);
+				var jsonPlayer = (json.flip_x == true);
 				if (json.repeatHoldAnimation == null) json.repeatHoldAnimation = true;
-				if (json.player_position == null) {
-					if (json.flip_x == true) {
-						json.player_position = json.position.copy();
-						json.enemy_position = [-json.position[0], json.position[1]];
-					} else {
-						json.enemy_position = json.position.copy();
-						json.player_position = [-json.position[0], json.position[1]];
-					}
+				if (json.position == null && dummyJson.player_position != null) {
+					if (jsonPlayer)
+						json.position = dummyJson.player_position.copy();
+					else
+						json.position = dummyJson.enemy_position.copy();
 				}
-				if (json.player_cameraPosition == null) {
-					json.enemy_cameraPosition = json.camera_position.copy();
-					json.player_cameraPosition = [-json.camera_position[0], json.camera_position[1]];
+				if (json.camera_position == null && dummyJson.player_cameraPosition != null) {
+					if (jsonPlayer)
+						json.camera_position = dummyJson.player_cameraPosition.copy();
+					else
+						json.camera_position = dummyJson.enemy_cameraPosition.copy();
 				}
 				var animations:Array<Dynamic> = json.animations;
 				for (anim in animations) {
-					if (anim.playerOffsets == null) {
-						anim.playerOffsets = anim.offsets.copy();
-						anim.enemyOffsets = anim.offsets.copy();
+					if (anim.offsets == null && anim.playerOffsets != null) {
+						if (jsonPlayer)
+							anim.offsets = anim.playerOffsets.copy();
+						else
+							anim.offsets = anim.enemyOffsets.copy();
 					}
 				}
 
 				if (Paths.existsPath('images/${json.image}.txt', TEXT))
-				{
 					frames = Paths.getPackerAtlas(json.image);
-				}
 				else if (Paths.existsPath('images/${json.image}.json', TEXT))
-				{
 					frames = Paths.getTexturePackerAtlas(json.image);
-				}
 				else if (Paths.existsPath('images/${json.image}/Animation.json', TEXT))
-				{
 					frames = AtlasFrameMaker.construct(json.image);	
-				}
 				else
-				{
 					frames = Paths.getSparrowAtlas(json.image);
-				}
 				
 				imageFile = json.image;
 
 				jsonScale = json.scale;
 
-				playerPosition = json.player_position;
-				enemyPosition = json.enemy_position;
-				playerCameraPosition = json.player_cameraPosition;
-				enemyCameraPosition = json.enemy_cameraPosition;
+				playerPosition = json.position.copy();
+				enemyPosition = json.position.copy();
+				playerCameraPosition = json.camera_position.copy();
+				enemyCameraPosition = json.camera_position.copy();
 
 				healthIcon = json.healthicon;
 				singDuration = json.sing_duration;
@@ -197,11 +186,10 @@ class Character extends FlxSprite
 						var animLoop:Bool = anim.loop == true;
 						var animIndices:Array<Int> = anim.indices;
 						addAnimation(animAnim, animName, animFps, animLoop, animIndices);
-						addFlippedOffset(animAnim, anim.playerOffsets, anim.enemyOffsets, flipped);
+						addOffset(animAnim, anim.offsets[0], anim.offsets[1]);
 					}
-				} else {
+				} else
 					quickAnimAdd('idle', 'BF idle dance');
-				}
 		}
 		originalFlipX = flipX;
 
@@ -217,28 +205,24 @@ class Character extends FlxSprite
 							fps: newRight.fps,
 							loop: newRight.loop == true,
 							indices: newRight.indices.copy(),
-							offsets: null,
-							playerOffsets: newRight.playerOffsets.copy(),
-							enemyOffsets: newRight.enemyOffsets.copy()
+							offsets: newRight.offsets.copy()
 						};
 
 						newRight.name = leftAnim.name;
 						newRight.fps = leftAnim.fps;
 						newRight.loop = leftAnim.loop == true;
 						newRight.indices = leftAnim.indices.copy();
-						newRight.playerOffsets = leftAnim.playerOffsets;
-						newRight.enemyOffsets = leftAnim.enemyOffsets;
+						newRight.offsets = leftAnim.offsets.copy();
 						addAnimation(newRight.anim, newRight.name, newRight.fps, newRight.loop, newRight.indices);
-						addFlippedOffset(newRight.anim, newRight.playerOffsets, newRight.enemyOffsets, flipped);
+						addOffset(newRight.anim, newRight.offsets[0], newRight.offsets[1]);
 
 						leftAnim.name = newLeft.name;
 						leftAnim.fps = newLeft.fps;
 						leftAnim.loop = newLeft.loop;
 						leftAnim.indices = newLeft.indices;
-						leftAnim.playerOffsets = newLeft.playerOffsets;
-						leftAnim.enemyOffsets = newLeft.enemyOffsets;
+						leftAnim.offsets = newLeft.offsets.copy();
 						addAnimation(leftAnim.anim, leftAnim.name, leftAnim.fps, leftAnim.loop, leftAnim.indices);
-						addFlippedOffset(leftAnim.anim, leftAnim.playerOffsets, leftAnim.enemyOffsets, flipped);
+						addOffset(leftAnim.anim, leftAnim.offsets[0], leftAnim.offsets[1]);
 					}
 				}
 			}
@@ -259,6 +243,37 @@ class Character extends FlxSprite
 				skipDance = true;
 				loadMappedAnims();
 				playAnim("shoot1");
+				updateHitbox();
+				setOffsets();
+		}
+
+		if (!debugMode && flipped != originalFlipX) {
+			var lastAnim = '';
+			if (animation.name != null)
+				lastAnim = animation.name;
+
+			if (originalFlipX) { //player character
+				var daDifference = (411 - width);
+				enemyPosition[0] = daDifference - enemyPosition[0];
+				enemyCameraPosition[0] = -(enemyCameraPosition[0]);
+				for (anim in animationsArray) {
+					playAnim(anim.anim, true);
+					daDifference = -(width - (frameWidth * scale.x));
+					addOffset(anim.anim, (daDifference - anim.offsets[0]), anim.offsets[1]);
+				}
+			} else { //opponent character
+				var daDifference = (429 - width);
+				playerPosition[0] = daDifference - playerPosition[0];
+				playerCameraPosition[0] = -(playerCameraPosition[0]);
+				for (anim in animationsArray) {
+					playAnim(anim.anim, true);
+					daDifference = -(width - (frameWidth * scale.x));
+					addOffset(anim.anim, (daDifference - anim.offsets[0]), anim.offsets[1]);
+				}
+			}
+
+			if (lastAnim.length > 0)
+				playAnim(lastAnim, true);
 		}
 	}
 
@@ -275,13 +290,6 @@ class Character extends FlxSprite
 			animation.addByIndices(anim, name, indices, "", fps, loop);
 		else
 			animation.addByPrefix(anim, name, fps, loop);
-	}
-
-	function addFlippedOffset(anim:String, playerOffsets:Array<Float>, enemyOffsets:Array<Float>, flipped:Bool) {
-		if (flipped && playerOffsets != null && playerOffsets.length > 1)
-			addOffset(anim, playerOffsets[0], playerOffsets[1]);
-		else if (!flipped && enemyOffsets != null && enemyOffsets.length > 1)
-			addOffset(anim, enemyOffsets[0], enemyOffsets[1]);
 	}
 
 	override function update(elapsed:Float) {
@@ -392,19 +400,19 @@ class Character extends FlxSprite
 		if (name == null)
 			name = animation.name;
 		
+		offset.set(-0.5 * (width - (width / scale.x)), -0.5 * (height - (height / scale.y)));
 		if (animOffsets.exists(name))
 		{
 			var daOffset = animOffsets.get(name);
-			offset.set(daOffset[0], daOffset[1]);
+			offset.x += daOffset[0];
+			offset.y += daOffset[1];
 		}
-		else
-			offset.set(0, 0);
 	}
 
 	function loadMappedAnims():Void
 	{
 		if (CoolUtil.inPlayState() && PlayState.SONG != null) {
-			var song = Song.loadFromJson('picospeaker', Paths.formatToSongPath(PlayState.SONG.song));
+			var song = Song.loadFromJson('picospeaker', PlayState.SONG.song);
 			if (song != null) {
 				var noteData:Array<SwagSection> = song.notes;
 				for (section in noteData) {

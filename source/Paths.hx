@@ -283,7 +283,7 @@ class Paths
 	{
 		var songKey:String = '${formatToSongPath(song)}';
 		var inst = returnSound(songKey, 'Inst', 'songs');
-		if (suffix.length > 0 && existsPath('$songKey/Inst$suffix', SOUND, 'songs'))
+		if (suffix.length > 0 && existsPath('$songKey/Inst$suffix.$SOUND_EXT', SOUND, 'songs'))
 			inst = returnSound(songKey, 'Inst$suffix', 'songs');
 		return inst;
 	}
@@ -292,7 +292,7 @@ class Paths
 	{
 		var songKey:String = '${formatToSongPath(song)}';
 		var voices = returnSound(songKey, 'Voices', 'songs');
-		if (suffix.length > 0 && existsPath('$songKey/Voices$suffix', SOUND, 'songs'))
+		if (suffix.length > 0 && existsPath('$songKey/Voices$suffix.$SOUND_EXT', SOUND, 'songs'))
 			voices = returnSound(songKey, 'Voices$suffix', 'songs');
 		return voices;
 	}
@@ -303,8 +303,8 @@ class Paths
 		var suffixes = ['Dad', 'Opponent'];
 		for (dadSuffix in suffixes) {
 			var voices = returnSound(songKey, 'Voices$dadSuffix', 'songs');
-			if (suffix.length > 0 && existsPath('$songKey/Voices$dadSuffix$suffix', SOUND, 'songs'))
-				voices = returnSound(songKey, 'Voices$dadSuffix', 'songs');
+			if (suffix.length > 0 && existsPath('$songKey/Voices$dadSuffix$suffix.$SOUND_EXT', SOUND, 'songs'))
+				voices = returnSound(songKey, 'Voices$dadSuffix$suffix', 'songs');
 			if (voices != null)
 				return voices;
 		}

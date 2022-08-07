@@ -665,18 +665,8 @@ class FreeplayState extends MusicBeatState
 			songText.targetY = i;
 			grpSongs.add(songText);
 
-			if (songText.width > 980)
-			{
-				var textScale:Float = 980 / songText.width;
-				songText.scale.x = textScale;
-				for (letter in songText.lettersArray)
-				{
-					letter.x *= textScale;
-					letter.offset.x *= textScale;
-				}
-			}
-
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
+			updateIconHitbox(icon);
 			icon.sprTracker = songText;
 			var iconVisible = !songs[i].iconHiddenUntilPlayed;
 			if (!iconVisible) {
@@ -691,14 +681,30 @@ class FreeplayState extends MusicBeatState
 			}
 			icon.visible = iconVisible;
 
+			if (90 + songText.width + 10 + icon.width > FlxG.width)
+            {
+                var daWidth = FlxG.width - (100 + icon.width);
+                var textScale:Float = daWidth / songText.width;
+				songText.scale.x = textScale;
+				for (letter in songText.lettersArray)
+				{
+					letter.x *= textScale;
+					letter.offset.x *= textScale;
+				}
+			}
+
 			// using a FlxGroup is too much fuss!
 			iconArray.push(icon);
 			grpIcons.add(icon);
 		}
-		if (change) {
+		if (change)
 			changeSelection(0, false);
-		}
 	}
+
+	function updateIconHitbox(icon:HealthIcon) {
+        icon.updateHitbox();
+        icon.offset.set(-0.5 * (icon.width - icon.frameWidth), -0.5 * (icon.height - icon.frameHeight));
+    }
 
 	override public function destroy() {
 		songs = null;

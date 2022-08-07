@@ -71,7 +71,7 @@ class MusicBeatSubState extends FlxSubState
 	function onClose() {
 		if (resetCameraOnClose) {
 			FlxG.camera.follow(null);
-			FlxG.camera.scroll.set();
+			FlxG.camera.scroll.set(lastScroll.x, lastScroll.y);
 		}
 
 		lastScroll = FlxDestroyUtil.put(lastScroll);

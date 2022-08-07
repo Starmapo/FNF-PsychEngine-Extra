@@ -225,7 +225,7 @@ class GameplayChangersSubState extends MusicBeatSubState
         var back = controls.BACK;
 		var reset = controls.RESET;
 		if (MainMenuState.inPvP) {
-			var gamepad = FlxG.gamepads.getByID(0);
+			var gamepad = FlxG.gamepads.lastActive;
 			if (gamepad != null) {
 				if (gamepad.justPressed.LEFT_STICK_DIGITAL_UP || gamepad.justPressed.DPAD_UP) upP = true;
 				if (gamepad.justPressed.LEFT_STICK_DIGITAL_DOWN || gamepad.justPressed.DPAD_DOWN) downP = true;

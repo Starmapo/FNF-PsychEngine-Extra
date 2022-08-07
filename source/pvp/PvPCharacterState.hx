@@ -28,9 +28,9 @@ class PvPCharacterState extends MusicBeatState {
         add(bg);
 
         var chars = getCharacters();
-        charSelect1 = new CharacterSelect(0, 0, chars);
+        charSelect1 = new CharacterSelect(0, 0, chars, true);
         add(charSelect1);
-        charSelect2 = new CharacterSelect(FlxG.width / 2, 0, chars, true);
+        charSelect2 = new CharacterSelect(FlxG.width / 2, 0, chars);
         add(charSelect2);
     }
 
@@ -38,9 +38,9 @@ class PvPCharacterState extends MusicBeatState {
         super.update(elapsed);
 
         #if debug
-        if (!exiting && charSelect1.ready && (charSelect2.ready || FlxG.gamepads.getByID(0) == null))
+        if (!exiting && charSelect2.ready && (charSelect1.ready || FlxG.gamepads.lastActive == null))
         #else
-        if (!exiting && charSelect1.ready && charSelect2.ready)
+        if (!exiting && charSelect2.ready && charSelect1.ready)
         #end
         {
             charSelect1.fadeStuff();

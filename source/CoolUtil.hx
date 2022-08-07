@@ -232,7 +232,7 @@ class CoolUtil
 		return PlayState.instance != null || (!skipPvP && pvp.PvPPlayState.instance != null);
 	}
 
-	public static function inPvPState(skipPvP:Bool = false) {
+	public static function inPvPState() {
 		return pvp.PvPPlayState.instance != null;
 	}
 
@@ -248,8 +248,8 @@ class CoolUtil
 
 	public static function getCamFollowCharacter(char:Character):Dynamic {
 		return {
-			x: ((char.x * char.scrollFactor.x) - (char.width - (char.width / char.jsonScale)) / 2) + (char.width / 2),
-			y: ((char.y * char.scrollFactor.y) - (char.height - (char.height / char.jsonScale)) / 2) + (char.height / 4)
+			x: (char.x * char.scrollFactor.x) + (char.width / 2),
+			y: (char.y * char.scrollFactor.y) + (char.height / 4)
 		};
 	}
 

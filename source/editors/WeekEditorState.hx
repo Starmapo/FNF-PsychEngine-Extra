@@ -469,49 +469,53 @@ class WeekEditorState extends MusicBeatState
 	public static var loadError:Bool = false;
 	private static function onLoadComplete(_):Void
 	{
-		_file.removeEventListener(Event.SELECT, onLoadComplete);
-		_file.removeEventListener(Event.CANCEL, onLoadCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+		if (_file != null) {
+			_file.removeEventListener(Event.SELECT, onLoadComplete);
+			_file.removeEventListener(Event.CANCEL, onLoadCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
 
-		#if sys
-		var fullPath:String = null;
-		@:privateAccess
-		if (_file.__path != null) fullPath = _file.__path;
+			#if sys
+			var fullPath:String = null;
+			@:privateAccess
+			if (_file.__path != null) fullPath = _file.__path;
 
-		if (fullPath != null) {
-			var rawJson:String = File.getContent(fullPath);
-			if (rawJson != null) {
-				loadedWeek = cast Json.parse(rawJson);
-				if (loadedWeek.weekCharacters != null && loadedWeek.weekName != null) //Make sure it's really a week
-				{
-					var cutName:String = _file.name.substr(0, _file.name.length - 5);
-					trace('Successfully loaded file: $cutName');
-					loadError = false;
+			if (fullPath != null) {
+				var rawJson:String = File.getContent(fullPath);
+				if (rawJson != null) {
+					loadedWeek = cast Json.parse(rawJson);
+					if (loadedWeek.weekCharacters != null && loadedWeek.weekName != null) //Make sure it's really a week
+					{
+						var cutName:String = _file.name.substr(0, _file.name.length - 5);
+						trace('Successfully loaded file: $cutName');
+						loadError = false;
 
-					weekFileName = cutName;
-					_file = null;
-					return;
+						weekFileName = cutName;
+						_file = null;
+						return;
+					}
 				}
 			}
+			loadError = true;
+			loadedWeek = null;
+			_file = null;
+			#else
+			trace("File couldn't be loaded! You aren't on Desktop, are you?");
+			#end
 		}
-		loadError = true;
-		loadedWeek = null;
-		_file = null;
-		#else
-		trace("File couldn't be loaded! You aren't on Desktop, are you?");
-		#end
 	}
 
 	/**
 		* Called when the save file dialog is cancelled.
-		*/
-		private static function onLoadCancel(_):Void
+	*/
+	private static function onLoadCancel(_):Void
 	{
-		_file.removeEventListener(Event.SELECT, onLoadComplete);
-		_file.removeEventListener(Event.CANCEL, onLoadCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
-		_file = null;
-		trace("Cancelled file loading.");
+		if (_file != null) {
+			_file.removeEventListener(Event.SELECT, onLoadComplete);
+			_file.removeEventListener(Event.CANCEL, onLoadCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+			_file = null;
+			trace("Cancelled file loading.");
+		}
 	}
 
 	/**
@@ -519,11 +523,13 @@ class WeekEditorState extends MusicBeatState
 		*/
 	private static function onLoadError(_):Void
 	{
-		_file.removeEventListener(Event.SELECT, onLoadComplete);
-		_file.removeEventListener(Event.CANCEL, onLoadCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
-		_file = null;
-		trace("Problem loading file");
+		if (_file != null) {
+			_file.removeEventListener(Event.SELECT, onLoadComplete);
+			_file.removeEventListener(Event.CANCEL, onLoadCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+			_file = null;
+			trace("Problem loading file");
+		}
 	}
 
 	public static function saveWeek(weekFile:WeekFile) {
@@ -540,22 +546,26 @@ class WeekEditorState extends MusicBeatState
 	
 	private static function onSaveComplete(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-		FlxG.log.notice("Successfully saved file.");
+		if (_file != null) {
+			_file.removeEventListener(Event.COMPLETE, onSaveComplete);
+			_file.removeEventListener(Event.CANCEL, onSaveCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+			_file = null;
+			FlxG.log.notice("Successfully saved file.");
+		}
 	}
 
 	/**
 		* Called when the save file dialog is cancelled.
 		*/
-		private static function onSaveCancel(_):Void
+	private static function onSaveCancel(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
+		if (_file != null) {
+			_file.removeEventListener(Event.COMPLETE, onSaveComplete);
+			_file.removeEventListener(Event.CANCEL, onSaveCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+			_file = null;
+		}
 	}
 
 	/**
@@ -563,11 +573,13 @@ class WeekEditorState extends MusicBeatState
 		*/
 	private static function onSaveError(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-		FlxG.log.error("Problem saving file");
+		if (_file != null) {
+			_file.removeEventListener(Event.COMPLETE, onSaveComplete);
+			_file.removeEventListener(Event.CANCEL, onSaveCancel);
+			_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+			_file = null;
+			FlxG.log.error("Problem saving file");
+		}
 	}
 }
 

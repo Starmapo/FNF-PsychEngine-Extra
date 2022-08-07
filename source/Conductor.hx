@@ -155,7 +155,8 @@ class Conductor
 			totalSteps += deltaSteps;
 			totalPos += calculateCrochet(curBPM, curSignature[1])/4 * deltaSteps;
 		}
-		trace('bpm change map: ' + bpmChangeMap);
+		if (bpmChangeMap.length > 0)
+			trace('bpm change map: ' + bpmChangeMap);
 	}
 
 	inline public static function calculateCrochet(bpm:Float, denominator:Int){

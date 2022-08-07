@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxDestroyUtil;
 import pvp.PvPPlayState;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -342,8 +343,7 @@ class PauseSubState extends MusicBeatSubState
 
 	override function destroy()
 	{
-		pauseMusic.destroy();
-
+		pauseMusic = FlxDestroyUtil.destroy(pauseMusic);
 		super.destroy();
 	}
 

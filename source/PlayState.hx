@@ -795,12 +795,12 @@ class PlayState extends MusicBeatState
 		var doof:DialogueBox = null;
 		if (!inEditor) {
 			var file:String = Paths.json('$curSong/dialogue'); //Checks for json/Psych Engine dialogue
-			if (Paths.existsPath(file, TEXT) && dialogueJson == null) {
+			if (Paths.exists(file, TEXT) && dialogueJson == null) {
 				dialogueJson = DialogueBoxPsych.parseDialogue(file);
 			}
 
 			var file:String = Paths.txt('$curSong/${curSong}Dialogue'); //Checks for vanilla/Senpai dialogue
-			if (Paths.existsPath(file, TEXT) && dialogue == null) {
+			if (Paths.exists(file, TEXT) && dialogue == null) {
 				dialogue = CoolUtil.coolTextFile(file);
 			}
 			doof = new DialogueBox(dialogue);
@@ -1087,9 +1087,8 @@ class PlayState extends MusicBeatState
 					startCountdown();
 			}
 			seenCutscene = true;
-		} else {
+		} else
 			startCountdown();
-		}
 		recalculateRating();
 
 		//PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
@@ -1098,11 +1097,10 @@ class PlayState extends MusicBeatState
 		precacheList.set('missnote2', 'sound');
 		precacheList.set('missnote3', 'sound');
 		
-		if (PauseSubState.songName != null) {
+		if (PauseSubState.songName != null)
 			precacheList.set(PauseSubState.songName, 'music');
-		} else if(ClientPrefs.pauseMusic != 'None') {
+		else if(ClientPrefs.pauseMusic != 'None')
 			precacheList.set(Paths.formatToSongPath(ClientPrefs.pauseMusic), 'music');
-		}
 
 		precacheList.set('alphabet', 'image');
 
@@ -1118,15 +1116,15 @@ class PlayState extends MusicBeatState
 
 		Conductor.safeZoneOffset = (ClientPrefs.safeFrames / 60) * 1000 * playbackRate;
 
-		#if HSCRIPT_ALLOWED
-		postSetHscript();
-		#end
-		callOnScripts('onCreatePost', []);
-
 		windowNameSuffix = ' | ' + (isStoryMode ? 'Story Mode - ' : 'Freeplay - ') + WeekData.getCurrentWeek().weekName + ' | $curSongDisplayName [${CoolUtil.difficultyString()}]';
 
 		cacheCountdown();
 		cachePopUpScore();
+
+		#if HSCRIPT_ALLOWED
+		postSetHscript();
+		#end
+		callOnScripts('onCreatePost', []);
 
 		for (key => type in precacheList)
 		{
@@ -1175,12 +1173,19 @@ class PlayState extends MusicBeatState
 
 	public function reloadHealthBarColors() {
 		var healthColors = [dad.healthColorArray, boyfriend.healthColorArray];
-		if (dadGroupFile != null) {
+		if (dadGroupFile != null)
 			healthColors[0] = dadGroupFile.healthbar_colors;
-		}
-		if (bfGroupFile != null) {
+		if (bfGroupFile != null)
 			healthColors[1] = bfGroupFile.healthbar_colors;
+		var match = true;
+		for (i in 0...healthColors[0].length) {
+			if (healthColors[0][i] != healthColors[1][i]) {
+				match = false;
+				break;
+			}
 		}
+		if (match)
+			healthColors = [[255, 0, 0], [102, 255, 51]];
 		if (!opponentChart) {
 			healthBar.createFilledBar(FlxColor.fromRGB(healthColors[0][0], healthColors[0][1], healthColors[0][2]),
 			FlxColor.fromRGB(healthColors[1][0], healthColors[1][1], healthColors[1][2]));
@@ -1493,11 +1498,7 @@ class PlayState extends MusicBeatState
 		camHUD.visible = false;
 
 		var filepath:String = Paths.video(name);
-		#if sys
-		if(!FileSystem.exists(filepath))
-		#else
-		if(!OpenFlAssets.exists(filepath))
-		#end
+		if(!Paths.exists(filepath))
 		{
 			FlxG.log.warn('Couldnt find video file: ' + name);
 			startAndEnd();
@@ -2748,22 +2749,18 @@ class PlayState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
+		super.update(elapsed);
+
 		callOnScripts('onUpdate', [elapsed]);
 
 		if (!inEditor) {
-			if (FlxG.sound.music != null && FlxG.sound.music.playing) {
+			if (FlxG.sound.music != null && FlxG.sound.music.playing)
 				setSongPitch();
-			}
 			
 			if (playbackRate != 1 && generatedMusic && startedCountdown && !endingSong && !transitioning && FlxG.sound.music != null && FlxG.sound.music.length - Conductor.songPosition <= 20)
 			{
 				Conductor.songPosition = FlxG.sound.music.length;
 				onSongComplete();
-			}
-
-			if (FlxG.keys.justPressed.NINE)
-			{
-				iconP1.swapOldIcon();
 			}
 
 			stage.onUpdate();
@@ -2794,9 +2791,8 @@ class PlayState extends MusicBeatState
 					if (boyfriendIdleTime >= 0.15) { // Kind of a mercy thing for making the achievement easier to get as it's apparently frustrating to some playerss
 						boyfriendIdled = true;
 					}
-				} else {
+				} else
 					boyfriendIdleTime = 0;
-				}
 			}
 		} else {
 			if (FlxG.keys.justPressed.ESCAPE)
@@ -2808,16 +2804,12 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		super.update(elapsed);
-
 		setOnScripts('curDecStep', curDecStep);
 		setOnScripts('curDecBeat', curDecBeat);
 
 		if (!inEditor) {
 			if (startedCountdown && generatedMusic && SONG.notes[curSection] != null && !endingSong && !isCameraOnForcedPos)
-			{
 				moveCameraSection();
-			}
 
 			if (botplayTxt.visible) {
 				botplaySine += 180 * elapsed;
@@ -2858,11 +2850,11 @@ class PlayState extends MusicBeatState
 			var division:Float = 1 / healthBar.numDivisions;
 
 			if (!opponentChart) {
-				iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, healthBar.numDivisions, 0) * division)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-				iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, healthBar.numDivisions, 0) * division)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+				iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 1, 0))) + ((150 * iconP1.scale.x - 150) / 2);
+				iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 1, 0))) - 150 - ((150 * iconP2.scale.x - 150) / 2);
 			} else {
-				iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 0, healthBar.numDivisions) * division)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-				iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 0, healthBar.numDivisions) * division)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+				iconP1.x = healthBar.x + (healthBar.width * (healthBar.percent / 100)) + ((150 * iconP1.scale.x - 150) / 2);
+				iconP2.x = healthBar.x + (healthBar.width * (healthBar.percent / 100)) - 150 - ((150 * iconP2.scale.x - 150) / 2);
 			}
 
 			if (health > 2)
@@ -3076,6 +3068,9 @@ class PlayState extends MusicBeatState
 					var strumScroll:Bool = daStrum.downScroll;
 					var strumHeight:Float = daStrum.height;
 					var noteSpeed = songSpeed * daNote.multSpeed;
+
+					if (daNote.isSustainNote && strumScroll)
+						daNote.flipY = true;
 	
 					strumX += daNote.offsetX;
 					strumY += daNote.offsetY;
@@ -3145,8 +3140,10 @@ class PlayState extends MusicBeatState
 						var center:Float = strumY + strumHeight / 2;
 						if (strumScroll)
 						{
-							if (daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= center)
+							if (daNote.y + daNote.height >= center)
 							{
+								if (daNote.clipRect != null)
+									daNote.clipRect = null;
 								var swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
 								swagRect.height = (center - daNote.y) / daNote.scale.y;
 								swagRect.y = daNote.frameHeight - swagRect.height;
@@ -3156,8 +3153,10 @@ class PlayState extends MusicBeatState
 						}
 						else
 						{
-							if (daNote.y + daNote.offset.y * daNote.scale.y <= center)
+							if (daNote.y <= center)
 							{
+								if (daNote.clipRect != null)
+									daNote.clipRect = null;
 								var swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
 								swagRect.y = (center - daNote.y) / daNote.scale.y;
 								swagRect.height -= swagRect.y;

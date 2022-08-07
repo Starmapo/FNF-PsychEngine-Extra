@@ -1,7 +1,7 @@
 {
 	"animations": [
 		{
-			"enemyOffsets": [
+			"offsets": [
 				-218,
 				-280
 			],
@@ -9,14 +9,10 @@
 			"fps": 24,
 			"anim": "idle",
 			"loop": false,
-			"name": "idle spirit_",
-			"playerOffsets": [
-				-218,
-				-280
-			]
+			"name": "idle spirit_"
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				-200,
 				-280
 			],
@@ -24,14 +20,10 @@
 			"fps": 24,
 			"anim": "singLEFT",
 			"loop": false,
-			"name": "left_",
-			"playerOffsets": [
-				-230,
-				-280
-			]
+			"name": "left_"
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				170,
 				110
 			],
@@ -39,14 +31,10 @@
 			"fps": 24,
 			"anim": "singDOWN",
 			"loop": false,
-			"name": "spirit down_",
-			"playerOffsets": [
-				170,
-				110
-			]
+			"name": "spirit down_"
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				-220,
 				-280
 			],
@@ -54,14 +42,10 @@
 			"fps": 24,
 			"anim": "singRIGHT",
 			"loop": false,
-			"name": "right_",
-			"playerOffsets": [
-				-220,
-				-280
-			]
+			"name": "right_"
 		},
 		{
-			"enemyOffsets": [
+			"offsets": [
 				-220,
 				-240
 			],
@@ -69,27 +53,15 @@
 			"fps": 24,
 			"anim": "singUP",
 			"loop": false,
-			"name": "up_",
-			"playerOffsets": [
-				-220,
-				-240
-			]
+			"name": "up_"
 		}
-	],
-	"enemy_position": [
-		-130,
-		100
 	],
 	"repeatHoldAnimation": true,
 	"no_antialiasing": true,
 	"image": "characters/spirit",
-	"enemy_cameraPosition": [
-		230,
-		490
-	],
-	"player_cameraPosition": [
-		200,
-		490
+	"position": [
+		-440,
+		-250
 	],
 	"healthicon": "spirit-pixel",
 	"flip_x": false,
@@ -98,9 +70,9 @@
 		60,
 		110
 	],
-	"player_position": [
-		-10,
-		100
+	"camera_position": [
+		230,
+		490
 	],
 	"sing_duration": 4,
 	"scale": 6

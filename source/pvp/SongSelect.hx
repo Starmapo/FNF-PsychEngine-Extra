@@ -42,7 +42,7 @@ class SongSelect extends FlxSpriteGroup {
         super(x, y);
         this.songs = songs.copy();
         this.isGamepad = isGamepad;
-        id = (isGamepad ? 1 : 0);
+        id = (isGamepad ? 0 : 1);
 
         bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
         bg.x = ((FlxG.width / 2) - bg.width) / 2;
@@ -77,14 +77,14 @@ class SongSelect extends FlxSpriteGroup {
             noGamepadBlack = new FlxSprite(0, 0).makeGraphic(Std.int(FlxG.width / 2), 720, FlxColor.BLACK);
             noGamepadBlack.scrollFactor.set();
             noGamepadBlack.alpha = 0.8;
-            noGamepadBlack.visible = (FlxG.gamepads.getByID(0) == null);
+            noGamepadBlack.visible = (FlxG.gamepads.lastActive == null);
             add(noGamepadBlack);
 
             noGamepadText = new FlxText(0, 360 - 16, FlxG.width / 2, "Waiting for gamepad...", 32);
             noGamepadText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
             noGamepadText.scrollFactor.set();
             noGamepadText.borderSize = 2;
-            noGamepadText.visible = (FlxG.gamepads.getByID(0) == null);
+            noGamepadText.visible = (FlxG.gamepads.lastActive == null);
             add(noGamepadText);
         }
 
@@ -124,7 +124,7 @@ class SongSelect extends FlxSpriteGroup {
             var back = controls.BACK;
 
             if (isGamepad) {
-                var gamepad = FlxG.gamepads.getByID(0);
+                var gamepad = FlxG.gamepads.lastActive;
                 if (gamepad != null) {
                     noGamepadBlack.visible = false;
                     noGamepadText.visible = false;
@@ -192,7 +192,7 @@ class SongSelect extends FlxSpriteGroup {
             if (back)
             {
                 if (!ready) {
-                    var gamepad = FlxG.gamepads.getByID(0);
+                    var gamepad = FlxG.gamepads.lastActive;
                     if (gamepad != null)
                         controls.addDefaultGamepad(0);
 
@@ -380,36 +380,36 @@ class SongSelect extends FlxSpriteGroup {
 			songText.isMenuItem = true;
 			songText.targetY = i;
             songText.yMult = 80;
-            if (isGamepad) songText.xAdd = FlxG.width / 2;
+            if (!isGamepad) songText.xAdd = FlxG.width / 2;
 			grpSongs.add(songText);
-
-			if (songText.width > 490)
-			{
-				var textScale:Float = 490 / songText.width;
-				songText.scale.x *= textScale;
-				for (letter in songText.lettersArray)
-				{
-					letter.x *= textScale;
-					letter.offset.x *= textScale;
-				}
-			}
 
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
             icon.setGraphicSize(Std.int(icon.width * 0.5));
             updateIconHitbox(icon);
 			icon.sprTracker = songText;
 
+            if (90 + songText.width + 10 + icon.width > 640)
+            {
+                var daWidth = 640 - (100 + icon.width);
+                var textScale:Float = daWidth / songText.width;
+                songText.scale.x *= textScale;
+                for (letter in songText.lettersArray)
+                {
+                    letter.x *= textScale;
+                    letter.offset.x *= textScale;
+                }
+            }
+
 			// using a FlxGroup is too much fuss!
 			iconArray.push(icon);
 			grpIcons.add(icon);
 		}
-		if (change) {
+		if (change)
 			changeSelection(0, false);
-		}
 	}
 
     function updateIconHitbox(icon:HealthIcon) {
         icon.updateHitbox();
-        icon.offset.set(-0.5 * (icon.width - icon.frameWidth), -0.5 * (icon.height - icon.frameHeight));
+        icon.offset.set((-0.5 * (icon.width - icon.frameWidth)) + icon.iconOffsets[0], (-0.5 * (icon.height - icon.frameHeight)) + icon.iconOffsets[1]);
     }
 }

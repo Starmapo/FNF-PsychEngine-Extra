@@ -4,10 +4,6 @@ import haxe.Json;
 import haxe.io.Path;
 #if sys
 import sys.FileSystem;
-import sys.io.File;
-#else
-import lime.utils.Assets;
-import openfl.utils.Assets as OpenFlAssets;
 #end
 
 using StringTools;
@@ -151,14 +147,15 @@ class WeekData {
 	}
 
 	private static function getWeekFile(path:String):WeekFile {
-		var rawJson:String = null;
-		if (Paths.exists(path)) {
-			rawJson = Paths.getContent(path);
-		}
+		try {
+			var rawJson:String = null;
+			if (Paths.exists(path))
+				rawJson = Paths.getContent(path);
 
-		if (rawJson != null && rawJson.length > 0) {
-			return cast Json.parse(rawJson);
-		}
+			if (rawJson != null && rawJson.length > 0)
+				return cast Json.parse(rawJson);
+		} catch (e:Dynamic)
+			trace(e);
 		return null;
 	}
 

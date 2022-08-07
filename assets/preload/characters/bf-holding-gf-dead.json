@@ -1,70 +1,46 @@
 {
 	"animations": [
 		{
-			"enemyOffsets": [
-				37,
-				-3
-			],
-			"loop": true,
 			"offsets": [
-				37,
-				-3
+				-1,
+				-17
 			],
+			"indices": [],
+			"fps": 24,
 			"anim": "deathLoop",
-			"fps": 24,
-			"playerOffsets": [
-				37,
-				-3
-			],
-			"name": "BF Dead with GF Loop",
-			"indices": []
+			"loop": true,
+			"name": "BF Dead with GF Loop"
 		},
 		{
-			"enemyOffsets": [
-				37,
-				14
-			],
-			"loop": false,
 			"offsets": [
-				37,
-				14
+				0,
+				0
 			],
+			"indices": [],
+			"fps": 24,
 			"anim": "firstDeath",
-			"fps": 24,
-			"playerOffsets": [
-				37,
-				14
-			],
-			"name": "BF Dies with GF",
-			"indices": []
+			"loop": false,
+			"name": "BF Dies with GF"
 		},
 		{
-			"enemyOffsets": [
-				37,
-				28
-			],
-			"loop": false,
 			"offsets": [
-				37,
-				28
+				-1,
+				16
 			],
-			"anim": "deathConfirm",
+			"indices": [],
 			"fps": 24,
-			"playerOffsets": [
-				37,
-				28
-			],
-			"name": "RETRY confirm holding gf",
-			"indices": []
+			"anim": "deathConfirm",
+			"loop": false,
+			"name": "RETRY confirm holding gf"
 		}
-	],
-	"enemy_position": [
-		0,
-		350
 	],
 	"repeatHoldAnimation": true,
 	"no_antialiasing": false,
 	"image": "characters/bfHoldingGF-DEAD",
+	"position": [
+		-50,
+		280
+	],
 	"healthicon": "bf",
 	"flip_x": true,
 	"healthbar_colors": [
@@ -75,10 +51,6 @@
 	"camera_position": [
 		0,
 		0
-	],
-	"player_position": [
-		0,
-		320
 	],
 	"sing_duration": 4,
 	"scale": 1.05
